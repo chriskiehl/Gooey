@@ -10,9 +10,12 @@ from argparse import (
 	_StoreFalseAction, _StoreTrueAction, 
 	_CountAction, _AppendAction)
 
-class ComponentFactory(object):
+class ActionSorter(object):
 	'''
-	Generates Wx Components from the argparse action types
+	So this thing is the thing that will 
+	pull out all of the "types" from the 
+	argparse object and turn them into the 
+	correct wx components 
 	
 	         COMPONENT MAP
 	     Action   		 WxWidget 
@@ -47,6 +50,76 @@ class ComponentFactory(object):
 		self._booleans 		= self.get_flag_style_optionals(self._actions)
 		self._counters 		= self.get_counter_actions(self._actions)
 		
+		self._display('ActionSorter: positionals', self._positionals)
+		self._display('ActionSorter: choices', self._choices)
+		self._display('ActionSorter: optionals', self._optionals)
+		self._display('ActionSorter: booleans', self._booleans)
+		self._display('ActionSorter: counters', self._counters)
+	
+	def _display(self, _type, something):
+		for i in something: 
+			print _type, i 
+		
+	def get_counter_actions(self, actions):
+		'''
+		Returns all instances of type _CountAction
+		'''
+		return [action 
+					for action in actions
+					if isinstance(action, _CountAction)]
+		
+	def get_positionals(self, actions):
+		'''
+		Get all required (positional) actions
+		'''
+		return [action 
+					for action in actions
+					if not action.option_strings]
+				
+	def get_optionals_without_choices(self, actions):
+		'''
+		All actions which are 
+			(a) Optional, but without required choices
+			(b) Not of a "boolean" type (storeTrue, etc..)
+			(c) Of type _AppendAction
+			
+		e.g. anything which has an argument style like: 
+		>>>	-f myfilename.txt 
+		'''
+		boolean_actions = (
+			_StoreConstAction, _StoreFalseAction, 
+			_StoreTrueAction
+		)
+		return [action 
+					for action in actions
+					if action.option_strings
+					and not action.choices
+					and action not in boolean_actions] 
+	
+	def get_optionals_with_choices(self, actions):
+		''' 
+		All optional arguments which are constrained 
+		to specific choices. 
+		'''
+		return [action 
+					for action in actions
+					if action.choices]
+		
+	def get_flag_style_optionals(self, actions):
+		''' 
+		Gets all instances of "flag" type options.
+		i.e. options which either store a const, or 
+		store boolean style options (e.g. StoreTrue). 
+		Types: 
+			_StoreTrueAction
+			_StoreFalseAction
+			_StoreConst
+		'''		
+		return [action
+					for action in actions
+					if isinstance(action, _StoreTrueAction)
+					or isinstance(action, _StoreFalseAction)
+					or isinstance(action, _StoreConstAction)]
 
 
 if __name__ == '__main__':

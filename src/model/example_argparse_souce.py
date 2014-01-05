@@ -76,6 +76,7 @@ USAGE
 				parser.add_argument("-r", "--recursive", dest="recurse", action="store_true", help="recurse into subfolders [default: %(default)s]")
 				parser.add_argument("-v", "--verbose", dest="verbose", action="count", help="set verbosity level [default: %(default)s]")
 				parser.add_argument("-i", "--include", action="append", help="only include paths matching this regex pattern. Note: exclude is given preference over include. [default: %(default)s]", metavar="RE" )
+				parser.add_argument("-m", "--mycoolargument", help="mycoolargument")
 				parser.add_argument("-e", "--exclude", dest="exclude", help="exclude paths matching this regex pattern. [default: %(default)s]", metavar="RE" )
 				parser.add_argument('-V', '--version', action='version')
 				parser.add_argument('-T', '--tester', choices=['yes','no'])

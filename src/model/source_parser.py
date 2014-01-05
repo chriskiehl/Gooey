@@ -22,7 +22,7 @@ from functools import partial
 from numpy.lib.utils import _split_line
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
-from app.dialogs.component_factory import ComponentFactory
+from app.dialogs.action_sorter import ActionSorter
 
 
 class ParserError(Exception):
@@ -269,7 +269,8 @@ if __name__ == '__main__':
 	ast_source = parse_source_file('example_argparse_souce.py')
 	python_code = convert_to_python(ast_source)
 	parser = ParserFromSource(python_code)
-	factory = ComponentFactory(parser)
+	factory = ActionSorter(parser)
+	print factory._positionals
 	
 # 	
 	
