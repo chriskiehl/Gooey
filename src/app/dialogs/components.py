@@ -35,6 +35,8 @@ class AbstractComponent(object):
 		if self.HasHelpMsg(self._action):
 			sizer.Add(self.CreateHelpMsgWidget(parent, self._action))
 			sizer.AddSpacer(2)
+		else:
+			sizer.AddSpacer(10)
 
 		if self.HasNargs(self._action):
 			sizer.Add(self.AddNargsMsg(parent, self._action))
@@ -58,12 +60,14 @@ class AbstractComponent(object):
 		return wx.StaticText(parent, label=msg)
 	
 	def CreateDestNameWidget(self, parent, action):
-		text = wx.StaticText(parent, label=str(action.dest).title())
+		label = str(action.dest).title() 
+		if action.option_strings: 
+			label += ' (%s)' % action.option_strings[0]
+		text = wx.StaticText(parent, label=label)
 		self.MakeBold(text)
 		return text
 	
-	def AssertInitialization(self, widget, clsname):
-		print self._widget
+	def AssertInitialization(self, clsname):
 		if not self._widget:
 			raise BuildException('%s was not correctly initialized' % clsname)
 		
@@ -103,7 +107,7 @@ class Positional(AbstractComponent):
 		return wx.TextCtrl(parent)
 	
 	def GetValue(self):
-		self.AssertInitialization(self._widget, 'Positional')
+		self.AssertInitialization('Positional')
 		return self._widget.GetValue()
 
 	
@@ -114,7 +118,7 @@ class Choice(AbstractComponent):
 		self.contents = None 
 		
 	def GetValue(self):
-		self.AssertInitialization() 
+		self.AssertInitialization('Choice') 
 		return self._widget.GetValue()
 	
 	def BuildWidget(self, parent, action):
@@ -129,7 +133,13 @@ class Choice(AbstractComponent):
 
 class Optional(AbstractComponent):
 	def __init__(self, action):
+		self._action = action
+		self._widget = None
+		self.contents = None 
+		
+	def BuildWidget(self, parent, action):
 		pass
+		
 
 
 
