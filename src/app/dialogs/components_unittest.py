@@ -22,16 +22,21 @@ class ComponentsTest(unittest.TestCase):
 		parser = ArgumentParser(description='Example Argparse Program')
 		parser.add_argument("filename", help="Name of the file you want to read")
 		parser.add_argument('-T', '--tester', choices=['yes','no'])
+		parser.add_argument('-o', '--outfile', help='Redirects output to the specified file')
+		parser.add_argument('-v', '--verbose', help='Toggles verbosity off')
+		parser.add_argument('-e', '--repeat', action='count', help='Set the number of times to repeat')
 		action = parser._actions
 		self.actions = {
 					'help' : action[0],
 					'Positional' : action[1],
-					'Choice' : action[2]				
+					'Choice' : action[2], 
+					'Optional' : action[3],
+					'Flag' : action[4],
+					'Counter' : action[5]
 					}
 		
 
 	def BuildWindow(self, component):
-		
 		app = wx.PySimpleApp()
 		module_name = os.path.split(sys.argv[0])[-1]
 		frame = wx.Frame(None, -1, module_name)
@@ -42,16 +47,24 @@ class ComponentsTest(unittest.TestCase):
 		
 		frame.Show(True)
 		
-		print component.GetValue()
 		app.MainLoop()
+
 		
 	def testPositionalWidgetBuild(self):
 		self.SetupWidgetAndBuildWindow('Positional')
-# 		component = components.Positional(self.actions['positional'])
-# 		self.BuildWindow(component)
 		
 	def testChoiceWidgetBuild(self):
 		self.SetupWidgetAndBuildWindow('Choice')
+		
+	def testOptionalWidgetBuild(self):
+		self.SetupWidgetAndBuildWindow('Optional')
+		
+	def testFlagWidgetBuild(self):
+		self.SetupWidgetAndBuildWindow('Flag')
+		
+	def testCounterWidgetBuild(self):
+		self.SetupWidgetAndBuildWindow('Counter')
+		
 		
 	def SetupWidgetAndBuildWindow(self, _type):
 		component = getattr(components, _type)(self.actions[_type])

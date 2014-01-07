@@ -61,7 +61,7 @@ class AbstractComponent(object):
 	
 	def CreateDestNameWidget(self, parent, action):
 		label = str(action.dest).title() 
-		if action.option_strings: 
+		if len(action.option_strings) > 1: 
 			label += ' (%s)' % action.option_strings[0]
 		text = wx.StaticText(parent, label=label)
 		self.MakeBold(text)
@@ -83,16 +83,12 @@ class AbstractComponent(object):
 	
 	@abstractmethod
 	def BuildWidget(self, parent, action):
-		''' 
-		Must construct the main widget type for the Action 
-		'''
+		''' Must construct the main widget type for the Action '''
 		pass
 	
 	@abstractmethod
 	def GetValue(self):
-		'''
-		Returns the state of the given widget
-		'''
+		''' Returns the state of the given widget '''
 		pass
 
 
@@ -138,23 +134,57 @@ class Optional(AbstractComponent):
 		self.contents = None 
 		
 	def BuildWidget(self, parent, action):
-		pass
-		
-
-
-
+		return wx.TextCtrl(parent)
 	
-
-
-
+	def GetValue(self):
+		self.AssertInitialization('Optional')
+		return self._widget.GetValue()
 		
+		
+
+class Flag(AbstractComponent):
+	def __init__(self, action):
+		self._action = action
+		self._widget = None
+		self.contents = None
+		
+	def BuildWidget(self, parent, action):
+		if len(action.option_strings) > 1:
+			label = action.option_strings[0]
+		else: 
+			label = ''
+		return wx.CheckBox(parent, -1, label=label)
+		
+	def GetValue(self):
+		return self._widget.GetValue()
+	
+	
+	
+class Counter(AbstractComponent):
+	def __init__(self, action):
+		self._action = action
+		self._widget = None
+		self.contents = None
+		
+	def BuildWidget(self, parent, action):
+		levels = [str(x) for x in range(1, 7)]
+		return wx.ComboBox(
+							parent=parent,
+							id=-1,
+							value='',
+							choices=levels, 
+							style=wx.CB_DROPDOWN
+							) 
+		
+	def GetValue(self):
+		return self._widget.GetValue()
+		
+		
+		
+
 if __name__ == '__main__':
-	parser = ArgumentParser(description='Example Argparse Program')
-	parser.add_argument("filename", help="filename")
-	action = parser._actions[1]
-	positional = Positional(action)
-	
-	a = getattr
+	pass
+
 	
 		
 		

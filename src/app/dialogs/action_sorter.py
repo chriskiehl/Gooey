@@ -2,6 +2,7 @@
 Created on Dec 8, 2013
 
 @author: Chris
+
 '''
 
 import wx
@@ -10,12 +11,14 @@ from argparse import (
 	_StoreFalseAction, _StoreTrueAction, 
 	_CountAction, _AppendAction)
 
+
+DEBUG = 1
+
 class ActionSorter(object):
 	'''
-	So this thing is the thing that will 
-	pull out all of the "types" from the 
-	argparse object and turn them into the 
-	correct wx components 
+	Sorts all of the actions into their appropriate containers. 
+	
+	Containers are based on the following map: 
 	
 	         COMPONENT MAP
 	     Action   		 WxWidget 
@@ -27,7 +30,16 @@ class ActionSorter(object):
        append        TextCtrl  
         count 			 DropDown
        choice        DropDown
-       
+  
+  Instance Variables:     
+	  self._positionals 
+		self._choices		
+		self._optionals  
+		self._flags 	
+		self._counters 	
+	
+	Example Argparse Def
+	       
   _HelpAction(option_strings=['-h', '--help'], dest='help', nargs=0, const=None, default='==SUPPRESS==', type=None, choices=None, help='show this help message and exit', metavar=None)
 	_StoreAction(option_strings=[], dest='filename', nargs=None, const=None, default=None, type=None, choices=None, help='filename', metavar=None)
 	_StoreTrueAction(option_strings=['-r', '--recursive'], dest='recurse', nargs=0, const=True, default=False, type=None, choices=None, help='recurse into subfolders [default: %(default)s]', metavar=None)
@@ -40,21 +52,21 @@ class ActionSorter(object):
 	usage: example_argparse_souce.py [-h] [-r] [-v] [-i RE] [-e RE] [-V]
 	'''
 	
-	def __init__(self, parser):
-		self._parser = parser
-		self._actions = self._parser._actions[:] # Copy all of the actions
+	def __init__(self, actions):
+		self._actions = actions[:] # Copy all of the actions
 		
 		self._positionals = self.get_positionals(self._actions)
 		self._choices			= self.get_optionals_with_choices(self._actions)
 		self._optionals 	= self.get_optionals_without_choices(self._actions) 
-		self._booleans 		= self.get_flag_style_optionals(self._actions)
+		self._flags 		= self.get_flag_style_optionals(self._actions)
 		self._counters 		= self.get_counter_actions(self._actions)
 		
-		self._display('ActionSorter: positionals', self._positionals)
-		self._display('ActionSorter: choices', self._choices)
-		self._display('ActionSorter: optionals', self._optionals)
-		self._display('ActionSorter: booleans', self._booleans)
-		self._display('ActionSorter: counters', self._counters)
+		if DEBUG:
+			self._display('ActionSorter: positionals', self._positionals)
+			self._display('ActionSorter: choices', self._choices)
+			self._display('ActionSorter: optionals', self._optionals)
+			self._display('ActionSorter: booleans', self._flags)
+			self._display('ActionSorter: counters', self._counters)
 	
 	def _display(self, _type, something):
 		for i in something: 
