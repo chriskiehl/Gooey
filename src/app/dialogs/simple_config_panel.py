@@ -45,8 +45,9 @@ class BodyDisplayPanel(wx.Panel):
 		return self.cmd_textbox.GetValue()
 		
 	def _bold_static_text(self, text_label):
-		bold = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 		text = wx.StaticText(self, label=text_label)
+		font_size = text.GetFont().GetPointSize()
+		bold = wx.Font(font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 		text.SetFont(bold)
 		return text
 	

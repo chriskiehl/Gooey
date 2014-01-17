@@ -24,7 +24,7 @@ class ComponentsTest(unittest.TestCase):
 		parser.add_argument('-T', '--tester', choices=['yes','no'])
 		parser.add_argument('-o', '--outfile', help='Redirects output to the specified file')
 		parser.add_argument('-v', '--verbose', help='Toggles verbosity off')
-		parser.add_argument('-e', '--repeat', action='count', help='Set the number of times to repeat')
+		parser.add_argument('-e', '--repeat', action='count')
 		action = parser._actions
 		self.actions = {
 					'help' : action[0],
@@ -36,10 +36,10 @@ class ComponentsTest(unittest.TestCase):
 					}
 		
 
-	def BuildWindow(self, component):
+	def BuildWindow(self, component, _type):
 		app = wx.PySimpleApp()
 		module_name = os.path.split(sys.argv[0])[-1]
-		frame = wx.Frame(None, -1, module_name)
+		frame = wx.Frame(None, -1, _type)
 		
 		panel = wx.Panel(frame, -1, size=(320,240))
 		component_sizer = component.Build(panel)
@@ -65,10 +65,10 @@ class ComponentsTest(unittest.TestCase):
 	def testCounterWidgetBuild(self):
 		self.SetupWidgetAndBuildWindow('Counter')
 		
-		
 	def SetupWidgetAndBuildWindow(self, _type):
 		component = getattr(components, _type)(self.actions[_type])
-		self.BuildWindow(component)
+		print component
+		self.BuildWindow(component, _type)
 		
 
 if __name__ == "__main__":

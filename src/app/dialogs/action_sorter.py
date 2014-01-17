@@ -9,7 +9,7 @@ import wx
 from argparse import (
 	_StoreAction, _StoreConstAction, 
 	_StoreFalseAction, _StoreTrueAction, 
-	_CountAction, _AppendAction)
+	_CountAction, _AppendAction, _HelpAction)
 
 
 DEBUG = 1
@@ -58,7 +58,7 @@ class ActionSorter(object):
 		self._positionals = self.get_positionals(self._actions)
 		self._choices			= self.get_optionals_with_choices(self._actions)
 		self._optionals 	= self.get_optionals_without_choices(self._actions) 
-		self._flags 		= self.get_flag_style_optionals(self._actions)
+		self._flags 			= self.get_flag_style_optionals(self._actions)
 		self._counters 		= self.get_counter_actions(self._actions)
 		
 		if DEBUG:
@@ -67,6 +67,7 @@ class ActionSorter(object):
 			self._display('ActionSorter: optionals', self._optionals)
 			self._display('ActionSorter: booleans', self._flags)
 			self._display('ActionSorter: counters', self._counters)
+			print '|-------------------------'
 	
 	def _display(self, _type, something):
 		for i in something: 
@@ -106,7 +107,9 @@ class ActionSorter(object):
 					for action in actions
 					if action.option_strings
 					and not action.choices
-					and action not in boolean_actions] 
+					and not isinstance(action, _CountAction)
+					and not isinstance(action, _HelpAction)
+					and type(action) not in boolean_actions] 
 	
 	def get_optionals_with_choices(self, actions):
 		''' 

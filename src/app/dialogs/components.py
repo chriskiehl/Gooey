@@ -26,21 +26,26 @@ class AbstractComponent(object):
 		self._widget = None
 	
 	def Build(self, parent):
-		self._widget = self.BuildWidget(parent, self._action)
-		sizer = wx.BoxSizer(wx.VERTICAL)
 		
+		self._widget = self.BuildWidget(parent, self._action)
+		self._msg    = (self.CreateHelpMsgWidget(parent, self._action) 
+										if self.HasHelpMsg(self._action) 
+										else None)
+		
+		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.Add(self.CreateDestNameWidget(parent, self._action))
 		sizer.AddSpacer(2)
 				
-		if self.HasHelpMsg(self._action):
-			sizer.Add(self.CreateHelpMsgWidget(parent, self._action))
+		if self._msg:
+			sizer.Add(self._msg, 0, wx.EXPAND)
 			sizer.AddSpacer(2)
 		else:
-			sizer.AddSpacer(10)
-
+			sizer.AddStretchSpacer(1)
+			
 		if self.HasNargs(self._action):
 			sizer.Add(self.AddNargsMsg(parent, self._action))
-			
+		
+		sizer.AddStretchSpacer(1)	
 		sizer.Add(self._widget, 0, wx.EXPAND)
 		return sizer
 		
@@ -80,6 +85,9 @@ class AbstractComponent(object):
 		darkgray = (54,54,54)
 		statictext.SetForegroundColour(darkgray)
 		
+	def __str__(self):
+		return str(self._action)
+		
 	
 	@abstractmethod
 	def BuildWidget(self, parent, action):
@@ -90,6 +98,36 @@ class AbstractComponent(object):
 	def GetValue(self):
 		''' Returns the state of the given widget '''
 		pass
+	
+# 	@abstractmethod
+	def Update(self, size):
+		''' 
+		Manually word wraps the StaticText help objects which would 
+		otherwise not wrap on resize
+		
+		Content area is based on each grid having two equally sized 
+		columns, where the content area is defined as 87% of the halved
+		window width. The wiggle room is the distance +- 10% of the 
+		content_area. 
+		
+		Wrap calculation is run only when the size of the help_msg 
+		extends outside of the wiggle_room. This was done to avoid 
+		the "flickering" that comes from constantly resizing a 
+		StaticText object.     
+		'''
+		if self._msg is None: 
+			return
+		help_msg = self._msg
+		width, height = size
+		content_area = int((width/2)*.87)
+
+		print 'wiget size', help_msg.Size[0]
+		wiggle_room = range(int(content_area - content_area * .05), int(content_area + content_area * .05))
+		print '(',int(content_area - content_area * .05), int(content_area + content_area * .05),')'
+		if help_msg.Size[0] not in wiggle_room:
+				self._msg.SetLabel(self._msg.GetLabelText().replace('\n',' '))
+				self._msg.Wrap(content_area)
+		
 
 
 
@@ -148,15 +186,60 @@ class Flag(AbstractComponent):
 		self._widget = None
 		self.contents = None
 		
+	def Build(self, parent):
+		self._widget = self.BuildWidget(parent, self._action)
+		self._msg    = (self.CreateHelpMsgWidget(parent, self._action) 
+										if self.HasHelpMsg(self._action) 
+										else None)
+		
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		sizer.Add(self.CreateDestNameWidget(parent, self._action))
+		sizer.AddSpacer(6)
+				
+		if self.HasNargs(self._action):
+			sizer.Add(self.AddNargsMsg(parent, self._action))
+			
+		if self._msg: 
+			hsizer = self.buildHorizonalMsgSizer(parent)
+			sizer.Add(hsizer, 1, wx.EXPAND)
+		else:
+			sizer.AddStretchSpacer(1)	
+			sizer.Add(self._widget, 0, wx.EXPAND)
+		return sizer
+		
 	def BuildWidget(self, parent, action):
-		if len(action.option_strings) > 1:
-			label = action.option_strings[0]
-		else: 
-			label = ''
-		return wx.CheckBox(parent, -1, label=label)
+		return wx.CheckBox(parent, -1, label='')
+	
+	def buildHorizonalMsgSizer(self, panel):
+		if not self._msg:
+			return None
+		sizer = wx.BoxSizer(wx.HORIZONTAL)
+		sizer.Add(self._widget, 0)
+		sizer.AddSpacer(6)
+		sizer.Add(self._msg, 1, wx.EXPAND)
+		return sizer
 		
 	def GetValue(self):
 		return self._widget.GetValue()
+	
+	def Update(self, size):
+		''' 
+		Custom wrapper calculator to account for the
+		increased size of the _msg widget after being 
+		inlined with the wx.CheckBox
+		''' 
+		if self._msg is None: 
+			return
+		help_msg = self._msg
+		width, height = size
+		content_area = int((width/2)*.70)
+
+		print 'wiget size', help_msg.Size[0]
+		wiggle_room = range(int(content_area - content_area * .05), int(content_area + content_area * .05))
+		print '(',int(content_area - content_area * .05), int(content_area + content_area * .05),')'
+		if help_msg.Size[0] not in wiggle_room:
+				self._msg.SetLabel(self._msg.GetLabelText().replace('\n',' '))
+				self._msg.Wrap(content_area)
 	
 	
 	

@@ -4,9 +4,10 @@ Created on Dec 8, 2013
 @author: Chris
 '''
 
-import wx
+import itertools
 import components 
 import action_sorter
+import argparse_test_data
 
 
 class ComponentFactory(object):
@@ -22,16 +23,16 @@ class ComponentFactory(object):
 		self.positionals	= self.BuildPositionals(self._actions)
 		self.choices			= self.BuildChoices(self._actions)
 		self.optionals 		= self.BuildOptionals(self._actions) 
-		self.booleans 		= self.BuildFlags(self._actions)
+		self.flags		 		= self.BuildFlags(self._actions)
 		self.counters 		= self.BuildCounters(self._actions)
 		
 		self._components = [
-								self.positionals,
-								self.choices, 
-								self.optionals, 
-								self.booleans, 
-								self.counters
-								]
+										self.positionals,
+										self.choices,
+										self.optionals,
+										self.flags,
+										self.counters				
+										]
 		
 	def BuildPositionals(self, actions):
 		return self._AssembleWidgetsFromActions(actions, 'Positional', '_positionals')
@@ -53,11 +54,19 @@ class ComponentFactory(object):
 		actions_list = getattr(actions, actiontype)
 		return [cls(action)
 					for action in actions_list]
+		
+# 	def __getitem__(self, slice):
+# 		return self._components[slice] 
 
+	def __iter__(self):
+		''' 
+		return an iterator for all of the contained 
+		components
+		'''
+		return itertools.chain(*self._components)
 
 if __name__ == '__main__':
-	pass
-		
+	a = ComponentFactory(argparse_test_data.parser) 
 				
 				
 				
