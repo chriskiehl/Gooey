@@ -49,8 +49,8 @@ if __name__ == '__main__':
 	frame = MainWindow(queue)
 	frame.Show(True)     # Show the frame.
 
-	mock = MockApplication()
-	mock.start()
+# 	mock = MockApplication()
+# 	mock.start()
 	
 	app.MainLoop()
 # 	

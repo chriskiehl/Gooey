@@ -19,4 +19,3 @@ parser.add_argument('-c', '--constoption', action="store_const", const="myconsta
 parser.add_argument('-t', '--truify', action="store_true", help='Ensure the store_true actions are sorted') # Flag
 parser.add_argument('-f', '--falsificle', action="store_false", help='Ensure the store_false actions are sorted') # Flag
 
- 

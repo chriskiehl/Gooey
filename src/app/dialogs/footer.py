@@ -12,22 +12,31 @@ class AbstractFooter(wx.Panel):
 	'''
 	def __init__(self, parent, **kwargs):
 		wx.Panel.__init__(self, parent, **kwargs)
-		self.SetMinSize((30, 50))
+		self.SetMinSize((30, 53))
 		
 		self.cancel_button = self._button('Cancel', wx.ID_CANCEL)
 		self.next_button = self._button("Next", wx.ID_OK)
-
-		sizer = wx.BoxSizer(wx.HORIZONTAL)
-		sizer.AddStretchSpacer(1)
-		sizer.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.TOP, 20)
-		sizer.Add(self.next_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.TOP, 20)
-		self.SetSizer(sizer)
+		
+		self._do_layout()
+		
+	def _do_layout(self):
+		v_sizer = wx.BoxSizer(wx.VERTICAL)
+		h_sizer = wx.BoxSizer(wx.HORIZONTAL)
+		
+		h_sizer.AddStretchSpacer(1)
+		h_sizer.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
+		h_sizer.Add(self.next_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
+		
+		v_sizer.AddStretchSpacer(1)
+		v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
+		v_sizer.AddStretchSpacer(1)
+		self.SetSizer(v_sizer)
 		
 	def _button(self,label=None, style=None):
 		return wx.Button(
 				parent=self,
 				id=-1,
-				size=(75, 23),
+				size=(90, 24),
 				label=label,
 				style=style)
 
@@ -45,7 +54,8 @@ class ConfigFooter(AbstractFooter):
 	def __init__(self, parent, controller, **kwargs):
 		AbstractFooter.__init__(self, parent, **kwargs)
 		
-		self._controller = controller 
+		self._controller = controller
+		 
 		self.Bind(wx.EVT_BUTTON, self.OnConfigCancel, self.cancel_button)
 		self.Bind(wx.EVT_BUTTON, self.OnConfigNext, self.next_button)
 		
@@ -78,3 +88,9 @@ class MainFooter(AbstractFooter):
 		
 	def OnMainNext(self, event):
 		self._controller.OnMainNext(event)
+		
+		
+		
+		
+		
+		

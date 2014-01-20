@@ -10,11 +10,12 @@ from wx.lib import wordwrap
 from itertools import chain
 from component_factory import ComponentFactory
 from wx.lib.scrolledpanel import ScrolledPanel
+from app.dialogs.option_reader import OptionReader
 
 PADDING = 10
 
 
-class AdvancedConfigPanel(ScrolledPanel):
+class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 	'''
 	Abstract class for the Footer panels. 
 	'''
@@ -24,46 +25,46 @@ class AdvancedConfigPanel(ScrolledPanel):
 		
 		self.components = ComponentFactory(parser)
 		
-		self.container = wx.BoxSizer(wx.VERTICAL)
-		self.container.AddSpacer(15)
+		self._msg_req_args = self.BuildHeaderMsg("Required Arguments")
+		self._msg_opt_args = self.BuildHeaderMsg("Optional Arguments")
 		
-		self.AddHeaderMsg("Required Arguments")
-		self.container.AddSpacer(10)
-		
-		box = wx.StaticBox(self, label="")
-		boxsizer = wx.StaticBoxSizer(box, wx.VERTICAL)
-		self.AddWidgets(self.container, self.components.positionals, add_space=True)
-		
-		self.container.AddSpacer(10)
-		self.container.Add(self._draw_horizontal_line(), 
-											0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
-		
-		self.container.AddSpacer(10)
-		self.AddHeaderMsg("Optional Arguments")
-		self.container.AddSpacer(15)
-		
-		flag_grids = self.CreateComponentGrid(self.components.flags, vgap=15)	
-		opt_choice_counter_grid = self.CreateComponentGrid(c for c in self.components 
-																											if not isinstance(c, components.Flag)
-																											and not isinstance(c, components.Positional)) 
-		self.container.Add(opt_choice_counter_grid, 0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
-		self.container.AddSpacer(30)
-		self.container.Add(flag_grids, 0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
-		
-# 		sizer_params = [(grid, 0, wx.LEFT|wx.RIGHT|wx.EXPAND, PADDING)
-# 										for grid in component_grids]
-# 		self.container.AddMany(sizer_params) 
-		self.SetSizer(self.container)
+		self._do_layout()
 		self.Bind(wx.EVT_SIZE, self.OnResize)
+		
+	def _do_layout(self):
+		STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
+		container = wx.BoxSizer(wx.VERTICAL)
+		container.AddSpacer(15)
+		
+		container.Add(self._msg_req_args, 0, wx.LEFT | wx.RIGHT, PADDING)
+		container.AddSpacer(5)
+		container.Add(self._draw_horizontal_line(), *STD_LAYOUT)
+		container.AddSpacer(20)
+		
+		self.AddWidgets(container, self.components.required_args, add_space=True)
+		
+		container.AddSpacer(10)
+		
+		container.AddSpacer(10)
+		container.Add(self._msg_opt_args, 0, wx.LEFT | wx.RIGHT, PADDING)
+		container.AddSpacer(5)
+		container.Add(self._draw_horizontal_line(), *STD_LAYOUT)
+		container.AddSpacer(20)
+		
+		flag_grids = self.CreateComponentGrid(self.components.flags, cols=3, vgap=15)	
+		general_opts_grid = self.CreateComponentGrid(self.components.general_options) 
+		container.Add(general_opts_grid, *STD_LAYOUT)
+		container.AddSpacer(30)
+		container.Add(flag_grids, *STD_LAYOUT)
+		
+		self.SetSizer(container)
 
-
-	def AddHeaderMsg(self, label):
-		required_msg = wx.StaticText(self, label=label)
-		font_size = required_msg.GetFont().GetPointSize()
+	def BuildHeaderMsg(self, label):
+		_msg = wx.StaticText(self, label=label)
+		font_size = _msg.GetFont().GetPointSize()
 		bold = wx.Font(font_size*1.2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-		required_msg.SetFont(bold)
-		self.container.Add(required_msg, 0, wx.LEFT | wx.RIGHT, PADDING)
-		 
+		_msg.SetFont(bold)
+		return _msg
 		
 	def AddWidgets(self, sizer, components, add_space=False, padding=PADDING):
 		for component in components: 
@@ -83,9 +84,16 @@ class AdvancedConfigPanel(ScrolledPanel):
 		return line
 	
 	def OnResize(self, evt):
-		print evt.m_size
+		print 'SIZEEEE:', evt.m_size
 		for component in self.components:
 			component.Update(evt.m_size)
+		evt.Skip()
+			
+	def GetOptions(self):
+		''' 
+		returns the collective values from all of the
+		widgets contained in the panel'''
+		raise NotImplementedError 
 		
 		
 			

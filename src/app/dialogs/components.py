@@ -232,7 +232,7 @@ class Flag(AbstractComponent):
 			return
 		help_msg = self._msg
 		width, height = size
-		content_area = int((width/2)*.70)
+		content_area = int((width/3)*.70)
 
 		print 'wiget size', help_msg.Size[0]
 		wiggle_room = range(int(content_area - content_area * .05), int(content_area + content_area * .05))

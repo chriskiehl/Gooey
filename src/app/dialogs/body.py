@@ -6,7 +6,7 @@ Created on Dec 23, 2013
 
 import wx
 
-class BodyDisplayPanel(wx.Panel):
+class BasicDisplayPanel(wx.Panel):
 	def __init__(self, parent, **kwargs):
 		wx.Panel.__init__(self, parent, **kwargs)
 
