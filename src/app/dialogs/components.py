@@ -3,6 +3,9 @@ Created on Jan 1, 2014
 
 @author: Chris
 
+TODO: 
+	Sanitize all GetValue inputs 
+	(to check that there's actual data there. 
 '''
 
 import wx
@@ -88,7 +91,6 @@ class AbstractComponent(object):
 	def __str__(self):
 		return str(self._action)
 		
-	
 	@abstractmethod
 	def BuildWidget(self, parent, action):
 		''' Must construct the main widget type for the Action '''
@@ -141,25 +143,43 @@ class Positional(AbstractComponent):
 		return wx.TextCtrl(parent)
 	
 	def GetValue(self):
+		'''
+		Positionals have no associated options_string, 
+		so only the supplied arguments are returned. 
+		The order is assumed to be the same as the order 
+		of declaration in the client code
+		
+		Returns
+			"argument_value"
+		'''
 		self.AssertInitialization('Positional')
 		return self._widget.GetValue()
 
 	
 class Choice(AbstractComponent):
+	_DEFAULT_VALUE = 'Select Option'
 	def __init__(self, action):
 		self._action = action
 		self._widget = None
 		self.contents = None 
 		
 	def GetValue(self):
-		self.AssertInitialization('Choice') 
-		return self._widget.GetValue()
+		'''
+		Returns
+			"--option_name argument"
+		'''
+		self.AssertInitialization('Choice')
+		if self._widget.GetValue() == self._DEFAULT_VALUE:
+			return ''
+		return ' '.join(
+									[self._action.option_strings[-1], # get the verbose copy if available  
+									self._widget.GetValue()])
 	
 	def BuildWidget(self, parent, action):
 		return wx.ComboBox(
 							parent=parent,
 							id=-1,
-							value='Select Option',
+							value=self._DEFAULT_VALUE,
 							choices=action.choices, 
 							style=wx.CB_DROPDOWN
 							) 
@@ -175,9 +195,19 @@ class Optional(AbstractComponent):
 		return wx.TextCtrl(parent)
 	
 	def GetValue(self):
+		'''
+		General options are key/value style pairs (conceptually). 
+		Thus the name of the option, as well as the argument to it 
+		are returned
+		e.g. 
+			>>> myscript --outfile myfile.txt
+		returns 
+			"--Option Value" 
+		'''
 		self.AssertInitialization('Optional')
-		return self._widget.GetValue()
-		
+		return ' '.join(
+							[self._action.option_strings[-1], # get the verbose copy if available  
+							self._widget.GetValue()])
 		
 
 class Flag(AbstractComponent):
@@ -220,7 +250,15 @@ class Flag(AbstractComponent):
 		return sizer
 		
 	def GetValue(self):
-		return self._widget.GetValue()
+		'''
+		Flag options have no param associated with them. 
+		Thus we only need the name of the option. 
+		e.g 
+			>>> Python -v myscript
+		returns 
+			Options name for argument (-v)
+		'''
+		return self._action.option_strings[-1]
 	
 	def Update(self, size):
 		''' 
@@ -260,7 +298,23 @@ class Counter(AbstractComponent):
 							) 
 		
 	def GetValue(self):
-		return self._widget.GetValue()
+		'''
+		NOTE: Added on plane. Cannot remember exact implementation 
+		of counter objects. I believe that they count sequentail 
+		pairings of options
+		e.g. 
+			-vvvvv 
+		But I'm not sure. That's what I'm going with for now.
+		
+		Returns 
+			str(action.options_string[0]) * DropDown Value
+		'''
+		dropdown_value = self._widget.GetValue()
+		try: 
+			return str(self._action.option_strings[0]) * int(dropdown_value) 
+		except Exception as e:
+			print e 
+			return '' 
 		
 		
 		

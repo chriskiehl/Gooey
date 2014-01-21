@@ -105,7 +105,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 		values = [(c._action, c.GetValue())
 							for c in self.components]
 		for i in values:
-			print (i[0].option_strings[-1], i[-1])
+			print i[-1]
 		
 		
 		
