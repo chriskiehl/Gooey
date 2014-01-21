@@ -8,7 +8,7 @@ import wx
 import os
 import sys
 import threading
-from model.controller import Controller 
+from app.dialogs.controller import Controller 
 from app.images import image_store
 from app.dialogs.header import FrameHeader
 from app.dialogs.basic_config_panel import BasicDisplayPanel

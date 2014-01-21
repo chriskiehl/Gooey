@@ -25,11 +25,16 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 		
 		self.components = ComponentFactory(parser)
 		
-		self._msg_req_args = self.BuildHeaderMsg("Required Arguments")
-		self._msg_opt_args = self.BuildHeaderMsg("Optional Arguments")
+		self._controller = None
 		
+		self._init_components()
 		self._do_layout()
 		self.Bind(wx.EVT_SIZE, self.OnResize)
+
+		
+	def _init_components(self):
+		self._msg_req_args = self.BuildHeaderMsg("Required Arguments")
+		self._msg_opt_args = self.BuildHeaderMsg("Optional Arguments")
 		
 	def _do_layout(self):
 		STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
@@ -88,12 +93,20 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 		for component in self.components:
 			component.Update(evt.m_size)
 		evt.Skip()
+	
+	def RegisterController(self, controller):
+		if self._controller is None:
+			self._controller = controller
 			
 	def GetOptions(self):
 		''' 
 		returns the collective values from all of the
 		widgets contained in the panel'''
-		raise NotImplementedError 
+		values = [(c._action, c.GetValue())
+							for c in self.components]
+		for i in values:
+			print (i[0].option_strings[-1], i[-1])
+		
 		
 		
 			

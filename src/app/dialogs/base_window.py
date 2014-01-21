@@ -1,6 +1,12 @@
 '''
 Created on Jan 19, 2014
 
+New plan: 
+
+	fuck the multi-component thing. 
+	
+	Bind and unbind the buttons on the panels. 
+
 @author: Chris
 '''
 
@@ -8,7 +14,7 @@ import os
 import wx
 import header
 import footer
-from model.controller import Controller
+from app.dialogs.controller import Controller
 from app.images import image_store
 
 class BaseWindow(wx.Frame):
@@ -23,11 +29,13 @@ class BaseWindow(wx.Frame):
 		)
 		
 		self._parser = parser
-		self._controller = Controller()
+		self._controller = None
 		
 		self._init_properties()
 		self._init_components(BodyPanel)
 		self._do_layout()
+		self._init_controller()
+		self.registerControllers()
 		
 	def _init_properties(self):
 		self.SetMinSize((400,300))
@@ -44,6 +52,8 @@ class BaseWindow(wx.Frame):
 																	size=(30,90))
 		self.body_panel = BodyPanel(self, self._parser)
 		self.cfg_foot_panel = footer.ConfigFooter(self, self._controller)
+		
+		self.panels = [self.head_panel, self.body_panel, self.cfg_foot_panel]
 # 		self.main_foot_panel = footer.MainFooter(self, self._controller)
 # 		self.main_foot_panel.Hide()
 		
@@ -56,18 +66,22 @@ class BaseWindow(wx.Frame):
 		sizer.Add(self.cfg_foot_panel, 0, wx.EXPAND)
 		self.SetSizer(sizer)
 		
-# 	def _init_panels(self):
-# 		self._frame_header = FrameHeader
-# 		self._basic_config_body = None
-# 		self._adv_config_body = None	
-# 		self._config_footer = None 
-# 		self._output_footer = None
-		
 	def _draw_horizontal_line(self, sizer):
 		line = wx.StaticLine(self, -1, style=wx.LI_HORIZONTAL)
 		line.SetSize((10, 10))
 		sizer.Add(line, 0, wx.EXPAND)
+	
+	def _init_controller(self):
+		self._controller = Controller(
+															base			 = self,
+															head_panel = self.head_panel, 
+															body_panel = self.body_panel, 
+															footer_panel = self.cfg_foot_panel)	
 		
+	def registerControllers(self):
+		for panel in self.panels:
+			panel.RegisterController(self._controller)
+			
 
 
 

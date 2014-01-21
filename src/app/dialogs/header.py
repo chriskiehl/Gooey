@@ -21,6 +21,8 @@ class FrameHeader(wx.Panel):
 
 		wx.Panel.__init__(self, **kwargs)
 		
+		self._controller = None
+		
 		self._init_properties()
 		self._init_components(heading, subheading, image_path)
 		self._do_layout()
@@ -33,10 +35,7 @@ class FrameHeader(wx.Panel):
 	def _init_components(self, heading, subheading, image_path):
 		self.header = self._bold_static_text(heading)
 		self.subheader = wx.StaticText(self, label=subheading)
-		self.img = wx.BitmapFromImage(imageutil.LoadAndResizeImage(image_path))
-		print '\n'
-		print 'Image returned from original method:', type(self._load_image(image_path))
-		print 'image returned from imageutil', type(self.img)
+		self.img = self._load_image(image_path)
 		
 	def _do_layout(self):
 		vsizer = wx.BoxSizer(wx.VERTICAL)
@@ -87,10 +86,12 @@ class FrameHeader(wx.Panel):
 				)
 		return wx.BitmapFromImage(image)
 
-	
 	def UpdateImage(self, image):
 		pass
-	
+
+	def RegisterController(self, controller):
+		if self._controller is None: 
+			self._controller = controller
 	
 	
 	

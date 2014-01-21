@@ -14,6 +14,8 @@ class AbstractFooter(wx.Panel):
 		wx.Panel.__init__(self, parent, **kwargs)
 		self.SetMinSize((30, 53))
 		
+		self._controller = None
+		
 		self.cancel_button = self._button('Cancel', wx.ID_CANCEL)
 		self.next_button = self._button("Next", wx.ID_OK)
 		
@@ -40,6 +42,10 @@ class AbstractFooter(wx.Panel):
 				label=label,
 				style=style)
 
+	def RegisterController(self, controller):
+		if self._controller is None: 
+			self._controller = controller
+
 
 class ConfigFooter(AbstractFooter):
 	'''
@@ -54,8 +60,6 @@ class ConfigFooter(AbstractFooter):
 	def __init__(self, parent, controller, **kwargs):
 		AbstractFooter.__init__(self, parent, **kwargs)
 		
-		self._controller = controller
-		 
 		self.Bind(wx.EVT_BUTTON, self.OnConfigCancel, self.cancel_button)
 		self.Bind(wx.EVT_BUTTON, self.OnConfigNext, self.next_button)
 		
@@ -78,8 +82,6 @@ class MainFooter(AbstractFooter):
 	def __init__(self, parent, controller, **kwargs):
 		AbstractFooter.__init__(self, parent, **kwargs)
 		
-		self._controller = controller
-
 		self.Bind(wx.EVT_BUTTON, self.OnConfigCancel, self.cancel_button)
 		self.Bind(wx.EVT_BUTTON, self.OnConfigNext, self.next_button)
 	
