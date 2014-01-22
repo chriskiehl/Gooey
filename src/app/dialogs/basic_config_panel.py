@@ -14,37 +14,27 @@ class BasicDisplayPanel(wx.Panel, OptionReader):
 	def __init__(self, parent, **kwargs):
 		wx.Panel.__init__(self, parent, **kwargs)
 
-		self.SetBackgroundColour('#F0F0F0')
-	
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.AddSpacer(10)
+		self._init_properties()
+		self._init_components()
+		self._do_layout()
 		
-# 		about_header = wx.StaticText(self, label="About")
-# 		about_header = self._bold_static_text("About")
-# 		about_body = wx.StaticText(self, label="This program does bla. Enter the command line args of your choice to control bla and bla.")
-# 		
-# 		sizer.Add(about_header, 0, wx.LEFT | wx.RIGHT, 20)
-# 		sizer.AddSpacer(5)
-# 		sizer.Add(about_body, 0, wx.LEFT | wx.RIGHT, 20)
-		
-		sizer.AddSpacer(40)
-		
-		text = self._bold_static_text("Enter Command Line Arguments")
-# 		
-		sizer.Add(text, 0, wx.LEFT, 20)
-		sizer.AddSpacer(10)
-		
-		h_sizer = wx.BoxSizer(wx.HORIZONTAL)
+	def _init_components(self):
+		self.header_msg = self._bold_static_text("Enter Command Line Arguments")
 		self.cmd_textbox = wx.TextCtrl(self, -1, "")
-		
+	
+	def _do_layout(self):		
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		sizer.AddSpacer(50)
+		sizer.Add(self.text, 0, wx.LEFT, 20)
+		sizer.AddSpacer(10)
+		h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 		h_sizer.Add(self.cmd_textbox, 1, wx.ALL | wx.EXPAND)
-		
 		sizer.Add(h_sizer, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.EXPAND, 20)
-		
 		self.SetSizer(sizer)
+
+	def _init_properties(self):
+		self.SetBackgroundColour('#F0F0F0')
 		
-	def get_contents(self):
-		return self.cmd_textbox.GetValue()
 		
 	def _bold_static_text(self, text_label):
 		text = wx.StaticText(self, label=text_label)
@@ -54,7 +44,7 @@ class BasicDisplayPanel(wx.Panel, OptionReader):
 		return text
 	
 	def GetValues(self):
-		raise NotImplementedError
+		return self.cmd_textbox.GetValue()
 	
 		
 		

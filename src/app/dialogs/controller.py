@@ -30,8 +30,11 @@ class Controller(object):
 	
 	def OnConfigCancel(self, event):
 		print 'OnCongigCancel pressed!'
+	
 	def OnConfigNext(self, event):
-		self._body.GetOptions()
+		cmd_line_args = self._body.GetOptions()
+		
+		
 	def OnMainCancel(self, event):
 		print 'OnMaingCancel pressed!'
 	def OnMainNext(self, event):

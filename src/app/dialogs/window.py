@@ -36,7 +36,7 @@ def WithAdvancedOptions(parser):
 	app = wx.App(False)  
 	frame = base_window.BaseWindow(advanced_config.AdvancedConfigPanel, parser)
 	frame.Show(True)     # Show the frame.
-	app.MainLoop()
+	app.MainLoop() 
 
 if __name__ == '__main__':
 	parser = argparse_test_data.parser

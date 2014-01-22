@@ -12,6 +12,7 @@ import wx
 from argparse import ArgumentParser
 from abc import ABCMeta, abstractmethod
 
+EMPTY = ''
 
 class BuildException(RuntimeError):
 	pass 
@@ -153,6 +154,8 @@ class Positional(AbstractComponent):
 			"argument_value"
 		'''
 		self.AssertInitialization('Positional')
+		if str(self._widget.GetValue()) == EMPTY:
+			return None
 		return self._widget.GetValue()
 
 	
@@ -170,9 +173,9 @@ class Choice(AbstractComponent):
 		'''
 		self.AssertInitialization('Choice')
 		if self._widget.GetValue() == self._DEFAULT_VALUE:
-			return ''
+			return None
 		return ' '.join(
-									[self._action.option_strings[-1], # get the verbose copy if available  
+									[self._action.option_strings[0], # get the verbose copy if available  
 									self._widget.GetValue()])
 	
 	def BuildWidget(self, parent, action):
@@ -205,9 +208,11 @@ class Optional(AbstractComponent):
 			"--Option Value" 
 		'''
 		self.AssertInitialization('Optional')
+		value = self._widget.GetValue()
+		if not value: return None
 		return ' '.join(
-							[self._action.option_strings[-1], # get the verbose copy if available  
-							self._widget.GetValue()])
+							[self._action.option_strings[0], # get the verbose copy if available  
+							value])
 		
 
 class Flag(AbstractComponent):
@@ -258,7 +263,8 @@ class Flag(AbstractComponent):
 		returns 
 			Options name for argument (-v)
 		'''
-		return self._action.option_strings[-1]
+		if self._widget.GetValue():
+			return self._action.option_strings[0]
 	
 	def Update(self, size):
 		''' 
@@ -310,13 +316,11 @@ class Counter(AbstractComponent):
 			str(action.options_string[0]) * DropDown Value
 		'''
 		dropdown_value = self._widget.GetValue()
-		try: 
-			return str(self._action.option_strings[0]) * int(dropdown_value) 
-		except Exception as e:
-			print e 
-			return '' 
-		
-		
+		if not str(dropdown_value).isdigit():
+			return None 
+		arg = str(self._action.option_strings[0]).replace('-','') 
+		repeated_args = arg * int(dropdown_value)
+		return '-' + repeated_args 
 		
 
 if __name__ == '__main__':

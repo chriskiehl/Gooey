@@ -102,10 +102,10 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 		''' 
 		returns the collective values from all of the
 		widgets contained in the panel'''
-		values = [(c._action, c.GetValue())
-							for c in self.components]
-		for i in values:
-			print i[-1]
+		values = [c.GetValue()
+							for c in self.components
+							if c.GetValue() is not None]
+		return ' '.join(values)
 		
 		
 		
