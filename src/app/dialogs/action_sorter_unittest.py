@@ -11,7 +11,7 @@ from functools import partial
 from argparse import _StoreAction, _HelpAction
 from action_sorter import ActionSorter
 
-class Test(unittest.TestCase):
+class TestActionSorter(unittest.TestCase):
 
 
 	def setUp(self):
@@ -26,7 +26,7 @@ class Test(unittest.TestCase):
 						'''_StoreAction(option_strings=['-T', '--tester'], dest='tester', nargs=None, const=None, default=None, type=None, choices=['yes', 'no'], help="Yo, what's up man? I'm a help message!", metavar=None)'''
 						]
 		self.expected_optionals = [
-						'''_StoreAction(option_strings=['-o', '--outfile'], dest='outfile', nargs=None, const=None, default=None, type=None, choices=None, help='Redirects output to the file specified by you, the awesome user', metavar=None)''',
+						'''_StoreAction(option_strings=['-m', '--moutfile'], dest='moutfile', nargs=None, const=None, default=None, type=None, choices=None, help='Redirects output to the file specified by you, the awesome user', metavar=None)''',
 						'''_StoreAction(option_strings=['-v', '--verbose'], dest='verbose', nargs=None, const=None, default=None, type=None, choices=None, help='Toggles verbosity off', metavar=None)''',
 						'''_StoreAction(option_strings=['-s', '--schimzammy'], dest='schimzammy', nargs=None, const=None, default=None, type=None, choices=None, help='Add in an optional shimzammy parameter', metavar=None)'''								
 						]

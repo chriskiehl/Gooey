@@ -31,8 +31,6 @@ class BaseWindow(wx.Frame):
 		)
 		
 		self._model = Model.GetInstance()
-		print self._model
-		sys.exit()
 		self._controller = None
 		
 		self._init_properties()

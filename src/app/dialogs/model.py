@@ -12,11 +12,6 @@ class ArgumentError(Exception):
 
 class Model(object):
 	_instance = None
-# 	def __new__(cls, *args, **kwargs):
-# 		if not cls._instance: 
-# 			cls._instance = super(Model, cls).__new__(
-# 																		cls, *args, **kwargs)
-# 		return cls._instance
 	
 	def __init__(self, parser=None):
 		print parser
@@ -32,7 +27,7 @@ class Model(object):
 																	self._parser)
 		
 		Model._instance = self
-		print self
+	
 	def HasPositionals(self):
 		if self.action_groups._positionals:
 			return True
@@ -55,7 +50,8 @@ class Model(object):
 		
 	def _FormatMsg(self, msg):
 		output = list(msg)
-		output[output.index(':')] = ':\n '
+		if ':' in output:
+			output[output.index(':')] = ':\n '
 		return ''.join(output)
 	
 	@staticmethod 
@@ -74,14 +70,7 @@ class Model(object):
 
 
 if __name__ == '__main__':
-	import argparse_test_data 
-	parser = argparse_test_data.parser 
-	
-	model = Model(parser)
-	b = model.GetInstance()
-	print model
-	print b 
-	print model == b
+	pass
 	
 	
 # 	print m2

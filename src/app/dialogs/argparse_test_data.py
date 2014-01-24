@@ -11,7 +11,7 @@ parser = ArgumentParser(description='Example Argparse Program')
 parser.add_argument("filename", help="Name of the file you want to read") # positional 
 parser.add_argument("outfile", help="Name of the file where you'll save the output") # positional
 parser.add_argument('-T', '--tester', choices=['yes','no'], help="Yo, what's up man? I'm a help message!") # Choice
-parser.add_argument('-o', '--outfile', help='Redirects output to the file specified by you, the awesome user') # Optional
+parser.add_argument('-m', '--moutfile', help='Redirects output to the file specified by you, the awesome user') # Optional
 parser.add_argument('-v', '--verbose', help='Toggles verbosity off') # Optional
 parser.add_argument('-s', '--schimzammy', help='Add in an optional shimzammy parameter') # Optional 
 parser.add_argument('-e', '--repeat', action='count', help='Set the number of times to repeat') # Counter

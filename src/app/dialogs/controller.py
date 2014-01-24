@@ -5,6 +5,7 @@ Created on Dec 22, 2013
 '''
 
 import msg_dialog
+from app.dialogs.model import Model
 
 class Controller(object):
 	'''
@@ -29,13 +30,21 @@ class Controller(object):
 		self._head = head_panel
 		self._body = body_panel 
 		self._foot = footer_panel
+		
+		self._model = Model.GetInstance()
 	
 	def OnConfigCancel(self, event):
 		print 'OnCongigCancel pressed!'
 	
 	def OnConfigNext(self, event):
 		cmd_line_args = self._body.GetOptions()
-# 		self.ShowArgumentErrorDlg(error)
+		if not self._model.IsValidArgString(cmd_line_args):
+			error_msg = self._model.GetErrorMsg(cmd_line_args)
+			print error_msg 
+		else: 
+			print 'All args passed.'
+			print cmd_line_args
+			
 		
 	def OnMainCancel(self, event):
 		print 'OnMaingCancel pressed!'
