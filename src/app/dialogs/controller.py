@@ -4,6 +4,7 @@ Created on Dec 22, 2013
 @author: Chris
 '''
 
+import wx 
 import msg_dialog
 from app.dialogs.model import Model
 
@@ -40,7 +41,8 @@ class Controller(object):
 		cmd_line_args = self._body.GetOptions()
 		if not self._model.IsValidArgString(cmd_line_args):
 			error_msg = self._model.GetErrorMsg(cmd_line_args)
-			print error_msg 
+			print error_msg
+			self.ShowArgumentErrorDlg(error_msg) 
 		else: 
 			print 'All args passed.'
 			print cmd_line_args
@@ -52,7 +54,7 @@ class Controller(object):
 		print 'OnCongigNext pressed!'
 		
 	def ShowArgumentErrorDlg(self, error):
-		msg_dialog.ShowError(error)
-	
-		
+		a = wx.MessageDialog(None, error, 'Argument Error')	
+		a.ShowModal()
+		a.Destroy()
 		

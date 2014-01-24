@@ -46,9 +46,6 @@ class AbstractComponent(object):
 		else:
 			sizer.AddStretchSpacer(1)
 			
-		if self.HasNargs(self._action):
-			sizer.Add(self.AddNargsMsg(parent, self._action))
-		
 		sizer.AddStretchSpacer(1)	
 		sizer.Add(self._widget, 0, wx.EXPAND)
 		return sizer
@@ -57,16 +54,17 @@ class AbstractComponent(object):
 		return action.help is not None
 	
 	def HasNargs(self, action):
-		return action.nargs == '+'
+		return action.nargs == '+' or action.nargs == '?'
 	
 	def CreateHelpMsgWidget(self, parent, action):
-		text = wx.StaticText(parent, label=action.help)
-		self.MakeDarkGrey(text)
-		return text
+		base_text = wx.StaticText(parent, label=action.help)
+		if self.HasNargs(action):
+			base_text += self.CreateNargsMsg(action)
+		self.MakeDarkGrey(base_text)
+		return base_text
 	
-	def AddNargsMsg(self, parent, action):
-		msg = 'Note: at least 1 or more arguments are required'
-		return wx.StaticText(parent, label=msg)
+	def CreateNargsMsg(self, action):
+		return ' (Note: at least 1 or more arguments are required'
 	
 	def CreateDestNameWidget(self, parent, action):
 		label = str(action.dest).title() 
@@ -232,7 +230,7 @@ class Flag(AbstractComponent):
 		sizer.AddSpacer(6)
 				
 		if self.HasNargs(self._action):
-			sizer.Add(self.AddNargsMsg(parent, self._action))
+			sizer.Add(self.CreateNargsMsg(parent, self._action))
 			
 		if self._msg: 
 			hsizer = self.buildHorizonalMsgSizer(parent)
