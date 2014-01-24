@@ -82,8 +82,8 @@ USAGE
 				parser.add_argument('-T', '--tester', choices=['yes','no'])
 				parser.add_argument(dest="paths", help="paths to folder(s) with source file(s) [default: %(default)s]", metavar="path", nargs='+')
 				
-				for i in parser._actions:
-					print i
+# 				for i in parser._actions:
+# 					print i
 				# Process arguments
 				args = parser.parse_args()
 

@@ -65,9 +65,11 @@ class ConfigFooter(AbstractFooter):
 		
 	def OnConfigCancel(self, event):
 		self._controller.OnConfigCancel(event)
+		event.Skip()
 		
 	def OnConfigNext(self, event):
 		self._controller.OnConfigNext(event)
+		event.Skip()
 
 
 class MainFooter(AbstractFooter):
@@ -87,9 +89,11 @@ class MainFooter(AbstractFooter):
 	
 	def OnMainCancel(self, event):
 		self._controller.OnMainCancel(event)
+# 		event.Skip()
 		
 	def OnMainNext(self, event):
 		self._controller.OnMainNext(event)
+		event.Skip()
 		
 		
 		

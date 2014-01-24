@@ -5,8 +5,11 @@ Created on Dec 22, 2013
 '''
 
 import wx 
-import msg_dialog
+import sys
 from app.dialogs.model import Model
+
+YES = 5103
+NO 	= 5104
 
 class Controller(object):
 	'''
@@ -35,17 +38,32 @@ class Controller(object):
 		self._model = Model.GetInstance()
 	
 	def OnConfigCancel(self, event):
-		print 'OnCongigCancel pressed!'
-	
+		msg = "Are you sure you want to exit?"
+		dlg = wx.MessageDialog(None, msg, "Close Program?", wx.YES_NO)
+		result = dlg.ShowModal()
+		print result
+		if result == YES:
+			dlg.Destroy()
+			self._base.Destroy()
+			sys.exit()
+			
 	def OnConfigNext(self, event):
 		cmd_line_args = self._body.GetOptions()
 		if not self._model.IsValidArgString(cmd_line_args):
 			error_msg = self._model.GetErrorMsg(cmd_line_args)
-			print error_msg
 			self.ShowArgumentErrorDlg(error_msg) 
-		else: 
-			print 'All args passed.'
-			print cmd_line_args
+			return 
+		self._model.AddToArgv(cmd_line_args)
+		self._base.NextPage()
+		self.RunClientCode()
+	
+	def RunClientCode(self):
+		pass 
+	
+	def AddPayload(self, payload):
+		pass
+		
+			
 			
 		
 	def OnMainCancel(self, event):

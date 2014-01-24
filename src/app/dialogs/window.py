@@ -27,17 +27,17 @@ import wx
 import base_window
 import advanced_config
 from app.dialogs import argparse_test_data
-from app.dialogs.action_sorter import ActionSorter
 from app.dialogs.model import Model
 
 def WithNoOptions(): pass 
 
 def WithBasicOptions(): pass 
 
-def WithAdvancedOptions(parser): 
+def WithAdvancedOptions(parser, payload): 
 	app = wx.App(False)  
 	model = Model(parser)
 	frame = base_window.BaseWindow(advanced_config.AdvancedConfigPanel)
+	frame.AttachPayload(payload)
 	frame.Show(True)     # Show the frame.
 	app.MainLoop() 
 

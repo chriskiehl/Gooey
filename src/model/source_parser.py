@@ -19,7 +19,6 @@ import argparse
 import cStringIO
 from itertools import chain
 from functools import partial 
-from numpy.lib.utils import _split_line
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 from app.dialogs.action_sorter import ActionSorter
@@ -217,52 +216,11 @@ def find_argparse_location(locations):
 def convert_to_python(ast_source):
 	return map(codegen.to_source, ast_source)	
 
-def generate_doc(f=None, format='html', noob=1, success_msg=1):
-	'''
-	Decorator for client code's main function. 
-	It gets the name of the calling script, loads it 
-	into parse_pyfile(), and generates the documentation, 
-	before finally calling the main() function to resume 
-	execution as normal. 
-	'''
 
-	# Handles if the passed in object is instance 
-	# of ArgumentParser. If so, it's being called as 
-	# a function, rather than a decorator
-	if isinstance(f, argparse.ArgumentParser):
-		filename = sys.argv[0]
-
-		build_doc_from_parser_obj(
-			file_name=filename, 
-			parser_obj=f, 
-			format=format, 
-			noob=noob, 
-			success_msg=success_msg
-			)
-		return 
-
-	# --------------------------------- #
-	# Below code is all decorator stuff #
-	# --------------------------------- #
-	def get_caller_path():
-		# utility func for decorator
-		# gets the name of the calling script
-		tmp_sys = __import__('sys')
-		return tmp_sys.argv[0]
-
-	def generate_docs(f):
-		def inner():
-			module_path = get_caller_path()
-			path = os.path.join(*os.path.split(module_path)[:-1])
-			filename = '{}'.format(os.path.split(module_path)[-1])
-			parse_pyfile(filename, format=format, noob=noob, success_msg=success_msg)
-		inner.__name__ = f.__name__ 
-		return inner
-
-	if callable(f):
-		return generate_docs(f)
-	return generate_docs
-
+def pull_parser_from(modulepath):
+	ast_source = parse_source_file(modulepath)
+	python_code = convert_to_python(ast_source)
+	return ParserFromSource(python_code)
 
 
 if __name__ == '__main__':

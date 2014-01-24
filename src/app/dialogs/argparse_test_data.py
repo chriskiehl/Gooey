@@ -3,9 +3,8 @@ Created on Jan 16, 2014
 
 @author: Chris
 '''
-
+import sys
 from argparse import ArgumentParser
-
 
 parser = ArgumentParser(description='Example Argparse Program')
 parser.add_argument("filename", help="Name of the file you want to read") # positional 
@@ -19,5 +18,4 @@ parser.add_argument('-c', '--constoption', action="store_const", const="myconsta
 parser.add_argument('-t', '--truify', action="store_true", help='Ensure the store_true actions are sorted') # Flag
 parser.add_argument('-f', '--falsificle', action="store_false", help='Ensure the store_false actions are sorted') # Flag
 
-print parser.parse_args('fname oname -T yes'.split())
 

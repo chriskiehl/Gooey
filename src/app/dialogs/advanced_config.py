@@ -91,7 +91,6 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 		return line
 	
 	def OnResize(self, evt):
-		print 'SIZEEEE:', evt.m_size
 		for component in self.components:
 			component.Update(evt.m_size)
 		evt.Skip()

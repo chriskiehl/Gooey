@@ -4,6 +4,7 @@ Created on Jan 23, 2014
 @author: Chris
 '''
 
+import sys
 import types
 from app.dialogs.action_sorter import ActionSorter
 
@@ -14,17 +15,17 @@ class Model(object):
 	_instance = None
 	
 	def __init__(self, parser=None):
-		print parser
 		self._parser = parser 
 		self.description = parser.description
-		
 		
 		self.action_groups = ActionSorter(self._parser._actions) 
 		
 		# monkey patch
+		print self._parser.error
 		self._parser.error = types.MethodType(
 																	self.ErrorAsString, 
 																	self._parser)
+		print self._parser.error
 		
 		Model._instance = self
 	
@@ -40,6 +41,7 @@ class Model(object):
 	
 	def _Parse(self, arg_string):
 		try: 
+			print self._parser.error
 			self._parser.parse_args(arg_string.split())
 			return True
 		except ArgumentError as e:
@@ -54,13 +56,16 @@ class Model(object):
 			output[output.index(':')] = ':\n '
 		return ''.join(output)
 	
+	def AddToArgv(self, arg_string):
+		sys.argv.append(arg_string.split())
+	
 	@staticmethod 
 	def ErrorAsString(self, msg):
 		'''
 		Monkey patch for parser.error
 		Returns the error string rather than 
 		printing and silently exiting. 
-		''' 
+		'''
 		raise ArgumentError(msg)
 	
 	@classmethod

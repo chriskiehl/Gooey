@@ -31,6 +31,7 @@ class BaseWindow(wx.Frame):
 		)
 		
 		self._model = Model.GetInstance()
+		self._payload = None
 		self._controller = None
 		
 		self._init_properties()
@@ -38,6 +39,8 @@ class BaseWindow(wx.Frame):
 		self._do_layout()
 		self._init_controller()
 		self.registerControllers()
+		
+# 		self.Bind(wx.EVT_CLOSE, self.OnXClose)
 		
 	def _init_properties(self):
 		self.SetMinSize((400,300))
@@ -84,8 +87,12 @@ class BaseWindow(wx.Frame):
 		for panel in self.panels:
 			panel.RegisterController(self._controller)
 			
-
-
+	def AttachPayload(self, payload):
+		self._payload = payload
+			
+# 	def OnXClose(self, event):
+# 		print 'adsfasdfadsf'
+			
 
 if __name__ == '__main__':
 	pass
