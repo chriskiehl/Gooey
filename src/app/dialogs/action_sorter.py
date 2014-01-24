@@ -12,7 +12,7 @@ from argparse import (
 	_CountAction, _AppendAction, _HelpAction)
 
 
-DEBUG = 1
+DEBUG = 0
 
 class ActionSorter(object):
 	'''
@@ -68,6 +68,7 @@ class ActionSorter(object):
 			self._display('ActionSorter: booleans', self._flags)
 			self._display('ActionSorter: counters', self._counters)
 			print '|-------------------------'
+			
 	
 	def _display(self, _type, something):
 		for i in something: 

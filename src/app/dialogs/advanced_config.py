@@ -19,11 +19,12 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 	'''
 	Abstract class for the Footer panels. 
 	'''
-	def __init__(self, parent, parser, **kwargs):
+	def __init__(self, parent, model, **kwargs):
 		ScrolledPanel.__init__(self, parent, **kwargs)
 		self.SetupScrolling()
 		
-		self.components = ComponentFactory(parser)
+		self.model = model
+		self.components = ComponentFactory(model.action_groups)
 		
 		self._controller = None
 		
@@ -33,22 +34,23 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
 		
 	def _init_components(self):
-		self._msg_req_args = self.BuildHeaderMsg("Required Arguments")
+		self._msg_req_args = (self.BuildHeaderMsg("Required Arguments")
+												if self.model.HasPositionals() else None)
 		self._msg_opt_args = self.BuildHeaderMsg("Optional Arguments")
 		
 	def _do_layout(self):
 		STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
 		container = wx.BoxSizer(wx.VERTICAL)
 		container.AddSpacer(15)
-		
-		container.Add(self._msg_req_args, 0, wx.LEFT | wx.RIGHT, PADDING)
-		container.AddSpacer(5)
-		container.Add(self._draw_horizontal_line(), *STD_LAYOUT)
-		container.AddSpacer(20)
-		
-		self.AddWidgets(container, self.components.required_args, add_space=True)
-		
-		container.AddSpacer(10)
+		if self.model.HasPositionals():
+			container.Add(self._msg_req_args, 0, wx.LEFT | wx.RIGHT, PADDING)
+			container.AddSpacer(5)
+			container.Add(self._draw_horizontal_line(), *STD_LAYOUT)
+			container.AddSpacer(20)
+			
+			self.AddWidgets(container, self.components.required_args, add_space=True)
+			
+			container.AddSpacer(10)
 		
 		container.AddSpacer(10)
 		container.Add(self._msg_opt_args, 0, wx.LEFT | wx.RIGHT, PADDING)

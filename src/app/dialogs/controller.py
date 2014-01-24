@@ -4,6 +4,8 @@ Created on Dec 22, 2013
 @author: Chris
 '''
 
+import msg_dialog
+
 class Controller(object):
 	'''
 	Main controller for the gui. 
@@ -33,12 +35,15 @@ class Controller(object):
 	
 	def OnConfigNext(self, event):
 		cmd_line_args = self._body.GetOptions()
-		
+# 		self.ShowArgumentErrorDlg(error)
 		
 	def OnMainCancel(self, event):
 		print 'OnMaingCancel pressed!'
 	def OnMainNext(self, event):
 		print 'OnCongigNext pressed!'
+		
+	def ShowArgumentErrorDlg(self, error):
+		msg_dialog.ShowError(error)
 	
 		
 		

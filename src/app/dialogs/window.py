@@ -27,6 +27,8 @@ import wx
 import base_window
 import advanced_config
 from app.dialogs import argparse_test_data
+from app.dialogs.action_sorter import ActionSorter
+from app.dialogs.model import Model
 
 def WithNoOptions(): pass 
 
@@ -34,7 +36,8 @@ def WithBasicOptions(): pass
 
 def WithAdvancedOptions(parser): 
 	app = wx.App(False)  
-	frame = base_window.BaseWindow(advanced_config.AdvancedConfigPanel, parser)
+	model = Model(parser)
+	frame = base_window.BaseWindow(advanced_config.AdvancedConfigPanel)
 	frame.Show(True)     # Show the frame.
 	app.MainLoop() 
 

@@ -19,8 +19,5 @@ parser.add_argument('-c', '--constoption', action="store_const", const="myconsta
 parser.add_argument('-t', '--truify', action="store_true", help='Ensure the store_true actions are sorted') # Flag
 parser.add_argument('-f', '--falsificle', action="store_false", help='Ensure the store_false actions are sorted') # Flag
 
-try: 
-	parser.parse_args('fname -T yes'.split())
-except Exception as e:
-	print 'asdfads'
-	print type(e)
+print parser.parse_args('fname oname -T yes'.split())
+

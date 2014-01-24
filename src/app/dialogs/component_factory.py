@@ -15,9 +15,9 @@ class ComponentFactory(object):
 	Aggregates all of the actions and  
 	'''
 	
-	def __init__(self, parser):
+	def __init__(self, sorted_actions):
 		
-		self._actions = action_sorter.ActionSorter(parser._actions[:])
+		self._actions = sorted_actions
 		
 		self.required_args		= self.BuildPositionals(self._actions)
 		self.flags		 				= self.BuildFlags(self._actions)

@@ -11,15 +11,17 @@ New plan:
 '''
 
 import os 
+import sys
 import wx
 import header
 import footer
 from app.dialogs.controller import Controller
 from app.images import image_store
+from app.dialogs.model import Model
 
 class BaseWindow(wx.Frame):
 
-	def __init__(self, BodyPanel, parser):
+	def __init__(self, BodyPanel):
 		wx.Frame.__init__(
 			self, 
 			parent=None, 
@@ -28,7 +30,9 @@ class BaseWindow(wx.Frame):
 			size=(610,530)
 		)
 		
-		self._parser = parser
+		self._model = Model.GetInstance()
+		print self._model
+		sys.exit()
 		self._controller = None
 		
 		self._init_properties()
@@ -46,11 +50,11 @@ class BaseWindow(wx.Frame):
 		# init components		
 		self.head_panel = header.FrameHeader(
 																	heading="Settings", 
-																	subheading = self._parser.description,
+																	subheading = self._model.description,
 																	image_path=image_store.settings2, 
 																	parent=self, 
 																	size=(30,90))
-		self.body_panel = BodyPanel(self, self._parser)
+		self.body_panel = BodyPanel(self, self._model)
 		self.cfg_foot_panel = footer.ConfigFooter(self, self._controller)
 		
 		self.panels = [self.head_panel, self.body_panel, self.cfg_foot_panel]
