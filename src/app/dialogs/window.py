@@ -34,7 +34,7 @@ from app.dialogs import argparse_test_data
 def WithAdvancedOptions(parser, payload): 
 	app = wx.App(False)  
 	model = Model(parser)
-	frame = BaseWindow(advanced_config.AdvancedConfigPanel, model)
+	frame = BaseWindow(advanced_config.AdvancedConfigPanel, model, payload)
 	frame.Show(True)     # Show the frame.
 	app.MainLoop() 
 

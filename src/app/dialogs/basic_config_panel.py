@@ -10,7 +10,7 @@ import wx
 import os
 from app.dialogs.option_reader import OptionReader
 
-class BasicDisplayPanel(wx.Panel, OptionReader):
+class RuntimeDisplay(wx.Panel, OptionReader):
 	def __init__(self, parent, **kwargs):
 		wx.Panel.__init__(self, parent, **kwargs)
 

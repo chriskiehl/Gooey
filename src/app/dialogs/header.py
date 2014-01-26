@@ -7,6 +7,7 @@ Created on Dec 23, 2013
 import wx
 import imageutil
 from app.dialogs.segoe_statictext import SegoeText
+from app.images import image_store
 
 PAD_SIZE = 10
 
@@ -33,16 +34,19 @@ class FrameHeader(wx.Panel):
 		self.SetMinSize((120, 80))
 		
 	def _init_components(self, heading, subheading, image_path):
-		self.header = self._bold_static_text(heading)
-		self.subheader = wx.StaticText(self, label=subheading)
-		self.img = self._load_image(image_path)
+		self._header = self._bold_static_text(heading)
+		self._subheader = wx.StaticText(self, label=subheading)
+		self._settings_img = self._load_image(image_path)
+		self._running_img = self._load_image(image_store.harwen_monitor)
 		
 	def _do_layout(self):
 		vsizer = wx.BoxSizer(wx.VERTICAL)
 		sizer = wx.BoxSizer(wx.HORIZONTAL)
 		headings_sizer = self.build_heading_sizer()
-		sizer.Add(headings_sizer, 1, wx.ALIGN_LEFT | wx.EXPAND | wx.LEFT, PAD_SIZE)
-		sizer.Add(self.img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+		sizer.Add(headings_sizer, 1, wx.ALIGN_LEFT | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND | wx.LEFT, PAD_SIZE)
+		sizer.Add(self._settings_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+		sizer.Add(self._running_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+		self._running_img.Hide()
 		vsizer.Add(sizer, 1, wx.EXPAND)
 		self.SetSizer(vsizer)
 		
@@ -57,8 +61,8 @@ class FrameHeader(wx.Panel):
 	def build_heading_sizer(self):
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.AddStretchSpacer(1)
-		sizer.Add(self.header, 1)
-		sizer.Add(self.subheader, 1)
+		sizer.Add(self._header, 0)
+		sizer.Add(self._subheader, 0)
 		sizer.AddStretchSpacer(1)
 		return sizer
 	
@@ -86,12 +90,19 @@ class FrameHeader(wx.Panel):
 				)
 		return wx.BitmapFromImage(image)
 
-	def UpdateImage(self, image):
-		pass
-
 	def RegisterController(self, controller):
 		if self._controller is None: 
 			self._controller = controller
+			
+	def NextPage(self):
+		self._header.SetLabel("Running")
+		self._subheader.SetLabel('Please wait while the application performs its tasks. '
+														'\nThis may take a few moments')
+		self._settings_img.Hide() 
+		self._running_img.Show()
+		self.Layout()
+	
+
 	
 	
 	

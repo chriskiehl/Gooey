@@ -7,6 +7,7 @@ Created on Dec 22, 2013
 import wx 
 import sys
 from app.dialogs.config_model import Model
+from multiprocessing.dummy import Pool
 
 YES = 5103
 NO 	= 5104
@@ -34,7 +35,7 @@ class Controller(object):
 		
 		self._model = model
 	
-	def OnConfigCancel(self, event):
+	def OnCancelButton(self, event):
 		msg = "Are you sure you want to exit?"
 		dlg = wx.MessageDialog(None, msg, "Close Program?", wx.YES_NO)
 		result = dlg.ShowModal()
@@ -44,7 +45,7 @@ class Controller(object):
 			self._base.Destroy()
 			sys.exit()
 			
-	def OnConfigNext(self, event):
+	def OnStartButton(self, event):
 		cmd_line_args = self._body.GetOptions()
 		if not self._model.IsValidArgString(cmd_line_args):
 			error_msg = self._model.GetErrorMsg(cmd_line_args)
@@ -53,21 +54,17 @@ class Controller(object):
 		self._model.AddToArgv(cmd_line_args)
 		self._base.NextPage()
 		self.RunClientCode()
-	
-	def RunClientCode(self):
-		pass 
-	
-	def AddPayload(self, payload):
+
+	def OnCancelRunButton(self, event):
 		pass
-		
-		
-	def OnMainCancel(self, event):
-		print 'OnMaingCancel pressed!'
-	def OnMainNext(self, event):
-		print 'OnCongigNext pressed!'
 		
 	def ShowArgumentErrorDlg(self, error):
 		a = wx.MessageDialog(None, error, 'Argument Error')	
 		a.ShowModal()
 		a.Destroy()
 		
+	def RunClientCode(self):
+		pool = Pool(1)
+		pool.apply_async(self._base._payload)
+
+

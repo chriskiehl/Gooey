@@ -15,11 +15,14 @@ class AbstractFooter(wx.Panel):
 		self.SetMinSize((30, 53))
 		
 		self._controller = None
-		
-		self.cancel_button = self._button('Cancel', wx.ID_CANCEL)
-		self.next_button = self._button("Start", wx.ID_OK)
-		
+
+		self._init_components()
 		self._do_layout()
+		
+	def _init_components(self):
+		self.cancel_button = self._Button('Cancel', wx.ID_CANCEL)
+		self.start_button = self._Button("Start", wx.ID_OK)
+		self.cancel_run_button = self._Button('Cancel', wx.ID_CANCEL)
 		
 	def _do_layout(self):
 		v_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -27,14 +30,16 @@ class AbstractFooter(wx.Panel):
 		
 		h_sizer.AddStretchSpacer(1)
 		h_sizer.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
-		h_sizer.Add(self.next_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
+		h_sizer.Add(self.start_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
 		
 		v_sizer.AddStretchSpacer(1)
 		v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
+		v_sizer.Add(self.cancel_run_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
+		self.cancel_run_button.Hide()
 		v_sizer.AddStretchSpacer(1)
 		self.SetSizer(v_sizer)
 		
-	def _button(self,label=None, style=None):
+	def _Button(self,label=None, style=None):
 		return wx.Button(
 				parent=self,
 				id=-1,
@@ -45,9 +50,15 @@ class AbstractFooter(wx.Panel):
 	def RegisterController(self, controller):
 		if self._controller is None: 
 			self._controller = controller
+			
+	def NextPage(self):
+		self.cancel_button.Hide()
+		self.start_button.Hide() 
+		self.cancel_run_button.Show()
+		self.Layout()
 
 
-class ConfigFooter(AbstractFooter):
+class Footer(AbstractFooter):
 	'''
 	Footer section used on the configuration 
 	screen of the application
@@ -60,15 +71,20 @@ class ConfigFooter(AbstractFooter):
 	def __init__(self, parent, controller, **kwargs):
 		AbstractFooter.__init__(self, parent, **kwargs)
 		
-		self.Bind(wx.EVT_BUTTON, self.OnConfigCancel, self.cancel_button)
-		self.Bind(wx.EVT_BUTTON, self.OnConfigNext, self.next_button)
+		self.Bind(wx.EVT_BUTTON, self.OnCancelButton, self.cancel_button)
+		self.Bind(wx.EVT_BUTTON, self.OnStartButton, self.start_button)
+		self.Bind(wx.EVT_BUTTON, self.OnCancelRunButton, self.cancel_run_button)
 		
-	def OnConfigCancel(self, event):
-		self._controller.OnConfigCancel(event)
+	def OnCancelButton(self, event):
+		self._controller.OnCancelButton(event)
 		event.Skip()
 		
-	def OnConfigNext(self, event):
-		self._controller.OnConfigNext(event)
+	def OnCancelRunButton(self, event):
+		self._controller.OnCancelRunButton(event)
+		event.Skip()
+		
+	def OnStartButton(self, event):
+		self._controller.OnStartButton(event)
 		event.Skip()
 
 
@@ -84,17 +100,13 @@ class MainFooter(AbstractFooter):
 	def __init__(self, parent, controller, **kwargs):
 		AbstractFooter.__init__(self, parent, **kwargs)
 		
-		self.Bind(wx.EVT_BUTTON, self.OnConfigCancel, self.cancel_button)
-		self.Bind(wx.EVT_BUTTON, self.OnConfigNext, self.next_button)
+		self.start_button = None
+		
+		self.Bind(wx.EVT_BUTTON, self.OnMainCancel, self.cancel_button)
 	
 	def OnMainCancel(self, event):
 		self._controller.OnMainCancel(event)
 # 		event.Skip()
-		
-	def OnMainNext(self, event):
-		self._controller.OnMainNext(event)
-		event.Skip()
-		
 		
 		
 		

@@ -11,8 +11,8 @@ import threading
 from app.dialogs.controller import Controller 
 from app.images import image_store
 from app.dialogs.header import FrameHeader
-from app.dialogs.basic_config_panel import BasicDisplayPanel
-from app.dialogs.footer import ConfigFooter 
+from app.dialogs.basic_config_panel import RuntimeDisplay
+from app.dialogs.footer import Footer 
 from app.dialogs.advanced_config import AdvancedConfigPanel
 
 class MessagePump(object):
@@ -78,8 +78,8 @@ class MainWindow(wx.Frame):
 	def _init_components(self):
 		# init components		
 		self.head_panel = FrameHeader(image_path=image_store.computer3, parent=self, size=(30,90))
-		self.body_panel = BasicDisplayPanel(parent=self)
-		self.foot_panel = ConfigFooter(self, self._controller)
+		self.body_panel = RuntimeDisplay(parent=self)
+		self.foot_panel = Footer(self, self._controller)
 		
 	def _do_layout(self):
 		sizer = wx.BoxSizer(wx.VERTICAL)

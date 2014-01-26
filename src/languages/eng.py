@@ -17,8 +17,8 @@ if __name__ == '__main__':
 						'optional_args_msg':'Optional Arguments',
 						'running':'Running',
 						"sure_you_want_to_exit":"Are you sure you want to exit?",
-						'close_program': 'Close Program?'
-	
+						'close_program': 'Close Program?',
+						'status':'Status'
 	}
 	
 	with open('english.json', 'wb') as f: 

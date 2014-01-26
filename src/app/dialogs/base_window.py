@@ -15,13 +15,14 @@ import sys
 import wx
 import header
 import footer
+from app.dialogs.runtime_display_panel import RuntimeDisplay
 from app.dialogs.controller import Controller
 from app.images import image_store
 from app.dialogs.config_model import Model
 
 class BaseWindow(wx.Frame):
 
-	def __init__(self, body_panel, model):
+	def __init__(self, body_panel, model, payload):
 		wx.Frame.__init__(
 			self, 
 			parent=None, 
@@ -31,6 +32,7 @@ class BaseWindow(wx.Frame):
 		)
 
 		self._model = model
+		self._payload = payload
 		
 		self._controller = None
 		
@@ -56,9 +58,10 @@ class BaseWindow(wx.Frame):
 																	parent=self, 
 																	size=(30,90))
 		self.body_panel = BodyPanel(self, self._model)
-		self.cfg_foot_panel = footer.ConfigFooter(self, self._controller)
+		self.runtime_display = RuntimeDisplay(self)
+		self.foot_panel = footer.Footer(self, self._controller)
 		
-		self.panels = [self.head_panel, self.body_panel, self.cfg_foot_panel]
+		self.panels = [self.head_panel, self.body_panel, self.foot_panel]
 # 		self.main_foot_panel = footer.MainFooter(self, self._controller)
 # 		self.main_foot_panel.Hide()
 		
@@ -67,8 +70,10 @@ class BaseWindow(wx.Frame):
 		sizer.Add(self.head_panel, 0, wx.EXPAND)
 		self._draw_horizontal_line(sizer)
 		sizer.Add(self.body_panel, 1, wx.EXPAND)
+		self.runtime_display.Hide()
+		sizer.Add(self.runtime_display, 1, wx.EXPAND)
 		self._draw_horizontal_line(sizer)
-		sizer.Add(self.cfg_foot_panel, 0, wx.EXPAND)
+		sizer.Add(self.foot_panel, 0, wx.EXPAND)
 		self.SetSizer(sizer)
 		
 	def _draw_horizontal_line(self, sizer):
@@ -81,12 +86,19 @@ class BaseWindow(wx.Frame):
 															base_frame	 = self,
 															head_panel	 = self.head_panel, 
 															body_panel	 = self.body_panel, 
-															footer_panel = self.cfg_foot_panel,
+															footer_panel = self.foot_panel,
 															model 			 = self._model)	
 		
 	def registerControllers(self):
 		for panel in self.panels:
 			panel.RegisterController(self._controller)
+			
+	def NextPage(self):
+		self.head_panel.NextPage()
+		self.foot_panel.NextPage()
+		self.body_panel.Hide()
+		self.runtime_display.Show() 
+		self.Layout()
 			
 	def AttachPayload(self, payload):
 		self._payload = payload
