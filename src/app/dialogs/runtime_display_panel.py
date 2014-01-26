@@ -11,30 +11,14 @@ import threading
 from model.i18n import I18N
 
 class MessagePump(object):
-	def __init__(self, queue):
-		self.queue = queue
+	def __init__(self):
+# 		self.queue = queue
 		self.stdout = sys.stdout
 	
 	# Overrides stdout's write method
 	def write(self, text):
-		if text != '':
-			self.queue.put(text)
+		raise NotImplementedError
 		
-
-class Listener(threading.Thread):
-	def __init__(self, queue, textbox):
-		threading.Thread.__init__(self)
-		self.queue = queue
-		self.update_text = lambda x: textbox.AppendText(x)
-		
-	def run(self):
-		while True:
-			try:
-				stdout_msg = self.queue.get(timeout=1)
-				if stdout_msg != '':
-					self.update_text(stdout_msg)
-			except Exception as e:
-				pass # Timeout. Aint nobody care 'bout dat 
 
 class RuntimeDisplay(wx.Panel):
 	def __init__(self, parent, **kwargs):
@@ -46,11 +30,14 @@ class RuntimeDisplay(wx.Panel):
 		self._init_components()
 		self._do_layout()
 		
-		self.queue = Queue.Queue()
+# 		self.queue = Queue.Queue()
 		_stdout = sys.stdout
-		sys.stdout = MessagePump(self.queue)
-		listener = Listener(self.queue, self.cmd_textbox)
-		listener.start()
+		_stdout_write = _stdout.write
+		
+		sys.stdout = MessagePump()
+		sys.stdout.write = self.WriteToDisplayBox
+# 		listener = Listener(self.queue, self.cmd_textbox)
+# 		listener.start()
 
 	def _init_properties(self):
 		self.SetBackgroundColour('#F0F0F0')
@@ -69,4 +56,13 @@ class RuntimeDisplay(wx.Panel):
 		sizer.Add(self.cmd_textbox, 1, wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.EXPAND, 30)
 		sizer.AddSpacer(20)
 		self.SetSizer(sizer)
+		
+	def AppendText(self, txt):
+		self.cmd_textbox.AppendText(txt)	
+		
+	def WriteToDisplayBox(self, txt):
+		if txt is not '':
+			self.AppendText(txt)
+	
+		
 		

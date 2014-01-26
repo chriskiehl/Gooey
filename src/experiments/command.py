@@ -1,38 +1,40 @@
+
 '''
 Created on Jan 7, 2014
 
 @author: Chris
 '''
 
-import types
+import sys
+import time
 
-class Fooer(object):
-	def __init__(self):
-		self.a=1 
-		self.b=2 
-		self.c=3
-		
-	def error(self, msg):
-		print msg 
-		
+_time = time.time 
 
-class Barer(object):
+class MessagePump(object):
 	def __init__(self):
-		self._fooer = Fooer() 
-		
-	def __getattr__(self, a):
-		return getattr(self._fooer, a)
-
-class Bazzer(object):
-	def __init__(self):
-		self._f = Fooer()
+# 		self.queue = queue
+		self.stdout = sys.stdout
+		self.asdf = []
 	
+	# Overrides stdout's write method
+	def write(self, text):
+		self.asdf.append((text, _time()))
+# 		if text != '':
+# 			self.queue.put(text)
+			
+			
+# self.queue = Queue.Queue()
+_stdout = sys.stdout
+sys.stdout = MessagePump()
+# listener = Listener(self.queue, self.cmd_textbox)
+# listener.start()
 
-def error2(self, msg):
-	print 'HEY! I\'ve been patched!'
-	
-b = Barer() 
+print 'hello!'
+time.sleep(1)
+print 'Jello!'
 
-b.error = types.MethodType(error2, b)
-
-b.error('asdf') 
+output = sys.stdout.asdf
+sys.stdout = _stdout
+for i in output:
+	print i
+print _time()
