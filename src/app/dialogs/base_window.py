@@ -17,11 +17,11 @@ import header
 import footer
 from app.dialogs.controller import Controller
 from app.images import image_store
-from app.dialogs.model import Model
+from app.dialogs.config_model import Model
 
 class BaseWindow(wx.Frame):
 
-	def __init__(self, BodyPanel):
+	def __init__(self, body_panel, model):
 		wx.Frame.__init__(
 			self, 
 			parent=None, 
@@ -29,13 +29,13 @@ class BaseWindow(wx.Frame):
 			title=os.path.basename(__file__),
 			size=(610,530)
 		)
+
+		self._model = model
 		
-		self._model = Model.GetInstance()
-		self._payload = None
 		self._controller = None
 		
 		self._init_properties()
-		self._init_components(BodyPanel)
+		self._init_components(body_panel)
 		self._do_layout()
 		self._init_controller()
 		self.registerControllers()
@@ -50,7 +50,7 @@ class BaseWindow(wx.Frame):
 	def _init_components(self, BodyPanel):
 		# init components		
 		self.head_panel = header.FrameHeader(
-																	heading="Settings", 
+																	heading=("Settings"), 
 																	subheading = self._model.description,
 																	image_path=image_store.settings2, 
 																	parent=self, 
@@ -78,10 +78,11 @@ class BaseWindow(wx.Frame):
 	
 	def _init_controller(self):
 		self._controller = Controller(
-															base			 = self,
-															head_panel = self.head_panel, 
-															body_panel = self.body_panel, 
-															footer_panel = self.cfg_foot_panel)	
+															base_frame	 = self,
+															head_panel	 = self.head_panel, 
+															body_panel	 = self.body_panel, 
+															footer_panel = self.cfg_foot_panel,
+															model 			 = self._model)	
 		
 	def registerControllers(self):
 		for panel in self.panels:

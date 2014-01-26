@@ -17,7 +17,7 @@ class AbstractFooter(wx.Panel):
 		self._controller = None
 		
 		self.cancel_button = self._button('Cancel', wx.ID_CANCEL)
-		self.next_button = self._button("Next", wx.ID_OK)
+		self.next_button = self._button("Start", wx.ID_OK)
 		
 		self._do_layout()
 		

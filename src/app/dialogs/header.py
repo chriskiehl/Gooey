@@ -13,8 +13,8 @@ PAD_SIZE = 10
 class FrameHeader(wx.Panel):
 	
 	def __init__(self,
-				heading="Settings",
-				subheading="Small notification or intructional message",
+				heading='',
+				subheading='',
 				image_path=None,
 				dlg_style=1,
 				**kwargs):

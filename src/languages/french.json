@@ -1,0 +1,9 @@
+{
+    "cancel": "Annuler", 
+    "next": "Suivant", 
+    "optional_args_msg": "Arguments optionnels", 
+    "required_args_msg": "Arguments obligatoires", 
+    "running": "fonctionnement", 
+    "settings": "Paramètres", 
+    "simple_config": "Entrez arguments de ligne de commande"
+}

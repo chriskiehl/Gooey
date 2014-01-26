@@ -6,7 +6,7 @@ Created on Dec 22, 2013
 
 import wx 
 import sys
-from app.dialogs.model import Model
+from app.dialogs.config_model import Model
 
 YES = 5103
 NO 	= 5104
@@ -16,26 +16,23 @@ class Controller(object):
 	Main controller for the gui. 
 	
 	All controlls are delegated to this central control point. 
-	It's kind of a bi-directional observer sort of thing, thus 
-	weirdly initialized with references to the BaseWindows panels, 
-	and then 'registered' with the panels . 
-	
-	
 	
 	Args: 
-		base			 = Reference to the Basewindow
-		head_panel = reference to the BaseWindow's Head Panel 	  
-		body_panel = reference to the BaseWindow's Body Panel 	  
-		footer_panel = reference to the BaseWindow's Footer Panel 	  
+		base_frame	 = Reference to the Basewindow
+		head_panel	 = reference to the BaseWindow's Head Panel 	  
+		body_panel 	 = reference to the BaseWindow's Body Panel 	  
+		footer_panel = reference to the BaseWindow's Footer Panel
+		model				 = configuration model 	  
 	'''
 	
-	def __init__(self, base, head_panel, body_panel, footer_panel):
-		self._base = base
+	def __init__(self, base_frame, head_panel, body_panel, 
+							footer_panel, model):
+		self._base = base_frame
 		self._head = head_panel
 		self._body = body_panel 
 		self._foot = footer_panel
 		
-		self._model = Model.GetInstance()
+		self._model = model
 	
 	def OnConfigCancel(self, event):
 		msg = "Are you sure you want to exit?"
@@ -63,8 +60,6 @@ class Controller(object):
 	def AddPayload(self, payload):
 		pass
 		
-			
-			
 		
 	def OnMainCancel(self, event):
 		print 'OnMaingCancel pressed!'

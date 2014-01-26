@@ -4,19 +4,35 @@ Created on Jan 7, 2014
 @author: Chris
 '''
 
-class Command(object):
+import types
+
+class Fooer(object):
 	def __init__(self):
-		pass
-	
-	def execute(self):
-		pass
-	
-	
-class NextButton(Command):
-	def execute(self):
-		print "Next Button"
+		self.a=1 
+		self.b=2 
+		self.c=3
 		
-class CancelButton(Command):
-	def execute(self):
-		print 'Cancel button!'
+	def error(self, msg):
+		print msg 
 		
+
+class Barer(object):
+	def __init__(self):
+		self._fooer = Fooer() 
+		
+	def __getattr__(self, a):
+		return getattr(self._fooer, a)
+
+class Bazzer(object):
+	def __init__(self):
+		self._f = Fooer()
+	
+
+def error2(self, msg):
+	print 'HEY! I\'ve been patched!'
+	
+b = Barer() 
+
+b.error = types.MethodType(error2, b)
+
+b.error('asdf') 

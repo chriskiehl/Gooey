@@ -1,1 +1,9 @@
 {
+    "cancel": "Cancel", 
+    "next": "Next", 
+    "optional_args_msg": "Optional Arguments", 
+    "required_args_msg": "Required Arguments", 
+    "running": "Running", 
+    "settings": "Settings", 
+    "simple_config": "Enter Command Line Arguments"
+}

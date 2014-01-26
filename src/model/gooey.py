@@ -8,10 +8,12 @@ import os
 import sys
 import argparse 
 import source_parser
+from app.dialogs.config_model import Model
 from app.dialogs import window
+from model.i18n import I18N
 
 
-def Gooey(f=None, advanced=True, basic=False):
+def Gooey(f=None, advanced=True, language='english'):
 	'''
 	Decorator for client code's main function. 
 	Entry point for the GUI generator.  
@@ -23,6 +25,7 @@ def Gooey(f=None, advanced=True, basic=False):
 	Launched 
 	
 	'''
+# 	print locals()
 
 	# Handles if the passed in object is instance 
 	# of ArgumentParser. If so, it's being called as 
@@ -45,9 +48,25 @@ def Gooey(f=None, advanced=True, basic=False):
 	def build(f):
 		def inner():
 			module_path = get_caller_path()
-			prog_name = get_program_name(module_path)
-			parser = source_parser.pull_parser_from(module_path)
+			parser = source_parser.extract_parser(module_path)
+			print 'parser in inner', parser
+			i18n = I18N(language)
+			if not parser: 
+				print 'shit fuck!'
+				# run basic program with info window
+				return 
+# 			config_model = Model(parser)
+# 			arg_string = 'asdf 5 -s'
+# 			if not config_model.IsValidArgString(arg_string):
+# 				error = config_model.GetErrorMsg(arg_string)
+# 				raise ValueError("you suck, son! \n%s" % error)
+# 			config_model.AddToArgv(arg_string)
+# 			f()
+# 			
+# 			if advanced:
 			window.WithAdvancedOptions(parser, f)
+# 			else:
+# 				pass # run simple congig version
 		inner.__name__ = f.__name__ 
 		return inner
 

@@ -13,12 +13,12 @@ client code.
 import os 
 import ast 
 import sys
+import types
 import random
 import codegen
 import argparse
 import cStringIO
 from itertools import chain
-from functools import partial 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 from app.dialogs.action_sorter import ActionSorter
@@ -26,6 +26,10 @@ from app.dialogs.action_sorter import ActionSorter
 
 class ParserError(Exception):
 	'''Thrown when the parser can't find argparse functions the client code'''
+	pass
+
+class ArgumentError(Exception):
+	'''Thrown when the parser is supplied with an incorrect argument format'''
 	pass
 
 
@@ -41,8 +45,9 @@ class ParserFromSource(object):
 	'''
 	def __init__(self, source_code):
 		self._parser_instance = self._build_argparser_from_client_source(source_code)
-		# redirect future getattr requests
-# 		self.__getattr__ = self._delegator
+		self._parser_instance.error = types.MethodType(
+																							self._ErrorAsString, 
+																							self._parser_instance)
 		
 	def _build_argparser_from_client_source(self, source_code):
 		'''
@@ -108,6 +113,15 @@ class ParserFromSource(object):
 		Auto-delegates everything to the ArgumentParser instance'''
 		return getattr(self._parser_instance, attr)
 	
+	@staticmethod 
+	def _ErrorAsString(self, msg):
+		'''
+		Monkey patch for parser.error
+		Returns the error string rather than 
+		printing and silently exiting. 
+		'''
+		raise ArgumentError(msg)
+	
 
 def parse_source_file(file_name):
 	'''
@@ -143,7 +157,8 @@ def parse_source_file(file_name):
 	
 	main_block = find_argparse_location(search_locations)
 	if not main_block: 
-		raise ParserError("Could not locate AugmentParser assignment.")
+		raise None
+# 		raise ParserError("Could not locate AugmentParser assignment.")
 	
 	argparse_assign_obj = [node for node in main_block.body
 									if has_instantiator(node, 'ArgumentParser')]
@@ -217,10 +232,12 @@ def convert_to_python(ast_source):
 	return map(codegen.to_source, ast_source)	
 
 
-def pull_parser_from(modulepath):
+def extract_parser(modulepath):
 	ast_source = parse_source_file(modulepath)
-	python_code = convert_to_python(ast_source)
-	return ParserFromSource(python_code)
+	if ast_source:
+		python_code = convert_to_python(ast_source)
+		return ParserFromSource(python_code)
+	return None
 
 
 if __name__ == '__main__':
