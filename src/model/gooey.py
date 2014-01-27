@@ -25,31 +25,10 @@ def Gooey(f=None, advanced=True, language='english'):
 	Launched 
 	
 	'''
-# 	print locals()
-
-	# Handles if the passed in object is instance 
-	# of ArgumentParser. If so, it's being called as 
-	# a function, rather than a decorator
-# 	if isinstance(f, argparse.ArgumentParser):
-# 		progname = sys.argv[0]
-# 
-# 		build_doc_from_parser_obj(
-# 			file_name=progname, 
-# 			parser_obj=f, 
-# 			format=format, 
-# 			noob=noob, 
-# 			success_msg=success_msg
-# 			)
-# 		return 
-
-	# --------------------------------- #
-	# Below code is all decorator stuff #
-	# --------------------------------- #
 	def build(f):
 		def inner():
 			module_path = get_caller_path()
 			parser = source_parser.extract_parser(module_path)
-			print 'parser in inner', parser
 			i18n = I18N(language)
 			if not parser: 
 				print 'shit fuck!'

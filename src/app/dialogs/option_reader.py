@@ -13,13 +13,10 @@ class OptionReader(object):
 	'''
 	__metaclass__ = ABCMeta
 
-	def __init__(self):
-		pass 
-	
 	@abstractmethod
 	def GetOptions(self):
 		''' 
 		Implemented by subclasses.
-		Defines how the config panels read their options
+		Defines how the config panel Views retrieve their options
 		''' 
 		pass

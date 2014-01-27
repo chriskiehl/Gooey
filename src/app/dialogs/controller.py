@@ -65,7 +65,6 @@ class Controller(object):
 	def OnCancelRunButton(self, event):
 		pass
 		
-		
 	def RunClientCode(self):
 		pool = Pool(1)
 		try:

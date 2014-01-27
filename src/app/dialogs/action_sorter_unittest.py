@@ -17,7 +17,7 @@ class TestActionSorter(unittest.TestCase):
 	def setUp(self):
 		self._actions = argparse_test_data.parser._actions
 		self.sorted_actions = ActionSorter(self._actions)
-		# pain in the A... PEP8 be damned! 
+		# pain in the A... 
 		self.expected_positionals = [
 						"_StoreAction(option_strings=[], dest='filename', nargs=None, const=None, default=None, type=None, choices=None, help='Name of the file you want to read', metavar=None)",
 						'''_StoreAction(option_strings=[], dest='outfile', nargs=None, const=None, default=None, type=None, choices=None, help="Name of the file where you'll save the output", metavar=None)'''												

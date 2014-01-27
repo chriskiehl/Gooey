@@ -11,6 +11,7 @@ import unittest
 import advanced_config
 import argparse_test_data
 from argparse import ArgumentParser 
+from config_model import Model
 
 class TestAdvancedConfigPanel(unittest.TestCase):
 
@@ -21,8 +22,8 @@ class TestAdvancedConfigPanel(unittest.TestCase):
 		app = wx.PySimpleApp()
 		module_name = os.path.split(sys.argv[0])[-1]
 		frame = wx.Frame(None, -1, module_name, size=(640,480))
-
-		panel = advanced_config.AdvancedConfigPanel(frame, self.parser)
+		
+		panel = advanced_config.AdvancedConfigPanel(frame, Model(self.parser))
 		frame.Show()
 		app.MainLoop()
 

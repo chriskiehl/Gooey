@@ -5,6 +5,7 @@ Created on Dec 23, 2013
 '''
 
 import wx
+from app.images import image_store
 
 class AbstractFooter(wx.Panel):
 	'''
@@ -20,9 +21,19 @@ class AbstractFooter(wx.Panel):
 		self._do_layout()
 		
 	def _init_components(self):
+		'''
+		initialize all of the components used in the footer
+		TODO: 
+			Add Checkmark image for when the program has finished running. 
+			Refactor image tools into their own module. The resize code is 
+			getting spread around a bit. 
+		'''
 		self.cancel_button = self._Button('Cancel', wx.ID_CANCEL)
 		self.start_button = self._Button("Start", wx.ID_OK)
 		self.cancel_run_button = self._Button('Cancel', wx.ID_CANCEL)
+		
+# 		_bitmap = wx.Bitmap(image_store.alessandro_rei_checkmark)
+# 		wx.StaticBitmap(self, -1, _bitmap)
 		
 	def _do_layout(self):
 		v_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -54,7 +65,7 @@ class AbstractFooter(wx.Panel):
 	def NextPage(self):
 		self.cancel_button.Hide()
 		self.start_button.Hide() 
-		self.cancel_run_button.Show()
+# 		self.cancel_run_button.Show()
 		self.Layout()
 
 
