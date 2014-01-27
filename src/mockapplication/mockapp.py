@@ -39,6 +39,7 @@ def main():
 			print 'printing message at: %s' % hashlib.md5(str(_time())).hexdigest()
 		_sleep(.5)
 	print 'Finished running the program. Byeeeeesss!'
+# 	raise ValueError("Something has gone wrong! AHHHHHHHHHHH")
 	
 if __name__ == '__main__':
 # 	sys.argv.extend('asdf -c 5 -s'.split())

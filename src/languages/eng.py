@@ -18,7 +18,17 @@ if __name__ == '__main__':
 						'running':'Running',
 						"sure_you_want_to_exit":"Are you sure you want to exit?",
 						'close_program': 'Close Program?',
-						'status':'Status'
+						'status':'Status',
+						'uh_oh': '''
+Uh oh! Looks like there was a problem. 
+Copy the below error to let your developer know what went wrong.
+
+{} 		
+		''',
+						'error_title':"Error",
+						'execution_finished':'Execution Finished', 
+						'success_message': 'Program completed Sucessfully!\nPress the OK button to exit',
+						
 	}
 	
 	with open('english.json', 'wb') as f: 

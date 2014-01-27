@@ -1,6 +1,8 @@
 {
     "cancel": "Cancel", 
     "close_program": "Close Program?", 
+    "error_title": "Error", 
+    "execution_finished": "Execution Finished", 
     "next": "Next", 
     "optional_args_msg": "Optional Arguments", 
     "required_args_msg": "Required Arguments", 
@@ -8,5 +10,7 @@
     "settings": "Settings", 
     "simple_config": "Enter Command Line Arguments", 
     "status": "Status", 
-    "sure_you_want_to_exit": "Are you sure you want to exit?"
+    "success_message": "Program completed Sucessfully!\nPress the OK button to exit", 
+    "sure_you_want_to_exit": "Are you sure you want to exit?", 
+    "uh_oh": "\nUh oh! Looks like there was a problem. \nCopy the below error to let your developer know what went wrong.\n\n{} \t\t\n\t\t"
 }

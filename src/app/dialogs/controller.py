@@ -6,8 +6,9 @@ Created on Dec 22, 2013
 
 import wx 
 import sys
-from app.dialogs.config_model import Model
-from multiprocessing.dummy import Pool
+import traceback
+from multiprocessing.dummy import Pool, Process
+from model.i18n import I18N
 
 YES = 5103
 NO 	= 5104
@@ -34,16 +35,22 @@ class Controller(object):
 		self._foot = footer_panel
 		
 		self._model = model
+		
+		self._payload_runner = Process(target=self.RunClientCode).start
+		
+		self._translator = I18N()
 	
 	def OnCancelButton(self, event):
-		msg = "Are you sure you want to exit?"
-		dlg = wx.MessageDialog(None, msg, "Close Program?", wx.YES_NO)
+		msg = self._translator['sure_you_want_to_exit']
+		dlg = wx.MessageDialog(None, msg, 
+													self._translator['close_program'], wx.YES_NO)
 		result = dlg.ShowModal()
 		print result
 		if result == YES:
 			dlg.Destroy()
 			self._base.Destroy()
 			sys.exit()
+		dlg.Destroy()
 			
 	def OnStartButton(self, event):
 		cmd_line_args = self._body.GetOptions()
@@ -53,18 +60,36 @@ class Controller(object):
 			return 
 		self._model.AddToArgv(cmd_line_args)
 		self._base.NextPage()
-		self.RunClientCode()
+		self._payload_runner()
 
 	def OnCancelRunButton(self, event):
 		pass
 		
-	def ShowArgumentErrorDlg(self, error):
-		a = wx.MessageDialog(None, error, 'Argument Error')	
-		a.ShowModal()
-		a.Destroy()
 		
 	def RunClientCode(self):
 		pool = Pool(1)
-		pool.apply_async(self._base._payload)
+		try:
+			pool.apply(self._base._payload)
+			self.ShowGoodFinishedDialog()
+		except:
+			self.ShowBadFinishedDialog(traceback.format_exc())
+			
+	def ShowDialog(self, title, content, style):
+		a = wx.MessageDialog(None, content, title, style)	
+		a.ShowModal()
+		a.Destroy()
 
+	def ShowGoodFinishedDialog(self):
+		self.ShowDialog(self._translator["execution_finished"], 
+									self._translator['success_message'],
+									wx.ICON_INFORMATION)
+		
+	def ShowBadFinishedDialog(self, error_msg):
+		msg = self._translator['uh_oh'].format(error_msg)
+		self.ShowDialog(self._translator['error_title'], msg, wx.ICON_ERROR)
+		
+		
+		
+
+		
 

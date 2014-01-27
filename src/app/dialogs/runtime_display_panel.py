@@ -29,16 +29,8 @@ class RuntimeDisplay(wx.Panel):
 		self._init_properties()
 		self._init_components()
 		self._do_layout()
-		
-# 		self.queue = Queue.Queue()
-		_stdout = sys.stdout
-		_stdout_write = _stdout.write
-		
-		sys.stdout = MessagePump()
-		sys.stdout.write = self.WriteToDisplayBox
-# 		listener = Listener(self.queue, self.cmd_textbox)
-# 		listener.start()
-
+		self._HookStdout()
+	
 	def _init_properties(self):
 		self.SetBackgroundColour('#F0F0F0')
 
@@ -56,9 +48,16 @@ class RuntimeDisplay(wx.Panel):
 		sizer.Add(self.cmd_textbox, 1, wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.EXPAND, 30)
 		sizer.AddSpacer(20)
 		self.SetSizer(sizer)
+
+	def _HookStdout(self):
+		_stdout = sys.stdout
+		_stdout_write = _stdout.write
+		
+		sys.stdout = MessagePump()
+		sys.stdout.write = self.WriteToDisplayBox
 		
 	def AppendText(self, txt):
-		self.cmd_textbox.AppendText(txt)	
+		self.cmd_textbox.AppendText(txt)
 		
 	def WriteToDisplayBox(self, txt):
 		if txt is not '':

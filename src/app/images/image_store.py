@@ -7,6 +7,7 @@ Convenience module for keeping the filepaths in one place.
 
 """
 
+alessandro_rei_checkmark = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\alessandro_rei_checkmark.png"
 computer = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\computer.png"
 computer2 = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\computer2.png"
 computer3 = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\computer3.png"

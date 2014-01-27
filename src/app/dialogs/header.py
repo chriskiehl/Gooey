@@ -6,7 +6,6 @@ Created on Dec 23, 2013
 
 import wx
 import imageutil
-from app.dialogs.segoe_statictext import SegoeText
 from app.images import image_store
 
 PAD_SIZE = 10
