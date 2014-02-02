@@ -12,8 +12,6 @@ from argparse import (
 	_CountAction, _AppendAction, _HelpAction)
 
 
-DEBUG = 0
-
 class ActionSorter(object):
 	'''
 	Sorts all of the actions into their appropriate containers. 
@@ -53,7 +51,7 @@ class ActionSorter(object):
 	'''
 	
 	def __init__(self, actions):
-		self._actions = actions[:] # Copy all of the actions
+		self._actions = actions[:] 
 		
 		self._positionals = self.get_positionals(self._actions)
 		self._choices			= self.get_optionals_with_choices(self._actions)
@@ -61,14 +59,13 @@ class ActionSorter(object):
 		self._flags 			= self.get_flag_style_optionals(self._actions)
 		self._counters 		= self.get_counter_actions(self._actions)
 		
-		if DEBUG:
+	def verbose(self):
 			self._display('ActionSorter: positionals', self._positionals)
 			self._display('ActionSorter: choices', self._choices)
 			self._display('ActionSorter: optionals', self._optionals)
 			self._display('ActionSorter: booleans', self._flags)
 			self._display('ActionSorter: counters', self._counters)
 			print '|-------------------------'
-			
 	
 	def _display(self, _type, something):
 		for i in something: 

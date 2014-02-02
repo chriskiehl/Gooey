@@ -11,7 +11,7 @@ from app.dialogs.action_sorter import ActionSorter
 
 
 
-class Model(object):
+class ConfigModel(object):
 	
 	def __init__(self, parser):
 		self._parser = parser 

@@ -25,16 +25,16 @@ def wrap():
 
 import wx 
 import advanced_config
+from basic_config_panel import BasicConfigPanel
 from base_window import BaseWindow
-from app.dialogs.config_model import Model
+from app.dialogs.config_model import ConfigModel
 from app.dialogs import argparse_test_data
 
 
 
-def WithAdvancedOptions(parser, payload): 
+def WithAdvancedOptions(BodyPanel, model, payload): 
 	app = wx.App(False)  
-	model = Model(parser)
-	frame = BaseWindow(advanced_config.AdvancedConfigPanel, model, payload)
+	frame = BaseWindow(BodyPanel, model, payload)
 	frame.Show(True)     # Show the frame.
 	app.MainLoop() 
 

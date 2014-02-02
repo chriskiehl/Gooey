@@ -4,16 +4,21 @@ Created on Jan 24, 2014
 @author: Chris
 '''
 
-import os 
+import os
+import wx 
 import sys
 import argparse 
 import source_parser
-from app.dialogs.config_model import Model
+from app.dialogs.config_model import ConfigModel
 from app.dialogs import window
+from app.dialogs.base_window import BaseWindow
+from app.dialogs.advanced_config import AdvancedConfigPanel
+from app.dialogs.basic_config_panel import BasicConfigPanel
 from model.i18n import I18N
+from functools import partial
 
 
-def Gooey(f=None, advanced=True, language='english'):
+def Gooey(f=None, advanced=False, language='english', noconfig=False):
 	'''
 	Decorator for client code's main function. 
 	Entry point for the GUI generator.  
@@ -25,27 +30,29 @@ def Gooey(f=None, advanced=True, language='english'):
 	Launched 
 	
 	'''
+	params = locals()
+	for k,v in params.iteritems(): 
+		print k, v
 	def build(f):
 		def inner():
 			module_path = get_caller_path()
-			parser = source_parser.extract_parser(module_path)
-			i18n = I18N(language)
-			if not parser: 
-				print 'shit fuck!'
-				# run basic program with info window
-				return 
-# 			config_model = Model(parser)
-# 			arg_string = 'asdf 5 -s'
-# 			if not config_model.IsValidArgString(arg_string):
-# 				error = config_model.GetErrorMsg(arg_string)
-# 				raise ValueError("you suck, son! \n%s" % error)
-# 			config_model.AddToArgv(arg_string)
-# 			f()
-# 			
-# 			if advanced:
-			window.WithAdvancedOptions(parser, f)
-# 			else:
-# 				pass # run simple congig version
+			try:
+				parser = source_parser.extract_parser(module_path)
+			except source_parser.ParserError:
+				raise source_parser.ParserError(
+																'Could not locate ArgumentParser statements.'
+																'\nPlease checkout github.com/chriskiehl/gooey to file a bug')
+			model = ConfigModel(parser) 
+			if advanced:
+				BodyPanel = partial(AdvancedConfigPanel, model=model) 
+			else:
+				BodyPanel = BasicConfigPanel
+			
+			app = wx.App(False)  
+			frame = BaseWindow(BodyPanel, model, f, params)
+			frame.Show(True)     # Show the frame.
+			app.MainLoop() 
+
 		inner.__name__ = f.__name__ 
 		return inner
 

@@ -157,8 +157,7 @@ def parse_source_file(file_name):
 	
 	main_block = find_argparse_location(search_locations)
 	if not main_block: 
-		raise None
-# 		raise ParserError("Could not locate AugmentParser assignment.")
+		raise ParserError("Could not locate AugmentParser.")
 	
 	argparse_assign_obj = [node for node in main_block.body
 									if has_instantiator(node, 'ArgumentParser')]
@@ -182,7 +181,7 @@ def find_main(nodes):
 	for node in nodes.body: 
 		if isinstance(node, ast.FunctionDef) and node.name == 'main':
 			return node
-	raise ParserError('Could not find `def main()`')
+	raise ParserError('Could not find main function')
 
 
 def get_assignment_name(node): 
@@ -241,10 +240,13 @@ def extract_parser(modulepath):
 
 
 if __name__ == '__main__':
-	ast_source = parse_source_file('example_argparse_souce.py')
+	filepath = os.path.join(os.path.dirname(__file__), 
+													'..', 'mockapplication', 
+													'example_argparse_souce.py')
+	ast_source = parse_source_file(filepath)
 	python_code = convert_to_python(ast_source)
 	parser = ParserFromSource(python_code)
-	factory = ActionSorter(parser)
+	factory = ActionSorter(parser._actions)
 	print factory._positionals
 	
 # 	

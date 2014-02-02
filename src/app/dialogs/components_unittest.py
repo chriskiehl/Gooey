@@ -67,7 +67,6 @@ class ComponentsTest(unittest.TestCase):
 		
 	def SetupWidgetAndBuildWindow(self, _type):
 		component = getattr(components, _type)(self.actions[_type])
-		print component
 		self.BuildWindow(component, _type)
 		
 

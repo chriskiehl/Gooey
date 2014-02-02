@@ -9,7 +9,7 @@ import unittest
 from option_reader import OptionReader
 
 	
-class FakeClass(OptionReader):
+class FakeClassWithoutImplementation(OptionReader):
 	def __init__(self):
 		pass 
 	
@@ -24,7 +24,7 @@ class Test(unittest.TestCase):
 	
 	def test_mixin_classes_throws_typeerror_without_implementation(self):
 		with self.assertRaises(TypeError):
-			fake_class = FakeClass() 
+			fake_class = FakeClassWithoutImplementation() 
 			
 	def test_mixin_classes_passes_with_implementation(self):
 		fc = FakeClassWithImplementation()

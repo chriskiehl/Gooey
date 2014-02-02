@@ -11,11 +11,11 @@ class Test(unittest.TestCase):
 
 
 	def setUp(self):
-		class FakeClass(ComponentRegister):
+		class FakeClassWithoutImplementation(ComponentRegister):
 			def __init__(self):
 				pass 
 			
-		self.test_class = FakeClass()
+		self.test_class = FakeClassWithoutImplementation()
 
 	def testHostClassReceivesMixinFunctions(self):
 		

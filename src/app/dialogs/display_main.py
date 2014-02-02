@@ -67,7 +67,7 @@ class MainWindow(wx.Frame):
 		
 		_stdout = sys.stdout
 		sys.stdout = MessagePump(queue)
-		listener = Listener(queue, self.body_panel.cmd_textbox)
+		listener = Listener(queue, self.config_panel.cmd_textbox)
 		listener.start()
 		
 	def _init_properties(self):
@@ -78,14 +78,14 @@ class MainWindow(wx.Frame):
 	def _init_components(self):
 		# init components		
 		self.head_panel = FrameHeader(image_path=image_store.computer3, parent=self, size=(30,90))
-		self.body_panel = RuntimeDisplay(parent=self)
+		self.config_panel = RuntimeDisplay(parent=self)
 		self.foot_panel = Footer(self, self._controller)
 		
 	def _do_layout(self):
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.Add(self.head_panel, 0, wx.EXPAND)
 		self._draw_horizontal_line(sizer)
-		sizer.Add(self.body_panel, 1, wx.EXPAND)
+		sizer.Add(self.config_panel, 1, wx.EXPAND)
 		self._draw_horizontal_line(sizer)
 		sizer.Add(self.foot_panel, 0, wx.EXPAND)
 		self.SetSizer(sizer)

@@ -14,31 +14,29 @@ PAD_SIZE = 10
 
 class FrameHeader(wx.Panel):
 	
-	def __init__(self,
-				heading='',
-				subheading='',
-				image_path=None,
-				dlg_style=1,
-				**kwargs):
+	def __init__(self, heading, subheading, translator, **kwargs):
 
 		wx.Panel.__init__(self, **kwargs)
 		
 		self._controller = None
 		
+		self._translator = translator
+		
 		self._init_properties()
-		self._init_components(heading, subheading, image_path)
+		self._init_components(heading, subheading)
 		self._init_pages()
 		self._do_layout()
 		
 
 	def _init_properties(self):
 		self.SetBackgroundColour('#ffffff')
+		self.SetSize((30,90))
 		self.SetMinSize((120, 80))
 		
-	def _init_components(self, heading, subheading, image_path):
+	def _init_components(self, heading, subheading):
 		self._header = self._bold_static_text(heading)
 		self._subheader = wx.StaticText(self, label=subheading)
-		self._settings_img = self._load_image(image_path, height=79)
+		self._settings_img = self._load_image(image_store.settings2, height=79)
 		self._running_img = self._load_image(image_store.computer3, 79)
 		self._check_mark = self._load_image(image_store.alessandro_rei_checkmark, height=75)
 
@@ -83,12 +81,11 @@ class FrameHeader(wx.Panel):
 			
 	def _init_pages(self):
 		messages = [[
-								"Running",
-								'Please wait while the application performs its tasks. ' +
-								'\nThis may take a few moments'
+								self._translator["running_title"],
+								self._translator['running_msg']
 							],[
-								'Finished',
-								'All done! You may now safely close the program.'
+								self._translator['finished_title'],
+								self._translator['finished_msg']
 								]]
 		pages = [[
 						self._header.SetLabel,
@@ -113,10 +110,7 @@ class FrameHeader(wx.Panel):
 		_zipl = itertools.izip_longest
 		
 		for func, arg in _zipl(commands, messages, fillvalue=None):
-			if arg:
-				func(arg)
-			else: 
-				func()
+			func(arg) if arg else func()
 			
 		
 

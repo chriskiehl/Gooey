@@ -10,7 +10,7 @@ import wx
 import os
 from app.dialogs.option_reader import OptionReader
 
-class RuntimeDisplay(wx.Panel, OptionReader):
+class BasicConfigPanel(wx.Panel, OptionReader):
 	def __init__(self, parent, **kwargs):
 		wx.Panel.__init__(self, parent, **kwargs)
 
@@ -25,7 +25,7 @@ class RuntimeDisplay(wx.Panel, OptionReader):
 	def _do_layout(self):		
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.AddSpacer(50)
-		sizer.Add(self.text, 0, wx.LEFT, 20)
+		sizer.Add(self.header_msg, 0, wx.LEFT, 20)
 		sizer.AddSpacer(10)
 		h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 		h_sizer.Add(self.cmd_textbox, 1, wx.ALL | wx.EXPAND)
@@ -43,8 +43,11 @@ class RuntimeDisplay(wx.Panel, OptionReader):
 		text.SetFont(bold)
 		return text
 	
-	def GetValues(self):
+	def GetOptions(self):
 		return self.cmd_textbox.GetValue()
+	
+	def RegisterController(self, controller):
+		pass
 	
 		
 		

@@ -19,11 +19,11 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 	'''
 	Abstract class for the Footer panels. 
 	'''
-	def __init__(self, parent, model, **kwargs):
+	def __init__(self, parent, params, model=None, **kwargs):
 		ScrolledPanel.__init__(self, parent, **kwargs)
 		self.SetupScrolling()
 		
-		self.model = model
+		self._model = model
 		self.components = ComponentFactory(model.action_groups)
 		
 		self._controller = None
@@ -35,14 +35,14 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 		
 	def _init_components(self):
 		self._msg_req_args = (self.BuildHeaderMsg("Required Arguments")
-												if self.model.HasPositionals() else None)
+												if self._model.HasPositionals() else None)
 		self._msg_opt_args = self.BuildHeaderMsg("Optional Arguments")
 		
 	def _do_layout(self):
 		STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
 		container = wx.BoxSizer(wx.VERTICAL)
 		container.AddSpacer(15)
-		if self.model.HasPositionals():
+		if self._model.HasPositionals():
 			container.Add(self._msg_req_args, 0, wx.LEFT | wx.RIGHT, PADDING)
 			container.AddSpacer(5)
 			container.Add(self._draw_horizontal_line(), *STD_LAYOUT)

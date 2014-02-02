@@ -13,11 +13,13 @@ class AbstractFooter(wx.Panel):
 	'''
 	Abstract class for the Footer panels. 
 	'''
-	def __init__(self, parent, **kwargs):
+	def __init__(self, parent, translator, **kwargs):
 		wx.Panel.__init__(self, parent, **kwargs)
 		self.SetMinSize((30, 53))
 		
 		self._controller = None
+		
+		self._translator = translator
 
 		self._init_components()
 		self._init_pages()
@@ -32,10 +34,10 @@ class AbstractFooter(wx.Panel):
 			Refactor image tools into their own module. The resize code is 
 			getting spread around a bit. 
 		'''
-		self.cancel_button = self._Button('Cancel', wx.ID_CANCEL)
-		self.start_button = self._Button("Start", wx.ID_OK)
+		self.cancel_button = self._Button(self._translator['cancel'], wx.ID_CANCEL)
+		self.start_button = self._Button(self._translator['start'], wx.ID_OK)
 		self.running_animation = wx.animate.GIFAnimationCtrl(self, -1, image_store.loader)
-		self.close_button = self._Button("Close", wx.ID_OK)
+		self.close_button = self._Button(self._translator["close"], wx.ID_OK)
 	
 	def _init_pages(self):
 		_pages = [[
@@ -104,8 +106,8 @@ class Footer(AbstractFooter):
 		controller: controller class used in delagating all the commands
 	'''
 	
-	def __init__(self, parent, controller, **kwargs):
-		AbstractFooter.__init__(self, parent, **kwargs)
+	def __init__(self, parent, controller, translator, **kwargs):
+		AbstractFooter.__init__(self, parent, translator, **kwargs)
 		
 		self.Bind(wx.EVT_BUTTON, self.OnCancelButton, self.cancel_button)
 		self.Bind(wx.EVT_BUTTON, self.OnStartButton, self.start_button)
@@ -124,26 +126,7 @@ class Footer(AbstractFooter):
 		event.Skip()
 
 
-class MainFooter(AbstractFooter):
-	'''
-	Footer section used on the Main Status  
-	screen of the application
-	
-	args:
-		parent: wxPython parent window
-		controller: controller class used in delagating all the commands
-	'''
-	def __init__(self, parent, controller, **kwargs):
-		AbstractFooter.__init__(self, parent, **kwargs)
-		
-		self.start_button = None
-		
-		self.Bind(wx.EVT_BUTTON, self.OnMainCancel, self.cancel_button)
-	
-	def OnMainCancel(self, event):
-		self._controller.OnMainCancel(event)
-# 		event.Skip()
-		
+
 		
 		
 		

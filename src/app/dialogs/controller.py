@@ -24,21 +24,21 @@ class Controller(object):
 		head_panel	 = reference to the BaseWindow's Head Panel 	  
 		body_panel 	 = reference to the BaseWindow's Body Panel 	  
 		footer_panel = reference to the BaseWindow's Footer Panel
-		model				 = configuration model 	  
+		model				 = configuration model 
+		translator	 = instance of the I18N class	  
 	'''
 	
 	def __init__(self, base_frame, head_panel, body_panel, 
-							footer_panel, model):
+							footer_panel, model, translator):
 		self._base = base_frame
 		self._head = head_panel
 		self._body = body_panel 
 		self._foot = footer_panel
 		
 		self._model = model
+		self._translator = translator
 		
 		self._payload_runner = Process(target=self.RunClientCode).start
-		
-		self._translator = I18N()
 	
 	def OnCancelButton(self, event):
 		msg = self._translator['sure_you_want_to_exit']
@@ -56,7 +56,7 @@ class Controller(object):
 		cmd_line_args = self._body.GetOptions()
 		if not self._model.IsValidArgString(cmd_line_args):
 			error_msg = self._model.GetErrorMsg(cmd_line_args)
-			self.ShowArgumentErrorDlg(error_msg) 
+			self.ShowDialog(self._translator['error'], error_msg, wx.ICON_ERROR) 
 			return 
 		self._model.AddToArgv(cmd_line_args)
 		self._base.NextPage()
