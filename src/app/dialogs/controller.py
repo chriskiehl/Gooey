@@ -62,13 +62,16 @@ class Controller(object):
 		self._base.NextPage()
 		self._payload_runner()
 
-	def OnCancelRunButton(self, event):
-		pass
+	def OnCloseButton(self, event):
+		self._base.Destroy()
+		sys.exit()
 		
 	def RunClientCode(self):
 		pool = Pool(1)
 		try:
 			pool.apply(self._base._payload)
+			self._head.NextPage()
+			self._foot.NextPage()
 			self.ShowGoodFinishedDialog()
 		except:
 			self.ShowBadFinishedDialog(traceback.format_exc())

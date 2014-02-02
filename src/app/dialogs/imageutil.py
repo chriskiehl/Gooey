@@ -8,20 +8,30 @@ from PIL import Image  # @UnresolvedImport
 from app.images import image_store
 
 
-
-def LoadAndResizeImage(path):
-	im = Image.open(path)
-	return PilImageToWxImage(_Resize(im))
-	
-def _Resize(pil_image):
+def _load_image(image_path):
+	try:
+		return wx.Bitmap(image_path)
+	except:
+		raise IOError('Invalid Image path')
+			
+def _resize_bitmap(parent, _bitmap, target_height):
 	'''
-	Resizes a bitmap to a height of 79 pixels (the 
-	size of the top panel -1), while keeping aspect ratio 
+	Resizes a bitmap to a height of 89 pixels (the 
+	size of the top panel), while keeping aspect ratio 
 	in tact
 	'''
-	target_size = _GetTargetSize(pil_image.size)
-	return pil_image.resize(target_size)
-	
+	image = wx.ImageFromBitmap(_bitmap) 
+	_width, _height = image.GetSize()
+	if _height < target_height: 
+		print 'returning image without resizing'
+		return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
+	print 'returning resized image'
+	ratio = float(_width) / _height
+	image = image.Scale(target_height * ratio, target_height,
+			wx.IMAGE_QUALITY_HIGH
+			)
+	return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
+
 def _GetTargetSize(size):
 	width, height = size
 	aspect_ratio = float(width)/height
@@ -29,17 +39,8 @@ def _GetTargetSize(size):
 	tWidth = int(tHeight * aspect_ratio)
 	return (tWidth, tHeight)	
 
-def PilImageToWxImage(p_image):
-	wx_image = wx.EmptyImage(*p_image.size)
-	wx_image.SetData(p_image.convert( 'RGB' ).tostring())
-	return wx_image.ConvertToBitmap()
-
 if __name__ == '__main__':
-	app = wx.App()
-	print 'adsfasdf',LoadAndResizeImage(image_store.computer)
-	print 'asdfadf'
-	app.MainLoop()
-	
+	pass
 	
 	
 	

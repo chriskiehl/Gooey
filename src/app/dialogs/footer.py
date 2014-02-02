@@ -5,6 +5,8 @@ Created on Dec 23, 2013
 '''
 
 import wx
+import wx.animate
+import imageutil
 from app.images import image_store
 
 class AbstractFooter(wx.Panel):
@@ -18,7 +20,9 @@ class AbstractFooter(wx.Panel):
 		self._controller = None
 
 		self._init_components()
+		self._init_pages()
 		self._do_layout()
+		
 		
 	def _init_components(self):
 		'''
@@ -30,10 +34,24 @@ class AbstractFooter(wx.Panel):
 		'''
 		self.cancel_button = self._Button('Cancel', wx.ID_CANCEL)
 		self.start_button = self._Button("Start", wx.ID_OK)
-		self.cancel_run_button = self._Button('Cancel', wx.ID_CANCEL)
-		
-# 		_bitmap = wx.Bitmap(image_store.alessandro_rei_checkmark)
-# 		wx.StaticBitmap(self, -1, _bitmap)
+		self.running_animation = wx.animate.GIFAnimationCtrl(self, -1, image_store.loader)
+		self.close_button = self._Button("Close", wx.ID_OK)
+	
+	def _init_pages(self):
+		_pages = [[
+						self.cancel_button.Hide,
+						self.start_button.Hide, 
+						self.running_animation.Show,
+						self.running_animation.Play,
+						self.Layout
+						],
+					[
+						self.running_animation.Stop,
+						self.running_animation.Hide,
+						self.close_button.Show,
+						self.Layout
+					]]
+		self._pages = iter(_pages)
 		
 	def _do_layout(self):
 		v_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -45,8 +63,10 @@ class AbstractFooter(wx.Panel):
 		
 		v_sizer.AddStretchSpacer(1)
 		v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
-		v_sizer.Add(self.cancel_run_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
-		self.cancel_run_button.Hide()
+		v_sizer.Add(self.running_animation, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
+		self.running_animation.Hide()
+		v_sizer.Add(self.close_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
+		self.close_button.Hide()
 		v_sizer.AddStretchSpacer(1)
 		self.SetSizer(v_sizer)
 		
@@ -63,10 +83,15 @@ class AbstractFooter(wx.Panel):
 			self._controller = controller
 			
 	def NextPage(self):
-		self.cancel_button.Hide()
-		self.start_button.Hide() 
-# 		self.cancel_run_button.Show()
-		self.Layout()
+		page = next(self._pages)
+		for action in page: 
+			action()
+		
+	def _load_image(self, img_path, height=70):
+		return imageutil._resize_bitmap(
+										self, 
+										imageutil._load_image(img_path),
+										height)
 
 
 class Footer(AbstractFooter):
@@ -84,14 +109,14 @@ class Footer(AbstractFooter):
 		
 		self.Bind(wx.EVT_BUTTON, self.OnCancelButton, self.cancel_button)
 		self.Bind(wx.EVT_BUTTON, self.OnStartButton, self.start_button)
-		self.Bind(wx.EVT_BUTTON, self.OnCancelRunButton, self.cancel_run_button)
+		self.Bind(wx.EVT_BUTTON, self.OnCloseButton, self.close_button)
 		
 	def OnCancelButton(self, event):
 		self._controller.OnCancelButton(event)
 		event.Skip()
 		
-	def OnCancelRunButton(self, event):
-		self._controller.OnCancelRunButton(event)
+	def OnCloseButton(self, event):
+		self._controller.OnCloseButton(event)
 		event.Skip()
 		
 	def OnStartButton(self, event):

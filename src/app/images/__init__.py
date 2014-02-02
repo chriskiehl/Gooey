@@ -31,7 +31,7 @@ def load_imagepaths():
 	file_extension = lambda x: os.path.splitext(x)[-1]
 	
 	return [os.path.join(PATH, f) for f in os.listdir(PATH)
-			if file_extension(f) in ('.jpeg','.png', '.ico')]
+			if file_extension(f) in ('.jpeg','.png', '.ico', '.gif')]
 
 
 	

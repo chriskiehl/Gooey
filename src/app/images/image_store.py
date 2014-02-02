@@ -13,6 +13,7 @@ computer2 = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\computer2.p
 computer3 = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\computer3.png"
 harwen_monitor = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\harwen_monitor.png"
 icon = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\icon.ico"
+loader = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\loader.gif"
 settings = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\settings.png"
 settings2 = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\settings2.png"
 terminal = r"C:\Users\Chris\Dropbox\pretty_gui\Gooey\src\app\images\terminal.png"
