@@ -19,7 +19,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 	'''
 	Abstract class for the Footer panels. 
 	'''
-	def __init__(self, parent, params, model=None, **kwargs):
+	def __init__(self, parent, model=None, **kwargs):
 		ScrolledPanel.__init__(self, parent, **kwargs)
 		self.SetupScrolling()
 		

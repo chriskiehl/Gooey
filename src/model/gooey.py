@@ -18,7 +18,9 @@ from model.i18n import I18N
 from functools import partial
 
 
-def Gooey(f=None, advanced=False, language='english', noconfig=False):
+def Gooey(f=None, advanced=True, 
+				language='english', noconfig=True,
+				program_name=None):
 	'''
 	Decorator for client code's main function. 
 	Entry point for the GUI generator.  
@@ -26,16 +28,18 @@ def Gooey(f=None, advanced=False, language='english', noconfig=False):
 	Scans the client code for argparse data. 
 	If found, extracts it and build the proper 
 	configuration page (basic or advanced). 
-	
-	Launched 
-	
 	'''
-	params = locals()
-	for k,v in params.iteritems(): 
-		print k, v
+	
+	params= locals()
+	
 	def build(f):
 		def inner():
 			module_path = get_caller_path()
+			
+			# User doesn't want to display configuration screen 
+			# Just straight to the run panel
+				
+			
 			try:
 				parser = source_parser.extract_parser(module_path)
 			except source_parser.ParserError:
@@ -50,7 +54,11 @@ def Gooey(f=None, advanced=False, language='english', noconfig=False):
 			
 			app = wx.App(False)  
 			frame = BaseWindow(BodyPanel, model, f, params)
-			frame.Show(True)     # Show the frame.
+			if noconfig:
+				# gah, ugly.. not sure how else to go 
+				# about it without rewriting a *bunch* of other stuff
+				frame.ManualStart()
+			frame.Show(True) 
 			app.MainLoop() 
 
 		inner.__name__ = f.__name__ 
@@ -62,7 +70,6 @@ def Gooey(f=None, advanced=False, language='english', noconfig=False):
 
 def get_program_name(path):
 	return '{}'.format(os.path.split(path)[-1])
-	
 
 def get_caller_path():
 	# utility func for decorator

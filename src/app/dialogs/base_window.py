@@ -28,8 +28,7 @@ class BaseWindow(wx.Frame):
 				self, 
 				parent=None, 
 				id=-1, 
-				title=os.path.basename(__file__),
-				size=(610,530)
+				
 		)
 		
 		self._params = params
@@ -47,6 +46,12 @@ class BaseWindow(wx.Frame):
 		self.registerControllers()
 		
 	def _init_properties(self):
+		if not self._params['program_name']:
+			title=os.path.basename(sys.argv[0].replace('.py', ''))
+		else:
+			title = self._params['program_name']
+		self.SetTitle(title)
+		self.SetSize((610,530))
 		self.SetMinSize((400,300))
 		self.icon = wx.Icon(image_store.icon, wx.BITMAP_TYPE_ICO)
 		self.SetIcon(self.icon)
@@ -103,8 +108,8 @@ class BaseWindow(wx.Frame):
 	def AttachPayload(self, payload):
 		self._payload = payload
 			
-# 	def OnXClose(self, event):
-# 		print 'adsfasdfadsf'
+	def ManualStart(self):
+		self._controller.ManualStart()
 			
 
 if __name__ == '__main__':

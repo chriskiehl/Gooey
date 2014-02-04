@@ -33,7 +33,6 @@ if __name__ == '__main__':
 						'optional_args_msg':'Optional Arguments',
 						
 						# popup dialogs
-						
 						"sure_you_want_to_exit":"Are you sure you want to exit?",
 						'close_program': 'Close Program?',
 						'status':'Status',

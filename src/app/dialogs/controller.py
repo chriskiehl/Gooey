@@ -61,6 +61,11 @@ class Controller(object):
 		self._model.AddToArgv(cmd_line_args)
 		self._base.NextPage()
 		self._payload_runner()
+		
+	def ManualStart(self):
+		self._base.NextPage()
+		wx.CallAfter(wx.ActivateEvent)
+		self._payload_runner()
 
 	def OnCloseButton(self, event):
 		self._base.Destroy()
