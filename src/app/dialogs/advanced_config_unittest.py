@@ -11,7 +11,7 @@ import unittest
 import advanced_config
 import argparse_test_data
 from argparse import ArgumentParser 
-from config_model import ConfigModel
+from app.dialogs.config_model import ConfigModel
 
 class TestAdvancedConfigPanel(unittest.TestCase):
 

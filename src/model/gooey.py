@@ -9,7 +9,8 @@ import wx
 import sys
 import argparse 
 import source_parser
-from app.dialogs.config_model import ConfigModel
+from app.dialogs.config_model import ConfigModel, EmptyConfigModel
+
 from app.dialogs import window
 from app.dialogs.base_window import BaseWindow
 from app.dialogs.advanced_config import AdvancedConfigPanel
@@ -18,8 +19,8 @@ from model.i18n import I18N
 from functools import partial
 
 
-def Gooey(f=None, advanced=True, 
-				language='english', noconfig=True,
+def Gooey(f=None, advanced=False, 
+				language='english', noconfig=False,
 				program_name=None):
 	'''
 	Decorator for client code's main function. 
@@ -36,26 +37,31 @@ def Gooey(f=None, advanced=True,
 		def inner():
 			module_path = get_caller_path()
 			
-			# User doesn't want to display configuration screen 
-			# Just straight to the run panel
-				
+			# Must be called before anything else
+			app = wx.App(False)  
 			
-			try:
-				parser = source_parser.extract_parser(module_path)
-			except source_parser.ParserError:
-				raise source_parser.ParserError(
-																'Could not locate ArgumentParser statements.'
-																'\nPlease checkout github.com/chriskiehl/gooey to file a bug')
-			model = ConfigModel(parser) 
-			if advanced:
-				BodyPanel = partial(AdvancedConfigPanel, model=model) 
+			if not noconfig:
+				try:
+					parser = source_parser.extract_parser(module_path)
+				except source_parser.ParserError:
+					raise source_parser.ParserError(
+																	'Could not locate ArgumentParser statements.'
+																	'\nPlease checkout github.com/chriskiehl/gooey to file a bug')
+				model = ConfigModel(parser)
+				if advanced:
+					BodyPanel = partial(AdvancedConfigPanel, model=model) 
+				else: 
+					BodyPanel = BasicConfigPanel
+
+			# User doesn't want to display configuration screen 
+			# Just jump straight to the run panel
 			else:
 				BodyPanel = BasicConfigPanel
+				model = EmptyConfigModel()
 			
-			app = wx.App(False)  
 			frame = BaseWindow(BodyPanel, model, f, params)
 			if noconfig:
-				# gah, ugly.. not sure how else to go 
+				# gah, hacky.. not sure how else to go 
 				# about it without rewriting a *bunch* of other stuff
 				frame.ManualStart()
 			frame.Show(True) 

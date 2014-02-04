@@ -51,7 +51,20 @@ class ConfigModel(object):
 	
 	def AddToArgv(self, arg_string):
 		sys.argv.extend(arg_string.split())
+
 	
+	
+class EmptyConfigModel(object):
+	def __init__(self):
+		'''
+		initializes a BlankModel object
+		
+		As you can see. This class does nothing.. 
+		'''
+
+		self.description = ''
+
+
 
 
 if __name__ == '__main__':
