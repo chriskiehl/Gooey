@@ -1,15 +1,17 @@
 '''
-generates the internals of the image_store module
+Code generation for the image_store module
 
-Nice perk of this approach is that it turns path errors into 
-things that lint can catch, rather than something that gets stumbled 
-upon randomly at runtime. 
+Loops throught the image package and 
+
+At some point early on, I thought this would be waaaaaaaay easier than just 
+updating the paths by hand. Being that I ended up with just a handful of images, 
+I was wrong.. 
 '''
 
 
 import os 
 
-PATH = __path__[0]
+PATH = os.path.dirname(__file__)
 print PATH 
 	
 def render_class(assignments):

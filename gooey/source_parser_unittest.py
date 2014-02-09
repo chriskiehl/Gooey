@@ -11,13 +11,13 @@ import source_parser
 
 
 class TestSourceParser(unittest.TestCase):
-	PATH = os.path.join(os.path.dirname(__file__), '..', 'mockapplication')
+	PATH = os.path.join(os.path.dirname(__file__), 'mockapplications')
 	
 	def module_path(self, name):
 		return os.path.join(self.PATH, name)
 	
 	def setUp(self):
-		self._mockapp = self.module_path('mockapplication.py')
+		self._mockapp = self.module_path('mockapplications.py')
 		self._module_with_noargparse = self.module_path('module_with_no_argparse.py')
 		self._module_with_arparse_in_try = self.module_path('example_argparse_souce_in_try.py')
 		self._module_with_argparse_in_main = self.module_path('example_argparse_souce_in_main.py')

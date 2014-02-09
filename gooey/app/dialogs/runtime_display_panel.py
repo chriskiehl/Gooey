@@ -8,7 +8,7 @@ import wx
 import sys
 import Queue
 import threading
-from model.i18n import I18N
+from i18n import I18N
 
 class MessagePump(object):
 	def __init__(self):

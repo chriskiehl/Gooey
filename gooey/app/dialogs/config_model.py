@@ -6,7 +6,7 @@ Created on Jan 23, 2014
 
 import sys
 import types
-from model.source_parser import ArgumentError
+from monkey_parser import ArgumentError
 from app.dialogs.action_sorter import ActionSorter
 
 

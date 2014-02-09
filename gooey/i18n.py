@@ -14,7 +14,7 @@ class I18N(object):
 	program.
 	'''
 	_instance = None
-	_default_dir = os.path.join(os.path.dirname(__file__), '..', 'languages')  
+	_default_dir = os.path.join(os.path.dirname(__file__), 'languages')  
 	def __init__(self, language='english'):
 		''' Create an I18N object '''
 		self._dict = self._open(self._get_path(language))

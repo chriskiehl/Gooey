@@ -8,7 +8,7 @@ import wx
 import sys
 import traceback
 from multiprocessing.dummy import Pool, Process
-from model.i18n import I18N
+from i18n import I18N
 
 YES = 5103
 NO 	= 5104
@@ -56,7 +56,7 @@ class Controller(object):
 		cmd_line_args = self._body.GetOptions()
 		if not self._model.IsValidArgString(cmd_line_args):
 			error_msg = self._model.GetErrorMsg(cmd_line_args)
-			self.ShowDialog(self._translator['error'], error_msg, wx.ICON_ERROR) 
+			self.ShowDialog(self._translator['error_title'], error_msg, wx.ICON_ERROR) 
 			return 
 		self._model.AddToArgv(cmd_line_args)
 		self._base.NextPage()

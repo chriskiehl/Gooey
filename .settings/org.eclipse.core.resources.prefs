@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
-encoding//src/mockapplication/example_argparse_souce_in_try.py=utf-8
-encoding//src/model/codegen.py=utf-8
+encoding//gooey/codegen.py=utf-8
+encoding//gooey/mockapplications/example_argparse_souce_in_main.py=utf-8
+encoding//gooey/mockapplications/example_argparse_souce_in_try.py=utf-8

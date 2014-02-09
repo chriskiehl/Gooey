@@ -15,13 +15,13 @@ from app.dialogs import window
 from app.dialogs.base_window import BaseWindow
 from app.dialogs.advanced_config import AdvancedConfigPanel
 from app.dialogs.basic_config_panel import BasicConfigPanel
-from model.i18n import I18N
+from i18n import I18N
 from functools import partial
 
 
-def Gooey(f=None, advanced=False, 
+def Gooey(f=None, advanced=True, 
 				language='english', noconfig=False,
-				program_name=None):
+				program_name=None, program_description=None):
 	'''
 	Decorator for client code's main function. 
 	Entry point for the GUI generator.  

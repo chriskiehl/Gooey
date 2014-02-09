@@ -19,7 +19,7 @@ from app.dialogs.runtime_display_panel import RuntimeDisplay
 from app.dialogs.controller import Controller
 from app.images import image_store
 from app.dialogs.config_model import ConfigModel
-from model.i18n import I18N
+from i18n import I18N
 
 class BaseWindow(wx.Frame):
 
