@@ -16,11 +16,7 @@ import codegen
 from itertools import chain
 from monkey_parser import MonkeyParser
 from app.dialogs.action_sorter import ActionSorter
-
-
-class ParserError(Exception):
-	'''Thrown when the parser can't find argparse functions the client code'''
-	pass
+from parser_exceptions import ParserError
 
 
 

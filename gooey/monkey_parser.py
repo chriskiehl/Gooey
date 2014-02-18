@@ -6,10 +6,9 @@ Created on Feb 8, 2014
 
 import types
 from argparse import ArgumentParser
+from parser_exceptions import ArgumentError
 
-class ArgumentError(Exception):
-	'''Thrown when the parser is supplied with an incorrect argument format'''
-	pass
+
 
 class MonkeyParser(object):
 	''' 

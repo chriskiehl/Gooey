@@ -7,15 +7,11 @@ Created on Jan 24, 2014
 import os
 import wx 
 import sys
-import argparse 
 import source_parser
-from app.dialogs.config_model import ConfigModel, EmptyConfigModel
-
-from app.dialogs import window
-from app.dialogs.base_window import BaseWindow
-from app.dialogs.advanced_config import AdvancedConfigPanel
-from app.dialogs.basic_config_panel import BasicConfigPanel
-from i18n import I18N
+from gooey.app.dialogs.config_model import ConfigModel, EmptyConfigModel
+from gooey.app.dialogs.base_window import BaseWindow
+from gooey.app.dialogs.advanced_config import AdvancedConfigPanel
+from gooey.app.dialogs.basic_config_panel import BasicConfigPanel
 from functools import partial
 
 

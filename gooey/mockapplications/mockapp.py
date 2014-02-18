@@ -8,7 +8,7 @@ import hashlib
 from time import time as _time
 from time import sleep as _sleep
 from argparse import ArgumentParser
-from gooey import Gooey
+from gooey_decorator import Gooey
 
 
 

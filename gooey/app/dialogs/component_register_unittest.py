@@ -18,7 +18,7 @@ class Test(unittest.TestCase):
 		self.test_class = FakeClassWithoutImplementation()
 
 	def testHostClassReceivesMixinFunctions(self):
-		
+		pass
 
 
 if __name__ == "__main__":

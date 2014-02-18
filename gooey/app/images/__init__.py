@@ -12,7 +12,6 @@ I was wrong..
 import os 
 
 PATH = os.path.dirname(__file__)
-print PATH 
 	
 def render_class(assignments):
 	template = '''
