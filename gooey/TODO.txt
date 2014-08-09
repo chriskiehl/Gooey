@@ -1,5 +1,8 @@
 
 
-1. Internationalization
+TODO:
+- Need to catch imports as well, I believe
+- support giving the GUI a specific name
+- system for supplying custom widgets to the GUI -- e.g. a FileChooser, rather than just a TextBox
 
  

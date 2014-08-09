@@ -32,30 +32,35 @@ DEBUG = 1
 TESTRUN = 0
 PROFILE = 0
 
+
 class CLIError(Exception):
-		'''Generic exception to raise and log different fatal errors.'''
-		def __init__(self, msg):
-				super(CLIError).__init__(type(self))
-				self.msg = "E: %s" % msg
-		def __str__(self):
-				return self.msg
-		def __unicode__(self):
-				return self.msg
+  '''Generic exception to raise and log different fatal errors.'''
 
-def main(argv=None): # IGNORE:C0111
-		'''Command line options.'''
+  def __init__(self, msg):
+    super(CLIError).__init__(type(self))
+    self.msg = "E: %s" % msg
 
-		if argv is None:
-				argv = sys.argv
-		else:
-				sys.argv.extend(argv)
+  def __str__(self):
+    return self.msg
 
-		program_name = os.path.basename(sys.argv[0])
-		program_version = "v%s" % __version__
-		program_build_date = str(__updated__)
-		program_version_message = '%%(prog)s %s (%s)' % (program_version, program_build_date)
-		program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
-		program_license = '''%s
+  def __unicode__(self):
+    return self.msg
+
+
+def main(argv=None):  # IGNORE:C0111
+  '''Command line options.'''
+
+  if argv is None:
+    argv = sys.argv
+  else:
+    sys.argv.extend(argv)
+
+  program_name = os.path.basename(sys.argv[0])
+  program_version = "v%s" % __version__
+  program_build_date = str(__updated__)
+  program_version_message = '%%(prog)s %s (%s)' % (program_version, program_build_date)
+  program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
+  program_license = '''%s
 
 	Created by user_name on %s.
 	Copyright 2013 organization_name. All rights reserved.
@@ -69,74 +74,83 @@ def main(argv=None): # IGNORE:C0111
 USAGE
 ''' % (program_shortdesc, str(__date__))
 
-		try:
-				# Setup argument parser
-				parser = ArgumentParser(description='Example Argparse Program', formatter_class=RawDescriptionHelpFormatter)
-				parser.add_argument("filename", help="filename")
-				parser.add_argument("-r", "--recursive", dest="recurse", action="store_true", help="recurse into subfolders [default: %(default)s]")
-				parser.add_argument("-v", "--verbose", dest="verbose", action="count", help="set verbosity level [default: %(default)s]")
-				parser.add_argument("-i", "--include", action="append", help="only include paths matching this regex pattern. Note: exclude is given preference over include. [default: %(default)s]", metavar="RE" )
-				parser.add_argument("-m", "--mycoolargument", help="mycoolargument")
-				parser.add_argument("-e", "--exclude", dest="exclude", help="exclude paths matching this regex pattern. [default: %(default)s]", metavar="RE" )
-				parser.add_argument('-V', '--version', action='version')
-				parser.add_argument('-T', '--tester', choices=['yes','no'])
-				parser.add_argument(dest="paths", help="paths to folder(s) with source file(s) [default: %(default)s]", metavar="path", nargs='+')
-				
-# 				for i in parser._actions:
-# 					print i
-				# Process arguments
-				args = parser.parse_args()
+  try:
+    # Setup argument parser
+    parser = ArgumentParser(description='Example Argparse Program', formatter_class=RawDescriptionHelpFormatter)
+    parser.add_argument("filename", help="filename")
+    parser.add_argument("-r", "--recursive", dest="recurse", action="store_true",
+                        help="recurse into subfolders [default: %(default)s]")
+    parser.add_argument("-v", "--verbose", dest="verbose", action="count",
+                        help="set verbosity level [default: %(default)s]")
+    parser.add_argument("-i", "--include", action="append",
+                        help="only include paths matching this regex pattern. Note: exclude is given preference over include. [default: %(default)s]",
+                        metavar="RE")
+    parser.add_argument("-m", "--mycoolargument", help="mycoolargument")
+    parser.add_argument("-e", "--exclude", dest="exclude",
+                        help="exclude paths matching this regex pattern. [default: %(default)s]", metavar="RE")
+    parser.add_argument('-V', '--version', action='version')
+    parser.add_argument('-T', '--tester', choices=['yes', 'no'])
+    parser.add_argument(dest="paths", help="paths to folder(s) with source file(s) [default: %(default)s]",
+                        metavar="path", nargs='+')
 
-				paths = args.paths
-				verbose = args.verbose
-				recurse = args.recurse
-				inpat = args.include
-				expat = args.exclude
+    # 				for i in parser._actions:
+    # 					print i
+    # Process arguments
+    args = parser.parse_args()
 
-				if verbose > 0:
-						print("Verbose mode on")
-						if recurse:
-								print("Recursive mode on")
-						else:
-								print("Recursive mode off")
+    paths = args.paths
+    verbose = args.verbose
+    recurse = args.recurse
+    inpat = args.include
+    expat = args.exclude
 
-				if inpat and expat and inpat == expat:
-						raise CLIError("include and exclude pattern are equal! Nothing will be processed.")
+    if verbose > 0:
+      print("Verbose mode on")
+      if recurse:
+        print("Recursive mode on")
+      else:
+        print("Recursive mode off")
 
-				for inpath in paths:
-						### do something with inpath ###
-						print(inpath)
-				return 0
-		except KeyboardInterrupt:
-				### handle keyboard interrupt ###
-				return 0
-		except Exception, e:
-				if DEBUG or TESTRUN:
-						raise(e)
-				indent = len(program_name) * " "
-				sys.stderr.write(program_name + ": " + repr(e) + "\n")
-				sys.stderr.write(indent + "  for help use --help")
-				return 2
+    if inpat and expat and inpat == expat:
+      raise CLIError("include and exclude pattern are equal! Nothing will be processed.")
+
+    for inpath in paths:
+      ### do something with inpath ###
+      print(inpath)
+    return 0
+  except KeyboardInterrupt:
+    ### handle keyboard interrupt ###
+    return 0
+  except Exception, e:
+    if DEBUG or TESTRUN:
+      raise (e)
+    indent = len(program_name) * " "
+    sys.stderr.write(program_name + ": " + repr(e) + "\n")
+    sys.stderr.write(indent + "  for help use --help")
+    return 2
+
 
 if __name__ == "__main__":
-		if DEBUG:
-				sys.argv.append("-h")
-# 				sys.argv.append("-v")
-				sys.argv.append("-r")
-				main() 
-				sys.exit()
-		if TESTRUN:
-				import doctest
-				doctest.testmod()
-		if PROFILE:
-				import cProfile
-				import pstats
-				profile_filename = 'bin.example_argparse_souce_profile.txt'
-				cProfile.run('main()', profile_filename)
-				statsfile = open("profile_stats.txt", "wb")
-				p = pstats.Stats(profile_filename, stream=statsfile)
-				stats = p.strip_dirs().sort_stats('cumulative')
-				stats.print_stats()
-				statsfile.close()
-				sys.exit(0)
-		sys.exit(main())
+  if DEBUG:
+    sys.argv.append("-h")
+    # 				sys.argv.append("-v")
+    sys.argv.append("-r")
+    main()
+    sys.exit()
+  if TESTRUN:
+    import doctest
+
+    doctest.testmod()
+  if PROFILE:
+    import cProfile
+    import pstats
+
+    profile_filename = 'bin.example_argparse_souce_profile.txt'
+    cProfile.run('main()', profile_filename)
+    statsfile = open("profile_stats.txt", "wb")
+    p = pstats.Stats(profile_filename, stream=statsfile)
+    stats = p.strip_dirs().sort_stats('cumulative')
+    stats.print_stats()
+    statsfile.close()
+    sys.exit(0)
+  sys.exit(main())

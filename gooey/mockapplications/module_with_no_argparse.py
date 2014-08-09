@@ -6,8 +6,9 @@ Created on Feb 2, 2014
 
 
 def main():
-	print 'hello!'
+  print 'Jello!'
+
 
 if __name__ == '__main__':
-	print main.__name__
+  print main.__name__
 
