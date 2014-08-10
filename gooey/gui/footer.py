@@ -22,6 +22,12 @@ class AbstractFooter(wx.Panel):
 
     self._controller = None
 
+    # components
+    self.cancel_button = None
+    self.start_button = None
+    self.running_animation = None
+    self.close_button = None
+
     self._init_components()
     self._init_pages()
     self._do_layout()
@@ -41,20 +47,22 @@ class AbstractFooter(wx.Panel):
     self.close_button = self._Button(i18n.translate("close"), wx.ID_OK)
 
   def _init_pages(self):
-    _pages = [[
-        self.cancel_button.Hide,
-        self.start_button.Hide,
-        self.running_animation.Show,
-        self.running_animation.Play,
-        self.Layout
-    ],
-    [
-        self.running_animation.Stop,
-        self.running_animation.Hide,
-        self.close_button.Show,
-        self.Layout
-    ]]
-    self._pages = iter(_pages)
+
+    def PageOne():
+      self.cancel_button.Hide()
+      self.start_button.Hide()
+      self.running_animation.Show()
+      self.running_animation.Play()
+      self.Layout()
+
+    def PageTwo():
+      self.running_animation.Stop()
+      self.running_animation.Hide()
+      self.close_button.Show()
+      self.Layout()
+
+    self._pages = iter([PageOne, PageTwo])
+
 
   def _do_layout(self):
     v_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -86,9 +94,7 @@ class AbstractFooter(wx.Panel):
       self._controller = controller
 
   def NextPage(self):
-    page = next(self._pages)
-    for action in page:
-      action()
+    next(self._pages)()
 
   def _load_image(self, img_path, height=70):
     return imageutil.resize_bitmap(
@@ -115,14 +121,14 @@ class Footer(AbstractFooter):
     self.Bind(wx.EVT_BUTTON, self.OnCloseButton, self.close_button)
 
   def OnCancelButton(self, event):
-    self._controller.OnCancelButton(event)
+    self._controller.OnCancelButton(self, event)
     event.Skip()
 
   def OnCloseButton(self, event):
-    self._controller.OnCloseButton(event)
+    self._controller.OnCloseButton(self, event)
     event.Skip()
 
   def OnStartButton(self, event):
-    self._controller.OnStartButton(event)
+    self._controller.OnStartButton(event, self)
     event.Skip()
 

@@ -32,18 +32,20 @@ class BaseWindow(wx.Frame):
 
     self._controller = None
 
+    # Components
+    self.icon = None
+    self.head_panel = None
+    self.config_panel = None
+    self.runtime_display = None
+    self.foot_panel = None
+    self.panels = None
+
     self._init_properties()
     self._init_components(BodyPanel)
     self._do_layout()
     self._init_controller()
     self.registerControllers()
 
-    # self.icon = None
-    # self.head_panel = None
-    # self.config_panel = None
-    # self.runtime_display = None
-    # self.foot_panel = None
-    # self.panels = None
 
   def _init_properties(self):
     if not self._params['program_name']:

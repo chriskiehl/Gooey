@@ -39,9 +39,9 @@ class Controller(object):
     self._foot = footer_panel
 
     self._model = model
-    self._payload_runner = Process(target=self.RunClientCode).start
+    self._payload_runner = Process(target=self.RunClientCode)
 
-  def OnCancelButton(self, event):
+  def OnCancelButton(self, widget, event):
     msg = i18n.translate('sure_you_want_to_exit')
     dlg = wx.MessageDialog(None, msg,
                            i18n.translate('close_program'), wx.YES_NO)
@@ -53,7 +53,7 @@ class Controller(object):
       sys.exit()
     dlg.Destroy()
 
-  def OnStartButton(self, event):
+  def OnStartButton(self, widget, event):
     cmd_line_args = self._body.GetOptions()
     if not self._model.IsValidArgString(cmd_line_args):
       error_msg = self._model.GetErrorMsg(cmd_line_args)
@@ -61,14 +61,14 @@ class Controller(object):
       return
     self._model.AddToArgv(cmd_line_args)
     self._base.NextPage()
-    self._payload_runner()
+    self._payload_runner.start()
 
   def ManualStart(self):
     self._base.NextPage()
     wx.CallAfter(wx.ActivateEvent)
-    self._payload_runner()
+    self._payload_runner.start()
 
-  def OnCloseButton(self, event):
+  def OnCloseButton(self, widget, event):
     self._base.Destroy()
     sys.exit()
 

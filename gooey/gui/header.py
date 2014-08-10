@@ -10,7 +10,7 @@ import wx
 from gooey import i18n
 from gooey.gui import imageutil
 from gooey import image_repository
-
+import styling
 
 PAD_SIZE = 10
 
@@ -21,6 +21,12 @@ class FrameHeader(wx.Panel):
     wx.Panel.__init__(self, **kwargs)
 
     self._controller = None
+
+    self._header = None
+    self._subheader = None
+    self._settings_img = None
+    self._running_img = None
+    self._check_mark = None
 
     self._init_properties()
     self._init_components(heading, subheading)
@@ -34,8 +40,10 @@ class FrameHeader(wx.Panel):
     self.SetMinSize((120, 80))
 
   def _init_components(self, heading, subheading):
-    self._header = self._bold_static_text(heading)
+    self._header = styling.H1(self, heading)
+
     self._subheader = wx.StaticText(self, label=subheading)
+
     self._settings_img = self._load_image(image_repository.settings2, height=79)
     self._running_img = self._load_image(image_repository.computer3, 79)
     self._check_mark = self._load_image(image_repository.alessandro_rei_checkmark, height=75)
@@ -54,18 +62,8 @@ class FrameHeader(wx.Panel):
     vsizer.Add(sizer, 1, wx.EXPAND)
     self.SetSizer(vsizer)
 
-  def _bold_static_text(self, label):
-    txt = wx.StaticText(self, label=label)
-    font_size = txt.GetFont().GetPointSize()
-    txt.SetFont(wx.Font(font_size * 1.2, wx.FONTFAMILY_DEFAULT,
-                        wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False)
-    )
-    return txt
-
   def _load_image(self, img_path, height=70):
-    return imageutil.resize_bitmap(self,
-                                    imageutil._load_image(img_path),
-                                    height)
+    return imageutil.resize_bitmap(self, imageutil._load_image(img_path), height)
 
   def build_heading_sizer(self):
     sizer = wx.BoxSizer(wx.VERTICAL)
@@ -80,34 +78,22 @@ class FrameHeader(wx.Panel):
       self._controller = controller
 
   def _init_pages(self):
-    messages = [[
-                  i18n.translate("running_title"),
-                  i18n.translate('running_msg')
-                ], [
-                  i18n.translate('finished_title'),
-                  i18n.translate('finished_msg')
-                ]]
-    pages = [[
-               self._header.SetLabel,
-               self._subheader.SetLabel,
-               self._settings_img.Hide,
-               self._running_img.Show,
-               self.Layout,
-             ], [
-               self._header.SetLabel,
-               self._subheader.SetLabel,
-               self._running_img.Hide,
-               self._check_mark.Show,
-               self.Layout,
-             ]]
-    self._messages = iter(messages)
-    self._pages = iter(pages)
+
+    def PageOne():
+      self._header.SetLabel(i18n.translate("running_title"))
+      self._subheader.SetLabel(i18n.translate('running_msg'))
+      self._settings_img.Hide()
+      self._running_img.Show()
+      self.Layout()
+
+    def PageTwo():
+      self._header.SetLabel(i18n.translate('finished_title'))
+      self._subheader.SetLabel(i18n.translate('finished_msg'))
+      self._running_img.Hide()
+      self._check_mark.Show()
+      self.Layout()
+
+    self._pages = iter([PageOne, PageTwo])
 
   def NextPage(self):
-    messages = next(self._messages)
-    commands = next(self._pages)
-
-    _zipl = itertools.izip_longest
-
-    for func, arg in _zipl(commands, messages, fillvalue=None):
-      func(arg) if arg else func()
+    next(self._pages)()
