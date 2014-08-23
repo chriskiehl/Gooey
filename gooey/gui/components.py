@@ -64,7 +64,7 @@ class AbstractComponent(object):
   def CreateHelpMsgWidget(self, parent, action):
     base_text = wx.StaticText(parent, label=action.help)
     if self.HasNargs(action):
-      base_text += self.CreateNargsMsg(action)
+      base_text.SetLabelText(base_text.GetLabelText() + self.CreateNargsMsg(action))
     styling.MakeDarkGrey(base_text)
     return base_text
 
@@ -72,7 +72,7 @@ class AbstractComponent(object):
     return action.nargs == '+' or action.nargs == '?'
 
   def CreateNargsMsg(self, action):
-    return ' (Note: at least 1 or more arguments are required'
+    return ' (Note: at least 1 or more arguments are required)'
 
   def CreateNameLabelWidget(self, parent, action):
     label = str(action.dest).title()

@@ -22,13 +22,14 @@ import os
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
+from gooey.gooey_decorator import Gooey
 
 __all__ = []
 __version__ = 0.1
 __date__ = '2013-12-13'
 __updated__ = '2013-12-13'
 
-DEBUG = 1
+DEBUG = 0
 TESTRUN = 0
 PROFILE = 0
 
@@ -47,7 +48,7 @@ class CLIError(Exception):
   def __unicode__(self):
     return self.msg
 
-
+@Gooey
 def main(argv=None):  # IGNORE:C0111
   '''Command line options.'''
 

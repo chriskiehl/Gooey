@@ -11,17 +11,18 @@ from gooey.gui.option_reader import OptionReader
 from gooey import i18n
 
 class BasicConfigPanel(wx.Panel, OptionReader):
-  def __init__(self, parent, params, **kwargs):
+  def __init__(self, parent, **kwargs):
     wx.Panel.__init__(self, parent, **kwargs)
 
-    self._translator = I18N(params['language'])
+    self.header_msg = None
+    self.cmd_textbox = None
 
     self._init_properties()
     self._init_components()
     self._do_layout()
 
   def _init_components(self):
-    self.header_msg = self._bold_static_text(self._translator['simple_config'])
+    self.header_msg = self._bold_static_text(i18n.translate('simple_config'))
     self.cmd_textbox = wx.TextCtrl(self, -1, "")
 
   def _init_properties(self):
@@ -49,6 +50,3 @@ class BasicConfigPanel(wx.Panel, OptionReader):
 
   def RegisterController(self, controller):
     pass
-	
-		
-		

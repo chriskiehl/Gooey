@@ -9,7 +9,7 @@ from time import time as _time
 from time import sleep as _sleep
 from argparse import ArgumentParser
 
-from gooey.gooey_decorator import Gooey
+from gooey import Gooey
 
 
 @Gooey

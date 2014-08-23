@@ -9,6 +9,7 @@ from wx.lib.scrolledpanel import ScrolledPanel
 
 from gooey.gui.component_factory import ComponentFactory
 from gooey.gui.option_reader import OptionReader
+import styling
 
 
 PADDING = 10
@@ -19,12 +20,16 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
   Abstract class for the Footer panels.
   """
 
-  def __init__(self, parent, model=None, **kwargs):
+  def __init__(self, parent, action_groups=None, **kwargs):
     ScrolledPanel.__init__(self, parent, **kwargs)
     self.SetupScrolling()
 
-    self._model = model
-    self.components = ComponentFactory(model.action_groups)
+    self._action_groups = action_groups
+    self._positionals = len(action_groups._positionals) > 0
+    self.components = ComponentFactory(action_groups)
+
+    self._msg_req_args = None
+    self._msg_opt_args = None
 
     self._controller = None
 
@@ -34,18 +39,20 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
 
   def _init_components(self):
-    self._msg_req_args = (self.BuildHeaderMsg("Required Arguments")
-                          if self._model.HasPositionals() else None)
-    self._msg_opt_args = self.BuildHeaderMsg("Optional Arguments")
+    self._msg_req_args = (styling.H1(self, "Required Arguments")
+                          if self._positionals else None)
+    self._msg_opt_args = styling.H1(self, "Optional Arguments")
 
   def _do_layout(self):
     STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
+
     container = wx.BoxSizer(wx.VERTICAL)
     container.AddSpacer(15)
-    if self._model.HasPositionals():
+
+    if self._positionals:
       container.Add(self._msg_req_args, 0, wx.LEFT | wx.RIGHT, PADDING)
       container.AddSpacer(5)
-      container.Add(self._draw_horizontal_line(), *STD_LAYOUT)
+      container.Add(styling.HorizontalRule(self), *STD_LAYOUT)
       container.AddSpacer(20)
 
       self.AddWidgets(container, self.components.required_args, add_space=True)
@@ -55,7 +62,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     container.AddSpacer(10)
     container.Add(self._msg_opt_args, 0, wx.LEFT | wx.RIGHT, PADDING)
     container.AddSpacer(5)
-    container.Add(self._draw_horizontal_line(), *STD_LAYOUT)
+    container.Add(styling.HorizontalRule(self), *STD_LAYOUT)
     container.AddSpacer(20)
 
     flag_grids = self.CreateComponentGrid(self.components.flags, cols=3, vgap=15)
@@ -65,13 +72,6 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     container.Add(flag_grids, *STD_LAYOUT)
 
     self.SetSizer(container)
-
-  def BuildHeaderMsg(self, label):
-    _msg = wx.StaticText(self, label=label)
-    font_size = _msg.GetFont().GetPointSize()
-    bold = wx.Font(font_size * 1.2, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-    _msg.SetFont(bold)
-    return _msg
 
   def AddWidgets(self, sizer, components, add_space=False, padding=PADDING):
     for component in components:
@@ -84,11 +84,6 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     gridsizer = wx.GridSizer(rows=0, cols=cols, vgap=vgap, hgap=4)
     self.AddWidgets(gridsizer, components)
     return gridsizer
-
-  def _draw_horizontal_line(self):
-    line = wx.StaticLine(self, -1, style=wx.LI_HORIZONTAL)
-    line.SetSize((10, 10))
-    return line
 
   def OnResize(self, evt):
     for component in self.components:

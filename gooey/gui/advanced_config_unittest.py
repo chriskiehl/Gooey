@@ -11,7 +11,7 @@ import unittest
 import wx
 
 import advanced_config
-from gooey.gui.config_model import ConfigModel
+from gooey.gui.client_app import ClientApp
 from gooey.gui import argparse_test_data
 
 
@@ -24,7 +24,7 @@ class TestAdvancedConfigPanel(unittest.TestCase):
     module_name = os.path.split(sys.argv[0])[-1]
     frame = wx.Frame(None, -1, module_name, size=(640, 480))
 
-    panel = advanced_config.AdvancedConfigPanel(frame, ConfigModel(self.parser))
+    panel = advanced_config.AdvancedConfigPanel(frame, ClientApp(self.parser))
     frame.Show()
     app.MainLoop()
 

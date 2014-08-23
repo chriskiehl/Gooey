@@ -10,12 +10,12 @@ from gooey.monkey_parser import ArgumentError
 from gooey.gui.action_sorter import ActionSorter
 
 
-class ConfigModel(object):
-  def __init__(self, parser):
+class ClientApp(object):
+  def __init__(self, parser, payload):
     self._parser = parser
     self.description = parser.description
     self.action_groups = ActionSorter(self._parser._actions)
-    self._payload = None
+    self.payload = payload
 
   def HasPositionals(self):
     if self.action_groups._positionals:
@@ -48,7 +48,7 @@ class ConfigModel(object):
     sys.argv.extend(arg_string.split())
 
 
-class EmptyConfigModel(object):
+class EmptyClientApp(object):
   def __init__(self):
     '''
     initializes a BlankModel object

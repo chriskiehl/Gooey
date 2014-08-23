@@ -20,15 +20,15 @@ from gooey.gui import footer
 from gooey import image_repository
 from gooey.gui.controller import Controller
 from gooey.gui.runtime_display_panel import RuntimeDisplay
+import styling
 
 
 class BaseWindow(wx.Frame):
-  def __init__(self, BodyPanel, model, payload, params):
+  def __init__(self, BodyPanel, client_app, params):
     wx.Frame.__init__(self, parent=None, id=-1)
 
     self._params = params
-    self._model = model
-    self._payload = payload
+    self._client_app = client_app
 
     self._controller = None
 
@@ -62,7 +62,7 @@ class BaseWindow(wx.Frame):
     # init gui
     self.head_panel = header.FrameHeader(
         heading=i18n.translate("settings_title"),
-        subheading=self._model.description,
+        subheading=self._client_app.description,
         parent=self)
     self.config_panel = BodyPanel(self)
     self.runtime_display = RuntimeDisplay(self)
@@ -72,30 +72,25 @@ class BaseWindow(wx.Frame):
   def _do_layout(self):
     sizer = wx.BoxSizer(wx.VERTICAL)
     sizer.Add(self.head_panel, 0, wx.EXPAND)
-    self._draw_horizontal_line(sizer)
+    sizer.Add(styling.HorizontalRule(self), 0, wx.EXPAND)
     sizer.Add(self.config_panel, 1, wx.EXPAND)
     self.runtime_display.Hide()
     sizer.Add(self.runtime_display, 1, wx.EXPAND)
-    self._draw_horizontal_line(sizer)
+    sizer.Add(styling.HorizontalRule(self), 0, wx.EXPAND)
     sizer.Add(self.foot_panel, 0, wx.EXPAND)
     self.SetSizer(sizer)
-
-  def _draw_horizontal_line(self, sizer):
-    line = wx.StaticLine(self, -1, style=wx.LI_HORIZONTAL)
-    line.SetSize((10, 10))
-    sizer.Add(line, 0, wx.EXPAND)
 
   def _init_controller(self):
     self._controller = Controller(
         base_frame=self,
-        head_panel=self.head_panel,
-        body_panel=self.config_panel,
-        footer_panel=self.foot_panel,
-        model=self._model)
+        client_app=self._client_app)
 
   def registerControllers(self):
     for panel in self.panels:
       panel.RegisterController(self._controller)
+
+  def GetOptions(self):
+    return self.config_panel.GetOptions()
 
   def NextPage(self):
     self.head_panel.NextPage()
@@ -104,8 +99,8 @@ class BaseWindow(wx.Frame):
     self.runtime_display.Show()
     self.Layout()
 
-  def AttachPayload(self, payload):
-    self._payload = payload
+  # def AttachPayload(self, payload):
+  #   self._payload = payload
 
   def ManualStart(self):
     self._controller.ManualStart()

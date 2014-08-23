@@ -7,11 +7,12 @@ Created on Jan 24, 2014
 from functools import partial
 
 import wx
+from gooey.gui.component_factory import ComponentFactory
 
 import i18n_config
 import source_parser
-from gooey.gui.config_model import ConfigModel
-from gooey.gui.config_model import EmptyConfigModel
+from gooey.gui.client_app import ClientApp
+from gooey.gui.client_app import EmptyClientApp
 from gooey.gui.base_window import BaseWindow
 from gooey.gui.advanced_config import AdvancedConfigPanel
 from gooey.gui.basic_config_panel import BasicConfigPanel
@@ -31,7 +32,7 @@ def Gooey(f=None, advanced=True,
 
   params = locals()
 
-  def build(f):
+  def build(payload):
     def inner():
       module_path = get_caller_path()
 
@@ -42,32 +43,31 @@ def Gooey(f=None, advanced=True,
 
       if config:
         parser = get_parser(module_path)
-        model = ConfigModel(parser)
+        client_app = ClientApp(parser, payload)
         if advanced:
-          BodyPanel = partial(AdvancedConfigPanel, model=model)
+          BodyPanel = partial(AdvancedConfigPanel, action_groups=client_app.action_groups)
         else:
           BodyPanel = BasicConfigPanel
-
       # User doesn't want to display configuration screen
       # Just jump straight to the run panel
       else:
         BodyPanel = BasicConfigPanel
-        model = EmptyConfigModel()
+        client_app = EmptyClientApp()
 
-      frame = BaseWindow(BodyPanel, model, f, params)
+      frame = BaseWindow(BodyPanel, client_app, params)
+
       if not config:
-        # gah, hacky.. not sure how else to go
-        # about it without rewriting a *bunch* of other stuff
         frame.ManualStart()
       frame.Show(True)
       app.MainLoop()
 
-    inner.__name__ = f.__name__
+    inner.__name__ = payload.__name__
     return inner
 
   if callable(f):
     return build(f)
   return build
+
 
 def get_parser(module_path):
   try:

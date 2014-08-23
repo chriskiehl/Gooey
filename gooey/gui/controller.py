@@ -30,21 +30,14 @@ class Controller(object):
     translator	 = instance of the I18N class
   '''
 
-  def __init__(
-      self, base_frame, head_panel, body_panel,
-      footer_panel, model):
+  def __init__(self, base_frame, client_app):
     self._base = base_frame
-    self._head = head_panel
-    self._body = body_panel
-    self._foot = footer_panel
-
-    self._model = model
+    self._client_app = client_app
     self._payload_runner = Process(target=self.RunClientCode)
 
   def OnCancelButton(self, widget, event):
     msg = i18n.translate('sure_you_want_to_exit')
-    dlg = wx.MessageDialog(None, msg,
-                           i18n.translate('close_program'), wx.YES_NO)
+    dlg = wx.MessageDialog(None, msg, i18n.translate('close_program'), wx.YES_NO)
     result = dlg.ShowModal()
     print result
     if result == YES:
@@ -54,12 +47,12 @@ class Controller(object):
     dlg.Destroy()
 
   def OnStartButton(self, widget, event):
-    cmd_line_args = self._body.GetOptions()
-    if not self._model.IsValidArgString(cmd_line_args):
-      error_msg = self._model.GetErrorMsg(cmd_line_args)
+    cmd_line_args = self._base.GetOptions()
+    if not self._client_app.IsValidArgString(cmd_line_args):
+      error_msg = self._client_app.GetErrorMsg(cmd_line_args)
       self.ShowDialog(i18n.translate('error_title'), error_msg, wx.ICON_ERROR)
       return
-    self._model.AddToArgv(cmd_line_args)
+    self._client_app.AddToArgv(cmd_line_args)
     self._base.NextPage()
     self._payload_runner.start()
 
@@ -75,9 +68,8 @@ class Controller(object):
   def RunClientCode(self):
     pool = Pool(1)
     try:
-      pool.apply(self._base._payload)
-      self._head.NextPage()
-      self._foot.NextPage()
+      pool.apply(self._client_app.payload)
+      self._base.NextPage()
       self.ShowGoodFinishedDialog()
     except:
       self.ShowBadFinishedDialog(traceback.format_exc())

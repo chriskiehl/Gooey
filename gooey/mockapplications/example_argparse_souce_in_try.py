@@ -23,12 +23,14 @@ import os
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
+from gooey.gooey_decorator import Gooey
+
 __all__ = []
 __version__ = 0.1
 __date__ = '2013-12-13'
 __updated__ = '2013-12-13'
 
-DEBUG = 1
+DEBUG = 0
 TESTRUN = 0
 PROFILE = 0
 
@@ -47,6 +49,7 @@ class CLIError(Exception):
     return self.msg
 
 
+@Gooey
 def main(argv=None):  # IGNORE:C0111
   '''Command line options.'''
 
@@ -62,14 +65,14 @@ def main(argv=None):  # IGNORE:C0111
   program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
   program_license = '''%s
 
-	Created by user_name on %s.
-	Copyright 2013 organization_name. All rights reserved.
+  Created by user_name on %s.
+  Copyright 2013 organization_name. All rights reserved.
 
-	Licensed under the Apache License 2.0
-	http://www.apache.org/licenses/LICENSE-2.0
+  Licensed under the Apache License 2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
-	Distributed on an "AS IS" basis without warranties
-	or conditions of any kind, either express or implied.
+  Distributed on an "AS IS" basis without warranties
+  or conditions of any kind, either express or implied.
 
 USAGE
 ''' % (program_shortdesc, str(__date__))
@@ -77,19 +80,28 @@ USAGE
   try:
     # Setup argument parser
     parser = ArgumentParser(description='Example Argparse Program', formatter_class=RawDescriptionHelpFormatter)
+
     parser.add_argument("filename", help="filename")
+
     parser.add_argument("-r", "--recursive", dest="recurse", action="store_true",
                         help="recurse into subfolders [default: %(default)s]")
+
     parser.add_argument("-v", "--verbose", dest="verbose", action="count",
                         help="set verbosity level [default: %(default)s]")
+
     parser.add_argument("-i", "--include", action="append",
                         help="only include paths matching this regex pattern. Note: exclude is given preference over include. [default: %(default)s]",
                         metavar="RE")
+
     parser.add_argument("-m", "--mycoolargument", help="mycoolargument")
+
     parser.add_argument("-e", "--exclude", dest="exclude",
                         help="exclude paths matching this regex pattern. [default: %(default)s]", metavar="RE")
+
     parser.add_argument('-V', '--version', action='version')
+
     parser.add_argument('-T', '--tester', choices=['yes', 'no'])
+
     parser.add_argument(dest="paths", help="paths to folder(s) with source file(s) [default: %(default)s]",
                         metavar="path", nargs='+')
 
