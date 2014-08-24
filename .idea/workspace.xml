@@ -4,8 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/gooey/image_repository.py" line="33" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c98c4f39-9f79-4674-9cd3-7d4122eb5aa3" name="Default" comment="Merge branch 'patch-1' of git://github.com/svisser/Gooey into svisser-patch-1&#10;&#10;Conflicts:&#10;&#9;setup.py&#10;">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
+    <list default="true" id="c98c4f39-9f79-4674-9cd3-7d4122eb5aa3" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Gooey.iws" />
@@ -41,7 +40,7 @@
       <file leaf-file-name="setup.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="6" selection-start="723" selection-end="723" vertical-scroll-proportion="0.5465632" vertical-offset="0" max-vertical-offset="902">
+            <state line="30" column="6" selection-start="723" selection-end="723" vertical-scroll-proportion="0.6608579" vertical-offset="0" max-vertical-offset="746">
               <folding />
             </state>
           </provider>
@@ -548,7 +547,11 @@
       <created>1408896884627</created>
       <updated>1408896884627</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Added data_files to setup.py">
+      <created>1408910743754</created>
+      <updated>1408910743754</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -573,8 +576,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32937366" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32937366" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32937366" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -584,12 +588,11 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19978401" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32937366" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16630669" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32937366" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -618,7 +621,8 @@
     <MESSAGE value="Fixed setup.py (I think)" />
     <MESSAGE value="Fixed setup.py again (I think)" />
     <MESSAGE value="Merge branch 'patch-1' of git://github.com/svisser/Gooey into svisser-patch-1&#10;&#10;Conflicts:&#10;&#9;setup.py&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'patch-1' of git://github.com/svisser/Gooey into svisser-patch-1&#10;&#10;Conflicts:&#10;&#9;setup.py&#10;" />
+    <MESSAGE value="Added data_files to setup.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added data_files to setup.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -901,7 +905,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="6" selection-start="723" selection-end="723" vertical-scroll-proportion="0.5465632" vertical-offset="0" max-vertical-offset="902">
+        <state line="30" column="6" selection-start="723" selection-end="723" vertical-scroll-proportion="0.6608579" vertical-offset="0" max-vertical-offset="746">
           <folding />
         </state>
       </provider>
