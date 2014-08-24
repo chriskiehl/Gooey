@@ -89,8 +89,8 @@ USAGE
     parser.add_argument("-v", "--verbose", dest="verbose", action="count",
                         help="set verbosity level [default: %(default)s]")
 
-    parser.add_argument("-i", "--include", action="append",
-                        help="only include paths matching this regex pattern. Note: exclude is given preference over include. [default: %(default)s]",
+    parser.add_argument("-i", "--include", action="append", nargs='+',
+                        help="only include paths matching this regex pattern. Note: exclude is given preference over include. ",
                         metavar="RE")
 
     parser.add_argument("-m", "--mycoolargument", help="mycoolargument")
