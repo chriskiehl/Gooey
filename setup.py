@@ -12,7 +12,7 @@ setup(
       'gooey.languages',
       'gooey.mockapplications',
     ],
-    url='http://pypi.python.org/pypi/TowelStuff/',
+    url='http://pypi.python.org/pypi/Gooey/',
     license='LICENSE.txt',
     description='Turn (almost) any command line program into a full GUI application with one line',
     long_description=open('README.md').read()
