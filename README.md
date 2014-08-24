@@ -46,7 +46,7 @@ Gooey is attached to your code via a simple decorator on your `main` method.
 
     from gooey import Gooey
 
-    @gooey      <--- all it takes! :)
+    @Gooey      <--- all it takes! :)
     def main():
       # rest of code
 
