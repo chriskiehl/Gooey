@@ -24,8 +24,8 @@ setup(
     author='Chris Kiehl',
     author_email='ckiehl@gmail.com',
     data_files=[
-      ('', images), 
-      ('', languages)
+      ('gooey/images', images), 
+      ('gooey/languages', languages)
     ],
     packages=[
       'gooey',
