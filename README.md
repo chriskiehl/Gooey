@@ -3,8 +3,16 @@ Gooey (Beta)
 Turn (almost) any Console Program into a GUI application with one line  
 
 <p align="center">
-    <img src="http://i.imgur.com/r6KOyKx.png"/>
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/primary.png"/>
 </p> 
+
+
+
+**Update**
+----------  
+
+Whoops. Looks like I packaged it up wrong with distutils(first time doing it!), so after install the program is missing the language and image files. You can remedy this by manually copying `/images` and `/languages` from the repo into `/site-packages/gooey`. I'll have this fixed in a second. 
+
 
 
 
@@ -46,7 +54,7 @@ Gooey is attached to your code via a simple decorator on your `main` method.
 
     from gooey import Gooey
 
-    @gooey      <--- all it takes! :)
+    @Gooey      <--- all it takes! :)
     def main():
       # rest of code
 
@@ -98,13 +106,13 @@ Currently, the `ArgumentParser._actions` are mapped to the following `WX` compon
 
 | Parser Action    | Widget    | Example |
 |:----------------------|-----------|------|
-| store  |  TextCtrl |  <img src="http://i.imgur.com/isFGFg8.png"/>|
-| store_const   |     CheckBox |  <img src="http://i.imgur.com/epHu2Vg.png"/>|
-|   store_true|        CheckBox | <img src="http://i.imgur.com/epHu2Vg.png"/>|
-|  store_False  |      CheckBox|  <img src="http://i.imgur.com/epHu2Vg.png"/>   |
-|       append |       TextCtrl |  <img src="http://i.imgur.com/isFGFg8.png"/>  | 
-|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="http://i.imgur.com/E7bCeC4.png"/> | 
-|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="http://i.imgur.com/rGmhcER.png"/> |
+| store  |  TextCtrl |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"/>|
+| store_const   |     CheckBox |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>|
+|   store_true|        CheckBox | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>|
+|  store_False  |      CheckBox|  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>   |
+|       append |       TextCtrl |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"/>  | 
+|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/count_dropdown.png"/> | 
+|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/options_dropdown.png"/> |
   
   
 -------------------------------------------  
@@ -149,7 +157,7 @@ The default view is the "full" or "advanced" configuration screen. It can be tog
         
 This view presents each action in the `Argument Parser` as a unique GUI component. This view is ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
 <p align="center">
-    <img src="http://i.imgur.com/o8d1R7M.png">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/advanced_config.png">
 </p>
 
 --------------------------------------------  
@@ -165,7 +173,7 @@ The basic view is best for times when the user is familiar with Console Applicat
         # rest of code  
 
 <p align="center">
-    <img src="http://i.imgur.com/c0VEODj.png">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/basic_config.png">
 </p>
 
 
@@ -176,7 +184,7 @@ The basic view is best for times when the user is familiar with Console Applicat
 No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the guy for classing up the delivery of little one-off scripts. 
 
 <p align="center">
-    <img src="http://i.imgur.com/1I1SUrm.png">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/no_config.png">
 </p>
 
 ---------------------------------------  
@@ -184,7 +192,7 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 Final Screen
 ------------  
 <p align="center">
-    <img src="http://i.imgur.com/bSGVnyf.png">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/final_screen.png">
 </p>
 
 ----------------------------------------------  
@@ -211,6 +219,7 @@ Wanna help?
 
 * Do you art? I'd love to swap out the graphics to something more stylistically unified. 
 * Programmer? Pull requests are super welcome. The projects style is *fantastically* inconsistent, though. So be warned :) I tried to follow the WxWidgets style of Leading Capital methods and CamelCased variables, but.. Python habits die hard. So, there are underscores littered all over the place. 
+
 
 
 
