@@ -5,7 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c98c4f39-9f79-4674-9cd3-7d4122eb5aa3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="C:\Users\Chris\Dropbox\pretty_gui\Gooey\.project" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Chris\Dropbox\pretty_gui\Gooey\.pydevproject" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MANIFEST.in" afterPath="$PROJECT_DIR$/MANIFEST.in" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MANIFEST" afterPath="$PROJECT_DIR$/MANIFEST" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.txt" afterPath="$PROJECT_DIR$/README.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/setup.py" afterPath="$PROJECT_DIR$/setup.py" />
     </list>
     <ignored path="Gooey.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,7 +45,7 @@
       <file leaf-file-name="setup.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/setup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="6" selection-start="723" selection-end="723" vertical-scroll-proportion="0.6608579" vertical-offset="0" max-vertical-offset="746">
+            <state line="33" column="6" selection-start="828" selection-end="828" vertical-scroll-proportion="0.7265416" vertical-offset="2" max-vertical-offset="748">
               <folding />
             </state>
           </provider>
@@ -910,7 +915,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/setup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="6" selection-start="723" selection-end="723" vertical-scroll-proportion="0.6608579" vertical-offset="0" max-vertical-offset="746">
+        <state line="33" column="6" selection-start="828" selection-end="828" vertical-scroll-proportion="0.7265416" vertical-offset="2" max-vertical-offset="748">
           <folding />
         </state>
       </provider>

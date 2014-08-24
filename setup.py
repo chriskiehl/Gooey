@@ -1,5 +1,6 @@
 import os 
-from distutils.core import setup
+from setuptools import setup, find_packages
+
 
 with open('README.md') as readme:
   long_description = readme.read()
@@ -15,26 +16,15 @@ languages = [os.path.join(langpath, lang)
             for lang in os.listdir(langpath)
             if '.py' not in lang]
 
-print(images)
-print(languages)
-
 setup(
     name='Gooey',
     version='0.1.0',
     author='Chris Kiehl',
-    author_email='ckiehl@gmail.com',
-    data_files=[
-      ('gooey/images', images), 
-      ('gooey/languages', languages)
-    ],
-    packages=[
-      'gooey',
-      'gooey.gui',
-      'gooey.images',
-      'gooey.languages',
-      'gooey.mockapplications',
-    ],
-
+    author_email='audionautic@gmail.com',
+    package_data={
+      '': ['*.txt', '*.png', '*.jpg', '*.json']
+    },
+    packages=find_packages(),
     url='http://pypi.python.org/pypi/Gooey/',
     license='LICENSE.txt',
     description='Turn (almost) any command line program into a full GUI application with one line',
