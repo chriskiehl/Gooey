@@ -184,7 +184,7 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 Final Screen
 ------------  
 <p align="center">
-    <img src=" http://i.imgur.com/bSGVnyf.png">
+    <img src="http://i.imgur.com/bSGVnyf.png">
 </p>
 
 ----------------------------------------------  
