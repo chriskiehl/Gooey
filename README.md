@@ -8,6 +8,14 @@ Turn (almost) any Console Program into a GUI application with one line
 
 
 
+**Update**
+----------  
+
+Whoops. Looks like I packaged it up wrong with distutils(first time doing it!), so after install the program is missing the language and image files. You can remedy this by manually copying `/images` and `/languages` from the repo into `/site-packages/gooey`. I'll have this fixed in a second. 
+
+
+
+
 Table of Contents
 -----------------  
 
