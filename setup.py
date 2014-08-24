@@ -1,5 +1,8 @@
 from distutils.core import setup
 
+with open('README.txt') as readme:
+	long_description = readme.read()
+
 setup(
 		name='Gooey',
 		version='0.1.0',
@@ -16,5 +19,5 @@ setup(
 		url='http://pypi.python.org/pypi/TowelStuff/',
 		license='LICENSE.txt',
 		description='Useful towel-related stuff.',
-		long_description=open('README.txt').read()
+		long_description=long_description
 )
