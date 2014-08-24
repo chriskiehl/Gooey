@@ -45,7 +45,7 @@ To install Gooey, simply clone the project to your local directory
 Gooey is attached to your code via a simple decorator on your `main` method. 
 
     from gooey import Gooey
-    
+
     @gooey      <--- all it takes! :)
     def main():
       # rest of code
@@ -97,7 +97,7 @@ At runtime, it loads the Abstract Syntax Tree for your module and parses it for 
 Currently, the `ArgumentParser._actions` are mapped to the following `WX` components. 
 
 | Parser Action    | Widget    | Example |
-|:----------------------|-----------|
+|:----------------------|-----------|------|
 | store  |  TextCtrl |  <img src="http://i.imgur.com/isFGFg8.png"/>|
 | store_const   |     CheckBox |  <img src="http://i.imgur.com/epHu2Vg.png"/>|
 |   store_true|        CheckBox | <img src="http://i.imgur.com/epHu2Vg.png"/>|
