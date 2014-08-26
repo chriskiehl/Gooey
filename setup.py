@@ -22,7 +22,7 @@ setup(
     author='Chris Kiehl',
     author_email='audionautic@gmail.com',
     package_data={
-      '': ['*.txt', '*.png', '*.jpg', '*.json', '*.ico']
+      '': ['*.txt', '*.png', '*.jpg', '*.json', '*.ico', '*.gif']
     },
     packages=find_packages(),
     url='http://pypi.python.org/pypi/Gooey/',
