@@ -11,12 +11,6 @@ from gooey.gui.component_factory import ComponentFactory
 
 import i18n_config
 import source_parser
-from gooey.gui.client_app import ClientApp
-from gooey.gui.client_app import EmptyClientApp
-from gooey.gui.base_window import BaseWindow
-from gooey.gui.advanced_config import AdvancedConfigPanel
-from gooey.gui.basic_config_panel import BasicConfigPanel
-
 
 def Gooey(f=None, advanced=True,
           language='english', config=True,
@@ -40,6 +34,13 @@ def Gooey(f=None, advanced=True,
       app = wx.App(False)
 
       load_language_pack(language)
+
+      # load gui components after loading the language pack
+      from gooey.gui.client_app import ClientApp
+      from gooey.gui.client_app import EmptyClientApp
+      from gooey.gui.base_window import BaseWindow
+      from gooey.gui.advanced_config import AdvancedConfigPanel
+      from gooey.gui.basic_config_panel import BasicConfigPanel
 
       if config:
         parser = get_parser(module_path)
