@@ -18,7 +18,7 @@ _DEFAULT_DIR = os.path.join(os.path.dirname(__file__), 'languages')
 
 def get_path(language):
   ''' Returns the full path to the language file '''
-  filename = language + '.json'
+  filename = language.lower() + '.json'
   lang_file_path = os.path.join(_DEFAULT_DIR, filename)
   if not os.path.exists(lang_file_path):
     raise IOError('Could not find {} language file'.format(language))
@@ -28,7 +28,7 @@ def get_path(language):
 def load(filepath):
   ''' Open and return the supplied json file '''
   try:
-    with open(filepath.lower(), 'rb') as f:
+    with open(filepath, 'rb') as f:
       return json.load(f)
   except IOError:
     raise IOError('Language file not found. Make sure that your ',

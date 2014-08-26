@@ -1,2 +1,3 @@
 include *.txt
-recursive-include docs *.txt
+include gooey\images\*
+include gooey\languages\*
