@@ -1,0 +1,20 @@
+{
+    "cancel": "Annuleren",
+    "close": "Sluiten",
+    "close_program": "Programma sluiten?",
+    "error_title": "Error",
+    "execution_finished": "Uitvoering is klaar",
+    "finished_msg": "Alles is klaar, je kunt het programma nu veilig afsluiten",
+    "finished_title": "Klaar",
+    "optional_args_msg": "Optionele Argumenten",
+    "required_args_msg": "Verplichte Argumenten",
+    "running_msg": "Wacht alstublieft totdat het programma klaar is met draaien,dit kan even duren",
+    "running_title": "Bezig",
+    "settings_title": "Opties",
+    "simple_config": "Voer Command Line argumenten in",
+    "start": "Start",
+    "status": "Status",
+    "success_message": "Programma is succesvol voltooid!\nDruk op de OK knop om af te sluiten",
+    "sure_you_want_to_exit": "Weet je zeker dat je wilt afsluiten?",
+    "uh_oh": "\nUh oh! Er is iets misgegaan. \nKopieër de te error hieronder om de ontwikkelaar te laten weten wat er mis is gegaan.\n\n{} \t\t\n\t\t"
+}

@@ -7,6 +7,7 @@ Created on Dec 28, 2013
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
+from gooey import i18n
 from gooey.gui.component_factory import ComponentFactory
 from gooey.gui.option_reader import OptionReader
 import styling
@@ -39,9 +40,9 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
 
   def _init_components(self):
-    self._msg_req_args = (styling.H1(self, "Required Arguments")
+    self._msg_req_args = (styling.H1(self, i18n.translate("required_args_msg"))
                           if self._positionals else None)
-    self._msg_opt_args = styling.H1(self, "Optional Arguments")
+    self._msg_opt_args = styling.H1(self, i18n.translate("optional_args_msg"))
 
   def _do_layout(self):
     STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
