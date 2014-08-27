@@ -16,6 +16,8 @@ __all__ = ['translate']
 _LANG = i18n_config.LANG
 _DEFAULT_DIR = os.path.join(os.path.dirname(__file__), 'languages')
 
+_DICTIONARY = None
+
 def get_path(language):
   ''' Returns the full path to the language file '''
   filename = language.lower() + '.json'
@@ -25,16 +27,16 @@ def get_path(language):
   return lang_file_path
 
 
-def load(filepath):
+def load(filename):
   ''' Open and return the supplied json file '''
+  global _DICTIONARY
   try:
-    with open(filepath, 'rb') as f:
-      return json.load(f)
+    json_file = filename + '.json'
+    with open(os.path.join(_DEFAULT_DIR, json_file), 'rb') as f:
+      _DICTIONARY = json.load(f)
   except IOError:
     raise IOError('Language file not found. Make sure that your ',
                   'translation file is in the languages directory, ')
-
-_DICTIONARY = load(get_path(_LANG))
 
 def translate(key):
   return _DICTIONARY[key]

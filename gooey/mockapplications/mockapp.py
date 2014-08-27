@@ -12,7 +12,7 @@ from argparse import ArgumentParser
 from gooey import Gooey
 
 
-@Gooey
+@Gooey(language='french')
 def main():
   my_cool_parser = ArgumentParser(description="Mock application to test Gooey's functionality")
   my_cool_parser.add_argument("filename", help="Name of the file you want to read")  # positional
