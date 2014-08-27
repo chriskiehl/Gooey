@@ -1,9 +1,20 @@
 {
-    "cancel": "Annuler", 
-    "next": "Suivant", 
-    "optional_args_msg": "Arguments optionnels", 
-    "required_args_msg": "Arguments obligatoires", 
-    "running": "fonctionnement", 
-    "settings": "Paramètres", 
-    "simple_config": "Entrez arguments de ligne de commande"
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "close_program": "Fermer le programme ?",
+    "error_title": "Erreur",
+    "execution_finished": "Exécution terminée",
+    "finished_msg": "Terminé ! Vous pouvez maintenant fermer le programme",
+    "finished_title": "Terminé",
+    "optional_args_msg": "Arguments optionnels",
+    "required_args_msg": "Arguments obligatoires",
+    "running_msg": "Veuillez attendre la fin de l'exécution. \nCela peut prendre quelques instants",
+    "running_title": "Exécution en cours",
+    "settings_title": "Paramètres",
+    "simple_config": "Entrez les arguments de ligne de commande",
+    "start": "Démarrer",
+    "status": "Statut",
+    "success_message": "Programme terminé avec succès !\nAppuyez sur le bouton OK pour fermer",
+    "sure_you_want_to_exit": "Voulez-vous vraiment quitter ?",
+    "uh_oh": "\nOups ! Il semble qu'une erreur soit survenue. \nCopiez le message d'erreur ci-dessous pour en informer le développeur\n\n{} \t\t\n\t\t"
 }
