@@ -40,9 +40,7 @@ def Gooey(f=None, advanced=True,
       # Must be called before anything else
       app = wx.App(False)
 
-      print i18n_config.LANG
-      load_language_pack(language)
-      print i18n_config.LANG
+      i18n.load(language)
 
       if config:
         parser = get_parser(module_path)
@@ -85,11 +83,6 @@ def get_caller_path():
   # gets the name of the calling script
   tmp_sys = __import__('sys')
   return tmp_sys.argv[0]
-
-def load_language_pack(language):
-  i18n.load(language)
-    # i18n_config.LANG = language
-
 
 
 if __name__ == '__main__':
