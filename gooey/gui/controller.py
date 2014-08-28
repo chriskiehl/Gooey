@@ -15,6 +15,7 @@ YES = 5103
 NO = 5104
 
 
+
 class Controller(object):
   '''
   Main controller for the gui.
@@ -33,7 +34,7 @@ class Controller(object):
   def __init__(self, base_frame, client_app):
     self._base = base_frame
     self._client_app = client_app
-    self._payload_runner = Process(target=self.RunClientCode)
+    # self._payload_runner = Process(target=self.RunClientCode)
 
   def OnCancelButton(self, widget, event):
     msg = i18n.translate('sure_you_want_to_exit')
@@ -47,14 +48,18 @@ class Controller(object):
     dlg.Destroy()
 
   def OnStartButton(self, widget, event):
-    cmd_line_args = self._base.GetOptions()
-    if not self._client_app.IsValidArgString(cmd_line_args):
-      error_msg = self._client_app.GetErrorMsg(cmd_line_args)
-      self.ShowDialog(i18n.translate('error_title'), error_msg, wx.ICON_ERROR)
-      return
-    self._client_app.AddToArgv(cmd_line_args)
+    if len(sys.argv) < 2:
+      cmd_line_args = self._base.GetOptions()
+      if not self._client_app.IsValidArgString(cmd_line_args):
+        error_msg = self._client_app.GetErrorMsg(cmd_line_args)
+        self.ShowDialog(i18n.translate('error_title'), error_msg, wx.ICON_ERROR)
+        return
+      self._client_app.AddToArgv(cmd_line_args)
     self._base.NextPage()
-    self._payload_runner.start()
+    Process(target=self.RunClientCode).start()
+
+  def OnRestartButton(self, widget, event):
+    self.OnStartButton(self, None, event)
 
   def ManualStart(self):
     self._base.NextPage()
@@ -66,9 +71,9 @@ class Controller(object):
     sys.exit()
 
   def RunClientCode(self):
-    pool = Pool(1)
+    _pool = Pool(1)
     try:
-      pool.apply(self._client_app.payload)
+      _pool.apply(self._client_app.payload)
       self._base.NextPage()
       self.ShowGoodFinishedDialog()
     except:

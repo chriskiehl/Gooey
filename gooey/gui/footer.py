@@ -27,6 +27,8 @@ class AbstractFooter(wx.Panel):
     self.start_button = None
     self.running_animation = None
     self.close_button = None
+    self.stop_button = None
+    self.restart_button = None
 
     self._init_components()
     self._init_pages()
@@ -45,8 +47,12 @@ class AbstractFooter(wx.Panel):
     self.start_button = self._Button(i18n.translate('start'), wx.ID_OK)
     self.running_animation = wx.animate.GIFAnimationCtrl(self, -1, image_repository.loader)
     self.close_button = self._Button(i18n.translate("close"), wx.ID_OK)
+    self.stop_button = self._Button('Stop', wx.ID_OK)  # TODO: i18n
+    self.restart_button = self._Button('Restart', wx.ID_OK)  # TODO: i18n
 
   def _init_pages(self):
+    if self.restart_button.IsShown(): self.restart_button.Hide()
+    if self.close_button.IsShown(): self.close_button.Hide()
 
     def PageOne():
       self.cancel_button.Hide()
@@ -58,13 +64,18 @@ class AbstractFooter(wx.Panel):
     def PageTwo():
       self.running_animation.Stop()
       self.running_animation.Hide()
+      self.restart_button.Show()
       self.close_button.Show()
+      self.restart_button.Show()
       self.Layout()
 
     self._pages = iter([PageOne, PageTwo])
 
 
   def _do_layout(self):
+    self.stop_button.Hide()
+    self.restart_button.Hide()
+
     v_sizer = wx.BoxSizer(wx.VERTICAL)
     h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -76,8 +87,12 @@ class AbstractFooter(wx.Panel):
     v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
     v_sizer.Add(self.running_animation, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
     self.running_animation.Hide()
+
+    v_sizer.Add(self.restart_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
     v_sizer.Add(self.close_button, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
+    self.restart_button.Hide()
     self.close_button.Hide()
+
     v_sizer.AddStretchSpacer(1)
     self.SetSizer(v_sizer)
 
@@ -94,7 +109,11 @@ class AbstractFooter(wx.Panel):
       self._controller = controller
 
   def NextPage(self):
-    next(self._pages)()
+    try:
+      next(self._pages)()
+    except:
+      self._init_pages()
+      next(self._pages)()
 
   def _load_image(self, img_path, height=70):
     return imageutil.resize_bitmap(
@@ -119,6 +138,7 @@ class Footer(AbstractFooter):
     self.Bind(wx.EVT_BUTTON, self.OnCancelButton, self.cancel_button)
     self.Bind(wx.EVT_BUTTON, self.OnStartButton, self.start_button)
     self.Bind(wx.EVT_BUTTON, self.OnCloseButton, self.close_button)
+    self.Bind(wx.EVT_BUTTON, self.OnRestartButton, self.restart_button)
 
   def OnCancelButton(self, event):
     self._controller.OnCancelButton(self, event)
@@ -129,6 +149,10 @@ class Footer(AbstractFooter):
     event.Skip()
 
   def OnStartButton(self, event):
+    self._controller.OnStartButton(event, self)
+    event.Skip()
+
+  def OnRestartButton(self, event):
     self._controller.OnStartButton(event, self)
     event.Skip()
 

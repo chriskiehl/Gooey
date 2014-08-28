@@ -96,4 +96,8 @@ class FrameHeader(wx.Panel):
     self._pages = iter([PageOne, PageTwo])
 
   def NextPage(self):
-    next(self._pages)()
+    try:
+      next(self._pages)()
+    except:
+      self._init_pages()
+      next(self._pages)()

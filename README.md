@@ -8,12 +8,6 @@ Turn (almost) any Console Program into a GUI application with one line
 
 
 
-**Update**
-----------  
-
-First attempt at packaging went not as planned. I've since swapped from `distutils` to `setuptools` and that seems to have remedied the issue. However, if you do receive an error after running `setup.py` please let me know by submitting an issue! It was caused by the image and language files not copying to the correct location during setup, so in a pinch you can remedy this by manually copying `/images` and `/languages` from the repo into `/site-packages/gooey`. 
-
-
 
 
 Table of Contents
@@ -21,6 +15,7 @@ Table of Contents
 
 - [Gooey](#gooey)
 - [Table of contents](#table-of-contents)
+- [Change Log](#change-log)
 - [Quick Start](#quick-start)
 	- [Installation Instructions](#installation-instructions)
 	- [Usage](#usage)
@@ -37,6 +32,20 @@ Table of Contents
 - [TODO](#todo)
 - [Contributing](#wanna-help)
 - [Image Credits](#image-credits)
+
+
+
+Change Log
+----------
+
+- Added `Restart` Button. `Issue #20` (hacked it in there ;) need to pretty it up later.)
+- Fixed bug in language class
+
+
+**Notes**
+
+First attempt at packaging went not as planned. I've since swapped from `distutils` to `setuptools` and that seems to have remedied the issue. However, if you do receive an error after running `setup.py` please let me know by submitting an issue! It was caused by the image and language files not copying to the correct location during setup, so in a pinch you can remedy this by manually copying `/images` and `/languages` from the repo into `/site-packages/gooey`.
+
 
 
 Quick Start

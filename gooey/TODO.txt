@@ -1,7 +1,10 @@
 
 
 TODO:
-- Need to catch imports as well, I believe
+- Update parser to catch all argparse import styles
+- Investigate Docopt
+- better graphics
+- Fix vertical stacking of restart button
 - system for supplying custom widgets to the GUI -- e.g. a FileChooser, rather than just a TextBox
 - Remove debug statements current printing from program
 
