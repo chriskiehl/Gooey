@@ -160,7 +160,7 @@ And each with the following options:
 |-----------|---------|
 | language | Gooey is (kind of) international ready (sans unicode issues (TODO). All program text is stored in an external `json` file. Translating to your host language only requires filling in the key/value pairs.|
 |program_name | The name displayed in the title bar of the GUI window. If the value is `None`, the title is pulled from `sys.argv[0]`. |
-| program_description | Sets the text displayed in the top panel of the `Settings` screen. If `None` the decription is pulled from the  `ArgumentParser`. |  
+| program_description | Sets the text displayed in the top panel of the `Settings` screen. If `None` the description is pulled from the  `ArgumentParser`. |  
 
 
 
