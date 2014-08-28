@@ -8,7 +8,7 @@
     "finished_title": "Fertig",
     "optional_args_msg": "optionale Argumente",
     "required_args_msg": "benötigte Argumente",
-    "running_msg": "Bitte warten Sie auf die Anwendung \nDies kann etwas brauchen"
+    "running_msg": "Bitte warten Sie auf die Anwendung \nDies kann etwas brauchen",
     "running_title": "Läuft",
     "settings_title": "Einstellungen",
     "simple_config": "Befehlszeilenargumente eingeben",
