@@ -82,6 +82,7 @@ class FrameHeader(wx.Panel):
     def PageOne():
       self._header.SetLabel(i18n.translate("running_title"))
       self._subheader.SetLabel(i18n.translate('running_msg'))
+      self._check_mark.Hide()
       self._settings_img.Hide()
       self._running_img.Show()
       self.Layout()
