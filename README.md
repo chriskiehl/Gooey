@@ -28,7 +28,6 @@ Table of Contents
     - [Basic](#basic)
     - [No Config](#no-config)
 - [Final Screen](#final-screen)
-
 - [TODO](#todo)
 - [Contributing](#wanna-help)
 - [Image Credits](#image-credits)
