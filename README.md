@@ -57,8 +57,15 @@ First attempt at packaging went not as planned. I've since swapped from `distuti
 Fixing Parser issues ([#18](https://github.com/chriskiehl/Gooey/issues/18))
 
 
-Quick Start
--------------  
+----------   
+
+
+
+
+
+
+##Quick Start
+
 
 ###Installation instructions
 
@@ -111,7 +118,7 @@ How does it work?
 
 Gooey is attached to your code via a simple decorator on your `main` method. 
 
-    @gooey      <--- all it takes! :)
+    @Gooey      <--- all it takes! :)
     def main():
       # rest of code
 
