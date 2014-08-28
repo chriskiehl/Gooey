@@ -1,0 +1,20 @@
+{
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "close_program": "Programm Schließen?",
+    "error_title": "Fehler",
+    "execution_finished": "ausführen erfolgreich",
+    "finished_msg": "Fertig! Sie können das Programm jetzt schließen",
+    "finished_title": "Fertig",
+    "optional_args_msg": "optionale Argumente",
+    "required_args_msg": "benötigte Argumente",
+    "running_msg": "Bitte warten Sie auf die Anwendung \nDies kann etwas brauchen",
+    "running_title": "Läuft",
+    "settings_title": "Einstellungen",
+    "simple_config": "Befehlszeilenargumente eingeben",
+    "start": "Start", 
+    "status": "Status", 
+    "success_message": "Programm war Erfolgreich!\nOK-Button zum Beenden",
+    "sure_you_want_to_exit": "Möchten Sie das Programm Beenden",
+    "uh_oh": "\nupps ! Irgendwas ist schief gelaufen. \nBitte senden Sie diesen Fehler an den Entwickler.\n\n{} \t\t\n\t\t"
+}
