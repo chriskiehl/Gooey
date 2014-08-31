@@ -38,11 +38,8 @@ def split_line(line):
   # splits an assignment statement into varname and command strings
   # in: "parser = ArgumentParser(description='Example Argparse Program')"
   # out: "parser", "ArgumentParser(description='Example Argparse Program"
-  # take/dropwhile used to avoid splitting on multiple '=' signs
-  not_equal_sign = lambda x: x != '='
-  varname = ''.join(takewhile(not_equal_sign, line)).strip()
-  command = ''.join(dropwhile(not_equal_sign, line))[2:]
-  return varname, command
+  pieces = line.split('=', 1)
+  return pieces[0].strip(), ''.join(pieces[1:]).lstrip()
 
 def update_parser_varname(new_varname, code):
   # lines = source.split('\n')[1:]
