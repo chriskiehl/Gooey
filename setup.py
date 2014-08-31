@@ -26,7 +26,17 @@ setup(
     },
     packages=find_packages(),
     url='http://pypi.python.org/pypi/Gooey/',
+    dependency_links = [
+        "http://www.wxpython.org/download.php"
+    ],
     license='LICENSE.txt',
+    classifiers = [
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools :: GUI :: CLI',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+    ]
     description='Turn (almost) any command line program into a full GUI application with one line',
     long_description=long_description
 )
