@@ -1,0 +1,20 @@
+{
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "close_program": "Fechar o Programa?",
+    "error_title": "Erro",
+    "execution_finished": "Execução Finalizada",
+    "finished_msg": "Acabou! Você agora pode fechar o programa com segurança.",
+    "finished_title": "Finalizado",
+    "optional_args_msg": "Argumentos Opcionais",
+    "required_args_msg": "Argumentos Obrigatórios",
+    "running_msg": "Aguarde enquanto a aplicação executa suas tarefas. \nIsto pode demorar alguns instantes",
+    "running_title": "Em Execução",
+    "settings_title": "Configurações",
+    "simple_config": "Entre com os argumentos de linha de comando",
+    "start": "Iniciar",
+    "status": "Status",
+    "success_message": "Programa finalizado com sucesso!\nPressione OK para sair",
+    "sure_you_want_to_exit": "Você tem certeza que deseja sair?",
+    "uh_oh": "\nOps! Parece que temos um problema. \nEnvie-nos o erro abaixo para que saibamos o que aconteceu.\n\n{} \t\t\n\t\t"
+}
