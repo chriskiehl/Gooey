@@ -35,8 +35,8 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools :: GUI :: CLI',
         'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-    ]
+        'Programming Language :: Python :: 2.7'
+    ],
     description='Turn (almost) any command line program into a full GUI application with one line',
     long_description=long_description
 )
