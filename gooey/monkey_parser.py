@@ -9,6 +9,7 @@ import types
 from parser_exceptions import ArgumentError
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
+import code_prep
 
 
 class MonkeyParser(object):
@@ -44,20 +45,22 @@ class MonkeyParser(object):
     and instantiates it in a local variable by evaling the rest of the lines.
     Each subsequent line updates the local variable in turn.
     '''
-    new_source_code = self._format_source_with_new_varname('clients_parser', source_code)
-    # variable of the same name as the one passed into the format_source method.
-    # Used to hold the eval'd statements
+    imports = filter(lambda x: 'gooey' not in x, code_prep.take_imports(source_code))
+    arg_code = code_prep.drop_imports(source_code)
+    updated_source_code = code_prep.update_parser_varname('clients_parser', arg_code)
 
-    first_line = new_source_code.pop(0)
-    clients_parser, assignment = self._split_line(first_line)
+    for _import in imports:
+      exec(_import)
 
+    first_line = updated_source_code.pop(0)
+    clients_parser, assignment = code_prep.split_line(first_line)
     clients_parser = eval(assignment)
 
-    for line in new_source_code:
+    for line in updated_source_code:
       eval(line)
     return clients_parser
 
-  def _format_source_with_new_varname(self, variable_name, source):
+  def _format_source_with_new_varname(self, new_variable_name, source):
     '''
     'injects' the client code with a known variable name so that it
     can be `eval`d and assigned to a variable in the local code.
@@ -74,11 +77,13 @@ class MonkeyParser(object):
     source_code = source[:]
 
     first_line = source_code[0]
-    parser_variable, statement = self._split_line(first_line)
-    parser_variable = parser_variable.strip()
+    client_parser_variable, statement = self._split_line(first_line)
+
+    client_parser_variable = client_parser_variable.strip()
 
     for index, line in enumerate(source_code):
-      source_code[index] = line.replace(parser_variable, variable_name)
+      source_code[index] = line.replace(client_parser_variable, new_variable_name)
+    source_code.append('{0}.parse_args()'.format(new_variable_name))
     return source_code
 
   def _split_line(self, line):

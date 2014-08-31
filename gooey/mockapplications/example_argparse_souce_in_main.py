@@ -22,7 +22,7 @@ import os
 
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
-from gooey.gooey_decorator import Gooey
+from gooey import Gooey
 
 __all__ = []
 __version__ = 0.1

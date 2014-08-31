@@ -108,14 +108,27 @@ else: pass
     result = source_parser.find_try_blocks(nodes)
     self.assertEqual(list(), result)
 
-  def test_find_argparse(selfs):
+  def test_find_argparse_located_object_when_imported_by_direct_name(self):
     example_source = '''
-parser = ArgumentParser(description='Example Argparse Program', formatter_class=RawDescriptionHelpFormatter)
-parser.add_argument("filename", help="filename")
-parser.add_argument("-r", "--recursive", dest="recurse", action="store_true", help="recurse into subfolders [default: %(default)s]")
-parser.add_argument("-v", "--verbose", dest="verbose", action="count", help="set verbosity level [default: %(default)s]")
+def main():
+  parser = ArgumentParser(description='Example Argparse Program', formatter_class=RawDescriptionHelpFormatter)
     '''
     nodes = ast.parse(example_source)
+    main_node = source_parser.find_main(nodes)
+    self.assertEqual('main', main_node.name)
+    containing_block = source_parser.find_block_containing_argparse([main_node])
+    self.assertTrue(containing_block is not None)
+
+  def test_find_argparse_located_object_when_access_through_module_dot_notation(self):
+    example_source = '''
+def main():
+  parser = argparse.ArgumentParser(description='Example Argparse Program', formatter_class=RawDescriptionHelpFormatter)
+    '''
+    nodes = ast.parse(example_source)
+    main_node = source_parser.find_main(nodes)
+    self.assertEqual('main', main_node.name)
+    containing_block = source_parser.find_block_containing_argparse([main_node])
+    self.assertTrue(containing_block is not None)
 
   def test_find_argparse_locates_assignment_stmnt_in_main(self):
     nodes = ast.parse(source_parser._openfile(self._module_with_argparse_in_main))
@@ -178,6 +191,28 @@ parser.add_argument("filename", help="filename")
     nodes = ast.parse(source)
     self.assertFalse(source_parser.has_instantiator(nodes.body[1], 'add_argument'))
 
+  def test_parser_identifies_import_module(self):
+    source = '''
+import os
+import itertools
+from os import path
+    '''
+    import _ast
+    nodes = ast.parse(source)
+    module_imports = source_parser.get_nodes_by_instance_type(nodes, _ast.Import)
+    self.assertEqual(2, len(module_imports))
+
+  def test_parser_identifies_import_from(self):
+    source = '''
+import os
+import itertools
+from os import path
+from gooey.gooey_decorator import Gooey
+    '''
+    import _ast
+    nodes = ast.parse(source)
+    from_imports = source_parser.get_nodes_by_instance_type(nodes, _ast.ImportFrom)
+    self.assertEqual(2, len(from_imports))
 
 
 
