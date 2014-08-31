@@ -8,7 +8,7 @@ class TestCodePrep(unittest.TestCase):
   def test_split_line(self):
     line = "parser = ArgumentParser(description='Example Argparse Program')"
     self.assertEqual("parser", code_prep.split_line(line)[0])
-    self.assertEqual("= ArgumentParser(description='Example Argparse Program')", code_prep.split_line(line)[1])
+    self.assertEqual("ArgumentParser(description='Example Argparse Program')", code_prep.split_line(line)[1])
 
   def test_update_parser_varname_assigns_new_name_to_parser_var(self):
     line = ["parser = ArgumentParser(description='Example Argparse Program')"]
