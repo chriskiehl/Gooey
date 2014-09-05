@@ -37,17 +37,17 @@ Table of Contents
 Change Log
 ----------
 
-- fixed a bug in codegen.py that was putting raw `ast` objects in the code output
+- Fixed a bug in codegen.py that was putting raw `ast` objects in the code output.
 - Rewrote parser to make future changes easier. `Issue 18`
-- fixed a bug in the parser that was missing certain import types 
+- Fixed a bug in the parser that was missing certain import types.
 - Added `Restart` Button. `Issue #20` (hacked it in there ;) need to pretty it up later.)
-- Fixed bug in language class
+- Fixed bug in language class.
 
 
-**Panned Features:** 
+**Planned Features:** 
 - docopt support -- The people demand it! 
 - Ability to customize widgets (e.g. FileChooser instead of TextBox)
-- stop/cancel button on run screen 
+- Stop/cancel button on run screen 
  
 
 
@@ -96,7 +96,7 @@ See: [How does it Work](#how-does-it-work) section for details on each option.
 What is it? 
 -----------  
 
-Gooey converts your Console Applications into end-user friendly GUI applications. It lets you focus on building robust, configurable programs in a familiar way, all without having to worry about how it will be presented to and interacted with by your average user. 
+Gooey converts your Console Applications into end-user-friendly GUI applications. It lets you focus on building robust, configurable programs in a familiar way, all without having to worry about how it will be presented to and interacted with by your average user. 
 
 Why?
 ---  
@@ -106,7 +106,7 @@ Because as much as we love the command prompt, the rest of the world looks at it
 Who is this for?
 ----------------  
 
-If you're building utilities for yourself, other programmers, or something which produces a result that you want capture and pipe over to another console application (e.g. *nix philosophy utils), Gooey probably isn't the tool for you. However, if you're building 'run and done,' around the office style scripts, things that shovel bits from point A to point B, or simply something that's targeted at a non-programmer, Gooey is the perfect tool for the job. It lets you build as complex of an application as your heart desires all while getting the GUI side for free. 
+If you're building utilities for yourself, other programmers, or something which produces a result that you want to capture and pipe over to another console application (e.g. *nix philosophy utils), Gooey probably isn't the tool for you. However, if you're building 'run and done,' around-the-office-style scripts, things that shovel bits from point A to point B, or simply something that's targeted at a non-programmer, Gooey is the perfect tool for the job. It lets you build as complex of an application as your heart desires all while getting the GUI side for free. 
 
 How does it work? 
 ------------------  
@@ -117,7 +117,7 @@ Gooey is attached to your code via a simple decorator on your `main` method.
     def main():
       # rest of code
 
-At runtime, it loads the Abstract Syntax Tree for your module and parses it for all references to `ArgumentParser` (The older `optparse` is currently not supported). These references are then extracted, assigned a `component type` based on the `'action'` they provide, and finally used to assemble the GUI.  
+At run-time, it loads the Abstract Syntax Tree for your module and parses it for all references to `ArgumentParser`. (The older `optparse` is currently not supported.) These references are then extracted, assigned a `component type` based on the `'action'` they provide, and finally used to assemble the GUI.  
 
 ####Mappings: 
 
@@ -149,12 +149,12 @@ Gooey comes in three main flavors.
 - Basic
 - No config  
 
-And each with the following options: 
+Each has the following options: 
 
 
 | Parameter | Summary | 
 |-----------|---------|
-| language | Gooey is (kind of) international ready (sans unicode issues (TODO). All program text is stored in an external `json` file. Translating to your host language only requires filling in the key/value pairs.|
+| language | Gooey is (kind of) international ready (sans Unicode issues (TODO)). All program text is stored in an external `json` file. Translating to your host language only requires filling in the key/value pairs.|
 |program_name | The name displayed in the title bar of the GUI window. If the value is `None`, the title is pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. If `None` the description is pulled from the  `ArgumentParser`. |  
 
@@ -201,7 +201,7 @@ The basic view is best for times when the user is familiar with Console Applicat
 
 ###No Config
 
-No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the guy for classing up the delivery of little one-off scripts. 
+No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. 
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/no_config.png">
@@ -238,7 +238,7 @@ Wanna help?
 -----------  
 
 * Do you art? I'd love to swap out the graphics to something more stylistically unified. 
-* Programmer? Pull requests are super welcome. The projects style is *fantastically* inconsistent, though. So be warned :) I tried to follow the WxWidgets style of Leading Capital methods and CamelCased variables, but.. Python habits die hard. So, there are underscores littered all over the place. 
+* Programmer? Pull requests are super welcome. The projects' style is *fantastically* inconsistent, though. So be warned :) I tried to follow the WxWidgets style of Leading Capital methods and CamelCased variables, but.. Python habits die hard. So, there are underscores littered all over the place. 
 
 
 
