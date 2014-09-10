@@ -14,8 +14,10 @@ from gooey import Gooey
 
 @Gooey
 def main():
-  my_cool_parser = ArgumentParser(description="Mock application to test Gooey's functionality")
-  my_cool_parser.add_argument("filename", help="Name of the file you want to read")  # positional
+  desc = "Mock application to test Gooey's functionality"
+  file_help_msg = "Name of the file you want to read"
+  my_cool_parser = ArgumentParser(description=desc)
+  my_cool_parser.add_argument("filename", help=file_help_msg)  # positional
   my_cool_parser.add_argument("outfile", help="Name of the file where you'll save the output")  # positional
   my_cool_parser.add_argument('-c', '--countdown', default=10, type=int, help='sets the time to count down from')
   my_cool_parser.add_argument("-s", "--showtime", action="store_true", help="display the countdown timer")

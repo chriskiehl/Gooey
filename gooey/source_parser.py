@@ -7,15 +7,14 @@ Collection of functions for extracting argparse related statements from the
 client code.
 '''
 
+import re
 import os
 import ast
 import _ast
-from itertools import chain
+from itertools import *
 
 import codegen
-from monkey_parser import MonkeyParser
-from gooey.gui.action_sorter import ActionSorter
-from parser_exceptions import ParserError
+from gooey import modules
 
 
 def parse_source_file(file_name):
@@ -67,6 +66,10 @@ def _openfile(file_name):
   with open(file_name, 'rb') as f:
     return f.read()
 
+def read_client_module(filename):
+  with open(filename, 'r') as f:
+    return f.readlines()
+
 def get_nodes_by_instance_type(nodes, object_type):
   return [node for node in walk_tree(nodes) if isinstance(node, object_type)]
 
@@ -92,12 +95,54 @@ def convert_to_python(ast_source):
   """
   return map(codegen.to_source, ast_source)
 
+def get_assignment_name(lines):
+  nodes = ast.parse(''.join(lines))
+  assignments = get_nodes_by_instance_type(nodes, _ast.Assign)
+  argparse_var = get_nodes_by_containing_attr(assignments, 'parse_args')
+  return argparse_var[0].value.func.value.id
+
+
+def lines_indented(line):
+  unindented = re.compile("^[a-zA-Z0-9_@]+")
+  return unindented.match(line) is None
+
+def not_at_main(line):
+  return 'def main' not in line
+
+def not_at_parse_args(line):
+  return 'parse_args(' not in line
+
+def get_indent(line):
+  indent = re.compile("(\t|\s)")
+  return ''.join(takewhile(lambda char: indent.match(char) is not None, line))
+
+def format_source_to_return_parser(source):
+  varname = get_assignment_name(source)
+
+  client_source = [line for line in source
+                   if '@gooey' not in line.lower()
+                   and 'import gooey' not in line.lower()]
+
+  top = takewhile(not_at_parse_args, client_source)
+  middle = dropwhile(not_at_parse_args, client_source)
+  # need this so the return statement is indented the
+  # same amount as the rest of the source
+  indent_width = get_indent(next(middle))
+
+  # chew off everything until you get to the end of the
+  # current block
+  bottom = dropwhile(lines_indented, middle)
+  # inject a return
+  return_statement = ['{}return {}\n\n'.format(indent_width, varname)]
+  # stitch it all back together
+  new_source = chain(top, return_statement, bottom)
+  return ''.join(new_source)
+
 def extract_parser(modulepath):
-  ast_source = parse_source_file(modulepath)
-  if ast_source:
-    python_code = convert_to_python(ast_source)
-    return MonkeyParser(python_code)
-  return None
+  source = read_client_module(modulepath)
+  module_source = format_source_to_return_parser(source)
+  client_module = modules.load(module_source)
+  return client_module.main()
 
 if __name__ == '__main__':
   filepath = os.path.join(os.path.dirname(__file__),
@@ -109,9 +154,6 @@ if __name__ == '__main__':
   ast_source = parse_source_file(filepath)
   python_code = convert_to_python(list(ast_source))
   for i in python_code: print i
-  # parser = MonkeyParser(python_code)
-  # factory = ActionSorter(parser._actions)
-  # print factory._positionals
 
 
 

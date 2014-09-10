@@ -215,7 +215,11 @@ from gooey.gooey_decorator import Gooey
     self.assertEqual(2, len(from_imports))
 
 
-
+  def test_get_indent_return_indent_amount_for_tabs_and_spaces(self):
+    spaced_lines = ["def main"," def main","  def main","    def main"]
+    expected_indent = ["", " ", "  ", "    "]
+    for line, expected in zip(spaced_lines, expected_indent):
+      self.assertEqual(expected, source_parser.get_indent(line))
 
   # def test_parse_source_file__file_with_argparse_in_main__succesfully_finds_and_returns_ast_obejcts(self):
   #   ast_objects = source_parser.parse_source_file(self._module_with_argparse_in_main)

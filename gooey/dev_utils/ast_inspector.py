@@ -1,5 +1,6 @@
-from gooey import source_parser
-
+import itertools
+from gooey import source_parser, code_prep
+import tempfile
 __author__ = 'Chris'
 
 """
@@ -47,6 +48,36 @@ def main():
   except:
     pass
 '''
-  nodes = ast.parse(open(r'C:\Users\Chris\Dropbox\pretty_gui\Gooey\gooey\mockapplications\mockapp_import_argparse.py').read())
 
-  pretty_print(nodes, 1)
+  git_example = '''
+
+from argparse import ArgumentParser
+def main():
+    """Main"""
+    bar = 'bar'
+    print "Hello!"
+    description='Desc'
+    parser = ArgumentParser(description=bar)
+    parser.add_argument(bar, help=('bar'))    ##################
+    return parser
+    # args = parser.parse_args()
+    # print(args)
+    # return True
+  '''
+
+  nodes = ast.parse(git_example)
+  assign = source_parser.get_nodes_by_instance_type(nodes, Assign)
+  assignment = source_parser.get_nodes_by_containing_attr(assign, "ArgumentParser")
+  varname, instruction = code_prep.split_line(source_parser.convert_to_python(assignment)[0])
+  updated_code = git_example.replace(varname, "jello_maker")
+  all_code_leading_up_to_parseargs = '\n'.join(itertools.takewhile(lambda line: 'parse_args()' not in line, updated_code.split('\n')))
+  code = compile(all_code_leading_up_to_parseargs, '', 'exec')
+  exec(code)
+  parser = main()
+  print parser._actions
+
+
+
+  # print assign[0].value.func.__dict__
+  # print assign[0].value.keywords[0].value.__dict__
+  # pretty_print(assign[0], 1)

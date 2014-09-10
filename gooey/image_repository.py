@@ -26,7 +26,7 @@ def _list_images():
   print '\n'.join(stmnts)
 
 
-_list_images()
+# _list_images()
 
 
 

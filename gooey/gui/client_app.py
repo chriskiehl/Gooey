@@ -49,7 +49,7 @@ class ClientApp(object):
 
 
 class EmptyClientApp(object):
-  def __init__(self):
+  def __init__(self, payload):
     '''
     initializes a BlankModel object
 
@@ -57,6 +57,7 @@ class EmptyClientApp(object):
     '''
 
     self.description = ''
+    self.payload = payload
 
 
 if __name__ == '__main__':

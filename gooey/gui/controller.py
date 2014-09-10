@@ -64,7 +64,7 @@ class Controller(object):
   def ManualStart(self):
     self._base.NextPage()
     wx.CallAfter(wx.ActivateEvent)
-    self._payload_runner.start()
+    Process(target=self.RunClientCode).start()
 
   def OnCloseButton(self, widget, event):
     self._base.Destroy()
