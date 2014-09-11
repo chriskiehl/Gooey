@@ -60,9 +60,10 @@ class BaseWindow(wx.Frame):
 
   def _init_components(self, BodyPanel):
     # init gui
+    _desc = self._client_app.description
     self.head_panel = header.FrameHeader(
         heading=i18n.translate("settings_title"),
-        subheading=self._client_app.description,
+        subheading=_desc if _desc is not None else '',
         parent=self)
     self.config_panel = BodyPanel(self)
     self.runtime_display = RuntimeDisplay(self)
