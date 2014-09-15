@@ -69,10 +69,16 @@ class AbstractComponent(object):
     return base_text
 
   def HasNargs(self, action):
-    return action.nargs == '+' or action.nargs == '?'
+    return action.nargs is not None and action.nargs is not 0
+
 
   def CreateNargsMsg(self, action):
-    return ' (Note: at least 1 or more arguments are required)'
+    if isinstance(action.nargs, int):
+      return '\n(Note: exactly {} arguments are required)'.format(action.nargs)
+    elif action.nargs == '+':
+      return '\n(Note: at least 1 or more arguments are required)'
+    return ''
+
 
   def CreateNameLabelWidget(self, parent, action):
     label = str(action.dest).title()
