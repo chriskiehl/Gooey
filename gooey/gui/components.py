@@ -178,7 +178,7 @@ class Choice(AbstractComponent):
     if self._widget.GetValue() == self._DEFAULT_VALUE:
       return None
     return ' '.join(
-      [self._action.option_strings[0],  # get the verbose copy if available
+      [self._action.option_strings[0] if self._action.option_strings else '',  # get the verbose copy if available
        self._widget.GetValue()])
 
   def BuildInputWidget(self, parent, action):
