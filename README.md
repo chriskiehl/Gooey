@@ -13,8 +13,6 @@ Turn (almost) any Console Program into a GUI application with one line
 Table of Contents
 -----------------  
 
-- [Gooey](#gooey)
-- [Table of contents](#table-of-contents)
 - [Change Log](#change-log)
 - [Quick Start](#quick-start)
 	- [Installation Instructions](#installation-instructions)
