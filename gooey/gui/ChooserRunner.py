@@ -11,7 +11,7 @@ class MyFrame(wx.Frame):
     self.SetBackgroundColour('#ffffff')
 
     sizer = wx.BoxSizer(wx.VERTICAL)
-    f = CalendarChooser({'title':'cool title', 'help_msg':'cool help msg that is super long and intense and has lots of words!', 'nargs': '+'})
+    f = CalendarChooser({'title':'cool title', 'help_msg':'cool help msg that is super long and intense andd has lots of words!', 'nargs': '+'})
     sizer.Add(f.build(self), 0, wx.EXPAND)
     self.SetSizer(sizer)
 
