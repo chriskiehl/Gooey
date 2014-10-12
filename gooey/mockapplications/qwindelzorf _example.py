@@ -1,25 +1,49 @@
-import argparse
+"""inline"""
 
+import argparse
 from gooey import Gooey
 
+x = '''random line'''
+
+y = """
+Buncha text here
+and here
+and here
+and here
+"""
 
 @Gooey
 def main():
+  """This is my main module"""
   parser = argparse.ArgumentParser('Get my users')
-  parser.add_argument('-type', "--type", type=str, action='store', dest='type', help= "type Query")
-  parser.add_argument('-dst', "--datestart", type=str, action='store', dest='date_start', help= "from Date")
-  parser.add_argument('-dsp', "--datestop", type=str, action='store', dest='date_stop', help= "to Date")
-  parser.add_argument('-n',"--IDuser", type=str, action='store', dest='idu', help="IDuser")
-  parser.add_argument('-t',"--text", type=str, action='store', dest='text', help="find Text")
-  parser.add_argument('-f',"--file", type=str, action='store', dest='filepath', help="File Save")
+  verbosity = parser.add_mutually_exclusive_group()
+  verbosity.add_argument('-v', '--verbose', dest='verbose', action="store_true", help="Show more details")
+  verbosity.add_argument('-q', '--quiet', dest='quiet', action="store_true", help="Only output on error")
+
   args = parser.parse_args()
-  query_type = args.type
-  date_start=args.date_start
-  date_stop=args.date_stop
-  userid=args.idu
-  input_data = args.text
-  path_to_file = args.filepath
-  print path_to_file
+
+def moo(asdf):
+  '''single quoted inline comment'''
+  a = 1
+
+def foo():
+  """Double quoted inline comment """
+  a = 1
+
+def bar():
+  """
+  Double quoted
+  multiline comment
+  """
+  a = 1
+
+def baz():
+  '''
+  Double quoted
+  multiline comment
+  '''
+  a = 1
+
 
 if __name__ == '__main__':
   main()

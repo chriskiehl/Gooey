@@ -58,8 +58,10 @@ class AbstractComponent(object):
     ''' Must construct the main widget type for the Action '''
     pass
 
+
   def HasHelpMsg(self, action):
     return action.help is not None
+
 
   def CreateHelpMsgWidget(self, parent, action):
     base_text = wx.StaticText(parent, label=action.help)
@@ -88,17 +90,21 @@ class AbstractComponent(object):
     styling.MakeBold(text)
     return text
 
+
   def AssertInitialization(self, clsname):
     if not self._widget:
       raise BuildException('%s was not correctly initialized' % clsname)
 
+
   def __str__(self):
     return str(self._action)
+
 
   @abstractmethod
   def GetValue(self):
     ''' Returns the state of the given widget '''
     pass
+
 
   def Update(self, size):
     '''
@@ -127,6 +133,7 @@ class AbstractComponent(object):
     if help_msg.Size[0] not in wiggle_room:
       self._msg.SetLabel(self._msg.GetLabelText().replace('\n', ' '))
       self._msg.Wrap(content_area)
+
 
 
 class Positional(AbstractComponent):
@@ -192,6 +199,7 @@ class Choice(AbstractComponent):
 
 
 class Optional(AbstractComponent):
+
   def __init__(self, action):
     self._action = action
     self._widget = None
@@ -322,6 +330,15 @@ class Counter(AbstractComponent):
     arg = str(self._action.option_strings[0]).replace('-', '')
     repeated_args = arg * int(dropdown_value)
     return '-' + repeated_args
+
+class Group(AbstractComponent):
+
+  def __init__(self, action):
+    self._action = action
+    self._widget = None
+    self.contents = None
+
+
 
 
 if __name__ == '__main__':
