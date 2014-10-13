@@ -3,7 +3,7 @@ __author__ = 'Chris'
 
 import wx
 from wx.lib import wordwrap
-from Chooser import FileChooser, DirectoryChooser, CalendarChooser
+from choosers import FileChooser, DirectoryChooser, CalendarChooser
 
 class MyFrame(wx.Frame):
   def __init__(self, parent):

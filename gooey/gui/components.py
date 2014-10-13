@@ -20,6 +20,122 @@ class BuildException(RuntimeError):
   pass
 
 
+class AbstractGuiComponent(object):
+  '''
+  Template pattern-y abstract class for the gui.
+  Children must all implement the BuildWidget and getValue
+  methods.
+  '''
+  __metaclass__ = ABCMeta
+
+  def __init__(self):
+    self._widget = None
+    self.msg = EMPTY
+
+  def Build(self, parent):
+    self._widget = self.BuildInputWidget(parent, self._action)
+    if self.HasHelpMsg(self._action):
+      self._msg = self.CreateHelpMsgWidget(parent, self._action)
+    else:
+      self._msg = None
+
+    sizer = wx.BoxSizer(wx.VERTICAL)
+    sizer.Add(self.CreateNameLabelWidget(parent, self._action))
+    sizer.AddSpacer(2)
+
+    if self._msg:
+      sizer.Add(self._msg, 0, wx.EXPAND)
+      sizer.AddSpacer(2)
+    else:
+      sizer.AddStretchSpacer(1)
+
+    sizer.AddStretchSpacer(1)
+    sizer.Add(self._widget, 0, wx.EXPAND)
+    return sizer
+
+  @abstractmethod
+  def BuildInputWidget(self, parent, action):
+    ''' Must construct the main widget type for the Action '''
+    pass
+
+
+  def HasHelpMsg(self, action):
+    return action.help is not None
+
+
+  def CreateHelpMsgWidget(self, parent, action):
+    base_text = wx.StaticText(parent, label=action.help)
+    if self.HasNargs(action):
+      base_text.SetLabelText(base_text.GetLabelText() + self.CreateNargsMsg(action))
+    styling.MakeDarkGrey(base_text)
+    return base_text
+
+  def HasNargs(self, action):
+    return action.nargs is not None and action.nargs is not 0
+
+
+  def CreateNargsMsg(self, action):
+    if isinstance(action.nargs, int):
+      return '\n(Note: exactly {0} arguments are required)'.format(action.nargs)
+    elif action.nargs == '+':
+      return '\n(Note: at least 1 or more arguments are required)'
+    return ''
+
+
+  def CreateNameLabelWidget(self, parent, action):
+    label = str(action.dest).title()
+    if len(action.option_strings) > 1:
+      label += ' (%s)' % action.option_strings[0]
+    text = wx.StaticText(parent, label=label)
+    styling.MakeBold(text)
+    return text
+
+
+  def AssertInitialization(self, clsname):
+    if not self._widget:
+      raise BuildException('%s was not correctly initialized' % clsname)
+
+
+  def __str__(self):
+    return str(self._action)
+
+
+  @abstractmethod
+  def GetValue(self):
+    ''' Returns the state of the given widget '''
+    pass
+
+
+  def Update(self, size):
+    '''
+    Manually word wraps the StaticText help objects which would
+    otherwise not wrap on resize
+
+    Content area is based on each grid having two equally sized
+    columns, where the content area is defined as 87% of the halved
+    window width. The wiggle room is the distance +- 10% of the
+    content_area.
+
+    Wrap calculation is run only when the size of the help_msg
+    extends outside of the wiggle_room. This was done to avoid
+    the "flickering" that comes from constantly resizing a
+    StaticText object.
+    '''
+    if self._msg is None:
+      return
+    help_msg = self._msg
+    width, height = size
+    content_area = int((width / 2) * .87)
+
+    print 'wiget size', help_msg.Size[0]
+    wiggle_room = range(int(content_area - content_area * .05), int(content_area + content_area * .05))
+    print '(', int(content_area - content_area * .05), ' -> ', int(content_area + content_area * .05), ')'
+    if help_msg.Size[0] not in wiggle_room:
+      self._msg.SetLabel(self._msg.GetLabelText().replace('\n', ' '))
+      self._msg.Wrap(content_area)
+
+
+
 class AbstractComponent(object):
   '''
   Template pattern-y abstract class for the gui.
