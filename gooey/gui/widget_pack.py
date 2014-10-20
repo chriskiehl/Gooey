@@ -158,3 +158,5 @@ class CounterPayload(WidgetPack):
     arg = str(self.option_string).replace('-', '')
     repeated_args = arg * int(dropdown_value)
     return '-' + repeated_args
+
+

@@ -12,7 +12,7 @@ and here
 and here
 """
 
-@Gooey
+# @Gooey
 def main():
   """This is my main module"""
   parser = argparse.ArgumentParser('Get my users')
@@ -20,7 +20,11 @@ def main():
   verbosity.add_argument('-v', '--verbose', dest='verbose', action="store_true", help="Show more details")
   verbosity.add_argument('-q', '--quiet', dest='quiet', action="store_true", help="Only output on error")
 
-  args = parser.parse_args()
+  for mutex_group in parser._mutually_exclusive_groups:
+    group_actions = mutex_group._group_actions
+    for i, mutex_action in enumerate(mutex_group._group_actions):
+      print mutex_action
+
 
 def moo(asdf):
   '''single quoted inline comment'''

@@ -10,11 +10,24 @@ class MyFrame(wx.Frame):
     self.SetBackgroundColour('#ffffff')
 
     sizer = wx.BoxSizer(wx.VERTICAL)
-    f = components2.Counter({
-      'title': 'cool title',
-      'help_msg': 'cool help msg that is super long and intense andd has lots of words!', 'nargs': '+',
-      'option_strings': ['-f', '--fudger'],
-      'choices': ['choice 1', 'choice 2', 'choice 3']
+    # f = components2.RadioGroup({
+    #   'title': 'cool title',
+    #   'help_msg': 'cool help msg that is super long and intense andd has lots of words!', 'nargs': '+',
+    #   'option_strings': ['-f', '--fudger'],
+    #   'choices': ['choice 1', 'choice 2', 'choice 3']
+    # })
+    f = components2.RadioGroup(data={
+      'group_name': 'My Options',
+      'buttons': [
+        {'name': 'verbose',
+         'help': "cool help msg that is super long and intense and has lots of words!",
+         'option': '-v'
+        },{
+         'name': 'quiet',
+         'help': "Only output on error",
+         'option': '-q'
+        }
+      ]
     })
     sizer.Add(f.build(self), 0, wx.EXPAND)
     self.SetSizer(sizer)
@@ -24,3 +37,5 @@ if __name__ == '__main__':
   frame = MyFrame(None)
   frame.Show(True)
   app.MainLoop()
+
+

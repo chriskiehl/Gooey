@@ -89,6 +89,69 @@ class BaseGuiComponent(object):
     return self.widget_pack.getValue()
 
 
+
+class RadioGroup(object):
+  def __init__(self, data):
+    self.panel = None
+
+    self.data = data
+
+    self.radio_buttons = []
+    self.option_stings = []
+    self.help_msgs = []
+    self.btn_names = []
+
+  def build(self, parent):
+    return self.do_layout(parent)
+
+  def do_layout(self, parent):
+    self.panel = wx.Panel(parent)
+
+    self.radio_buttons = [wx.RadioButton(self.panel, -1) for _ in self.data['buttons']]
+    self.btn_names = [wx.StaticText(self.panel, label=btn['name'].title()) for btn in self.data['buttons']]
+    self.help_msgs = [wx.StaticText(self.panel, label=btn['help'].title()) for btn in self.data['buttons']]
+    self.option_stings = [btn['option'] for btn in self.data['buttons']]
+
+    # box = wx.StaticBox(self.panel, -1, label=self.data['group_name'])
+    vertical_container = wx.BoxSizer(wx.VERTICAL)
+
+    for button, name, help in zip(self.radio_buttons, self.btn_names, self.help_msgs):
+
+      hbox = wx.BoxSizer(wx.HORIZONTAL)
+
+      hbox.Add(button, 0, wx.ALIGN_TOP | wx.ALIGN_LEFT)
+      hbox.Add(name, 0, wx.LEFT, 10)
+
+      vertical_container.Add(hbox, 0, wx.EXPAND)
+
+      vertical_container.Add(help, 1, wx.EXPAND | wx.LEFT, 25)
+      vertical_container.AddSpacer(5)
+      self.panel.Bind(wx.EVT_RADIOBUTTON, self.onSetter, button)
+
+    self.panel.SetSizer(vertical_container)
+    self.panel.Bind(wx.EVT_SIZE, self.onResize)
+    return self.panel
+
+  def onSetter(self, evt):
+    self.getValue()
+
+  def onResize(self, evt):
+    msg = self.help_msgs[0]
+    container_width, _ = self.panel.Size
+    text_width, _ = msg.Size
+
+    if text_width != container_width:
+      msg.SetLabel(msg.GetLabelText().replace('\n', ' '))
+      msg.Wrap(container_width)
+    evt.Skip()
+
+  def getValue(self):
+    vals = [button.GetValue() for button in self.radio_buttons]
+    print self.option_stings[vals.index(True)]
+    return self.option_stings[vals.index(True)]
+
+
+
 FileChooser = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileChooserPayload())
 DirChooser  = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DirChooserPayload())
 DateChooser = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DateChooserPayload())
