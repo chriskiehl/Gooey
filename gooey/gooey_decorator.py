@@ -45,6 +45,7 @@ done.
 from functools import partial
 
 import wx
+from gooey import argparse_to_json
 from gooey.gui.component_factory import ComponentFactory
 
 import i18n
@@ -84,8 +85,11 @@ def Gooey(f=None, advanced=True,
       if config:
         parser = get_parser(module_path)
         client_app = ClientApp(parser, payload)
+
+        build_spec = argparse_to_json.convert(parser)
+
         if advanced:
-          BodyPanel = partial(AdvancedConfigPanel, action_groups=client_app.action_groups)
+          BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
         else:
           BodyPanel = BasicConfigPanel
       # User doesn't want to display configuration screen

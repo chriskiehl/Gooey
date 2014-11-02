@@ -1,12 +1,5 @@
 '''
 Created on Jan 19, 2014
-
-New plan: 
-
-  fuck the multi-component thing.
-
-  Bind and unbind the buttons on the panels.
-
 @author: Chris
 '''
 
@@ -45,6 +38,7 @@ class BaseWindow(wx.Frame):
     self._do_layout()
     self._init_controller()
     self.registerControllers()
+    self.Bind(wx.EVT_SIZE, self.onResize)
 
 
   def _init_properties(self):
@@ -54,7 +48,7 @@ class BaseWindow(wx.Frame):
       title = self._params['program_name']
     self.SetTitle(title)
     self.SetSize((610, 530))
-    self.SetMinSize((400, 300))
+    # self.SetMinSize((400, 300))
     self.icon = wx.Icon(image_repository.icon, wx.BITMAP_TYPE_ICO)
     self.SetIcon(self.icon)
 
@@ -105,6 +99,10 @@ class BaseWindow(wx.Frame):
 
   def ManualStart(self):
     self._controller.ManualStart()
+
+  def onResize(self, evt):
+    print self.Size
+    evt.Skip()
 
 
 if __name__ == '__main__':

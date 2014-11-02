@@ -1,41 +1,76 @@
 __author__ = 'Chris'
 
 import wx
-import components2
+from wx.lib.scrolledpanel import ScrolledPanel
 
+
+class TestPanel(ScrolledPanel):
+  def __init__(self, parent):
+    ScrolledPanel.__init__(self, parent)
+    self.SetupScrolling(scroll_x=False)
+
+    self.textctrls = [wx.TextCtrl(self) for _ in range(4)]
+
+    sizer = wx.BoxSizer(wx.VERTICAL)
+    hsizer = wx.BoxSizer(wx.HORIZONTAL)
+    for textctrl in self.textctrls:
+      hsizer.Add(textctrl, 1, wx.EXPAND)
+
+    sizer.Add(hsizer, 0, wx.EXPAND)
+    self.SetSizer(sizer)
 
 class MyFrame(wx.Frame):
   def __init__(self, parent):
     wx.Frame.__init__(self, parent, title="test", size=(320, 240))
     self.SetBackgroundColour('#ffffff')
-
-    sizer = wx.BoxSizer(wx.VERTICAL)
-    # f = components2.RadioGroup({
-    #   'title': 'cool title',
-    #   'help_msg': 'cool help msg that is super long and intense andd has lots of words!', 'nargs': '+',
-    #   'option_strings': ['-f', '--fudger'],
-    #   'choices': ['choice 1', 'choice 2', 'choice 3']
-    # })
-    f = components2.RadioGroup(data={
-      'group_name': 'My Options',
-      'buttons': [
-        {'name': 'verbose',
-         'help': "cool help msg that is super long and intense and has lots of words!",
-         'option': '-v'
-        },{
-         'name': 'quiet',
-         'help': "Only output on error",
-         'option': '-q'
-        }
-      ]
-    })
-    sizer.Add(f.build(self), 0, wx.EXPAND)
-    self.SetSizer(sizer)
+    self.panel = TestPanel(self)
+    self.Show()
 
 if __name__ == '__main__':
   app = wx.App(False)
-  frame = MyFrame(None)
-  frame.Show(True)
+  MyFrame(None)
   app.MainLoop()
 
+
+
+
+  # a = {
+  #   'required' : [
+  #     {
+  #       'component': 'TextField',
+  #       'data': {
+  #         'display_name': 'filename',
+  #         'help_text': 'path to file you want to process',
+  #         'command_args': ['-f', '--infile']
+  #       }
+  #     },
+  #     {
+  #       'component': 'FileChooser',
+  #       'data': {
+  #         'display_name': 'Output Location',
+  #         'help_text': 'Where to save the file',
+  #         'command_args': ['-o', '--outfile']
+  #       }
+  #     }
+  #   ],
+  #   'optional' : [
+  #     {
+  #       'component': 'RadioGroup',
+  #       'data': [
+  #         {
+  #           'display_name': 'Output Location',
+  #           'help_text': 'Where to save the file',
+  #           'command_args': ['-o', '--outfile']
+  #         }, {
+  #           'display_name': 'Output Location',
+  #           'help_text': 'Where to save the file',
+  #           'command_args': ['-o', '--outfile']
+  #         }
+  #       ]
+  #     }
+  #   ]
+  # }
+  #
+  #   ]
+  # }
 

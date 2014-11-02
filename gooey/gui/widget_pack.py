@@ -113,7 +113,7 @@ class DropdownPayload(WidgetPack):
     self.widget = None
 
   def build(self, parent, data):
-    self.option_string = data['option_strings'][0]
+    self.option_string = data['commands'][0]
     self.widget = wx.ComboBox(
         parent=parent,
         id=-1,

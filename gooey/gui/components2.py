@@ -49,13 +49,13 @@ class BaseGuiComponent(object):
   def createHelpMsgWidget(self, parent):
     label_text = (self.formatExtendedHelpMsg(self.data)
                   if self.data['nargs']
-                  else self.data['help_msg'])
-    base_text = wx.StaticText(parent, label=label_text)
+                  else self.data['help'])
+    base_text = wx.StaticText(parent, label=label_text or '')
     styling.MakeDarkGrey(base_text)
     return base_text
 
   def createTitle(self, parent):
-    text = wx.StaticText(parent, label=self.data['title'].title())
+    text = wx.StaticText(parent, label=self.data['display_name'].title())
     styling.MakeBold(text)
     return text
 
@@ -76,18 +76,73 @@ class BaseGuiComponent(object):
     evt.Skip()
 
   def _onResize(self, evt):
-    if self.help_msg is None:
+    if not self.help_msg:
       return
+    self.panel.Size = evt.GetSize()
+    print 'Component Panel Size:', self.panel.Size
     container_width, _ = self.panel.Size
+    # if 'filename' in self.data['display_name']:
+    #   print 'Container Width:', container_width, '-', self.data['display_name']
     text_width, _ = self.help_msg.Size
 
+    print 'container width:', container_width
+    print 'text width', text_width
     if text_width != container_width:
       self.help_msg.SetLabel(self.help_msg.GetLabelText().replace('\n', ' '))
       self.help_msg.Wrap(container_width)
+    evt.Skip()
 
   def getValue(self):
     return self.widget_pack.getValue()
 
+
+class CheckBox(BaseGuiComponent):
+  def __init__(self, data, widget_pack=None):
+    BaseGuiComponent.__init__(self, data, widget_pack)
+
+    self.widget = None
+    print data
+    self.option_strings = data['commands'][0]
+
+  def build(self, parent):
+    return self.do_layout(parent)
+
+  def do_layout(self, parent):
+    self.panel = wx.Panel(parent)
+
+    self.widget = wx.CheckBox(self.panel)
+    self.title = self.createTitle(self.panel)
+    self.help_msg = self.createHelpMsgWidget(self.panel)
+
+    vertical_container = wx.BoxSizer(wx.VERTICAL)
+    vertical_container.Add(self.title)
+
+    horizontal_sizer = wx.BoxSizer(wx.HORIZONTAL)
+    horizontal_sizer.Add(self.widget, 0, wx.EXPAND | wx.RIGHT, 10)
+    horizontal_sizer.Add(self.help_msg, 1, wx.EXPAND)
+
+    vertical_container.Add(horizontal_sizer, 0, wx.EXPAND)
+
+    self.panel.SetSizer(vertical_container)
+    self.panel.Bind(wx.EVT_SIZE, self.onResize)
+    return self.panel
+
+  def onSetter(self, evt):
+    self.getValue()
+
+  def onResize(self, evt):
+    msg = self.help_msg
+    print 'thing:',  self.data['display_name']
+    container_width, _ = self.panel.Size
+    text_width, _ = msg.Size
+
+    if text_width != container_width:
+      msg.SetLabel(msg.GetLabelText().replace('\n', ' '))
+      msg.Wrap(container_width)
+    evt.Skip()
+
+  def getValue(self):
+    return
 
 
 class RadioGroup(object):
@@ -107,13 +162,14 @@ class RadioGroup(object):
   def do_layout(self, parent):
     self.panel = wx.Panel(parent)
 
-    self.radio_buttons = [wx.RadioButton(self.panel, -1) for _ in self.data['buttons']]
-    self.btn_names = [wx.StaticText(self.panel, label=btn['name'].title()) for btn in self.data['buttons']]
-    self.help_msgs = [wx.StaticText(self.panel, label=btn['help'].title()) for btn in self.data['buttons']]
-    self.option_stings = [btn['option'] for btn in self.data['buttons']]
+    self.radio_buttons = [wx.RadioButton(self.panel, -1) for _ in self.data]
+    self.btn_names = [wx.StaticText(self.panel, label=btn_data['display_name'].title()) for btn_data in self.data]
+    self.help_msgs = [wx.StaticText(self.panel, label=btn_data['help'].title()) for btn_data in self.data]
+    self.option_stings = [btn_data['commands'] for btn_data in self.data]
 
     # box = wx.StaticBox(self.panel, -1, label=self.data['group_name'])
-    vertical_container = wx.BoxSizer(wx.VERTICAL)
+    box = wx.StaticBox(self.panel, -1, label='Set Verbosity Level')
+    vertical_container = wx.StaticBoxSizer(box, wx.VERTICAL)
 
     for button, name, help in zip(self.radio_buttons, self.btn_names, self.help_msgs):
 
@@ -158,7 +214,8 @@ DateChooser = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.D
 TextField   = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload())
 Dropdown    = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DropdownPayload())
 Counter     = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.CounterPayload())
-
+# RadioGroup
+# CheckBox
 
 
 

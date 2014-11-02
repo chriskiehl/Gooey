@@ -68,13 +68,23 @@ def main():
   nodes = ast.parse(git_example)
   assign = source_parser.get_nodes_by_instance_type(nodes, Assign)
   assignment = source_parser.get_nodes_by_containing_attr(assign, "ArgumentParser")
+  print assignment
+  print assignment[0].__dict__
+  p = source_parser.convert_to_python(assignment)[0]
+  print p
+
   varname, instruction = code_prep.split_line(source_parser.convert_to_python(assignment)[0])
+
   updated_code = git_example.replace(varname, "jello_maker")
-  all_code_leading_up_to_parseargs = '\n'.join(itertools.takewhile(lambda line: 'parse_args()' not in line, updated_code.split('\n')))
-  code = compile(all_code_leading_up_to_parseargs, '', 'exec')
-  exec(code)
-  parser = main()
-  print parser._actions
+
+  print 'Fusdo:', updated_code.split('\n')[8]
+
+  # all_code_leading_up_to_parseargs = '\n'.join(itertools.takewhile(lambda line: 'parse_args()' not in line, updated_code.split('\n')))
+  # code = compile(all_code_leading_up_to_parseargs, '', 'exec')
+
+  # exec(code)
+  # parser = main()
+  # print parser._actions
 
 
 

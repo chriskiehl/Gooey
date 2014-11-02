@@ -27,7 +27,7 @@ class RuntimeDisplay(wx.Panel):
     self._init_properties()
     self._init_components()
     self._do_layout()
-    self._HookStdout()
+    # self._HookStdout()
 
   def _init_properties(self):
     self.SetBackgroundColour('#F0F0F0')
@@ -61,5 +61,4 @@ class RuntimeDisplay(wx.Panel):
     if txt is not '':
       self.AppendText(txt)
 	
-		
 		
