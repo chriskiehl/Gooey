@@ -128,7 +128,7 @@ class Footer(AbstractFooter):
   screen of the application
 
   args:
-    parent: wxPython parent window
+    parent: wxPython parent windows
     controller: controller class used in delagating all the commands
   '''
 

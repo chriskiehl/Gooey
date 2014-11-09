@@ -113,7 +113,7 @@ class AbstractGuiComponent(object):
 
     Content area is based on each grid having two equally sized
     columns, where the content area is defined as 87% of the halved
-    window width. The wiggle room is the distance +- 10% of the
+    windows width. The wiggle room is the distance +- 10% of the
     content_area.
 
     Wrap calculation is run only when the size of the help_msg
@@ -229,7 +229,7 @@ class AbstractComponent(object):
 
     Content area is based on each grid having two equally sized
     columns, where the content area is defined as 87% of the halved
-    window width. The wiggle room is the distance +- 10% of the
+    windows width. The wiggle room is the distance +- 10% of the
     content_area.
 
     Wrap calculation is run only when the size of the help_msg

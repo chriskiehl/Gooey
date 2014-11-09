@@ -45,15 +45,13 @@ done.
 from functools import partial
 
 import wx
-from gooey import argparse_to_json
-from gooey.gui.component_factory import ComponentFactory
 
+from gooey import argparse_to_json
 import i18n
-import i18n_config
 import source_parser
 
 def Gooey(f=None, advanced=True,
-          language='english', config=True,
+          language='english', show_config=True,
           program_name=None, program_description=None):
   '''
   Decorator for client code's main function.
@@ -61,10 +59,12 @@ def Gooey(f=None, advanced=True,
 
   Scans the client code for argparse data.
   If found, extracts it and build the proper
-  configuration gui window (basic or advanced).
+  configuration gui windows (basic or advanced).
   '''
 
   params = locals()
+
+
 
   def build(payload):
     def inner():
@@ -78,15 +78,26 @@ def Gooey(f=None, advanced=True,
       # load gui components after loading the language pack
       from gooey.gui.client_app import ClientApp
       from gooey.gui.client_app import EmptyClientApp
-      from gooey.gui.base_window import BaseWindow
-      from gooey.gui.advanced_config import AdvancedConfigPanel
-      from gooey.gui.basic_config_panel import BasicConfigPanel
+      from gooey.gui.windows.base_window import BaseWindow
+      from gooey.gui.windows.advanced_config import AdvancedConfigPanel
+      from gooey.gui.windows.basic_config_panel import BasicConfigPanel
 
-      if config:
+      if show_config:
         parser = get_parser(module_path)
+
+        meta = {
+          'target': get_caller_path(),
+          'program_name': program_name,
+          'program_description': program_description or parser.description,
+          'show_config': show_config,
+          'show_advanced': advanced,
+          'default_size': (610, 530),
+          'requireds_cols': 1,
+          'optionals_cols': 2
+        }
         client_app = ClientApp(parser, payload)
 
-        build_spec = argparse_to_json.convert(parser)
+        build_spec = dict(meta.items() + argparse_to_json.convert(parser).items())
 
         if advanced:
           BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
@@ -98,9 +109,9 @@ def Gooey(f=None, advanced=True,
         BodyPanel = BasicConfigPanel
         client_app = EmptyClientApp(payload)
 
-      frame = BaseWindow(BodyPanel, client_app, params)
+      frame = BaseWindow(BodyPanel, build_spec, params)
 
-      if not config:
+      if not show_config:
         frame.ManualStart()
       frame.Show(True)
       app.MainLoop()

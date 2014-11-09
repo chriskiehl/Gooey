@@ -44,6 +44,7 @@ class TestArgparseToJson(unittest.TestCase):
   def test_get_counter_style_optionals(self):
     target_arg = self.find_arg_by_option(self.base_actions, '--verbose')
     json_result = get_counter_style_optionals(self.base_actions)
+    print json_result
     self._test_parser_to_json_mapping(target_arg, json_result[0], 'Dropdown')
 
   def test_get_mutually_exclusive_optionals(self):

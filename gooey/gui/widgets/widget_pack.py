@@ -2,9 +2,11 @@
 
 __author__ = 'Chris'
 
-import wx
 from abc import ABCMeta, abstractmethod
-from calender_dialog import CalendarDlg
+
+import wx
+
+from gooey.gui.widgets.calender_dialog import CalendarDlg
 
 
 class WidgetPack(object):
@@ -38,6 +40,7 @@ class BaseChooser(WidgetPack):
   def build(self, parent, data=None):
     self.parent = parent
     self.text_box = wx.TextCtrl(self.parent)
+    self.text_box.SetMinSize((0, -1))
     self.button = wx.Button(self.parent, label=self.button_text, size=(73, 23))
 
     widget_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -100,6 +103,7 @@ class TextInputPayload(WidgetPack):
 
   def build(self, parent, data):
     self.widget = wx.TextCtrl(parent)
+    self.widget.SetMinSize((0, -1))
     return self.widget
 
   def getValue(self):
@@ -135,7 +139,7 @@ class CounterPayload(WidgetPack):
     self.widget = None
 
   def build(self, parent, data):
-    self.option_string = data['option_strings'][0]
+    self.option_string = data['commands'][0]
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,

@@ -15,6 +15,7 @@ from app.images import image_store
 from app.dialogs.header import FrameHeader
 from app.dialogs.basic_config_panel import RuntimeDisplay
 from app.dialogs.footer import Footer
+from gooey.gui.message_event import EVT_MSG
 
 
 class MessagePump(object):
@@ -89,6 +90,8 @@ class MainWindow(wx.Frame):
     sizer.Add(self.foot_panel, 0, wx.EXPAND)
     self.SetSizer(sizer)
 
+    self.Bind(EVT_MSG, self.OnMsg)
+
   def _init_panels(self):
     self._frame_header = FrameHeader
     self._basic_config_body = None
@@ -100,7 +103,9 @@ class MainWindow(wx.Frame):
     line = wx.StaticLine(self, -1, style=wx.LI_HORIZONTAL)
     line.SetSize((10, 10))
     sizer.Add(line, 0, wx.EXPAND)
-		
+
+
+
 		
 		
 		

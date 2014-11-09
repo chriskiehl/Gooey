@@ -8,6 +8,7 @@ import sys
 import wx
 
 from gooey import i18n
+from gooey.gui.message_event import EVT_MSG
 
 
 class MessagePump(object):
@@ -47,6 +48,8 @@ class RuntimeDisplay(wx.Panel):
     sizer.AddSpacer(20)
     self.SetSizer(sizer)
 
+    self.Bind(EVT_MSG, self.OnMsg)
+
   def _HookStdout(self):
     _stdout = sys.stdout
     _stdout_write = _stdout.write
@@ -60,5 +63,7 @@ class RuntimeDisplay(wx.Panel):
   def WriteToDisplayBox(self, txt):
     if txt is not '':
       self.AppendText(txt)
-	
-		
+
+  def OnMsg(self, evt):
+    print 'It workded!!'
+    print locals()

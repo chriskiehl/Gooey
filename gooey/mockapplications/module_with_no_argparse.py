@@ -6,7 +6,7 @@ Created on Feb 2, 2014
 import time
 from gooey import Gooey
 
-@Gooey(config=False)
+@Gooey(show_config=False)
 def main():
   end = time.time() + 1
   while end > time.time():

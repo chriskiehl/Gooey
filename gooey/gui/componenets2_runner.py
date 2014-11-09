@@ -9,12 +9,13 @@ class TestPanel(ScrolledPanel):
     ScrolledPanel.__init__(self, parent)
     self.SetupScrolling(scroll_x=False)
 
-    self.textctrls = [wx.TextCtrl(self) for _ in range(4)]
+    self.textctrls = [wx.TextCtrl(self) for _ in range(1)]
 
     sizer = wx.BoxSizer(wx.VERTICAL)
     hsizer = wx.BoxSizer(wx.HORIZONTAL)
     for textctrl in self.textctrls:
       hsizer.Add(textctrl, 1, wx.EXPAND)
+      textctrl.SetMinSize((10,23))
 
     sizer.Add(hsizer, 0, wx.EXPAND)
     self.SetSizer(sizer)

@@ -1,9 +1,10 @@
+from gooey.gui.widgets import widget_pack
+
 __author__ = 'Chris'
 
 import wx
-import styling
+from gooey.gui import styling
 
-import widget_pack
 
 class BaseGuiComponent(object):
   def __init__(self, data, widget_pack):
@@ -27,6 +28,7 @@ class BaseGuiComponent(object):
 
     self.title = self.createTitle(self.panel)
     self.help_msg = self.createHelpMsgWidget(self.panel)
+    self.help_msg.SetMinSize((0, -1))
     core_widget_set = self.widget_pack.build(self.panel, self.data)
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
@@ -79,20 +81,20 @@ class BaseGuiComponent(object):
     if not self.help_msg:
       return
     self.panel.Size = evt.GetSize()
-    print 'Component Panel Size:', self.panel.Size
+    # print 'Component Panel Size:', self.panel.Size
     container_width, _ = self.panel.Size
     # if 'filename' in self.data['display_name']:
     #   print 'Container Width:', container_width, '-', self.data['display_name']
     text_width, _ = self.help_msg.Size
 
-    print 'container width:', container_width
-    print 'text width', text_width
+    # print 'container width:', container_width
+    # print 'text width', text_width
     if text_width != container_width:
       self.help_msg.SetLabel(self.help_msg.GetLabelText().replace('\n', ' '))
       self.help_msg.Wrap(container_width)
     evt.Skip()
 
-  def getValue(self):
+  def GetValue(self):
     return self.widget_pack.getValue()
 
 
@@ -101,7 +103,7 @@ class CheckBox(BaseGuiComponent):
     BaseGuiComponent.__init__(self, data, widget_pack)
 
     self.widget = None
-    print data
+    #  data
     self.option_strings = data['commands'][0]
 
   def build(self, parent):
@@ -113,6 +115,7 @@ class CheckBox(BaseGuiComponent):
     self.widget = wx.CheckBox(self.panel)
     self.title = self.createTitle(self.panel)
     self.help_msg = self.createHelpMsgWidget(self.panel)
+    self.help_msg.SetMinSize((0, -1))
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
     vertical_container.Add(self.title)
@@ -132,7 +135,6 @@ class CheckBox(BaseGuiComponent):
 
   def onResize(self, evt):
     msg = self.help_msg
-    print 'thing:',  self.data['display_name']
     container_width, _ = self.panel.Size
     text_width, _ = msg.Size
 
@@ -141,8 +143,8 @@ class CheckBox(BaseGuiComponent):
       msg.Wrap(container_width)
     evt.Skip()
 
-  def getValue(self):
-    return
+  def GetValue(self):
+    return self.option_strings[0] if self.widget.GetValue() else ''
 
 
 class RadioGroup(object):
@@ -182,7 +184,7 @@ class RadioGroup(object):
 
       vertical_container.Add(help, 1, wx.EXPAND | wx.LEFT, 25)
       vertical_container.AddSpacer(5)
-      self.panel.Bind(wx.EVT_RADIOBUTTON, self.onSetter, button)
+      # self.panel.Bind(wx.EVT_RADIOBUTTON, self.onSetter, button)
 
     self.panel.SetSizer(vertical_container)
     self.panel.Bind(wx.EVT_SIZE, self.onResize)
@@ -201,10 +203,14 @@ class RadioGroup(object):
       msg.Wrap(container_width)
     evt.Skip()
 
-  def getValue(self):
+  def GetValue(self):
     vals = [button.GetValue() for button in self.radio_buttons]
-    print self.option_stings[vals.index(True)]
-    return self.option_stings[vals.index(True)]
+    # print self.option_stings[vals.index(True)]
+    try:
+      opts = self.option_stings[vals.index(True)][0]
+      print opts
+    except:
+      return ''
 
 
 

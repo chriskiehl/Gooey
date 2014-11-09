@@ -10,9 +10,9 @@ import unittest
 
 import wx
 
-import advanced_config
 from gooey.gui.client_app import ClientApp
 from gooey.gui import argparse_test_data
+from gooey.gui.windows import advanced_config
 
 
 class TestAdvancedConfigPanel(unittest.TestCase):
@@ -35,7 +35,6 @@ class TestAdvancedConfigPanel(unittest.TestCase):
 if __name__ == "__main__":
   #import sys;sys.argv = ['', 'Test.testName']
   unittest.main()
-	
 	
 	
 	

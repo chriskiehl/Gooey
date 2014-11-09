@@ -142,13 +142,12 @@ def get_counter_style_optionals(actions):
                       for action in actions
                       if isinstance(action, _CountAction)]
 
-  _json_options =  [as_json(action, default_widget='Dropdown')
+  _json_options =  [as_json(action, default_widget='Counter')
                     for action in filtered_actions]
 
   # Counter should show as Dropdowns, so pre-populare with numeric choices
   for opt in _json_options:
     opt['choices'] = range(10)
-
   return _json_options
 
 

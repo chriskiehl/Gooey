@@ -1,8 +1,9 @@
 __author__ = 'Chris'
 
 import wx
-import styling
-from calender_dialog import CalendarDlg
+
+from gooey.gui import styling
+from gooey.gui.widgets.calender_dialog import CalendarDlg
 
 
 class AbstractChooser(object):

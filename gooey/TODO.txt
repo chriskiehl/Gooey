@@ -15,7 +15,17 @@ Restart Button Change:
 - add optional cancel button. 
 - allow NoConfig to run without argparse (Issue #43)
 	- display warning when this happens (could be a misfire on Gooey's end)
-	- add suppress warnings flag 
+	- add suppress warnings flag
+
+
+- Meta Info
+  - Program Name
+  - Program Description
+  - Client Program
+  - Desired Size
+  - Desired Columns (required)
+  - Desired Columns (optional)
+
 
 
 

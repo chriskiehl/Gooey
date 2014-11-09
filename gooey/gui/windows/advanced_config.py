@@ -3,15 +3,15 @@ Created on Dec 28, 2013
 
 @author: Chris
 """
+from itertools import chain
 
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
 from gooey import i18n
 from gooey.gui import component_builder
-from gooey.gui.component_factory import ComponentFactory
 from gooey.gui.option_reader import OptionReader
-import styling
+from gooey.gui import styling
 
 PADDING = 10
 
@@ -22,7 +22,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
   def __init__(self, parent, build_spec=None, **kwargs):
     ScrolledPanel.__init__(self, parent, **kwargs)
-    self.SetupScrolling()
+    self.SetupScrolling(scroll_x=False, scrollToTop=False)
 
     self._action_groups = build_spec
     self._positionals = build_spec.get('required', None)
@@ -65,8 +65,8 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     container.Add(styling.HorizontalRule(self), *STD_LAYOUT)
     container.AddSpacer(20)
 
-    # self.CreateComponentGrid(container, self.components.flags, cols=3)
     self.CreateComponentGrid(container, self.components.general_options, cols=2)
+    self.CreateComponentGrid(container, self.components.flags, cols=3)
     # container.Add(general_opts_grid, *STD_LAYOUT)
     # container.AddSpacer(30)
     # container.Add(flag_grids, 0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
@@ -93,7 +93,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
   def OnResize(self, evt):
     for component in self.components:
       component.onResize(evt)
-    self.SetupScrolling()
+    self.SetupScrolling(scroll_x=False, scrollToTop=False)
     evt.Skip()
 
   def RegisterController(self, controller):
@@ -107,7 +107,15 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     values = [c.GetValue()
               for c in self.components
               if c.GetValue() is not None]
+    print values
     return ' '.join(values)
+
+  def GetRequiredArgs(self):
+    return [arg.GetValue() for arg in self.components.required_args]
+
+  def GetOptionalArgs(self):
+    return [arg.GetValue() for arg in
+            chain(self.components.general_options, self.components.flags)]
 
 
 if __name__ == '__main__':

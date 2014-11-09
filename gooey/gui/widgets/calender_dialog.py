@@ -1,7 +1,7 @@
 __author__ = 'Chris'
 
 import wx
-import styling
+from gooey.gui import styling
 
 
 class CalendarDlg(wx.Dialog):

@@ -1,9 +1,9 @@
 __author__ = 'Chris'
 
-
 import wx
-from wx.lib import wordwrap
-from choosers import FileChooser, DirectoryChooser, CalendarChooser
+
+from gooey.gui.widgets.choosers import CalendarChooser
+
 
 class MyFrame(wx.Frame):
   def __init__(self, parent):

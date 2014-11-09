@@ -63,9 +63,3 @@ class EmptyClientApp(object):
 if __name__ == '__main__':
   pass
 
-
-# 	print m2
-
-	
-	
-	

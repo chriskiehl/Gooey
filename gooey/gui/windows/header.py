@@ -10,7 +10,7 @@ import wx
 from gooey import i18n
 from gooey.gui import imageutil
 from gooey import image_repository
-import styling
+from gooey.gui import styling
 
 PAD_SIZE = 10
 

@@ -3,6 +3,7 @@ Created on Dec 22, 2013
 
 @author: Chris
 '''
+import subprocess
 
 import wx
 import sys
@@ -31,9 +32,8 @@ class Controller(object):
     translator	 = instance of the I18N class
   '''
 
-  def __init__(self, base_frame, client_app):
-    self._base = base_frame
-    self._client_app = client_app
+  def __init__(self, base_frame):
+    self.core_gui = base_frame
     # self._payload_runner = Process(target=self.RunClientCode)
 
   def OnCancelButton(self, widget, event):
@@ -43,41 +43,54 @@ class Controller(object):
     print result
     if result == YES:
       dlg.Destroy()
-      self._base.Destroy()
+      self.core_gui.Destroy()
       sys.exit()
     dlg.Destroy()
 
   def OnStartButton(self, widget, event):
-    if len(sys.argv) < 2:
-      cmd_line_args = self._base.GetOptions()
-      if not self._client_app.IsValidArgString(cmd_line_args):
-        error_msg = self._client_app.GetErrorMsg(cmd_line_args)
-        self.ShowDialog(i18n.translate('error_title'), error_msg, wx.ICON_ERROR)
-        return
-      self._client_app.AddToArgv(cmd_line_args)
-    self._base.NextPage()
-    Process(target=self.RunClientCode).start()
+    cmd_line_args = self.core_gui.GetOptions()
+
+    _required = self.core_gui.GetRequiredArgs()
+    if _required and any(req == '' for req in _required):
+      self.ShowDialog(i18n.translate('error_title'), "Must fill in all fields in the Required section!", wx.ICON_ERROR)
+      return
+
+    self.core_gui.NextPage()
+    self.RunClientCode(None)
+
+  def RunClientCode(self, process):
+    def doInBackground(process, callback):
+      while True:
+        line = process.stdout.readline()
+        if not line:
+          break
+        self.core_gui.PublishConsoleMsg(line)
+      callback(process)
+
+    p = subprocess.Popen(r'python C:\Users\Chris\Desktop\Untitled\prog.py', bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    _pool = Pool(1)
+    _pool.apply_async(doInBackground, (p, self.HandleResult))
+
+  def HandleResult(self, process):
+    _stdout, _stderr = process.communicate()
+    if process.returncode == 0:
+      self.core_gui.NextPage()
+      self.ShowGoodFinishedDialog()
+    else:
+      self.core_gui.NextPage()
+      self.ShowBadFinishedDialog(_stderr)
 
   def OnRestartButton(self, widget, event):
     self.OnStartButton(self, None, event)
 
   def ManualStart(self):
-    self._base.NextPage()
+    self.core_gui.NextPage()
     wx.CallAfter(wx.ActivateEvent)
     Process(target=self.RunClientCode).start()
 
   def OnCloseButton(self, widget, event):
-    self._base.Destroy()
+    self.core_gui.Destroy()
     sys.exit()
-
-  def RunClientCode(self):
-    _pool = Pool(1)
-    try:
-      _pool.apply(self._client_app.payload)
-      self._base.NextPage()
-      self.ShowGoodFinishedDialog()
-    except:
-      self.ShowBadFinishedDialog(traceback.format_exc())
 
   def ShowGoodFinishedDialog(self):
     self.ShowDialog(i18n.translate("execution_finished"),
