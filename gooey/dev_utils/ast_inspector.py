@@ -1,6 +1,5 @@
-import itertools
-from gooey import source_parser, code_prep
-import tempfile
+from gooey.python_bindings import code_prep, source_parser
+
 __author__ = 'Chris'
 
 """
@@ -8,7 +7,8 @@ Pretty Printing util for inspecting the various ast objects
 """
 
 import ast
-from _ast import Assign, Call
+from _ast import Assign
+
 
 def pretty_print(node, indent):
   d = node.__dict__

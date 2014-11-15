@@ -5,6 +5,8 @@ Created on Jan 19, 2014
 
 import os
 import sys
+import time
+from collections import deque
 
 import wx
 
@@ -107,10 +109,8 @@ class BaseWindow(wx.Frame):
     self._controller.ManualStart()
 
   def onResize(self, evt):
-    self.Freeze()
-    # print self.Size
     evt.Skip()
-    self.Thaw()
+
 
   def PublishConsoleMsg(self, text):
     self.runtime_display.cmd_textbox.AppendText(text)

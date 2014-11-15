@@ -104,6 +104,7 @@ class TextInputPayload(WidgetPack):
   def build(self, parent, data):
     self.widget = wx.TextCtrl(parent)
     self.widget.SetMinSize((0, -1))
+    self.widget.SetDoubleBuffered(True)
     return self.widget
 
   def getValue(self):

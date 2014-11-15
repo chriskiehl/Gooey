@@ -1,4 +1,4 @@
-from gooey import modules
+from gooey.python_bindings import modules
 
 __author__ = 'Chris'
 

@@ -1,3 +1,4 @@
+import time
 from gooey.gui.widgets import widget_pack
 
 __author__ = 'Chris'
@@ -19,6 +20,11 @@ class BaseGuiComponent(object):
 
     # Internal WidgetPack
     self.widget_pack = widget_pack
+
+    # used to throttle resizing (to avoid widget jiggle)
+    # TODO: figure out anti-jiggle technology
+    # self.last_update = time.time()
+    # self.event_stack = []
 
   def build(self, parent):
     return self.do_layout(parent)
@@ -72,30 +78,33 @@ class BaseGuiComponent(object):
 
   def onResize(self, evt):
     # handle internal widgets
+    self.panel.Freeze()
     self._onResize(evt)
     # propagate event to child widgets
     self.widget_pack.onResize(evt)
     evt.Skip()
+    self.panel.Thaw()
 
   def _onResize(self, evt):
     if not self.help_msg:
       return
     self.panel.Size = evt.GetSize()
-    # print 'Component Panel Size:', self.panel.Size
     container_width, _ = self.panel.Size
-    # if 'filename' in self.data['display_name']:
-    #   print 'Container Width:', container_width, '-', self.data['display_name']
     text_width, _ = self.help_msg.Size
-
-    # print 'container width:', container_width
-    # print 'text width', text_width
+    # if self.widget_pack.getValue() and '-c' in self.widget_pack.getValue():
+    #   print 'text width:', text_width
+    #   print 'cont width:', container_width
+    #   print
     if text_width != container_width:
       self.help_msg.SetLabel(self.help_msg.GetLabelText().replace('\n', ' '))
       self.help_msg.Wrap(container_width)
     evt.Skip()
 
   def GetValue(self):
-    return self.widget_pack.getValue()
+    if self.widget_pack.getValue() and self.data['commands']:
+      return '{} {}'.format(self.data['commands'][0], self.widget_pack.getValue())
+    else:
+      return self.widget_pack.getValue()
 
 
 class CheckBox(BaseGuiComponent):

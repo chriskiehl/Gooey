@@ -13,8 +13,7 @@ import ast
 import _ast
 from itertools import *
 
-import codegen
-from gooey import modules
+from gooey.python_bindings import codegen, modules
 
 
 def parse_source_file(file_name):

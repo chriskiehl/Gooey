@@ -24,6 +24,8 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     ScrolledPanel.__init__(self, parent, **kwargs)
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
 
+    self.SetDoubleBuffered(True)
+
     self._action_groups = build_spec
     self._positionals = build_spec.get('required', None)
     self.components = component_builder.ComponentBuilder(build_spec)
@@ -91,10 +93,12 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
       parent_sizer.AddSpacer(20)
 
   def OnResize(self, evt):
+    self.Freeze()
     for component in self.components:
       component.onResize(evt)
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
     evt.Skip()
+    self.Thaw()
 
   def RegisterController(self, controller):
     if self._controller is None:

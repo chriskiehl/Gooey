@@ -19,7 +19,7 @@ class FrameHeader(wx.Panel):
   def __init__(self, heading, subheading, **kwargs):
 
     wx.Panel.__init__(self, **kwargs)
-
+    self.SetDoubleBuffered(True)
     self._controller = None
 
     self._header = None

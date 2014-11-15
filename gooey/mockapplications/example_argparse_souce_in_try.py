@@ -19,11 +19,11 @@ It defines classes_and_methods
 
 import sys
 import os
-
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
-from gooey.gooey_decorator import Gooey
+from gooey.python_bindings.gooey_decorator import Gooey
+
 
 __all__ = []
 __version__ = 0.1

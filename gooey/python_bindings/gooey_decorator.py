@@ -46,8 +46,8 @@ from functools import partial
 
 import wx
 
-from gooey import argparse_to_json
-import i18n
+from gooey.python_bindings import argparse_to_json
+from gooey import i18n
 import source_parser
 
 def Gooey(f=None, advanced=True,

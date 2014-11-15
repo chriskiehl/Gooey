@@ -6,7 +6,6 @@ Created on Jan 23, 2014
 
 import sys
 
-from gooey.monkey_parser import ArgumentError
 from gooey.gui.action_sorter import ActionSorter
 
 
@@ -32,7 +31,7 @@ class ClientApp(object):
       print self._parser.error
       self._parser.parse_args(arg_string.split())
       return True
-    except ArgumentError as e:
+    except Exception as e:
       return str(e)
 
   def GetErrorMsg(self, arg_string):
