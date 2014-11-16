@@ -1,9 +1,10 @@
 import os
 
+
 __author__ = 'Chris'
 
 base_path = os.path.dirname(__file__)
-image_dir = os.path.join(base_path, 'images')
+image_dir = os.path.join(base_path, '../images')
 
 alessandro_rei_checkmark = os.path.join(image_dir, "alessandro_rei_checkmark.png")
 computer = os.path.join(image_dir, "computer.png")

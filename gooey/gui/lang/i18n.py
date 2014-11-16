@@ -9,12 +9,14 @@ Provides Internationalization for all text within the program.
 
 import os
 import json
-import i18n_config
+
+from gooey.gui.lang import i18n_config
+
 
 __all__ = ['translate']
 
 _LANG = i18n_config.LANG
-_DEFAULT_DIR = os.path.join(os.path.dirname(__file__), 'languages')
+_DEFAULT_DIR = os.path.join(os.path.dirname(__file__), '../../languages')
 
 _DICTIONARY = None
 

@@ -48,7 +48,7 @@ def parse_source_file(file_name):
 
   argparse_assignments = get_nodes_by_containing_attr(assignment_objs, 'ArgumentParser')
   add_arg_assignments  = get_nodes_by_containing_attr(call_objects, 'add_argument')
-  # parse_args_assignment = get_nodes_by_containing_attr(call_objects, 'parse_args')
+  parse_args_assignment = get_nodes_by_containing_attr(call_objects, 'parse_args')
 
   ast_argparse_source = chain(
     module_imports,
@@ -115,31 +115,36 @@ def get_indent(line):
   indent = re.compile("(\t|\s)")
   return ''.join(takewhile(lambda char: indent.match(char) is not None, line))
 
-def format_source_to_return_parser(source):
-  varname = get_assignment_name(source)
+def format_source_to_return_parser(source, cutoff_line, restart_line, col_offset, parser_name):
+  top = source[:cutoff_line - 1]
+  bottom = source[restart_line:]
 
-  client_source = [line for line in source
-                   if '@gooey' not in line.lower()
-                   and 'import gooey' not in line.lower()]
+  return_statement = ['{}return {}\n\n'.format(' ' * col_offset, parser_name)]
 
-  top = takewhile(not_at_parse_args, client_source)
-  middle = dropwhile(not_at_parse_args, client_source)
-  # need this so the return statement is indented the
-  # same amount as the rest of the source
-  indent_width = get_indent(next(middle))
+  # stitch it all back together excluding the Gooey decorator
+  new_source = (line for line in chain(top, return_statement, bottom)
+                if '@gooey' not in line.lower()
+                and 'import gooey' not in line.lower())
 
-  # chew off everything until you get to the end of the
-  # current block
-  bottom = dropwhile(lines_indented, middle)
-  # inject a return
-  return_statement = ['{}return {}\n\n'.format(indent_width, varname)]
-  # stitch it all back together
-  new_source = chain(top, return_statement, bottom)
   return ''.join(new_source)
 
 def extract_parser(modulepath):
   source = read_client_module(modulepath)
-  module_source = format_source_to_return_parser(source)
+
+  nodes = ast.parse(''.join(source))
+  funcs = get_nodes_by_instance_type(nodes, _ast.FunctionDef)
+  assignment_objs = get_nodes_by_instance_type(nodes, _ast.Assign)
+
+  main_func = get_nodes_by_containing_attr(funcs, 'main')[0]
+  parse_args_assignment = get_nodes_by_containing_attr(main_func.body, 'parse_args')[0]
+
+  module_source = format_source_to_return_parser(
+    source,
+    cutoff_line=parse_args_assignment.lineno,
+    restart_line=main_func.body[-1].lineno,
+    col_offset=parse_args_assignment.col_offset,
+    parser_name=parse_args_assignment.value.func.value.id
+  )
   client_module = modules.load(module_source)
   return client_module.main()
 

@@ -41,14 +41,22 @@ to us. No more complicated ast stuff. Just a little bit of string parsing and we
 done.
 
 '''
+from argparse import ArgumentParser
 
 from functools import partial
+import os
+import sys
 
 import wx
 
+from gooey.gui.lang import i18n
 from gooey.python_bindings import argparse_to_json
-from gooey import i18n
 import source_parser
+
+
+ROOT_DIR = os.path.dirname(__import__(__name__.split('.')[0]).__file__)
+TMP_DIR  = os.path.join(ROOT_DIR, '_tmp')
+
 
 def Gooey(f=None, advanced=True,
           language='english', show_config=True,
@@ -64,11 +72,17 @@ def Gooey(f=None, advanced=True,
 
   params = locals()
 
-
-
   def build(payload):
     def inner():
-      module_path = get_caller_path()
+      main_module_path = get_caller_path()
+      _, filename = os.path.split(main_module_path)
+      cleaned_source = clean_source(main_module_path)
+
+      filepath = os.path.join(TMP_DIR, filename)
+      with open(filepath, 'w') as f:
+        f.write(cleaned_source)
+
+      run_cmd = 'python {}'.format(filepath)
 
       # Must be called before anything else
       app = wx.App(False)
@@ -83,10 +97,10 @@ def Gooey(f=None, advanced=True,
       from gooey.gui.windows.basic_config_panel import BasicConfigPanel
 
       if show_config:
-        parser = get_parser(module_path)
+        parser = get_parser(main_module_path)
 
         meta = {
-          'target': get_caller_path(),
+          'target': run_cmd,
           'program_name': program_name,
           'program_description': program_description or parser.description,
           'show_config': show_config,
@@ -124,17 +138,23 @@ def Gooey(f=None, advanced=True,
   return build
 
 
+def clean_source(module_path):
+  with open(module_path, 'r') as f:
+    return ''.join(
+      line for line in f.readlines()
+      if '@gooey' not in line.lower()
+      and 'import gooey' not in line.lower())
+
+
+def run():
+  parser = source_parser.extract_parser(module_path)
+  client_module = create_cleaned_backup()
+
+
 def get_parser(module_path):
-  # try:
   return source_parser.extract_parser(module_path)
-  # except source_parser.ParserError:
-  #   raise source_parser.ParserError(
-  #     'Could not locate ArgumentParser statements in Main().'
-  #     '\nThis is probably my fault :( Please checkout github.com/chriskiehl/gooey to file a bug!')
 
 def get_caller_path():
-  # utility func for decorator
-  # gets the name of the calling script
   tmp_sys = __import__('sys')
   return tmp_sys.argv[0]
 

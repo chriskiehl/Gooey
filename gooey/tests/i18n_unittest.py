@@ -5,8 +5,9 @@ Created on Jan 25, 2014
 '''
 
 import unittest
+
 import i18n
-import i18n_config
+
 
 # from i18n import I18N
 

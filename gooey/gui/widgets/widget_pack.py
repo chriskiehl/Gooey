@@ -32,13 +32,15 @@ class WidgetPack(object):
 class BaseChooser(WidgetPack):
   def __init__(self, button_text='Browse'):
     self.button_text = button_text
-
+    self.option_string = None
     self.parent = None
     self.text_box = None
     self.button = None
 
   def build(self, parent, data=None):
+
     self.parent = parent
+    self.option_string = data['commands'][0] if data['commands'] else ''
     self.text_box = wx.TextCtrl(self.parent)
     self.text_box.SetMinSize((0, -1))
     self.button = wx.Button(self.parent, label=self.button_text, size=(73, 23))
@@ -100,15 +102,25 @@ class DateChooserPayload(BaseChooser):
 class TextInputPayload(WidgetPack):
   def __init__(self):
     self.widget = None
+    self.option_string = None
 
   def build(self, parent, data):
+    self.option_string = data['commands'][0] if data['commands'] else ''
     self.widget = wx.TextCtrl(parent)
     self.widget.SetMinSize((0, -1))
     self.widget.SetDoubleBuffered(True)
     return self.widget
 
   def getValue(self):
-    return self.widget.GetValue()
+    if self.widget.GetValue() and self.option_string:
+      return '{} {}'.format(self.option_string, self.widget.GetValue())
+    else:
+      return self.widget.GetValue()
+
+  def _SetValue(self, text):
+    # used for testing
+    self.widget.SetLabelText(text)
+
 
 
 class DropdownPayload(WidgetPack):
@@ -130,8 +142,15 @@ class DropdownPayload(WidgetPack):
 
   def getValue(self):
     if self.widget.GetValue() == self.default_value:
-      return None
-    return ' '.join([self.option_string, self.widget.GetValue()])
+      return ''
+    elif self.widget.GetValue() and self.option_string:
+      return '{} {}'.format(self.option_string, self.widget.GetValue())
+    else:
+      self.widget.GetValue()
+
+  def _SetValue(self, text):
+    # used for testing
+    self.widget.SetLabelText(text)
 
 
 class CounterPayload(WidgetPack):
@@ -159,7 +178,7 @@ class CounterPayload(WidgetPack):
     '''
     dropdown_value = self.widget.GetValue()
     if not str(dropdown_value).isdigit():
-      return None
+      return ''
     arg = str(self.option_string).replace('-', '')
     repeated_args = arg * int(dropdown_value)
     return '-' + repeated_args

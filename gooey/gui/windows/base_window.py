@@ -5,18 +5,13 @@ Created on Jan 19, 2014
 
 import os
 import sys
-import time
-from collections import deque
 
 import wx
 
-from gooey.gui.message_event import MessageEvent
-from gooey import i18n
-from gooey import image_repository
 from gooey.gui.controller import Controller
-from gooey.gui.message_router import MessageRouter
+from gooey.gui.lang import i18n
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
-from gooey.gui import styling
+from gooey.gui import styling, image_repository
 from gooey.gui.windows import footer, header
 
 
@@ -79,7 +74,7 @@ class BaseWindow(wx.Frame):
     self.SetSizer(sizer)
 
   def _init_controller(self):
-    self._controller = Controller(base_frame=self)
+    self._controller = Controller(base_frame=self, build_spec=self.build_spec)
 
   def registerControllers(self):
     for panel in self.panels:
@@ -110,7 +105,6 @@ class BaseWindow(wx.Frame):
 
   def onResize(self, evt):
     evt.Skip()
-
 
   def PublishConsoleMsg(self, text):
     self.runtime_display.cmd_textbox.AppendText(text)

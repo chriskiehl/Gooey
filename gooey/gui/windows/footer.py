@@ -6,9 +6,9 @@ Created on Dec 23, 2013
 
 import wx
 import wx.animate
-from gooey import i18n
-from gooey.gui import imageutil
-from gooey import image_repository
+
+from gooey.gui import imageutil, image_repository
+from gooey.gui.lang import i18n
 
 
 class AbstractFooter(wx.Panel):

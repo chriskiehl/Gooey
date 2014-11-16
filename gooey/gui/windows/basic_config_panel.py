@@ -4,11 +4,11 @@ Created on Dec 9, 2013
 @author: Chris
 '''
 
-
 import wx
 
+from gooey.gui.lang import i18n
 from gooey.gui.option_reader import OptionReader
-from gooey import i18n
+
 
 class BasicConfigPanel(wx.Panel, OptionReader):
   def __init__(self, parent, **kwargs):

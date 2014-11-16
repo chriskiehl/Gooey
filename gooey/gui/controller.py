@@ -4,13 +4,13 @@ Created on Dec 22, 2013
 @author: Chris
 '''
 import subprocess
+import sys
+from multiprocessing.dummy import Pool, Process
 
 import wx
-import sys
-import traceback
 
-from gooey import i18n
-from multiprocessing.dummy import Pool, Process
+from gooey.gui.lang import i18n
+
 
 YES = 5103
 NO = 5104
@@ -32,9 +32,9 @@ class Controller(object):
     translator	 = instance of the I18N class
   '''
 
-  def __init__(self, base_frame):
+  def __init__(self, base_frame, build_spec):
     self.core_gui = base_frame
-    # self._payload_runner = Process(target=self.RunClientCode)
+    self.build_spec = build_spec
 
   def OnCancelButton(self, widget, event):
     msg = i18n.translate('sure_you_want_to_exit')

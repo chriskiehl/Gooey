@@ -4,13 +4,12 @@ Created on Dec 23, 2013
 @author: Chris
 '''
 
-import itertools
-
 import wx
-from gooey import i18n
-from gooey.gui import imageutil
-from gooey import image_repository
+
+from gooey.gui import imageutil, image_repository
 from gooey.gui import styling
+from gooey.gui.lang import i18n
+
 
 PAD_SIZE = 10
 

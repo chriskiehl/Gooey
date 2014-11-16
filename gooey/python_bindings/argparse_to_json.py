@@ -199,4 +199,3 @@ def widget_type(option_string):
 
 
 
-

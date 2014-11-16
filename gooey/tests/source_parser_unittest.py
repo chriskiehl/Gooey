@@ -14,8 +14,7 @@ TODO:
 import os
 import ast
 import unittest
-
-import source_parser
+from gooey.python_bindings import source_parser
 
 
 basic_pyfile = '''

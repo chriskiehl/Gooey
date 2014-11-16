@@ -12,12 +12,10 @@ from time import sleep as _sleep
 import argparse as ap
 from argparse import ArgumentParser as AP
 
-from gooey import Gooey
 
 a = globals()
 
 
-@Gooey
 def main():
   '''
   does stuff with parser.parse_args()

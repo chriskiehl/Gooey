@@ -8,8 +8,8 @@ from itertools import chain
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
-from gooey import i18n
 from gooey.gui import component_builder
+from gooey.gui.lang import i18n
 from gooey.gui.option_reader import OptionReader
 from gooey.gui import styling
 

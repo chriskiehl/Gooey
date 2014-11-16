@@ -101,10 +101,11 @@ class BaseGuiComponent(object):
     evt.Skip()
 
   def GetValue(self):
-    if self.widget_pack.getValue() and self.data['commands']:
-      return '{} {}'.format(self.data['commands'][0], self.widget_pack.getValue())
-    else:
-      return self.widget_pack.getValue()
+    return self.widget_pack.getValue()
+
+  def _GetWidget(self):
+    # used only for unittesting
+    return self.widget_pack.widget
 
 
 class CheckBox(BaseGuiComponent):
@@ -153,7 +154,10 @@ class CheckBox(BaseGuiComponent):
     evt.Skip()
 
   def GetValue(self):
-    return self.option_strings[0] if self.widget.GetValue() else ''
+    return self.option_strings if self.widget.GetValue() else ''
+
+  def _GetWidget(self):
+    return self.widget
 
 
 class RadioGroup(object):
@@ -220,6 +224,11 @@ class RadioGroup(object):
       print opts
     except:
       return ''
+
+  def _GetWidget(self):
+    return self.radio_buttons
+
+
 
 
 

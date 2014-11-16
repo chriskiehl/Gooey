@@ -5,9 +5,10 @@ Created on Dec 23, 2013
 '''
 
 import sys
+
 import wx
 
-from gooey import i18n
+from gooey.gui.lang import i18n
 from gooey.gui.message_event import EVT_MSG
 
 
