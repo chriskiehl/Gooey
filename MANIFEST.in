@@ -1,4 +1,7 @@
-include *.txt
-include *.md
-include gooey\images\*
-include gooey\languages\*
+include README.md
+include LICENSE.txt
+include MANIFEST.in
+recursive-include gooey/images *
+recursive-include gooey/languages *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
