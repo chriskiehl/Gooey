@@ -1,1 +1,342 @@
-My Page
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Gooey by Chris Kiehl</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Gooey</h1>
+        <h2>Turn (almost) any Python command line program into a full GUI application with one line</h2>
+        <a href="https://github.com/chriskiehl/Gooey" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <p align="center">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/primary.png">
+</p> 
+
+<h2>
+<a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a>Table of Contents</h2>
+
+<ul>
+<li><a href="#gooey">Gooey</a></li>
+<li><a href="#table-of-contents">Table of contents</a></li>
+<li><a href="#change-log">Change Log</a></li>
+<li>
+<a href="#quick-start">Quick Start</a>
+
+<ul>
+<li><a href="#installation-instructions">Installation Instructions</a></li>
+<li><a href="#usage">Usage</a></li>
+</ul>
+</li>
+<li><a href="#what-is-it">What It Is</a></li>
+<li><a href="#why">Why Is It</a></li>
+<li><a href="#who-is-this-for">Who is this for</a></li>
+<li><a href="#how-does-it-work">How does it work</a></li>
+<li>
+<a href="#configuration">Configuration</a>
+
+<ul>
+<li><a href="#advanced">Full/Advanced</a></li>
+<li><a href="#basic">Basic</a></li>
+<li><a href="#no-config">No Config</a></li>
+</ul>
+</li>
+<li><a href="#final-screen">Final Screen</a></li>
+<li><a href="#todo">TODO</a></li>
+<li><a href="#wanna-help">Contributing</a></li>
+<li><a href="#image-credits">Image Credits</a></li>
+</ul>
+
+<h2>
+<a name="change-log" class="anchor" href="#change-log"><span class="octicon octicon-link"></span></a>Change Log</h2>
+
+<ul>
+<li>Fixed a bug in codegen.py that was putting raw <code>ast</code> objects in the code output.</li>
+<li>Rewrote parser to make future changes easier. <code>Issue 18</code>
+</li>
+<li>Fixed a bug in the parser that was missing certain import types.</li>
+<li>Added <code>Restart</code> Button. <code>Issue #20</code> (hacked it in there ;) need to pretty it up later.)</li>
+<li>Fixed bug in language class.</li>
+</ul>
+
+<p><strong>Planned Features:</strong> </p>
+
+<ul>
+<li>Language agnostic support -- a stand-alone Gooey to build other Gooies! </li>
+<li>docopt support -- The people demand it! </li>
+<li>Ability to customize widgets (e.g. FileChooser instead of TextBox)</li>
+<li>Stop/cancel button on run screen </li>
+</ul>
+
+<hr>
+
+<h2>
+<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h2>
+
+<h3>
+<a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation instructions</h3>
+
+<p>To install Gooey, simply clone the project to your local directory</p>
+
+<pre><code>git clone https://github.com/chriskiehl/Gooey.git
+</code></pre>
+
+<h3>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>Gooey is attached to your code via a simple decorator on your <code>main</code> method. </p>
+
+<pre><code>from gooey import Gooey
+
+@Gooey      &lt;--- all it takes! :)
+def main():
+  # rest of code
+</code></pre>
+
+<p>Different styling and functionality can be configured by passing arguments into the decorator.</p>
+
+<pre><code># options
+@Gooey(advanced=Boolean,          # toggle whether to show advanced config or not 
+       language=language_string,  # Translations configurable via json
+       config=Boolean,            # skip config screens all together
+       program_name='name',       # Defaults to script name 
+       program_description        # Defaults to ArgParse Description
+  )
+def main():
+  # rest of app
+</code></pre>
+
+<p>See: <a href="#how-does-it-work">How does it Work</a> section for details on each option.</p>
+
+<h2>
+<a name="what-is-it-" class="anchor" href="#what-is-it-"><span class="octicon octicon-link"></span></a>What is it? </h2>
+
+<p>Gooey converts your Console Applications into end-user-friendly GUI applications. It lets you focus on building robust, configurable programs in a familiar way, all without having to worry about how it will be presented to and interacted with by your average user. </p>
+
+<h2>
+<a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why?</h2>
+
+<p>Because as much as we love the command prompt, the rest of the world looks at it like some kind of ugly relic from the early '80s. On top of that, more often than not programs need to do more than just one thing, and that means giving options, which previously meant either building a GUI, or trying to explain how to supply arguments to a Console Application. Gooey was made to (hopefully) solve those problems. It makes programs easy to use, and pretty to look at! </p>
+
+<h2>
+<a name="who-is-this-for" class="anchor" href="#who-is-this-for"><span class="octicon octicon-link"></span></a>Who is this for?</h2>
+
+<p>If you're building utilities for yourself, other programmers, or something which produces a result that you want to capture and pipe over to another console application (e.g. *nix philosophy utils), Gooey probably isn't the tool for you. However, if you're building 'run and done,' around-the-office-style scripts, things that shovel bits from point A to point B, or simply something that's targeted at a non-programmer, Gooey is the perfect tool for the job. It lets you build as complex of an application as your heart desires all while getting the GUI side for free. </p>
+
+<h2>
+<a name="how-does-it-work-" class="anchor" href="#how-does-it-work-"><span class="octicon octicon-link"></span></a>How does it work? </h2>
+
+<p>Gooey is attached to your code via a simple decorator on your <code>main</code> method. </p>
+
+<pre><code>@Gooey      &lt;--- all it takes! :)
+def main():
+  # rest of code
+</code></pre>
+
+<p>At run-time, it loads the Abstract Syntax Tree for your module and parses it for all references to <code>ArgumentParser</code>. (The older <code>optparse</code> is currently not supported.) These references are then extracted, assigned a <code>component type</code> based on the <code>'action'</code> they provide, and finally used to assemble the GUI.  </p>
+
+<h4>
+<a name="mappings" class="anchor" href="#mappings"><span class="octicon octicon-link"></span></a>Mappings:</h4>
+
+<p>Currently, the <code>ArgumentParser._actions</code> are mapped to the following <code>WX</code> components. </p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parser Action</th>
+<th>Widget</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">store</td>
+<td>TextCtrl</td>
+<td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"></td>
+</tr>
+<tr>
+<td align="left">store_const</td>
+<td>CheckBox</td>
+<td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"></td>
+</tr>
+<tr>
+<td align="left">store_true</td>
+<td>CheckBox</td>
+<td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"></td>
+</tr>
+<tr>
+<td align="left">store_False</td>
+<td>CheckBox</td>
+<td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"></td>
+</tr>
+<tr>
+<td align="left">append</td>
+<td>TextCtrl</td>
+<td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"></td>
+</tr>
+<tr>
+<td align="left">count</td>
+<td>DropDown                 </td>
+<td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/count_dropdown.png"></td>
+</tr>
+<tr>
+<td align="left">choice                                             </td>
+<td>DropDown</td>
+<td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/options_dropdown.png"></td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<h2>
+<a name="configuration-" class="anchor" href="#configuration-"><span class="octicon octicon-link"></span></a>Configuration </h2>
+
+<p>Gooey comes in three main flavors.  </p>
+
+<ul>
+<li>Full/Advanced </li>
+<li>Basic</li>
+<li>No config<br>
+</li>
+</ul>
+
+<p>Each has the following options: </p>
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>language</td>
+<td>Gooey is (kind of) international ready (sans Unicode issues (TODO)). All program text is stored in an external <code>json</code> file. Translating to your host language only requires filling in the key/value pairs.</td>
+</tr>
+<tr>
+<td>program_name</td>
+<td>The name displayed in the title bar of the GUI window. If the value is <code>None</code>, the title is pulled from <code>sys.argv[0]</code>.</td>
+</tr>
+<tr>
+<td>program_description</td>
+<td>Sets the text displayed in the top panel of the <code>Settings</code> screen. If <code>None</code> the description is pulled from the  <code>ArgumentParser</code>.</td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a name="advanced" class="anchor" href="#advanced"><span class="octicon octicon-link"></span></a>Advanced</h3>
+
+<p>The default view is the "full" or "advanced" configuration screen. It can be toggled via the <code>advanced</code> parameter in the <code>Gooey</code> decorator. </p>
+
+<pre><code>@gooey(advanced=True)
+def main():
+    # rest of code   
+</code></pre>
+
+<p>This view presents each action in the <code>Argument Parser</code> as a unique GUI component. This view is ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.</p>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/advanced_config.png">
+</p>
+
+<hr>
+
+<h3>
+<a name="basic" class="anchor" href="#basic"><span class="octicon octicon-link"></span></a>Basic</h3>
+
+<p>The basic view is best for times when the user is familiar with Console Applications, but you still want to present something a little more polished than a simple terminal. The basic display is accessed by setting the <code>advanced</code> parameter in the <code>gooey</code> decorator to <code>False</code>. </p>
+
+<pre><code>@gooey(advanced=False)
+def main():
+    # rest of code  
+</code></pre>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/basic_config.png">
+</p>
+
+<hr>
+
+<h3>
+<a name="no-config" class="anchor" href="#no-config"><span class="octicon octicon-link"></span></a>No Config</h3>
+
+<p>No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the <code>display</code> section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. </p>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/no_config.png">
+</p>
+
+<hr>
+
+<h2>
+<a name="final-screen" class="anchor" href="#final-screen"><span class="octicon octicon-link"></span></a>Final Screen</h2>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/final_screen.png">
+</p>
+
+<hr>
+
+<h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h2>
+
+<ul>
+<li>Add to pypi</li>
+<li>Themes </li>
+<li>Add ability to customize the mapping between <code>Parser</code> actions and <code>wxComponents</code>. For instance, if your program had a file as a required argument, it'd be far more useful to the end user to supply a <code>wx.FileDialog</code> rather than a simple <code>TextBox</code>. </li>
+<li>Update graphics</li>
+<li>Optparse support? </li>
+<li>Get OS X version working. </li>
+</ul>
+
+<h2>
+<a name="wanna-help" class="anchor" href="#wanna-help"><span class="octicon octicon-link"></span></a>Wanna help?</h2>
+
+<ul>
+<li>Do you art? I'd love to swap out the graphics to something more stylistically unified. </li>
+<li>Programmer? Pull requests are super welcome. The projects' style is <em>fantastically</em> inconsistent, though. So be warned :) I tried to follow the WxWidgets style of Leading Capital methods and CamelCased variables, but.. Python habits die hard. So, there are underscores littered all over the place. </li>
+</ul>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/chriskiehl/Gooey/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/chriskiehl/Gooey/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/chriskiehl/Gooey"></a> is maintained by <a href="https://github.com/chriskiehl">chriskiehl</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
