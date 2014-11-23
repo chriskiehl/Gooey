@@ -13,7 +13,7 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <title>Gooey by Chris Kiehl</title>
+    <title>Gooey by LudoVio</title>
   </head>
 
   <body>
@@ -21,7 +21,7 @@
       <div class="inner">
         <h1>Gooey</h1>
         <h2>Turn (almost) any Python command line program into a full GUI application with one line</h2>
-        <a href="https://github.com/chriskiehl/Gooey" class="button"><small>View project on</small> GitHub</a>
+        <a href="https://github.com/LudoVio/Gooey" class="button"><small>View project on</small> GitHub</a>
       </div>
     </header>
 
@@ -33,12 +33,12 @@
 </p> 
 
 <h2>
-<a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a>Table of Contents</h2>
+<a id="table-of-contents" class="anchor" href="#table-of-contents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table of Contents</h2>
 
 <ul>
 <li><a href="#gooey">Gooey</a></li>
 <li><a href="#table-of-contents">Table of contents</a></li>
-<li><a href="#change-log">Change Log</a></li>
+<li><a href="#latest-update">Latest Update</a></li>
 <li>
 <a href="#quick-start">Quick Start</a>
 
@@ -61,47 +61,45 @@
 </ul>
 </li>
 <li><a href="#final-screen">Final Screen</a></li>
+<li><a href="#change-log">Change Log</a></li>
 <li><a href="#todo">TODO</a></li>
 <li><a href="#wanna-help">Contributing</a></li>
 <li><a href="#image-credits">Image Credits</a></li>
 </ul>
 
-<h2>
-<a name="change-log" class="anchor" href="#change-log"><span class="octicon octicon-link"></span></a>Change Log</h2>
+<hr>
 
-<ul>
-<li>Fixed a bug in codegen.py that was putting raw <code>ast</code> objects in the code output.</li>
-<li>Rewrote parser to make future changes easier. <code>Issue 18</code>
-</li>
-<li>Fixed a bug in the parser that was missing certain import types.</li>
-<li>Added <code>Restart</code> Button. <code>Issue #20</code> (hacked it in there ;) need to pretty it up later.)</li>
-<li>Fixed bug in language class.</li>
-</ul>
+<h3>
+<a id="latest-update" class="anchor" href="#latest-update" aria-hidden="true"><span class="octicon octicon-link"></span></a>Latest Update:</h3>
 
-<p><strong>Planned Features:</strong> </p>
+<p>Drag and Drop support (<code>Issue #28</code>)</p>
 
-<ul>
-<li>Language agnostic support -- a stand-alone Gooey to build other Gooies! </li>
-<li>docopt support -- The people demand it! </li>
-<li>Ability to customize widgets (e.g. FileChooser instead of TextBox)</li>
-<li>Stop/cancel button on run screen </li>
-</ul>
+<p align="center">
+ <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/dragdrop.gif" width="500">
+</p>
+
+<p>Tada!   </p>
 
 <hr>
 
 <h2>
-<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h2>
+<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick Start</h2>
 
 <h3>
-<a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation instructions</h3>
+<a id="installation-instructions" class="anchor" href="#installation-instructions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation instructions</h3>
 
 <p>To install Gooey, simply clone the project to your local directory</p>
 
 <pre><code>git clone https://github.com/chriskiehl/Gooey.git
 </code></pre>
 
+<p>And run <code>setup.py</code> </p>
+
+<pre><code>python setup.py install
+</code></pre>
+
 <h3>
-<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
 
 <p>Gooey is attached to your code via a simple decorator on your <code>main</code> method. </p>
 
@@ -127,23 +125,33 @@ def main():
 
 <p>See: <a href="#how-does-it-work">How does it Work</a> section for details on each option.</p>
 
+<p>Gooey will do its best to choose sensible widget defaults to display in the GUI. However, if more fine tuning is desired, you can use the drop-in replacement <code>GooeyParser</code> in place of <code>ArgumentParser</code>. This lets you control which widget displays in the GUI. See: <a href="#gooeyparser">GooeyParser</a></p>
+
+<pre><code>from gooey import Gooey
+
+@Gooey      &lt;--- all it takes! :)
+def main():
+  parser = GooeyParser(description="My Cool GUI Program!") 
+  parser.add_argument('Filename', widget="FileChooser")
+</code></pre>
+
 <h2>
-<a name="what-is-it-" class="anchor" href="#what-is-it-"><span class="octicon octicon-link"></span></a>What is it? </h2>
+<a id="what-is-it-" class="anchor" href="#what-is-it-" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it? </h2>
 
 <p>Gooey converts your Console Applications into end-user-friendly GUI applications. It lets you focus on building robust, configurable programs in a familiar way, all without having to worry about how it will be presented to and interacted with by your average user. </p>
 
 <h2>
-<a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why?</h2>
+<a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why?</h2>
 
-<p>Because as much as we love the command prompt, the rest of the world looks at it like some kind of ugly relic from the early '80s. On top of that, more often than not programs need to do more than just one thing, and that means giving options, which previously meant either building a GUI, or trying to explain how to supply arguments to a Console Application. Gooey was made to (hopefully) solve those problems. It makes programs easy to use, and pretty to look at! </p>
+<p>Because as much as we love the command prompt, the rest of the world looks at it like an ugly relic from the early '80s. On top of that, more often than not programs need to do more than just one thing, and that means giving options, which previously meant either building a GUI, or trying to explain how to supply arguments to a Console Application. Gooey was made to (hopefully) solve those problems. It makes programs easy to use, and pretty to look at! </p>
 
 <h2>
-<a name="who-is-this-for" class="anchor" href="#who-is-this-for"><span class="octicon octicon-link"></span></a>Who is this for?</h2>
+<a id="who-is-this-for" class="anchor" href="#who-is-this-for" aria-hidden="true"><span class="octicon octicon-link"></span></a>Who is this for?</h2>
 
 <p>If you're building utilities for yourself, other programmers, or something which produces a result that you want to capture and pipe over to another console application (e.g. *nix philosophy utils), Gooey probably isn't the tool for you. However, if you're building 'run and done,' around-the-office-style scripts, things that shovel bits from point A to point B, or simply something that's targeted at a non-programmer, Gooey is the perfect tool for the job. It lets you build as complex of an application as your heart desires all while getting the GUI side for free. </p>
 
 <h2>
-<a name="how-does-it-work-" class="anchor" href="#how-does-it-work-"><span class="octicon octicon-link"></span></a>How does it work? </h2>
+<a id="how-does-it-work-" class="anchor" href="#how-does-it-work-" aria-hidden="true"><span class="octicon octicon-link"></span></a>How does it work? </h2>
 
 <p>Gooey is attached to your code via a simple decorator on your <code>main</code> method. </p>
 
@@ -152,12 +160,12 @@ def main():
   # rest of code
 </code></pre>
 
-<p>At run-time, it loads the Abstract Syntax Tree for your module and parses it for all references to <code>ArgumentParser</code>. (The older <code>optparse</code> is currently not supported.) These references are then extracted, assigned a <code>component type</code> based on the <code>'action'</code> they provide, and finally used to assemble the GUI.  </p>
+<p>At run-time, it parses your Python script for all references to <code>ArgumentParser</code>. (The older <code>optparse</code> is currently not supported.) These references are then extracted, assigned a <code>component type</code> based on the <code>'action'</code> they provide, and finally used to assemble the GUI.  </p>
 
 <h4>
-<a name="mappings" class="anchor" href="#mappings"><span class="octicon octicon-link"></span></a>Mappings:</h4>
+<a id="mappings" class="anchor" href="#mappings" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mappings:</h4>
 
-<p>Currently, the <code>ArgumentParser._actions</code> are mapped to the following <code>WX</code> components. </p>
+<p>Gooey does its best to choose sensible defaults based on the options it finds. Currently, <code>ArgumentParser._actions</code> are mapped to the following <code>WX</code> components. </p>
 
 <table>
 <thead>
@@ -199,6 +207,11 @@ def main():
 <td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/count_dropdown.png"></td>
 </tr>
 <tr>
+<td align="left">Mutually Exclusive Group</td>
+<td>Radio Group</td>
+<td><img src="https://github.com/chriskiehl/Gooey/blob/master/resources/radio_group.png"></td>
+</tr>
+<tr>
 <td align="left">choice                                             </td>
 <td>DropDown</td>
 <td><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/options_dropdown.png"></td>
@@ -206,10 +219,64 @@ def main():
 </tbody>
 </table>
 
+<h3>
+<a id="gooeyparser" class="anchor" href="#gooeyparser" aria-hidden="true"><span class="octicon octicon-link"></span></a>GooeyParser</h3>
+
+<p>If the above defaults aren't cutting it, you can control the exact widget type by using the drop-in <code>ArgumentParser</code> replacement <code>GooeyParser</code>. This gives you the additional keyword argument <code>widget</code>, to which you can supply the name of the component you want to display. Best part? You don't have to change any of your <code>argparse</code> code to use it. Drop it in, and you're good to go. </p>
+
+<p><strong>Example:</strong></p>
+
+<pre><code>from argparse import ArgumentParser
+....
+
+def main(): 
+    parser = ArgumentParser(description="My Cool Gooey App!")
+    parser.add_argument('filename', help="name of the file to process") 
+</code></pre>
+
+<p>Given then above, Gooey would select a normal <code>TextField</code> as the widget type like this: </p>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/textfield_demo.PNG">
+</p>
+
+<p>However, by dropping in <code>GooeyParser</code> and supplying a <code>widget</code> name, you display a much more user friendly <code>FileChooser</code> </p>
+
+<pre><code>from gooeyimport GooeyParser
+....
+
+def main(): 
+    parser = GooeyParser(description="My Cool Gooey App!")
+    parser.add_argument('filename', help="name of the file to process", widget='FileChooser') 
+</code></pre>
+
+<p align="center"><img src="https://github.com/chriskiehl/Gooey/blob/master/resources/chooser_demo.PNG"></p>
+
+<p><strong>Custom Widgets:</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>Widget</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Directory/FileChooser</td>
+<td><p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p></td>
+</tr>
+<tr>
+<td>DateChooser                                               </td>
+<td><p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/datechooser.gif" width="400"></p></td>
+</tr>
+</tbody>
+</table>
+
 <hr>
 
 <h2>
-<a name="configuration-" class="anchor" href="#configuration-"><span class="octicon octicon-link"></span></a>Configuration </h2>
+<a id="configuration-" class="anchor" href="#configuration-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration </h2>
 
 <p>Gooey comes in three main flavors.  </p>
 
@@ -246,7 +313,7 @@ def main():
 </table>
 
 <h3>
-<a name="advanced" class="anchor" href="#advanced"><span class="octicon octicon-link"></span></a>Advanced</h3>
+<a id="advanced" class="anchor" href="#advanced" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced</h3>
 
 <p>The default view is the "full" or "advanced" configuration screen. It can be toggled via the <code>advanced</code> parameter in the <code>Gooey</code> decorator. </p>
 
@@ -264,7 +331,7 @@ def main():
 <hr>
 
 <h3>
-<a name="basic" class="anchor" href="#basic"><span class="octicon octicon-link"></span></a>Basic</h3>
+<a id="basic" class="anchor" href="#basic" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic</h3>
 
 <p>The basic view is best for times when the user is familiar with Console Applications, but you still want to present something a little more polished than a simple terminal. The basic display is accessed by setting the <code>advanced</code> parameter in the <code>gooey</code> decorator to <code>False</code>. </p>
 
@@ -280,7 +347,7 @@ def main():
 <hr>
 
 <h3>
-<a name="no-config" class="anchor" href="#no-config"><span class="octicon octicon-link"></span></a>No Config</h3>
+<a id="no-config" class="anchor" href="#no-config" aria-hidden="true"><span class="octicon octicon-link"></span></a>No Config</h3>
 
 <p>No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the <code>display</code> section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. </p>
 
@@ -291,7 +358,7 @@ def main():
 <hr>
 
 <h2>
-<a name="final-screen" class="anchor" href="#final-screen"><span class="octicon octicon-link"></span></a>Final Screen</h2>
+<a id="final-screen" class="anchor" href="#final-screen" aria-hidden="true"><span class="octicon octicon-link"></span></a>Final Screen</h2>
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/final_screen.png">
@@ -299,38 +366,63 @@ def main():
 
 <hr>
 
+<h3>
+<a id="change-log" class="anchor" href="#change-log" aria-hidden="true"><span class="octicon octicon-link"></span></a>Change Log</h3>
+
+<hr>
+
+<ul>
+<li>Added drag and drop support</li>
+<li>Added new widget packs: DateChooser, FileChooser, DirChooser</li>
+<li>fixed several parsing related issues. </li>
+<li>Gooey now has a sane setup.py (thanks to hero user LudoVio) </li>
+<li>Gooey now builds from json for easy configurability 
+
+<ul>
+<li>Side Note: This was done with big strides towards making Gooey language agnostic. Coming Soon! </li>
+</ul>
+</li>
+<li>Fixed GUI layout so that resizing works better</li>
+</ul>
+
+<h3>
+<a id="planned-features" class="anchor" href="#planned-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Planned Features:</h3>
+
+<ul>
+<li>Language agnostic! </li>
+<li>Stop/cancel button on run screen </li>
+</ul>
+
 <h2>
-<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h2>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO</h2>
 
 <ul>
 <li>Add to pypi</li>
-<li>Themes </li>
-<li>Add ability to customize the mapping between <code>Parser</code> actions and <code>wxComponents</code>. For instance, if your program had a file as a required argument, it'd be far more useful to the end user to supply a <code>wx.FileDialog</code> rather than a simple <code>TextBox</code>. </li>
 <li>Update graphics</li>
-<li>Optparse support? </li>
 <li>Get OS X version working. </li>
 </ul>
 
 <h2>
-<a name="wanna-help" class="anchor" href="#wanna-help"><span class="octicon octicon-link"></span></a>Wanna help?</h2>
+<a id="wanna-help" class="anchor" href="#wanna-help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Wanna help?</h2>
 
 <ul>
-<li>Do you art? I'd love to swap out the graphics to something more stylistically unified. </li>
+<li>
+<strong>Artist Wanted!</strong> The graphics and icons in Gooey are a mismash of stuff I was able to scrape up for free off the internet. I'd love to replace them with something more stylistically unified. </li>
 <li>Programmer? Pull requests are super welcome. The projects' style is <em>fantastically</em> inconsistent, though. So be warned :) I tried to follow the WxWidgets style of Leading Capital methods and CamelCased variables, but.. Python habits die hard. So, there are underscores littered all over the place. </li>
 </ul>
         </section>
 
         <aside id="sidebar">
-          <a href="https://github.com/chriskiehl/Gooey/zipball/master" class="button">
+          <a href="https://github.com/LudoVio/Gooey/zipball/master" class="button">
             <small>Download</small>
             .zip file
           </a>
-          <a href="https://github.com/chriskiehl/Gooey/tarball/master" class="button">
+          <a href="https://github.com/LudoVio/Gooey/tarball/master" class="button">
             <small>Download</small>
             .tar.gz file
           </a>
 
-          <p class="repo-owner"><a href="https://github.com/chriskiehl/Gooey"></a> is maintained by <a href="https://github.com/chriskiehl">chriskiehl</a>.</p>
+          <p class="repo-owner"><a href="https://github.com/LudoVio/Gooey"></a> is maintained by <a href="https://github.com/LudoVio">LudoVio</a>.</p>
 
           <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
