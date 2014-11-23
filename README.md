@@ -284,7 +284,6 @@ TODO
 ----  
 
 * Add to pypi
-* Themes 
 * Update graphics
 * Get OS X version working. 
 
