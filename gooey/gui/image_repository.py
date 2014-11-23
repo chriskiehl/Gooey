@@ -24,7 +24,6 @@ def _list_images():
   stmnts = ('{0} = os.path.join(image_dir, "{1}")'
               .format(os.path.splitext(im)[0], im)
             for im in images)
-  print '\n'.join(stmnts)
 
 
 # _list_images()

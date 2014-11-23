@@ -111,7 +111,6 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     values = [c.GetValue()
               for c in self.components
               if c.GetValue() is not None]
-    print values
     return ' '.join(values)
 
   def GetRequiredArgs(self):

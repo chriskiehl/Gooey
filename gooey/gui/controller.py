@@ -40,7 +40,6 @@ class Controller(object):
     msg = i18n.translate('sure_you_want_to_exit')
     dlg = wx.MessageDialog(None, msg, i18n.translate('close_program'), wx.YES_NO)
     result = dlg.ShowModal()
-    print result
     if result == YES:
       dlg.Destroy()
       self.core_gui.Destroy()

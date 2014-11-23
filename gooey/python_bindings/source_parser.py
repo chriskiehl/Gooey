@@ -57,8 +57,6 @@ def parse_source_file(file_name):
     add_arg_assignments
     # parse_args_assignment
   )
-  # for i in ast_argparse_source:
-  #   print i
   return ast_argparse_source
 
 def _openfile(file_name):
@@ -156,7 +154,6 @@ if __name__ == '__main__':
   #
   ast_source = parse_source_file(filepath)
   python_code = convert_to_python(list(ast_source))
-  for i in python_code: print i
 
 
 

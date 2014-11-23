@@ -127,9 +127,7 @@ class AbstractGuiComponent(object):
     width, height = size
     content_area = int((width / 2) * .87)
 
-    print 'wiget size', help_msg.Size[0]
     wiggle_room = range(int(content_area - content_area * .05), int(content_area + content_area * .05))
-    print '(', int(content_area - content_area * .05), ' -> ', int(content_area + content_area * .05), ')'
     if help_msg.Size[0] not in wiggle_room:
       self._msg.SetLabel(self._msg.GetLabelText().replace('\n', ' '))
       self._msg.Wrap(content_area)
@@ -243,9 +241,7 @@ class AbstractComponent(object):
     width, height = size
     content_area = int((width / 2) * .87)
 
-    print 'wiget size', help_msg.Size[0]
     wiggle_room = range(int(content_area - content_area * .05), int(content_area + content_area * .05))
-    print '(', int(content_area - content_area * .05), ' -> ', int(content_area + content_area * .05), ')'
     if help_msg.Size[0] not in wiggle_room:
       self._msg.SetLabel(self._msg.GetLabelText().replace('\n', ' '))
       self._msg.Wrap(content_area)

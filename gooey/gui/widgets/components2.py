@@ -91,10 +91,7 @@ class BaseGuiComponent(object):
     self.panel.Size = evt.GetSize()
     container_width, _ = self.panel.Size
     text_width, _ = self.help_msg.Size
-    # if self.widget_pack.getValue() and '-c' in self.widget_pack.getValue():
-    #   print 'text width:', text_width
-    #   print 'cont width:', container_width
-    #   print
+
     if text_width != container_width:
       self.help_msg.SetLabel(self.help_msg.GetLabelText().replace('\n', ' '))
       self.help_msg.Wrap(container_width)
@@ -221,7 +218,6 @@ class RadioGroup(object):
     # print self.option_stings[vals.index(True)]
     try:
       opts = self.option_stings[vals.index(True)][0]
-      print opts
     except:
       return ''
 

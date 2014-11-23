@@ -183,7 +183,6 @@ def get_mutually_exclusive_optionals(mutex_group):
 
 
 def as_json(action, widget):
-  print 'widget:', widget
   if widget not in VALID_WIDGETS:
     raise UnknownWidgetType('Widget Type {0} is unrecognized'.format(widget))
 
@@ -198,16 +197,6 @@ def as_json(action, widget):
       'choices': action.choices or [],
     }
   }
-
-
-
-def is_widget_spec(option_string):
-  return option_string and option_string in VALID_WIDGETS
-
-def widget_type(option_string):
-  return option_string[1:]
-
-
 
 
 

@@ -67,7 +67,6 @@ class ActionSorter(object):
     self._display('ActionSorter: optionals', self._optionals)
     self._display('ActionSorter: booleans', self._flags)
     self._display('ActionSorter: counters', self._counters)
-    print '|-------------------------'
 
   def _display(self, _type, something):
     for i in something:

@@ -28,7 +28,6 @@ class ClientApp(object):
 
   def _Parse(self, arg_string):
     try:
-      print self._parser.error
       self._parser.parse_args(arg_string.split())
       return True
     except Exception as e:
