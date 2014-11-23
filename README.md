@@ -7,15 +7,12 @@ Turn (almost) any Python Console Program into a GUI application with one line
 </p> 
 
 
-
-
-
 Table of Contents
 -----------------  
 
 - [Gooey](#gooey)
 - [Table of contents](#table-of-contents)
-- [Change Log](#change-log)
+- [Latest Update](#latest-update)
 - [Quick Start](#quick-start)
     - [Installation Instructions](#installation-instructions)
     - [Usage](#usage)
@@ -28,35 +25,27 @@ Table of Contents
     - [Basic](#basic)
     - [No Config](#no-config)
 - [Final Screen](#final-screen)
+- [Change Log](#change-log)
 - [TODO](#todo)
 - [Contributing](#wanna-help)
 - [Image Credits](#image-credits)
 
 
 
-Change Log
-----------
-  
-  
-- Added drag and drop support
-- Added new widget packs: DateChooser, FileChooser, DirChooser
-- fixed several parsing related issues. 
-- Gooey now has a sane setup.py (thanks to hero user LudoVio) 
-- Gooey now builds from json for easy configurability 
-    - Side Note: This was done with big strides towards making Gooey language agnostic. Coming Soon! 
-- Fixed GUI layout so that resizing works better
 
-
-**Planned Features:** 
-- Language agnostic! 
-- Stop/cancel button on run screen 
  
 
 
 ----------   
 
 
+###Latest Update: 
 
+Drag and Drop support (`Issue #28`)
+
+<p align="center">
+ <img src="https://github.com/chriskiehl/Gooey/blob/master/resources/dragdrop.gif" width="500">
+</p>
 
 
 
@@ -162,8 +151,9 @@ If the above defaults aren't cutting it, you can control the exact widget type b
         parser.add_argument('filename', help="name of the file to process") 
 
 Given then above, Gooey would select a normal `TextField` as the widget type like this: 
-
-TEXTFIELD_DEMO.png
+<p align="center">
+    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/textfield_demo.PNG">
+</p>
 
 However, by dropping in `GooeyParser` and supplying a `widget` name, you display a much more user friendly `FileChooser` 
 
@@ -174,14 +164,15 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you display
     def main(): 
         parser = GooeyParser(description="My Cool Gooey App!")
         parser.add_argument('filename', help="name of the file to process", widget='FileChooser') 
+        
+<p align="center"><img src="https://github.com/chriskiehl/Gooey/blob/master/resources/chooser_demo.PNG"></p>
 
 **Custom Widgets:**
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  FileChooser   | img                          | 
-|  DirChooser    |  img                           | 
-|  DateChooser   |                             |  
+|  Directory/FileChooser   | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p> | 
+|  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/datechooser.gif" width="400"></p> |  
  
   
 
@@ -272,7 +263,20 @@ Final Screen
 ----------------------------------------------  
 
 
+###Change Log
+----------
+- Added drag and drop support
+- Added new widget packs: DateChooser, FileChooser, DirChooser
+- fixed several parsing related issues. 
+- Gooey now has a sane setup.py (thanks to hero user LudoVio) 
+- Gooey now builds from json for easy configurability 
+    - Side Note: This was done with big strides towards making Gooey language agnostic. Coming Soon! 
+- Fixed GUI layout so that resizing works better
 
+
+###Planned Features: 
+- Language agnostic! 
+- Stop/cancel button on run screen 
     
     
 
@@ -281,9 +285,7 @@ TODO
 
 * Add to pypi
 * Themes 
-* Add ability to customize the mapping between `Parser` actions and `wxComponents`. For instance, if your program had a file as a required argument, it'd be far more useful to the end user to supply a `wx.FileDialog` rather than a simple `TextBox`. 
 * Update graphics
-* Optparse support? 
 * Get OS X version working. 
 
 
@@ -291,7 +293,7 @@ TODO
 Wanna help?
 -----------  
 
-* Do you art? I'd love to swap out the graphics to something more stylistically unified. 
+* **Artist Wanted!** The graphics and icons in Gooey are a mismash of stuff I was able to scrape up for free off the internet. I'd love to replace them with something more stylistically unified. 
 * Programmer? Pull requests are super welcome. The projects' style is *fantastically* inconsistent, though. So be warned :) I tried to follow the WxWidgets style of Leading Capital methods and CamelCased variables, but.. Python habits die hard. So, there are underscores littered all over the place. 
 
 
