@@ -1,5 +1,3 @@
-
-
 __author__ = 'Chris'
 
 from abc import ABCMeta, abstractmethod
@@ -28,6 +26,17 @@ class WidgetPack(object):
     pass
 
 
+class FileDrop(wx.FileDropTarget):
+  def __init__(self, window):
+    wx.FileDropTarget.__init__(self)
+    self.window = window
+
+  def OnDropFiles(self, x, y, filenames):
+
+    for name in filenames:
+      self.window.WriteText(name)
+
+
 
 class BaseChooser(WidgetPack):
   def __init__(self, button_text='Browse'):
@@ -43,6 +52,8 @@ class BaseChooser(WidgetPack):
     self.option_string = data['commands'][0] if data['commands'] else ''
     self.text_box = wx.TextCtrl(self.parent)
     self.text_box.SetMinSize((0, -1))
+    dt = FileDrop(self.text_box)
+    self.text_box.SetDropTarget(dt)
     self.button = wx.Button(self.parent, label=self.button_text, size=(73, 23))
 
     widget_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -93,7 +104,7 @@ class DirChooserPayload(BaseChooser):
 
 class DateChooserPayload(BaseChooser):
   def __init__(self):
-      BaseChooser.__init__(self, button_text='Pick Date')
+    BaseChooser.__init__(self, button_text='Pick Date')
 
   def onButton(self, evt):
     dlg = CalendarDlg(self.parent)
@@ -125,9 +136,9 @@ class TextInputPayload(WidgetPack):
     self.widget.SetLabelText(text)
 
 
-
 class DropdownPayload(WidgetPack):
   default_value = 'Select Option'
+
   def __init__(self):
     self.option_string = None
     self.widget = None
@@ -135,11 +146,11 @@ class DropdownPayload(WidgetPack):
   def build(self, parent, data):
     self.option_string = data['commands'][0]
     self.widget = wx.ComboBox(
-        parent=parent,
-        id=-1,
-        value=self.default_value,
-        choices=data['choices'],
-        style=wx.CB_DROPDOWN
+      parent=parent,
+      id=-1,
+      value=self.default_value,
+      choices=data['choices'],
+      style=wx.CB_DROPDOWN
     )
     return self.widget
 
