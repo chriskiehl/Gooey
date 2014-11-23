@@ -1,3 +1,5 @@
+from gooey.gui.util.filedrop import FileDrop
+
 __author__ = 'Chris'
 
 from abc import ABCMeta, abstractmethod
@@ -25,16 +27,6 @@ class WidgetPack(object):
   def onResize(self, evt):
     pass
 
-
-class FileDrop(wx.FileDropTarget):
-  def __init__(self, window):
-    wx.FileDropTarget.__init__(self)
-    self.window = window
-
-  def OnDropFiles(self, x, y, filenames):
-
-    for name in filenames:
-      self.window.WriteText(name)
 
 
 
@@ -121,6 +113,8 @@ class TextInputPayload(WidgetPack):
   def build(self, parent, data):
     self.option_string = data['commands'][0] if data['commands'] else ''
     self.widget = wx.TextCtrl(parent)
+    dt = FileDrop(self.widget)
+    self.widget.SetDropTarget(dt)
     self.widget.SetMinSize((0, -1))
     self.widget.SetDoubleBuffered(True)
     return self.widget

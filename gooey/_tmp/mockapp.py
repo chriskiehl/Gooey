@@ -24,7 +24,7 @@ def main():
   file_help_msg = "Name of the file you want to process"
   my_cool_parser = GooeyParser(description=desc)
   my_cool_parser.add_argument("filename", help=file_help_msg, widget="FileChooser")  # positional
-  my_cool_parser.add_argument("outfile", help="Name of the file where you'll save the output", widget="FileChooser")  # positional
+  my_cool_parser.add_argument("outfile", help="Name of the file where you'll save the output")  # positional
   my_cool_parser.add_argument('-c', '--countdown', default=10, type=int, help='sets the time to count down from you see its quite simple!', widget='DateChooser')
   # my_cool_parser.add_argument('-c', '--cron-schedule', default=10, type=int, help='Set the datetime when the cron should begin', widget='DateChooser')
   my_cool_parser.add_argument("-s", "--showtime", action="store_true", help="display the countdown timer")
