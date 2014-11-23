@@ -55,10 +55,11 @@ class Controller(object):
       self.ShowDialog(i18n.translate('error_title'), "Must fill in all fields in the Required section!", wx.ICON_ERROR)
       return
 
+    command = '{0} {1}'.format(self.build_spec['target'], cmd_line_args)
     self.core_gui.NextPage()
-    self.RunClientCode(None)
+    self.RunClientCode(command)
 
-  def RunClientCode(self, process):
+  def RunClientCode(self, command):
     def doInBackground(process, callback):
       while True:
         line = process.stdout.readline()
@@ -67,7 +68,7 @@ class Controller(object):
         self.core_gui.PublishConsoleMsg(line)
       callback(process)
 
-    p = subprocess.Popen(r'python C:\Users\Chris\Desktop\Untitled\prog.py', bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     _pool = Pool(1)
     _pool.apply_async(doInBackground, (p, self.HandleResult))
 

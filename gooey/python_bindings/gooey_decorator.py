@@ -41,11 +41,13 @@ to us. No more complicated ast stuff. Just a little bit of string parsing and we
 done.
 
 '''
-from argparse import ArgumentParser
+
+from argparse import ArgumentParser as RealArgParser, ArgumentParser
 
 from functools import partial
 import os
 import sys
+import types
 
 import wx
 
@@ -56,7 +58,6 @@ import source_parser
 
 ROOT_DIR = os.path.dirname(__import__(__name__.split('.')[0]).__file__)
 TMP_DIR  = os.path.join(ROOT_DIR, '_tmp')
-
 
 def Gooey(f=None, advanced=True,
           language='english', show_config=True,
@@ -142,13 +143,7 @@ def clean_source(module_path):
   with open(module_path, 'r') as f:
     return ''.join(
       line for line in f.readlines()
-      if '@gooey' not in line.lower()
-      and 'import gooey' not in line.lower())
-
-
-def run():
-  parser = source_parser.extract_parser(module_path)
-  client_module = create_cleaned_backup()
+      if '@gooey' not in line.lower())
 
 
 def get_parser(module_path):
@@ -158,6 +153,43 @@ def get_caller_path():
   tmp_sys = __import__('sys')
   return tmp_sys.argv[0]
 
+
+class GooeyParser(object):
+    def __init__(self, **kwargs):
+      self.__dict__['parser'] = ArgumentParser(**kwargs)
+      self.widgets = {}
+
+    @property
+    def _mutually_exclusive_groups(self):
+      return self.parser._mutually_exclusive_groups
+
+    @property
+    def _actions(self):
+      return self.parser._actions
+
+    @property
+    def description(self):
+      return self.parser.description
+
+    def add_argument(self, *args, **kwargs):
+      widget = kwargs.pop('widget', None)
+      self.parser.add_argument(*args, **kwargs)
+      self.widgets[self.parser._actions[-1].dest] = widget
+
+    def add_mutually_exclusive_group(self, **kwargs):
+      return self.parser.add_mutually_exclusive_group(**kwargs)
+
+    def add_argument_group(self, *args, **kwargs):
+      return self.parser.add_argument_group(*args, **kwargs)
+
+    def parse_args(self, args=None, namespace=None):
+      return self.parser.parse_args(args, namespace)
+
+    def __getattr__(self, item):
+      return getattr(self.parser, item)
+
+    def __setattr__(self, key, value):
+      return setattr(self.parser, key, value)
 
 if __name__ == '__main__':
   pass

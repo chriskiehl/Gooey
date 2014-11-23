@@ -123,8 +123,7 @@ def format_source_to_return_parser(source, cutoff_line, restart_line, col_offset
 
   # stitch it all back together excluding the Gooey decorator
   new_source = (line for line in chain(top, return_statement, bottom)
-                if '@gooey' not in line.lower()
-                and 'import gooey' not in line.lower())
+                if '@gooey' not in line.lower())
 
   return ''.join(new_source)
 

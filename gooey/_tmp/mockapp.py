@@ -5,15 +5,15 @@ Created on Dec 21, 2013
 '''
 import sys
 import hashlib
-from time import time as _time
+from time import time as _time, time
 from time import sleep as _sleep
 # from argparse import ArgumentParser
 # import argparse
 import argparse as ap
 from argparse import ArgumentParser as AP
 
-
-a = globals()
+from gooey import Gooey
+from gooey.python_bindings.gooey_decorator import GooeyParser
 
 
 def main():
@@ -22,9 +22,9 @@ def main():
   '''
   desc = "Mock application to test Gooey's functionality"
   file_help_msg = "Name of the file you want to process"
-  my_cool_parser = ap.ArgumentParser(description=desc)
-  my_cool_parser.add_argument("filename", help=file_help_msg, metavar='asdf')  # positional
-  my_cool_parser.add_argument("outfile", help="Name of the file where you'll save the output")  # positional
+  my_cool_parser = GooeyParser(description=desc)
+  my_cool_parser.add_argument("filename", help=file_help_msg, widget="FileChooser")  # positional
+  my_cool_parser.add_argument("outfile", help="Name of the file where you'll save the output", widget="FileChooser")  # positional
   my_cool_parser.add_argument('-c', '--countdown', default=10, type=int, help='sets the time to count down from you see its quite simple!')
   my_cool_parser.add_argument("-s", "--showtime", action="store_true", help="display the countdown timer")
   my_cool_parser.add_argument("-d", "--delay", action="store_true", help="Delay execution for a bit")
@@ -36,8 +36,10 @@ def main():
   verbosity = my_cool_parser.add_mutually_exclusive_group()
   verbosity.add_argument('-t', '--verbozze', dest='verbose', action="store_true", help="Show more details")
   verbosity.add_argument('-q', '--quiet', dest='quiet', action="store_true", help="Only output on error")
+  print my_cool_parser._actions
 
   print 'inside of main(), my_cool_parser =', my_cool_parser
+
   args = my_cool_parser.parse_args()
 
   print sys.argv
@@ -53,8 +55,11 @@ def main():
       print 'printing message at: %s' % hashlib.md5(str(_time())).hexdigest()
     _sleep(.5)
   print 'Finished running the program. Byeeeeesss!'
+  raise ValueError("Something has gone wrong! AHHHHHHHHHHH")
 
-# 	raise ValueError("Something has gone wrong! AHHHHHHHHHHH")
+def here_is_smore():
+  pass
+
 
 if __name__ == '__main__':
   print sys.argv

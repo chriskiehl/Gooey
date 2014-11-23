@@ -55,7 +55,7 @@ class BaseWindow(wx.Frame):
     _desc = self.build_spec['program_description']
     self.head_panel = header.FrameHeader(
         heading=i18n.translate("settings_title"),
-        subheading=_desc if _desc is not None else '',
+        subheading=_desc or '',
         parent=self)
     self.config_panel = BodyPanel(self)
     self.runtime_display = RuntimeDisplay(self)
