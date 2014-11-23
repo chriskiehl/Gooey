@@ -1,6 +1,6 @@
 Gooey (Beta)
 =====  
-Turn (almost) any Console Program into a GUI application with one line  
+Turn (almost) any Python Console Program into a GUI application with one line  
 
 <p align="center">
     <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/primary.png"/>
@@ -45,6 +45,7 @@ Change Log
 
 
 **Planned Features:** 
+- Language agnostic support -- a stand-alone Gooey to build other Gooies! 
 - docopt support -- The people demand it! 
 - Ability to customize widgets (e.g. FileChooser instead of TextBox)
 - Stop/cancel button on run screen 
