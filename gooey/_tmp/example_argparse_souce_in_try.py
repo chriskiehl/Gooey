@@ -53,7 +53,6 @@ class CLIError(Exception):
     return self.msg
 
 
-@Gooey
 def main(argv=None):  # IGNORE:C0111
   '''Command line options.'''
 

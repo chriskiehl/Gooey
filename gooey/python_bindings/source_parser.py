@@ -145,6 +145,7 @@ def extract_parser(modulepath):
   client_module = modules.load(module_source)
   return client_module.main()
 
+
 if __name__ == '__main__':
   filepath = os.path.join(os.path.dirname(__file__),
                           'mockapplications',

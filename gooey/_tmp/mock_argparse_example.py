@@ -1,14 +1,10 @@
-import sys
+__author__ = 'Chris'
 import argparse
 from gooey import Gooey
 
-
-sys.argv.extend(['1', '2', '3', '4', '--sum'])
-
-# @Gooey
 def main():
   parser = argparse.ArgumentParser(description='Process some integers.')
-  parser.add_argument('integers', metavar='N', type=int, nargs="+",
+  parser.add_argument('integers', metavar='N', type=int, nargs='+',
                      help='an integer for the accumulator')
   parser.add_argument('--sum', dest='accumulate', action='store_const',
                      const=sum, default=max,

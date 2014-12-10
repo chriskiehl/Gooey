@@ -6,6 +6,7 @@ Created on Dec 22, 2013
 import subprocess
 import sys
 from multiprocessing.dummy import Pool, Process
+import time
 
 import wx
 
@@ -49,10 +50,11 @@ class Controller(object):
   def OnStartButton(self, widget, event):
     cmd_line_args = self.core_gui.GetOptions()
 
-    _required = self.core_gui.GetRequiredArgs()
-    if _required and any(req == '' for req in _required):
-      self.ShowDialog(i18n.translate('error_title'), "Must fill in all fields in the Required section!", wx.ICON_ERROR)
-      return
+    if not self.build_spec['manual_start']:
+      _required = self.core_gui.GetRequiredArgs()
+      if _required and any(req == '' for req in _required):
+        self.ShowDialog(i18n.translate('error_title'), "Must fill in all fields in the Required section!", wx.ICON_ERROR)
+        return
 
     command = '{0} {1}'.format(self.build_spec['target'], cmd_line_args)
     self.core_gui.NextPage()
@@ -81,12 +83,10 @@ class Controller(object):
       self.ShowBadFinishedDialog(_stderr)
 
   def OnRestartButton(self, widget, event):
-    self.OnStartButton(self, None, event)
+    self.OnStartButton(None, event)
 
   def ManualStart(self):
-    self.core_gui.NextPage()
-    wx.CallAfter(wx.ActivateEvent)
-    Process(target=self.RunClientCode).start()
+    self.OnStartButton(None, None)
 
   def OnCloseButton(self, widget, event):
     self.core_gui.Destroy()

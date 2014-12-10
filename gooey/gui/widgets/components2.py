@@ -68,7 +68,7 @@ class BaseGuiComponent(object):
     return text
 
   def formatExtendedHelpMsg(self, data):
-    base_text = data['help_msg']
+    base_text = data.get('help_msg', '')
     nargs = data['nargs']
     if isinstance(nargs, int):
       return '{base}\n(Note: exactly {nargs} arguments are required)'.format(base=base_text, nargs=nargs)

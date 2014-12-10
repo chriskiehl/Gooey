@@ -6,7 +6,6 @@ Created on Feb 2, 2014
 import time
 from gooey import Gooey
 
-@Gooey
 def main():
   end = time.time() + 10
   while end > time.time():

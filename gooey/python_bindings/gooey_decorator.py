@@ -52,6 +52,7 @@ import types
 import wx
 
 from gooey.gui.lang import i18n
+from gooey.gui.windows import layouts
 from gooey.python_bindings import argparse_to_json
 import source_parser
 
@@ -75,6 +76,8 @@ def Gooey(f=None, advanced=True,
 
   def build(payload):
     def inner():
+      show_config = params['show_config'] #because nonlocal keyword doesn't exist yet :(
+
       main_module_path = get_caller_path()
       _, filename = os.path.split(main_module_path)
       cleaned_source = clean_source(main_module_path)
@@ -82,6 +85,9 @@ def Gooey(f=None, advanced=True,
       filepath = os.path.join(TMP_DIR, filename)
       with open(filepath, 'w') as f:
         f.write(cleaned_source)
+
+      if not has_argparse(cleaned_source):
+        show_config = False
 
       run_cmd = 'python {}'.format(filepath)
 
@@ -97,32 +103,38 @@ def Gooey(f=None, advanced=True,
       from gooey.gui.windows.advanced_config import AdvancedConfigPanel
       from gooey.gui.windows.basic_config_panel import BasicConfigPanel
 
+      meta = {
+        'target': run_cmd,
+        'program_name': program_name,
+        'program_description': program_description or '',
+        'show_config': show_config,
+        'show_advanced': advanced,
+        'default_size': (610, 530),
+        'requireds_cols': 1,
+        'optionals_cols': 2,
+        'manual_start': False
+      }
+
       if show_config:
         parser = get_parser(main_module_path)
+        meta['program_description'] = parser.description or program_description
 
-        meta = {
-          'target': run_cmd,
-          'program_name': program_name,
-          'program_description': program_description or parser.description,
-          'show_config': show_config,
-          'show_advanced': advanced,
-          'default_size': (610, 530),
-          'requireds_cols': 1,
-          'optionals_cols': 2
-        }
         client_app = ClientApp(parser, payload)
 
-        build_spec = dict(meta.items() + argparse_to_json.convert(parser).items())
-
         if advanced:
+          build_spec = dict(meta.items() + argparse_to_json.convert(parser).items())
           BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
         else:
-          BodyPanel = BasicConfigPanel
+          build_spec = dict(meta.items() + layouts.basic_config.items())
+          BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
       # User doesn't want to display configuration screen
       # Just jump straight to the run panel
       else:
-        BodyPanel = BasicConfigPanel
+        build_spec = dict(meta.items() + layouts.basic_config.items())
+        build_spec['manual_start'] = True
+        BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
         client_app = EmptyClientApp(payload)
+
 
       frame = BaseWindow(BodyPanel, build_spec, params)
 
@@ -153,6 +165,9 @@ def get_caller_path():
   tmp_sys = __import__('sys')
   return tmp_sys.argv[0]
 
+def has_argparse(source):
+  bla = ['.parse_args()' in line.lower() for line in source.split('\n')]
+  return any(bla)
 
 
 

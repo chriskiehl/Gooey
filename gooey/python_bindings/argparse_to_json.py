@@ -29,7 +29,7 @@ class UnknownWidgetType(Exception):
 
 def convert(parser):
 
-  widget_dict = getattr(parser, 'widgets', None)
+  widget_dict = getattr(parser, 'widgets', {})
 
   mutually_exclusive_group = [
                   mutex_action

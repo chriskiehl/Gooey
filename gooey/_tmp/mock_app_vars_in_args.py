@@ -4,7 +4,6 @@ from argparse import ArgumentParser
 from gooey import Gooey
 
 
-@Gooey
 def main():
     """Main"""
     bar = 'bar'
