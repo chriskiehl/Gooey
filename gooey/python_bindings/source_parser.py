@@ -148,7 +148,7 @@ def extract_parser(modulepath):
 
 if __name__ == '__main__':
   filepath = os.path.join(os.path.dirname(__file__),
-                          'mockapplications',
+                          'examples',
                           'example_argparse_souce_in_main.py')
 
   nodes = ast.parse(_openfile(filepath))
