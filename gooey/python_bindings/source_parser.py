@@ -116,8 +116,8 @@ def get_indent(line):
 def format_source_to_return_parser(source, cutoff_line, restart_line, col_offset, parser_name):
   top = source[:cutoff_line - 1]
   bottom = source[restart_line:]
-
-  return_statement = ['{}return {}\n\n'.format(' ' * col_offset, parser_name)]
+  indentation = source[cutoff_line - 1][:col_offset]
+  return_statement = ['{}return {}\n\n'.format(indentation, parser_name)]
 
   # stitch it all back together excluding the Gooey decorator
   new_source = (line for line in chain(top, return_statement, bottom)
