@@ -51,6 +51,8 @@ import types
 
 import wx
 
+import tempfile
+
 from gooey.gui.lang import i18n
 from gooey.gui.windows import layouts
 from gooey.python_bindings import argparse_to_json
@@ -58,7 +60,7 @@ import source_parser
 
 
 ROOT_DIR = os.path.dirname(__import__(__name__.split('.')[0]).__file__)
-TMP_DIR  = os.path.join(ROOT_DIR, '_tmp')
+TMP_DIR  = tempfile.mkdtemp()
 
 def Gooey(f=None, advanced=True,
           language='english', show_config=True,
@@ -83,6 +85,7 @@ def Gooey(f=None, advanced=True,
       cleaned_source = clean_source(main_module_path)
 
       filepath = os.path.join(TMP_DIR, filename)
+      print(filepath)
       with open(filepath, 'w') as f:
         f.write(cleaned_source)
 
