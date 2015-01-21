@@ -46,8 +46,10 @@ done.
 '''
 
 import os
+import tempfile
 import wx
 import source_parser
+import atexit
 from functools import partial
 from gooey.gui.lang import i18n
 from gooey.gui.windows import layouts
@@ -77,15 +79,16 @@ def Gooey(f=None, advanced=True,
       _, filename = os.path.split(main_module_path)
       cleaned_source = clean_source(main_module_path)
 
-      filepath = os.path.join(create_local_storage(), 'gooey_' + filename)
+      descriptor, tmp_filepath = tempfile.mkstemp(suffix='.py')
+      atexit.register(cleanup, descriptor, tmp_filepath)
 
-      with open(filepath, 'w') as f:
+      with open(tmp_filepath, 'w') as f:
         f.write(cleaned_source)
 
       if not has_argparse(cleaned_source):
         show_config = False
 
-      run_cmd = 'python {}'.format(filepath)
+      run_cmd = 'python {}'.format(tmp_filepath)
 
       # Must be called before anything else
       app = wx.App(False)
@@ -165,14 +168,9 @@ def has_argparse(source):
   bla = ['.parse_args()' in line.lower() for line in source.split('\n')]
   return any(bla)
 
-
-def create_local_storage():
-  path = os.path.join(os.getcwd(), '_gooey_generated_files_')
-  try:
-    os.mkdir(path)
-  except OSError:
-    pass # already exists
-  return path
+def cleanup(descriptor, filepath):
+  os.close(descriptor)
+  os.remove(filepath)
 
 
 if __name__ == '__main__':

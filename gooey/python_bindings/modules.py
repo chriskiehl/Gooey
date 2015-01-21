@@ -10,10 +10,10 @@ sys.path.append(os.path.dirname(__file__))
 
 def load(module_source):
   descriptor, tmpfilepath = tempfile.mkstemp(suffix='.py')
-  print descriptor, tmpfilepath
+
   tmpfiledir = os.path.dirname(tmpfilepath)
   tmpfilename = os.path.splitext(os.path.split(tmpfilepath)[-1])[0]
-  print tmpfilename
+
   sys.path.append(tmpfiledir)
   try:
     with open(tmpfilepath, 'w') as f:
