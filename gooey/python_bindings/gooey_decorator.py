@@ -3,6 +3,9 @@ Created on Jan 24, 2014
 
 @author: Chris
 
+Hey, whaduya know. This is out of date again. TODO: update giant doctring.
+
+
 ##How things work these days (though, likely to change)
 
 The decorator is used solely as a nice way to get the location
@@ -42,25 +45,15 @@ done.
 
 '''
 
-from argparse import ArgumentParser as RealArgParser, ArgumentParser
-
-from functools import partial
 import os
-import sys
-import types
-
 import wx
-
-import tempfile
-
+import source_parser
+from functools import partial
 from gooey.gui.lang import i18n
 from gooey.gui.windows import layouts
 from gooey.python_bindings import argparse_to_json
-import source_parser
 
 
-ROOT_DIR = os.path.dirname(__import__(__name__.split('.')[0]).__file__)
-TMP_DIR  = tempfile.mkdtemp()
 
 def Gooey(f=None, advanced=True,
           language='english', show_config=True,
@@ -84,8 +77,8 @@ def Gooey(f=None, advanced=True,
       _, filename = os.path.split(main_module_path)
       cleaned_source = clean_source(main_module_path)
 
-      filepath = os.path.join(TMP_DIR, filename)
-      print(filepath)
+      filepath = os.path.join(create_local_storage(), 'gooey_' + filename)
+
       with open(filepath, 'w') as f:
         f.write(cleaned_source)
 
@@ -172,6 +165,14 @@ def has_argparse(source):
   bla = ['.parse_args()' in line.lower() for line in source.split('\n')]
   return any(bla)
 
+
+def create_local_storage():
+  path = os.path.join(os.getcwd(), '_gooey_generated_files_')
+  try:
+    os.mkdir(path)
+  except OSError:
+    pass # already exists
+  return path
 
 
 if __name__ == '__main__':
