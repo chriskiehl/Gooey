@@ -9,6 +9,7 @@ from argparse import (
   _StoreFalseAction,
   _StoreTrueAction,
   ArgumentParser)
+import argparse
 import itertools
 
 
@@ -37,7 +38,7 @@ def convert(parser):
                   for mutex_action in group_actions._group_actions]
 
 
-  base_actions = [(action, widget_dict.get(action.dest, None))
+  base_actions = [(action, get_widget(action, widget_dict))
                   for action in parser._actions
                   if action not in mutually_exclusive_group]
 
@@ -63,7 +64,10 @@ def convert(parser):
   }
 
 
-
+def get_widget(action, widgets):
+  supplied_widget = widgets.get(action.dest, None)
+  type_arg_widget = 'FileChooser' if type(action.type) == type(argparse.FileType) else None
+  return supplied_widget or type_arg_widget or None
 
 
 def get_required_and_positional_args(actions):
