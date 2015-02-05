@@ -3,11 +3,12 @@ Created on Dec 22, 2013
 
 @author: Chris
 '''
+
 import subprocess
 import sys
 from multiprocessing.dummy import Pool, Process
 import time
-
+import platform
 import wx
 
 from gooey.gui.lang import i18n
@@ -66,10 +67,9 @@ class Controller(object):
         line = process.stdout.readline()
         if not line:
           break
-        self.core_gui.PublishConsoleMsg(line)
-      callback(process)
-
-    p = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
+      wx.CallAfter(callback, process)
+    p = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     _pool = Pool(1)
     _pool.apply_async(doInBackground, (p, self.HandleResult))
 
