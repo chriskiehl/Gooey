@@ -23,7 +23,9 @@ setup(
     classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'Topic :: Software Development :: Build Tools :: GUI :: CLI',
+        'Topic :: Desktop Environment',
+        'Topic :: Software Development :: Build Tools',
+        'Topic :: Software Development :: Widget Sets',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7'
     ],
