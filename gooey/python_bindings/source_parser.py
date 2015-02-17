@@ -135,10 +135,15 @@ def extract_parser(modulepath):
   main_func = get_nodes_by_containing_attr(funcs, 'main')[0]
   parse_args_assignment = get_nodes_by_containing_attr(main_func.body, 'parse_args')[0]
 
+  # ast seemingly incorrectly reports the line no of ast.If objects (bug?)
+  # thus, if we end on an IF statement, decriment the line number by one.
+  final_line = main_func.body[-1]
+  restart_line = final_line.lineno if not isinstance(final_line, ast.If) else final_line.lineno - 1
+
   module_source = format_source_to_return_parser(
     source,
     cutoff_line=parse_args_assignment.lineno,
-    restart_line=main_func.body[-1].lineno,
+    restart_line=restart_line,
     col_offset=parse_args_assignment.col_offset,
     parser_name=parse_args_assignment.value.func.value.id
   )
