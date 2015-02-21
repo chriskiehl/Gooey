@@ -15,6 +15,8 @@ import itertools
 
 VALID_WIDGETS = (
   'FileChooser',
+  'MultiFileChooser',
+  'FileSaver',
   'DirChooser',
   'DateChooser',
   'TextField',

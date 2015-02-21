@@ -17,7 +17,10 @@ def main():
   desc = "Example application to show Gooey's various widgets"
   file_help_msg = "Name of the file you want to process"
   my_cool_parser = GooeyParser(description=desc)
-  my_cool_parser.add_argument("filename", help=file_help_msg, widget="FileChooser")   # positional
+  my_cool_parser.add_argument("FileChooser", help=file_help_msg, widget="FileChooser")   # positional
+  my_cool_parser.add_argument("DirectoryChooser", help=file_help_msg, widget="DirChooser")   # positional
+  my_cool_parser.add_argument("FileSaver", help=file_help_msg, widget="FileSaver")   # positional
+  my_cool_parser.add_argument("MultiFileSaver", help=file_help_msg, widget="MultiFileChooser")   # positional
   my_cool_parser.add_argument("directory", help="Directory to store output")          # positional
 
   my_cool_parser.add_argument('-c', '--countdown', default=2, type=int, help='sets the time to count down from you see its quite simple!')

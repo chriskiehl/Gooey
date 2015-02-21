@@ -1,3 +1,4 @@
+from functools import partial
 from gooey.gui.util.filedrop import FileDrop
 
 __author__ = 'Chris'
@@ -65,13 +66,13 @@ class BaseChooser(WidgetPack):
   def onButton(self, evt):
     raise NotImplementedError
 
-
-class FileChooserPayload(BaseChooser):
-  def __init__(self):
+class BaseFileChooser(BaseChooser):
+  def __init__(self, dialog):
     BaseChooser.__init__(self)
+    self.dialog = dialog
 
   def onButton(self, evt):
-    dlg = wx.FileDialog(self.parent, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+    dlg = self.dialog(self.parent)
     result = (dlg.GetPath()
               if dlg.ShowModal() == wx.ID_OK
               else None)
@@ -80,29 +81,18 @@ class FileChooserPayload(BaseChooser):
       # kinda hacky, but avoided a buncha boilerplate
       self.text_box.SetLabelText(result)
 
-
-class DirChooserPayload(BaseChooser):
-  def __init__(self):
-    BaseChooser.__init__(self)
-
-  def onButton(self, evt):
-    dlg = wx.DirDialog(self.parent, 'Select directory', style=wx.DD_DEFAULT_STYLE)
-    result = (dlg.GetPath()
-              if dlg.ShowModal() == wx.ID_OK
-              else None)
-    if result:
-      self.text_box.SetLabelText(result)
+def build_dialog(style, exist_constraint=True, **kwargs):
+  if exist_constraint:
+    return lambda panel: wx.FileDialog(panel, style=style | wx.FD_FILE_MUST_EXIST, **kwargs)
+  else:
+    return lambda panel: wx.FileDialog(panel, style=style, **kwargs)
 
 
-class DateChooserPayload(BaseChooser):
-  def __init__(self):
-    BaseChooser.__init__(self, button_text='Pick Date')
-
-  def onButton(self, evt):
-    dlg = CalendarDlg(self.parent)
-    dlg.ShowModal()
-    if dlg.GetPath():
-      self.text_box.SetLabelText(dlg.GetPath())
+FileChooserPayload    = partial(BaseFileChooser, dialog=build_dialog(wx.FD_OPEN))
+FileSaverPayload      = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename"))
+MultiFileSaverPayload = partial(BaseFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
+DirChooserPayload     = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE))
+DateChooserPayload    = partial(BaseFileChooser, dialog=CalendarDlg)
 
 
 class TextInputPayload(WidgetPack):

@@ -228,14 +228,15 @@ class RadioGroup(object):
 
 
 
-FileChooser = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileChooserPayload())
-DirChooser  = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DirChooserPayload())
-DateChooser = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DateChooserPayload())
-TextField   = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload())
-Dropdown    = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DropdownPayload())
-Counter     = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.CounterPayload())
-# RadioGroup
-# CheckBox
+FileChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileChooserPayload())
+MultiFileChooser  = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.MultiFileSaverPayload())
+DirChooser        = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DirChooserPayload())
+FileSaver         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileSaverPayload())
+DateChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DateChooserPayload())
+TextField         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload())
+Dropdown          = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DropdownPayload())
+Counter           = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.CounterPayload())
+
 
 
 
