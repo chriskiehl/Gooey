@@ -90,7 +90,7 @@ Different styling and functionality can be configured by passing arguments into 
     # options
     @Gooey(advanced=Boolean,          # toggle whether to show advanced config or not 
            language=language_string,  # Translations configurable via json
-           config=Boolean,            # skip config screens all together
+           show_config=Boolean,            # skip config screens all together
            program_name='name',       # Defaults to script name 
            program_description        # Defaults to ArgParse Description
       )
