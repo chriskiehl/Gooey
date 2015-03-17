@@ -319,6 +319,8 @@ And then when parsing command-line arguments, you can detect if your script is r
         main_parser.add_argument('-i', '--input', metavar='/path/to/root/folder', type=str, required=True,
                             help='Path to the root folder from where the scanning will occur.')
 
+You can then just call your script using --gui as the first argument (eg, `python yourscript.py --gui`) to show the Gooey GUI, or just omit this argument and use your script from command-line as usual.
+
 
 ---------------------------------------  
 
