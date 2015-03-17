@@ -114,10 +114,16 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     return ' '.join(values)
 
   def GetRequiredArgs(self):
-    return [arg.GetValue() for arg in self.components.required_args]
+    if not self.components.required_args:
+        return None
+    else:
+        return [arg.GetValue() for arg in self.components.required_args]
 
   def GetOptionalArgs(self):
-    return [arg.GetValue() for arg in
+    if not self.components.general_args:
+        return None
+    else:
+        return [arg.GetValue() for arg in
             chain(self.components.general_options, self.components.flags)]
 
 
