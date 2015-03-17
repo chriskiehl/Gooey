@@ -141,7 +141,7 @@ def get_caller_path():
   return tmp_sys.argv[0]
 
 def has_argparse(source):
-  bla = ['.parse_args()' in line.lower() for line in source.split('\n')]
+  bla = ['.parse_args(' in line.lower() for line in source.split('\n')]
   return any(bla)
 
 def cleanup(descriptor, filepath):
