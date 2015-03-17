@@ -119,6 +119,7 @@ def get_optionals_without_choices(actions):
       for action, widget in actions
       if action.option_strings
       and not action.choices
+      and not action.required
       and not isinstance(action, _CountAction)
       and not isinstance(action, _HelpAction)
       and type(action) not in boolean_actions
