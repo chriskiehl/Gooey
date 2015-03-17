@@ -332,7 +332,7 @@ class Optional(AbstractComponent):
     '''
     self.AssertInitialization('Optional')
     value = self._widget.GetValue()
-    if not value:
+    if not value or len(value) <= 0:
       return None
     return ' '.join(
       [self._action.option_strings[0],  # get the verbose copy if available
@@ -387,8 +387,10 @@ class Flag(AbstractComponent):
     returns
       Options name for argument (-v)
     '''
-    if self._widget.GetValue():
-      return self._action.option_strings[0]
+    if not self._widget.GetValue() or len(self._widget.GetValue()) <= 0:
+        return None
+    else:
+        return self._action.option_strings[0]
 
   def Update(self, size):
     '''
