@@ -24,6 +24,7 @@ Table of Contents
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
+    - [AutoGooey](#autogooey)
 - [Final Screen](#final-screen)
 - [Change Log](#change-log)
 - [TODO](#todo)
