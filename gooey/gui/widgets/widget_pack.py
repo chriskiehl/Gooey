@@ -80,7 +80,8 @@ class BaseFileChooser(BaseChooser):
     if result:
       # self.text_box references a field on the class this is passed into
       # kinda hacky, but avoided a buncha boilerplate
-      self.text_box.SetLabelText(result)
+      self.text_box.SetValue(result)
+
 
 def build_dialog(style, exist_constraint=True, **kwargs):
   if exist_constraint:
