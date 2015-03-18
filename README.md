@@ -24,6 +24,7 @@ Table of Contents
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
+    - [AutoGooey](#autogooey)
 - [Final Screen](#final-screen)
 - [Change Log](#change-log)
 - [TODO](#todo)
@@ -90,7 +91,7 @@ Different styling and functionality can be configured by passing arguments into 
     # options
     @Gooey(advanced=Boolean,          # toggle whether to show advanced config or not 
            language=language_string,  # Translations configurable via json
-           config=Boolean,            # skip config screens all together
+           show_config=Boolean,            # skip config screens all together
            program_name='name',       # Defaults to script name 
            program_description        # Defaults to ArgParse Description
       )
@@ -158,7 +159,7 @@ If the above defaults aren't cutting it, you can control the exact widget type b
 
     from argparse import ArgumentParser
     ....
-    
+
     def main(): 
         parser = ArgumentParser(description="My Cool Gooey App!")
         parser.add_argument('filename', help="name of the file to process") 
@@ -168,12 +169,14 @@ Given then above, Gooey would select a normal `TextField` as the widget type lik
     <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/textfield_demo.PNG">
 </p>
 
-However, by dropping in `GooeyParser` and supplying a `widget` name, you display a much more user friendly `FileChooser` 
+However, by dropping in `GooeyParser` and supplying a `widget` name, you display a much more user friendly `FileChooser`.
 
+Note: notice that you still need to decorate your function with @Gooey.
 
-    from gooeyimport GooeyParser
+    from gooey import Gooey, GooeyParser
     ....
-    
+
+    @Gooey
     def main(): 
         parser = GooeyParser(description="My Cool Gooey App!")
         parser.add_argument('filename', help="name of the file to process", widget='FileChooser') 
@@ -184,8 +187,13 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you display
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  Directory/FileChooser   | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p> | 
+|  FileChooser<br />FileSaver<br />DirChooser<br />MultiFileChooser   | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p> | 
 |  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/datechooser.gif" width="400"></p> |  
+|  TextField   |  | 
+|  Dropdown   |  | 
+|  Counter   |  | 
+|  RadioGroup   |  | 
+|  CheckBox   |  | 
  
   
 
@@ -201,11 +209,11 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you display
 Configuration 
 ------------   
 
-Gooey comes in three main flavors.  
+Gooey can show three kinds of GUI.
 
-- Full/Advanced 
+- Full/Advanced
 - Basic
-- No config  
+- No config
 
 Each has the following options: 
 
@@ -266,6 +274,61 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 </p>
 
 ---------------------------------------  
+
+
+###AutoGooey
+
+When using the @Gooey decorator, your script will always display a GUI. If you want to offer both interfaces (command-line and GUI), you can use this code snippet:
+
+    # Try to import Gooey for GUI display, but manage exception so that we replace the Gooey decorator by a dummy function that will just return the main function as-is, thus keeping the compatibility with command-line usage
+    try:
+        import lib.gooey as gooey
+    except:
+        # Define a dummy replacement function for Gooey to stay compatible with command-line usage
+        class gooey(object):
+            def Gooey(func):
+                return func
+        # If --gui was specified, then there's a problem
+        if len(sys.argv) > 1 and sys.argv[1] == '--gui': raise ImportError('--gui specified but lib/gooey could not be found, cannot load the GUI (however you can still use in commandline).')
+
+    def check_gui_arg():
+        '''Check that the --gui argument was passed, and if true, we remove the --gui option and replace by --gui_launched so that Gooey does not loop infinitely'''
+        if len(sys.argv) > 1 and sys.argv[1] == '--gui':
+            #del sys.argv[1]
+            sys.argv[1] = '--gui_launched' # CRITICAL: need to remove/replace the --gui argument, else it will stay in memory and when Gooey will call the script again, it will be stuck in an infinite loop calling back and forth between this script and Gooey. Thus, we need to remove this argument, but we also need to be aware that Gooey was called so that we can call gooey.GooeyParser() instead of argparse.ArgumentParser() (for better fields management like checkboxes for boolean arguments). To solve both issues, we replace the argument --gui by another internal argument --gui_launched.
+            return True
+        else:
+            return False
+
+    def AutoGooey(fn):
+        '''Automatically show a Gooey GUI if --gui is passed as the first argument, else it will just run the function as normal'''
+        if check_gui_arg():
+            return gooey.Gooey(fn)
+        else:
+            return fn
+
+    @AutoGooey
+    def main(argv=None):
+        # ... your program here ...
+
+And then when parsing command-line arguments, you can detect if your script is running inside Gooey or from command-line:
+
+    @AutoGooey
+    def main(argv=None):
+        #-- Constructing the parser
+        if len(sys.argv) > 1 and sys.argv[1] == '--gui_launched':
+            main_parser = gooey.GooeyParser()
+        else:
+            main_parser = argparse.ArgumentParser()
+        #-- Constructing arguments
+        main_parser.add_argument('-i', '--input', metavar='/path/to/root/folder', type=str, required=True,
+                            help='Path to the root folder from where the scanning will occur.')
+
+You can then just call your script using --gui as the first argument (eg, `python yourscript.py --gui`) to show the Gooey GUI, or just omit this argument and use your script from command-line as usual.
+
+
+---------------------------------------  
+
 
 Final Screen
 ------------  
