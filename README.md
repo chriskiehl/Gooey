@@ -187,8 +187,13 @@ Note: notice that you still need to decorate your function with @Gooey.
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  Directory/FileChooser   | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p> | 
+|  FileChooser<br />FileSaver<br />DirChooser<br />MultiFileChooser   | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p> | 
 |  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/datechooser.gif" width="400"></p> |  
+|  TextField   |  | 
+|  Dropdown   |  | 
+|  Counter   |  | 
+|  RadioGroup   |  | 
+|  CheckBox   |  | 
  
   
 
