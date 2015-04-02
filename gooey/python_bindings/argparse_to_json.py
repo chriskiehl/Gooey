@@ -68,7 +68,7 @@ def convert(parser):
 
 def get_widget(action, widgets):
   supplied_widget = widgets.get(action.dest, None)
-  type_arg_widget = 'FileChooser' if type(action.type) == type(argparse.FileType) else None
+  type_arg_widget = 'FileChooser' if action.type == argparse.FileType else None
   return supplied_widget or type_arg_widget or None
 
 
