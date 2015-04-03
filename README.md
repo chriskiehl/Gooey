@@ -171,7 +171,7 @@ Given then above, Gooey would select a normal `TextField` as the widget type lik
 However, by dropping in `GooeyParser` and supplying a `widget` name, you display a much more user friendly `FileChooser` 
 
 
-    from gooeyimport GooeyParser
+    from gooey import GooeyParser
     ....
     
     def main(): 
