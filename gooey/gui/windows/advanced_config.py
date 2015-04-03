@@ -114,17 +114,11 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     return ' '.join(values)
 
   def GetRequiredArgs(self):
-    if not self.components.required_args:
-        return None
-    else:
-        return [arg.GetValue() for arg in self.components.required_args]
+    return [arg.GetValue() for arg in self.components.required_args]
 
   def GetOptionalArgs(self):
-    if not self.components.general_args:
-        return None
-    else:
-        return [arg.GetValue() for arg in
-            chain(self.components.general_options, self.components.flags)]
+    # Not used anywhere. Keep for debugging?
+    return filter(None, [arg.GetValue() for arg in chain(self.components.general_options, self.components.flags)])
 
 
 if __name__ == '__main__':

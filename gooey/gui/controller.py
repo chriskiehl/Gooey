@@ -24,17 +24,13 @@ class Controller(object):
   Main controller for the gui.
 
   All controlls are delegated to this central control point.
-
-  Args:
-    base_frame	 = Reference to the Basewindow
-    head_panel	 = reference to the BaseWindow's Head Panel
-    body_panel 	 = reference to the BaseWindow's Body Panel
-    footer_panel = reference to the BaseWindow's Footer Panel
-    model				 = configuration model
-    translator	 = instance of the I18N class
   '''
 
   def __init__(self, base_frame, build_spec):
+    '''
+    :param base_frame: BaseWindow
+    :param build_spec: Json
+    '''
     self.core_gui = base_frame
     self.build_spec = build_spec
 

@@ -97,9 +97,6 @@ class BaseWindow(wx.Frame):
     self.runtime_display.Show()
     self.Layout()
 
-  # def AttachPayload(self, payload):
-  #   self._payload = payload
-
   def ManualStart(self):
     self._controller.ManualStart()
 
@@ -108,9 +105,6 @@ class BaseWindow(wx.Frame):
 
   def PublishConsoleMsg(self, text):
     self.runtime_display.cmd_textbox.AppendText(text)
-    # evt = MessageEvent(message=text)
-    # self.GetEventHandler().ProcessEvent(evt)
-    # wx.PostEvent(self.runtime_display, evt)
 
 
 if __name__ == '__main__':

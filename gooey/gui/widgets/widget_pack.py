@@ -58,11 +58,11 @@ class BaseChooser(WidgetPack):
     return widget_sizer
 
   def getValue(self):
-    if self.option_string and self.text_box.GetValue() and len(self.text_box.GetValue()) > 0:
-      return '{0} "{1}"'.format(self.option_string, self.text_box.GetValue())
+    value = self.text_box.GetValue()
+    if self.option_string and value:
+      return '{0} "{1}"'.format(self.option_string, value)
     else:
-      #return '"{}"'.format(self.text_box.GetValue())
-      return None
+      return '"{}"'.format(value) if value else None
 
   def onButton(self, evt):
     raise NotImplementedError
