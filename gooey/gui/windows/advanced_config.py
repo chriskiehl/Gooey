@@ -1,26 +1,26 @@
 """
-Created on Dec 28, 2013
+Managed the internal layout for configuration options
 
 @author: Chris
 """
-from itertools import chain
-import itertools
+
+
 
 import wx
+import itertools
+
 from wx.lib.scrolledpanel import ScrolledPanel
 
-from gooey.gui import component_builder
-from gooey.gui.lang import i18n
-from gooey.gui.option_reader import OptionReader
 from gooey.gui import styling
+from gooey.gui.lang import i18n
+from gooey.gui import component_builder
+from gooey.gui.option_reader import OptionReader
+
 
 PADDING = 10
 
 
 class AdvancedConfigPanel(ScrolledPanel, OptionReader):
-  """
-  Abstract class for the Footer panels.
-  """
 
   def __init__(self, parent, build_spec=None, **kwargs):
     ScrolledPanel.__init__(self, parent, **kwargs)
@@ -59,7 +59,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
       container.Add(styling.HorizontalRule(self), *STD_LAYOUT)
       container.AddSpacer(20)
 
-      self.AddWidgets(container, self.components.required_args, add_space=True)
+      self.CreateComponentGrid(container, self.components.required_args, cols=self._build_spec['requireds_cols'])
 
       container.AddSpacer(10)
 
@@ -73,13 +73,6 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     self.CreateComponentGrid(container, self.components.flags, cols=self._build_spec['optionals_cols'])
 
     self.SetSizer(container)
-
-  def AddWidgets(self, sizer, components, add_space=False, padding=PADDING):
-    for component in components:
-      widget_group = component.build(parent=self)
-      sizer.Add(widget_group, 0, wx.LEFT | wx.RIGHT | wx.EXPAND, padding)
-      if add_space:
-        sizer.AddSpacer(8)
 
   def CreateComponentGrid(self, parent_sizer, components, cols=2):
     for row in self.chunk(components, cols):
@@ -113,10 +106,6 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
   def GetRequiredArgs(self):
     return [arg.GetValue() for arg in self.components.required_args]
-
-  def GetOptionalArgs(self):
-    # Not used anywhere. Keep for debugging?
-    return filter(None, [arg.GetValue() for arg in chain(self.components.general_options, self.components.flags)])
 
   def chunk(self, iterable, n, fillvalue=None):
     "Collect data into fixed-length chunks or blocks"
