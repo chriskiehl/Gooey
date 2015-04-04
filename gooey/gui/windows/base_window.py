@@ -16,10 +16,9 @@ from gooey.gui.windows import footer, header
 
 
 class BaseWindow(wx.Frame):
-  def __init__(self, BodyPanel, build_spec, params):
+  def __init__(self, BodyPanel, build_spec):
     wx.Frame.__init__(self, parent=None, id=-1)
 
-    self._params = params
     self.build_spec = build_spec
 
     self._controller = None
@@ -40,10 +39,7 @@ class BaseWindow(wx.Frame):
     self.Bind(wx.EVT_SIZE, self.onResize)
 
   def _init_properties(self):
-    if not self._params['program_name']:
-      title = os.path.basename(sys.argv[0].replace('.py', ''))
-    else:
-      title = self._params['program_name']
+    title = self.build_spec['program_name']
     self.SetTitle(title)
     self.SetSize(self.build_spec['default_size'])
     # self.SetMinSize((400, 300))

@@ -1,6 +1,6 @@
 import itertools
 
-from gooey.gui.widgets import components2
+from gooey.gui.widgets import components
 
 
 class ComponentBuilder(object):
@@ -13,8 +13,8 @@ class ComponentBuilder(object):
 
     optionals = self.build_widget(_optional_specs) if _optional_specs else None
     if _optional_specs:
-      self.flags = [widget for widget in optionals if isinstance(widget, components2.CheckBox)]
-      self.general_options = [widget for widget in optionals if not isinstance(widget, components2.CheckBox)]
+      self.flags = [widget for widget in optionals if isinstance(widget, components.CheckBox)]
+      self.general_options = [widget for widget in optionals if not isinstance(widget, components.CheckBox)]
     else:
       self.flags = []
       self.general_options = []
@@ -25,7 +25,7 @@ class ComponentBuilder(object):
       widget_type = spec['type']
       properties = spec['data']
 
-      Component = getattr(components2, widget_type)
+      Component = getattr(components, widget_type)
       assembled_widgets.append(Component(data=properties))
     return assembled_widgets
 

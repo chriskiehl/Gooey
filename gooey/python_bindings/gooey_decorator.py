@@ -45,16 +45,16 @@ done.
 
 '''
 
-import os
-import tempfile
 import wx
-import source_parser
+import os
+import sys
 import atexit
-from functools import partial
-from gooey.gui.lang import i18n
+import tempfile
+import source_parser
+
+from gooey.gui import application
 from gooey.gui.windows import layouts
 from gooey.python_bindings import argparse_to_json
-
 
 
 def Gooey(f=None, advanced=True,
@@ -93,54 +93,30 @@ def Gooey(f=None, advanced=True,
       # Must be called before anything else
       app = wx.App(False)
 
-      i18n.load(language)
-
-      # load gui components after loading the language pack
-      from gooey.gui.client_app import ClientApp
-      from gooey.gui.client_app import EmptyClientApp
-      from gooey.gui.windows.base_window import BaseWindow
-      from gooey.gui.windows.advanced_config import AdvancedConfigPanel
-      from gooey.gui.windows.basic_config_panel import BasicConfigPanel
-
-      meta = {
+      build_spec = {
+        'language': language,
         'target': run_cmd,
-        'program_name': program_name,
+        'program_name': program_name or os.path.basename(sys.argv[0].replace('.py', '')),
         'program_description': program_description or '',
         'show_config': show_config,
         'show_advanced': advanced,
         'default_size': (610, 530),
         'requireds_cols': 1,
-        'optionals_cols': 2,
+        'optionals_cols': 4,
         'manual_start': False
       }
 
       if show_config:
         parser = get_parser(main_module_path)
-        meta['program_description'] = parser.description or program_description
+        build_spec['program_description'] = parser.description or program_description
 
-        client_app = ClientApp(parser, payload)
+        layout_data = argparse_to_json.convert(parser) if advanced else layouts.basic_config.items()
+        build_spec.update(layout_data)
 
-        if advanced:
-          build_spec = dict(meta.items() + argparse_to_json.convert(parser).items())
-          BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
-        else:
-          build_spec = dict(meta.items() + layouts.basic_config.items())
-          BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
-      # User doesn't want to display configuration screen
-      # Just jump straight to the run panel
       else:
-        build_spec = dict(meta.items() + layouts.basic_config.items())
         build_spec['manual_start'] = True
-        BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
-        client_app = EmptyClientApp(payload)
 
-
-      frame = BaseWindow(BodyPanel, build_spec, params)
-
-      if not show_config:
-        frame.ManualStart()
-      frame.Show(True)
-      app.MainLoop()
+      application.run(build_spec)
 
     inner.__name__ = payload.__name__
     return inner

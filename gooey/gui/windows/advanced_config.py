@@ -4,6 +4,7 @@ Created on Dec 28, 2013
 @author: Chris
 """
 from itertools import chain
+import itertools
 
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
@@ -14,6 +15,7 @@ from gooey.gui.option_reader import OptionReader
 from gooey.gui import styling
 
 PADDING = 10
+
 
 class AdvancedConfigPanel(ScrolledPanel, OptionReader):
   """
@@ -26,7 +28,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
     self.SetDoubleBuffered(True)
 
-    self._action_groups = build_spec
+    self._build_spec = build_spec
     self._positionals = build_spec.get('required', None)
     self.components = component_builder.ComponentBuilder(build_spec)
 
@@ -67,11 +69,8 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     container.Add(styling.HorizontalRule(self), *STD_LAYOUT)
     container.AddSpacer(20)
 
-    self.CreateComponentGrid(container, self.components.general_options, cols=2)
-    self.CreateComponentGrid(container, self.components.flags, cols=3)
-    # container.Add(general_opts_grid, *STD_LAYOUT)
-    # container.AddSpacer(30)
-    # container.Add(flag_grids, 0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
+    self.CreateComponentGrid(container, self.components.general_options, cols=self._build_spec['optionals_cols'])
+    self.CreateComponentGrid(container, self.components.flags, cols=self._build_spec['optionals_cols'])
 
     self.SetSizer(container)
 
@@ -83,10 +82,9 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
         sizer.AddSpacer(8)
 
   def CreateComponentGrid(self, parent_sizer, components, cols=2):
-    rows = [components[i:i+cols] for i in range(0, len(components), cols)]
-    for row in rows:
+    for row in self.chunk(components, cols):
       hsizer = wx.BoxSizer(wx.HORIZONTAL)
-      for widget in row:
+      for widget in filter(None, row):
         hsizer.Add(widget.build(self), 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
       # hsizer.FitInside(parent_sizer)
       parent_sizer.Add(hsizer, 0, wx.EXPAND)
@@ -120,6 +118,11 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     # Not used anywhere. Keep for debugging?
     return filter(None, [arg.GetValue() for arg in chain(self.components.general_options, self.components.flags)])
 
+  def chunk(self, iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    return itertools.izip_longest(fillvalue=fillvalue, *args)
 
 if __name__ == '__main__':
   pass

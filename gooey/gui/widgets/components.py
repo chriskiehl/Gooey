@@ -1,4 +1,4 @@
-import time
+
 from gooey.gui.widgets import widget_pack
 
 __author__ = 'Chris'
@@ -23,7 +23,6 @@ class BaseGuiComponent(object):
 
     # used to throttle resizing (to avoid widget jiggle)
     # TODO: figure out anti-jiggle technology
-    # self.last_update = time.time()
     # self.event_stack = []
 
   def build(self, parent):

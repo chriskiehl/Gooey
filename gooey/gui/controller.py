@@ -4,13 +4,11 @@ Created on Dec 22, 2013
 @author: Chris
 '''
 
-import subprocess
-import sys
-from multiprocessing.dummy import Pool, Process
-import time
-import platform
 import wx
+import sys
+import subprocess
 
+from multiprocessing.dummy import Pool
 from gooey.gui.lang import i18n
 
 
@@ -28,8 +26,8 @@ class Controller(object):
 
   def __init__(self, base_frame, build_spec):
     '''
-    :param base_frame: BaseWindow
-    :param build_spec: Json
+    :type base_frame: BaseWindow
+    :type build_spec: dict
     '''
     self.core_gui = base_frame
     self.build_spec = build_spec
