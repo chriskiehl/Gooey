@@ -69,8 +69,9 @@ class ActionSorter(object):
     self._display('ActionSorter: counters', self._counters)
 
   def _display(self, _type, something):
-    for i in something:
-      print _type, i
+    pass
+    # for i in something:
+    #   print _type, i
 
   def get_counter_actions(self, actions):
     """

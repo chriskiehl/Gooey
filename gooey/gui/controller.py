@@ -7,7 +7,6 @@ Created on Dec 22, 2013
 import wx
 import sys
 import subprocess
-
 from multiprocessing.dummy import Pool
 from gooey.gui.lang import i18n
 

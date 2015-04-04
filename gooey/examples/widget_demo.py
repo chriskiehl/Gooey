@@ -58,7 +58,6 @@ def here_is_smore():
 
 
 if __name__ == '__main__':
-  print sys.argv
   main()
   # import inspect
   # import dis

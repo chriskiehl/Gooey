@@ -153,6 +153,8 @@ def extract_parser(modulepath):
   client_module = modules.load(module_source)
   return client_module.main()
 
+def has_argparse(source):
+  return any(['.parse_args(' in line.lower() for line in source.split('\n')])
 
 if __name__ == '__main__':
   filepath = os.path.join(os.path.dirname(__file__),

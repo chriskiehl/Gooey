@@ -44,37 +44,36 @@ to us. No more complicated ast stuff. Just a little bit of string parsing and we
 done.
 
 '''
+import json
 
-import wx
 import os
 import sys
 import atexit
 import tempfile
 import source_parser
+import config_generator
 
 from gooey.gui import application
 from gooey.gui.windows import layouts
 from gooey.python_bindings import argparse_to_json
 
 
-def Gooey(f=None, advanced=True,
-          language='english', show_config=True,
-          program_name=None, program_description=None):
+def Gooey(f=None,
+          advanced=True,
+          language='english',
+          show_config=True,
+          program_name=None,
+          program_description=None,
+          dump_build_config=False):
   '''
   Decorator for client code's main function.
-  Entry point for the GUI generator.
-
-  Scans the client code for argparse data.
-  If found, extracts it and build the proper
-  configuration gui windows (basic or advanced).
+  Serializes argparse data to JSON for use with the Gooey front end
   '''
 
   params = locals()
 
   def build(payload):
     def inner():
-      show_config = params['show_config'] #because nonlocal keyword doesn't exist yet :(
-
       main_module_path = get_caller_path()
       _, filename = os.path.split(main_module_path)
       cleaned_source = clean_source(main_module_path)
@@ -85,36 +84,16 @@ def Gooey(f=None, advanced=True,
       with open(tmp_filepath, 'w') as f:
         f.write(cleaned_source)
 
-      if not has_argparse(cleaned_source):
+      if not source_parser.has_argparse(cleaned_source):
         show_config = False
 
-      run_cmd = 'python {}'.format(tmp_filepath)
+      build_spec = config_generator.create_from_module(tmp_filepath, **params)
 
-      # Must be called before anything else
-      app = wx.App(False)
-
-      build_spec = {
-        'language': language,
-        'target': run_cmd,
-        'program_name': program_name or os.path.basename(sys.argv[0].replace('.py', '')),
-        'program_description': program_description or '',
-        'show_config': show_config,
-        'show_advanced': advanced,
-        'default_size': (610, 530),
-        'requireds_cols': 1,
-        'optionals_cols': 4,
-        'manual_start': False
-      }
-
-      if show_config:
-        parser = get_parser(main_module_path)
-        build_spec['program_description'] = parser.description or program_description
-
-        layout_data = argparse_to_json.convert(parser) if advanced else layouts.basic_config.items()
-        build_spec.update(layout_data)
-
-      else:
-        build_spec['manual_start'] = True
+      if dump_build_config:
+        config_path = os.path.join(os.getcwd(), 'gooey_config.json')
+        print 'Writing Build Config to: {}'.format(config_path)
+        with open(config_path, 'w') as f:
+          f.write(json.dumps(build_spec, indent=2))
 
       application.run(build_spec)
 
@@ -140,9 +119,6 @@ def get_caller_path():
   tmp_sys = __import__('sys')
   return tmp_sys.argv[0]
 
-def has_argparse(source):
-  bla = ['.parse_args(' in line.lower() for line in source.split('\n')]
-  return any(bla)
 
 def cleanup(descriptor, filepath):
   os.close(descriptor)
