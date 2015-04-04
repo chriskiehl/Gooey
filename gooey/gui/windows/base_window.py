@@ -39,8 +39,7 @@ class BaseWindow(wx.Frame):
     self.Bind(wx.EVT_SIZE, self.onResize)
 
   def _init_properties(self):
-    title = self.build_spec['program_name']
-    self.SetTitle(title)
+    self.SetTitle(self.build_spec['program_name'])
     self.SetSize(self.build_spec['default_size'])
     # self.SetMinSize((400, 300))
     self.icon = wx.Icon(image_repository.icon, wx.BITMAP_TYPE_ICO)

@@ -66,5 +66,6 @@ class RuntimeDisplay(wx.Panel):
       self.AppendText(txt)
 
   def OnMsg(self, evt):
-    print 'It workded!!'
-    print locals()
+    pass
+    # print 'It workded!!'
+    # print locals()
