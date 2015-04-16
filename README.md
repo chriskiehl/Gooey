@@ -39,17 +39,11 @@ Table of Contents
 ----------   
 
 
-###Latest Update: 
+###Artist Wanted!
 
-Drag and Drop support (`Issue #28`)
+Want to contribute to Gooey? We need icons/logos!
 
-<p align="center">
- <img src="https://github.com/chriskiehl/Gooey/blob/master/resources/dragdrop.gif" width="500">
-</p>
-
-Tada!   
-
-  
+Drop me an <a href="mailto:audionautic@gmail.com">email</a> if you want to help out!
 
 ----------------  
 
@@ -77,12 +71,13 @@ run `setup.py`
 
 ###Usage  
 
-Gooey is attached to your code via a simple decorator on whichever method has your `argparse` code (usually `main`).
+Gooey is attached to your code via a simple decorator on whichever method has your `argparse` declarations (usually `main`).
 
     from gooey import Gooey
 
     @Gooey      <--- all it takes! :)
     def main():
+      parser = ArgumentParser(...)
       # rest of code
 
 Different styling and functionality can be configured by passing arguments into the decorator.
@@ -131,8 +126,9 @@ Who is this for?
 
 If you're building utilities for yourself, other programmers, or something which produces a result that you want to capture and pipe over to another console application (e.g. *nix philosophy utils), Gooey probably isn't the tool for you. However, if you're building 'run and done,' around-the-office-style scripts, things that shovel bits from point A to point B, or simply something that's targeted at a non-programmer, Gooey is the perfect tool for the job. It lets you build as complex of an application as your heart desires all while getting the GUI side for free. 
 
-How does it work? 
-------------------  
+
+How does it work?
+-----------------
 
 Gooey is attached to your code via a simple decorator on whichever method has your `argparse` declarations.
 
@@ -176,7 +172,7 @@ Given then above, Gooey would select a normal `TextField` as the widget type lik
     <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/textfield_demo.PNG">
 </p>
 
-However, by dropping in `GooeyParser` and supplying a `widget` name, you display a much more user friendly `FileChooser` 
+However, by dropping in `GooeyParser` and supplying a `widget` name, you can display a much more user friendly `FileChooser`
 
 
     from gooey import GooeyParser
@@ -286,6 +282,17 @@ Final Screen
 
 ###Change Log
 ----------
+
+
+- Argparse no longer required to me in `main` (issue 84)
+- Drag and Drop support (`Issue #28`)
+
+<p align="center">
+ <img src="https://github.com/chriskiehl/Gooey/blob/master/resources/dragdrop.gif" width="500">
+</p>
+
+Tada!
+
 - Added drag and drop support
 - Added new widget packs: DateChooser, FileChooser, DirChooser
 - fixed several parsing related issues. 
@@ -313,8 +320,7 @@ TODO
 Wanna help?
 -----------  
 
-* **Artist Wanted!** The graphics and icons in Gooey are a mismash of stuff I was able to scrape up for free off the internet. I'd love to replace them with something more stylistically unified. 
-* Programmer? Pull requests are super welcome. The projects' style is *fantastically* inconsistent, though. So be warned :) I tried to follow the WxWidgets style of Leading Capital methods and CamelCased variables, but.. Python habits die hard. So, there are underscores littered all over the place. 
+Code, translation, graphics? Pull requests are welcome.
 
 
 
