@@ -12,8 +12,9 @@ from gooey import Gooey
 from gooey import GooeyParser
 
 
+
 @Gooey
-def main():
+def arbitrary_function():
   desc = "Example application to show Gooey's various widgets"
   file_help_msg = "Name of the file you want to process"
   my_cool_parser = GooeyParser(description=desc)
@@ -39,6 +40,10 @@ def main():
   print 'inside of main(), my_cool_parser =', my_cool_parser
 
   args = my_cool_parser.parse_args()
+  main(args)
+
+
+def main(args):
   print sys.argv
   print args.countdown
   print args.showtime
@@ -58,12 +63,4 @@ def here_is_smore():
 
 
 if __name__ == '__main__':
-  main()
-  # import inspect
-  # import dis
-  # # print dir(main.__code__)
-  # # for i in dir(main.__code__):
-  # #   print i, getattr(main.__code__, i)
-  # print dis.dis(main.__code__)
-  # # for i in inspect.getmembers(main):
-  # #   print i
+  arbitrary_function()

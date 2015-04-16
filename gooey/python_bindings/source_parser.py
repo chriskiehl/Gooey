@@ -125,14 +125,14 @@ def format_source_to_return_parser(source, cutoff_line, restart_line, col_offset
 
   return ''.join(new_source)
 
-def extract_parser(modulepath):
+def extract_parser(modulepath, func_with_argparse):
   source = read_client_module(modulepath)
 
   nodes = ast.parse(''.join(source))
   funcs = get_nodes_by_instance_type(nodes, _ast.FunctionDef)
   assignment_objs = get_nodes_by_instance_type(nodes, _ast.Assign)
 
-  main_func = get_nodes_by_containing_attr(funcs, 'main')[0]
+  main_func = get_nodes_by_containing_attr(funcs, func_with_argparse)[0]
   parse_args_assignment = get_nodes_by_containing_attr(main_func.body, 'parse_args')[0]
 
   # ast reports the line no of a block structure as the start of the structure,
@@ -151,7 +151,8 @@ def extract_parser(modulepath):
     parser_name=parse_args_assignment.value.func.value.id
   )
   client_module = modules.load(module_source)
-  return client_module.main()
+  return getattr(client_module, func_with_argparse)()
+
 
 def has_argparse(source):
   return any(['.parse_args(' in line.lower() for line in source.split('\n')])

@@ -87,7 +87,7 @@ def Gooey(f=None,
       if not source_parser.has_argparse(cleaned_source):
         show_config = False
 
-      build_spec = config_generator.create_from_module(tmp_filepath, **params)
+      build_spec = config_generator.create_from_module(tmp_filepath, payload_name=payload.__name__, **params)
 
       if dump_build_config:
         config_path = os.path.join(os.getcwd(), 'gooey_config.json')

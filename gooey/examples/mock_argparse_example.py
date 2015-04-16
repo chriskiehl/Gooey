@@ -1,7 +1,7 @@
 import argparse
 from gooey import Gooey
 
-@Gooey
+@Gooey(dump_build_config=True)
 def main():
   parser = argparse.ArgumentParser(description='Process some integers.')
   parser.add_argument('integers', metavar='N', type=int, nargs='+',

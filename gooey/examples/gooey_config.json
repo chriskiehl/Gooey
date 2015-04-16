@@ -1,0 +1,41 @@
+{
+  "show_advanced": true, 
+  "language": "english", 
+  "manual_start": false, 
+  "optionals_cols": 3, 
+  "required": [
+    {
+      "data": {
+        "nargs": "+", 
+        "commands": [], 
+        "display_name": "integers", 
+        "help": "an integer for the accumulator", 
+        "choices": []
+      }, 
+      "type": "TextField"
+    }
+  ], 
+  "requireds_cols": 1, 
+  "show_config": true, 
+  "default_size": [
+    610, 
+    530
+  ], 
+  "optional": [
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "--sum"
+        ], 
+        "display_name": "accumulate", 
+        "help": "sum the integers (default: find the max)", 
+        "choices": []
+      }, 
+      "type": "CheckBox"
+    }
+  ], 
+  "program_name": "tmpewuheq", 
+  "program_description": "Process some integers.", 
+  "target": "python c:\\users\\chris\\appdata\\local\\temp\\tmpewuheq.py"
+}
