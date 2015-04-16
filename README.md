@@ -77,7 +77,7 @@ run `setup.py`
 
 ###Usage  
 
-Gooey is attached to your code via a simple decorator on your `main` method. 
+Gooey is attached to your code via a simple decorator on whichever method has your `argparse` code (usually `main`).
 
     from gooey import Gooey
 
@@ -90,23 +90,30 @@ Different styling and functionality can be configured by passing arguments into 
     # options
     @Gooey(advanced=Boolean,          # toggle whether to show advanced config or not 
            language=language_string,  # Translations configurable via json
-           config=Boolean,            # skip config screens all together
-           program_name='name',       # Defaults to script name 
-           program_description        # Defaults to ArgParse Description
-      )
+           show_config=True,          # skip config screens all together
+           program_name='name',       # Defaults to script name
+           program_description,       # Defaults to ArgParse Description
+           default_size=(610, 530),   # starting size of the GUI
+           required_cols=1,           # number of columns in the "Required" section
+           optional_cols=2,           # number of columbs in the "Optional" section
+           dump_build_config=False)   # Dump the JSON Gooey uses to configure itself
+    )
     def main():
-      # rest of app
+      parser = ArgumentParser(...)
+      # rest of code
             
 See: [How does it Work](#how-does-it-work) section for details on each option.
 
 Gooey will do its best to choose sensible widget defaults to display in the GUI. However, if more fine tuning is desired, you can use the drop-in replacement `GooeyParser` in place of `ArgumentParser`. This lets you control which widget displays in the GUI. See: [GooeyParser](#gooeyparser)
 
-    from gooey import Gooey
+    from gooey import Gooey, GooeyParser
 
-    @Gooey      <--- all it takes! :)
+    @Gooey
     def main():
       parser = GooeyParser(description="My Cool GUI Program!") 
       parser.add_argument('Filename', widget="FileChooser")
+      parser.add_argument('Date', widget="DateChooser")
+      ...
 
     
 What is it? 
@@ -127,10 +134,11 @@ If you're building utilities for yourself, other programmers, or something which
 How does it work? 
 ------------------  
 
-Gooey is attached to your code via a simple decorator on your `main` method. 
+Gooey is attached to your code via a simple decorator on whichever method has your `argparse` declarations.
 
-    @Gooey      <--- all it takes! :)
-    def main():
+    @Gooey
+    def my_run_func():
+      parser = ArgumentParser(...)
       # rest of code
 
 At run-time, it parses your Python script for all references to `ArgumentParser`. (The older `optparse` is currently not supported.) These references are then extracted, assigned a `component type` based on the `'action'` they provide, and finally used to assemble the GUI.  
