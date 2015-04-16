@@ -64,6 +64,9 @@ def Gooey(f=None,
           show_config=True,
           program_name=None,
           program_description=None,
+          default_size=(610, 530),
+          required_cols=3,
+          optional_cols=2,
           dump_build_config=False):
   '''
   Decorator for client code's main function.
