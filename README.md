@@ -283,7 +283,7 @@ Final Screen
 ###Change Log
 ----------
 
-
+- Fixed issue #85
 - Argparse no longer required to me in `main` (issue 84)
 - Drag and Drop support (`Issue #28`)
 
