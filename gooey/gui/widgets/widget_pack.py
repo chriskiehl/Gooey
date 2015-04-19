@@ -28,6 +28,10 @@ class WidgetPack(object):
   def onResize(self, evt):
     pass
 
+  @staticmethod
+  def get_command(data):
+    return data['commands'][0] if data['commands'] else ''
+
 
 
 
@@ -103,7 +107,7 @@ class TextInputPayload(WidgetPack):
     self.option_string = None
 
   def build(self, parent, data):
-    self.option_string = data['commands'][0] if data['commands'] else ''
+    self.option_string = self.get_command(data)
     self.widget = wx.TextCtrl(parent)
     dt = FileDrop(self.widget)
     self.widget.SetDropTarget(dt)
@@ -130,7 +134,7 @@ class DropdownPayload(WidgetPack):
     self.widget = None
 
   def build(self, parent, data):
-    self.option_string = data['commands'][0]
+    self.option_string = self.get_command(data)
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,
@@ -159,7 +163,7 @@ class CounterPayload(WidgetPack):
     self.widget = None
 
   def build(self, parent, data):
-    self.option_string = data['commands'][0]
+    self.option_string = self.get_command(data)
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,

@@ -2,6 +2,7 @@
 Converts argparse parser actions into json "Build Specs"
 """
 
+import argparse
 from argparse import (
   _CountAction,
   _HelpAction,
@@ -9,8 +10,6 @@ from argparse import (
   _StoreFalseAction,
   _StoreTrueAction,
   ArgumentParser)
-import argparse
-import itertools
 
 
 VALID_WIDGETS = (
@@ -26,12 +25,12 @@ VALID_WIDGETS = (
   'CheckBox'
 )
 
+
 class UnknownWidgetType(Exception):
   pass
 
 
 def convert(parser):
-
   widget_dict = getattr(parser, 'widgets', {})
 
   mutually_exclusive_group = [
@@ -40,135 +39,75 @@ def convert(parser):
                   for mutex_action in group_actions._group_actions]
 
 
-  base_actions = [(action, get_widget(action, widget_dict))
-                  for action in parser._actions
-                  if action not in mutually_exclusive_group]
+  base_actions = [action for action in parser._actions
+                  if action not in mutually_exclusive_group
+                  and action.dest != 'help']
 
-
-
-  positional_args = get_required_and_positional_args(base_actions)
-
-  choice_args     = get_optionals_with_choices(base_actions)
-  standard_args   = get_optionals_without_choices(base_actions)
-  counter_args    = get_counter_style_optionals(base_actions)
-  radio_args      = get_mutually_exclusive_optionals(mutually_exclusive_group)
-  checkable_args  = get_flag_style_optionals(base_actions)
+  required_actions = filter(is_required, base_actions)
+  optional_actions = filter(is_optional, base_actions)
 
   return {
-    'required': positional_args,
-    'optional': list(itertools.chain(
-      get_optionals_with_choices(base_actions),
-      get_optionals_without_choices(base_actions),
-      get_counter_style_optionals(base_actions),
-      get_mutually_exclusive_optionals(mutually_exclusive_group),
-      get_flag_style_optionals(base_actions)
-    )),
+    'required': list(categorize(required_actions, widget_dict)),
+    'optional': list(categorize(optional_actions, widget_dict)) + build_radio_group(mutually_exclusive_group)
   }
 
+def categorize(actions, widget_dict):
+  for action in actions:
+    if is_standard(action):
+      yield as_json(action, get_widget(action, widget_dict) or 'TextField')
+    elif is_choice(action):
+      yield as_json(action, get_widget(action, widget_dict) or 'Dropdown')
+    elif is_counter(action):
+      _json = as_json(action, get_widget(action, widget_dict) or 'Dropdown')
+      # prefill the 'counter' dropdown
+      _json['choices'] = range(1, 11)
+      yield _json
+    elif is_flag(action):
+      yield as_json(action, get_widget(action, widget_dict) or 'CheckBox')
+    else:
+      raise UnknownWidgetType(action)
 
 def get_widget(action, widgets):
   supplied_widget = widgets.get(action.dest, None)
   type_arg_widget = 'FileChooser' if action.type == argparse.FileType else None
   return supplied_widget or type_arg_widget or None
 
+def is_required(action):
+  '''_actions which are positional or possessing the `required` flag '''
+  return not action.option_strings or action.required == True
 
-def get_required_and_positional_args(actions):
-  """
-  Extracts positional or required args from the actions list
-  In argparse, positionals are defined by either an empty option_strings
-  or by the option_strings parameters being sans a leading hyphen
-  """
-  filtered_actions = [(action, widget)
-                      for action, widget in actions
-                      if not action.option_strings
-                      or action.required == True]
+def is_optional(action):
+  '''_actions not positional or possessing the `required` flag'''
+  return action.option_strings and not action.required
 
-  return [as_json(action, widget=widget or 'TextField')
-          for action, widget in filtered_actions]
+def is_choice(action):
+  ''' action with choices supplied '''
+  return action.choices
 
-
-def get_optionals_with_choices(actions):
-  """
-  All optional arguments which are constrained
-  to specific choices.
-  """
-  filtered_actions = [(action, widget)
-                      for action, widget in actions
-                      if action.choices]
-
-  return [as_json(action, widget=widget or 'Dropdown')
-          for action, widget in filtered_actions]
-
-
-def get_optionals_without_choices(actions):
-  """
-  All actions which are:
-    (a) Optional, but without required choices
-    (b) Not of a "boolean" type (storeTrue, etc..)
-    (c) Of type _AppendAction
-
+def is_standard(action):
+  """ actions which are general "store" instructions.
   e.g. anything which has an argument style like:
-     >>>	-f myfilename.txt
+     $ script.py -f myfilename.txt
   """
   boolean_actions = (
     _StoreConstAction, _StoreFalseAction,
     _StoreTrueAction
   )
-  filtered_actions = [
-      (action, widget)
-      for action, widget in actions
-      if action.option_strings
-      and not action.choices
-      and not action.required
-      and not isinstance(action, _CountAction)
-      and not isinstance(action, _HelpAction)
-      and type(action) not in boolean_actions
-  ]
+  return (not action.choices
+          and not isinstance(action, _CountAction)
+          and not isinstance(action, _HelpAction)
+          and type(action) not in boolean_actions)
 
-  return [as_json(action, widget=widget or 'TextField')
-          for action, widget in filtered_actions]
+def is_flag(action):
+  """ _actions which are either storeconst, store_bool, etc.. """
+  action_types = [_StoreTrueAction, _StoreFalseAction, _StoreConstAction]
+  return any(map(lambda Action: isinstance(action, Action), action_types))
 
+def is_counter(action):
+  """ _actions which are of type _CountAction """
+  return isinstance(action, _CountAction)
 
-def get_flag_style_optionals(actions):
-  """
-  Gets all instances of "flag" type options.
-  i.e. options which either store a const, or
-  store boolean style options (e.g. StoreTrue).
-  Types:
-    _StoreTrueAction
-    _StoreFalseAction
-    _StoreConst
-  """
-  filtered_actions = [
-      (action, widget)
-      for action, widget in actions
-      if isinstance(action, _StoreTrueAction)
-      or isinstance(action, _StoreFalseAction)
-      or isinstance(action, _StoreConstAction)
-  ]
-
-  return [as_json(action, widget=widget or 'CheckBox')
-          for action, widget in filtered_actions]
-
-
-def get_counter_style_optionals(actions):
-  """
-  Returns all instances of type _CountAction
-  """
-  filtered_actions = [(action, widget)
-                      for action, widget in actions
-                      if isinstance(action, _CountAction)]
-
-  _json_options =  [as_json(action, widget=widget or 'Counter')
-                    for action, widget in filtered_actions]
-
-  # Counter should show as Dropdowns, so pre-populare with numeric choices
-  for opt in _json_options:
-    opt['choices'] = range(10)
-  return _json_options
-
-
-def get_mutually_exclusive_optionals(mutex_group):
+def build_radio_group(mutex_group):
   if not mutex_group:
     return []
 
