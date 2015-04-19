@@ -1,0 +1,227 @@
+{
+  "show_advanced": true, 
+  "language": "english", 
+  "manual_start": false, 
+  "optionals_cols": 3, 
+  "required": [
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [], 
+        "display_name": "FileChooser", 
+        "help": "Name of the file you want to process", 
+        "choices": []
+      }, 
+      "type": "FileChooser"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [], 
+        "display_name": "DirectoryChooser", 
+        "help": "Name of the file you want to process", 
+        "choices": []
+      }, 
+      "type": "DirChooser"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [], 
+        "display_name": "FileSaver", 
+        "help": "Name of the file you want to process", 
+        "choices": []
+      }, 
+      "type": "FileSaver"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [], 
+        "display_name": "MultiFileSaver", 
+        "help": "Name of the file you want to process", 
+        "choices": []
+      }, 
+      "type": "MultiFileChooser"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [], 
+        "display_name": "directory", 
+        "help": "Directory to store output", 
+        "choices": []
+      }, 
+      "type": "TextField"
+    }
+  ], 
+  "requireds_cols": 2, 
+  "show_config": true, 
+  "default_size": [
+    610, 
+    530
+  ], 
+  "optional": [
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-r", 
+          "--recursive"
+        ], 
+        "display_name": "recursive", 
+        "help": "Recurse into subfolders", 
+        "choices": [
+          "yes", 
+          "no"
+        ]
+      }, 
+      "type": "Dropdown"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-c", 
+          "--countdown"
+        ], 
+        "display_name": "countdown", 
+        "help": "sets the time to count down from you see its quite simple!", 
+        "choices": []
+      }, 
+      "type": "TextField"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-j", 
+          "--cron-schedule"
+        ], 
+        "display_name": "cron_schedule", 
+        "help": "Set the datetime when the cron should begin", 
+        "choices": []
+      }, 
+      "type": "DateChooser"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-w", 
+          "--writelog"
+        ], 
+        "display_name": "writelog", 
+        "help": "write log to some file or something", 
+        "choices": []
+      }, 
+      "type": "TextField"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-v", 
+          "--verbose"
+        ], 
+        "display_name": "verbose", 
+        "help": null, 
+        "choices": []
+      }, 
+      "type": "Counter", 
+      "choices": [
+        0, 
+        1, 
+        2, 
+        3, 
+        4, 
+        5, 
+        6, 
+        7, 
+        8, 
+        9
+      ]
+    }, 
+    {
+      "data": [
+        {
+          "nargs": "", 
+          "commands": [
+            "-t", 
+            "--verbozze"
+          ], 
+          "display_name": "verbose", 
+          "help": "Show more details", 
+          "choices": null
+        }, 
+        {
+          "nargs": "", 
+          "commands": [
+            "-q", 
+            "--quiet"
+          ], 
+          "display_name": "quiet", 
+          "help": "Only output on error", 
+          "choices": null
+        }
+      ], 
+      "type": "RadioGroup", 
+      "group_name": "Choose Option"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-s", 
+          "--showtime"
+        ], 
+        "display_name": "showtime", 
+        "help": "display the countdown timer", 
+        "choices": []
+      }, 
+      "type": "CheckBox"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-d", 
+          "--delay"
+        ], 
+        "display_name": "delay", 
+        "help": "Delay execution for a bit", 
+        "choices": []
+      }, 
+      "type": "CheckBox"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-o", 
+          "--obfuscate"
+        ], 
+        "display_name": "obfuscate", 
+        "help": "obfuscate the countdown timer!", 
+        "choices": []
+      }, 
+      "type": "CheckBox"
+    }, 
+    {
+      "data": {
+        "nargs": "", 
+        "commands": [
+          "-e", 
+          "--expandAll"
+        ], 
+        "display_name": "expandAll", 
+        "help": "expand all processes", 
+        "choices": []
+      }, 
+      "type": "CheckBox"
+    }
+  ], 
+  "program_name": "widget_demo", 
+  "program_description": "Example application to show Gooey's various widgets", 
+  "target": "python c:\\users\\chris\\appdata\\local\\temp\\tmpx9yfmb.py"
+}
