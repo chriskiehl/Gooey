@@ -283,6 +283,8 @@ Final Screen
 ###Change Log
 ----------
 
+- Removed parsing code, replaced it with @SylvainDe patch
+- Fixed issue #87
 - Fixed issue #85
 - Argparse no longer required to me in `main` (issue 84)
 - Drag and Drop support (`Issue #28`)
