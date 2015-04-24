@@ -9,7 +9,7 @@ class ComponentBuilder(object):
     _required_specs = self.build_spec.get('required', None)
     _optional_specs = self.build_spec.get('optional', None)
 
-    self.required_args = self.build_widget(_required_specs) if _required_specs else None
+    self.required_args = self.build_widget(_required_specs) if _required_specs else []
 
     optionals = self.build_widget(_optional_specs) if _optional_specs else None
     if _optional_specs:
