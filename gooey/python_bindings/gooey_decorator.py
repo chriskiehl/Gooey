@@ -44,6 +44,7 @@ to us. No more complicated ast stuff. Just a little bit of string parsing and we
 done.
 
 '''
+from argparse import ArgumentParser
 import json
 
 import os
@@ -57,6 +58,33 @@ from gooey.gui import application
 from gooey.gui.windows import layouts
 from gooey.python_bindings import argparse_to_json
 
+
+def decorator(func):
+    def graphical_parse_args(self, args=None, namespace=None):
+        values = [raw_input("Enter %s (%s):" % (a.dest, a.help)) for a in self._actions]
+        raw_input('Press enter to start')
+        # update new args with what you get from the graphical widgets
+        return self.original_parse_args(arg_lst, namespace)
+
+    def inner(*args, **kwargs):
+        ArgumentParser.original_parse_args = ArgumentParser.parse_args
+        ArgumentParser.parse_args = graphical_parse_args
+        return func(*args, **kwargs)
+
+
+    return inner
+
+def store_executable_copy():
+  main_module_path = get_caller_path()
+  _, filename = os.path.split(main_module_path)
+  cleaned_source = clean_source(main_module_path)
+
+  descriptor, tmp_filepath = tempfile.mkstemp(suffix='.py')
+  atexit.register(cleanup, descriptor, tmp_filepath)
+
+  with open(tmp_filepath, 'w') as f:
+    f.write(cleaned_source)
+  return tmp_filepath
 
 def Gooey(f=None,
           advanced=True,
@@ -76,21 +104,10 @@ def Gooey(f=None,
   params = locals()
 
   def build(payload):
-    def inner():
-      main_module_path = get_caller_path()
-      _, filename = os.path.split(main_module_path)
-      cleaned_source = clean_source(main_module_path)
+    def run_gooey(self, args=None, namespace=None):
+      source_path = store_executable_copy()
 
-      descriptor, tmp_filepath = tempfile.mkstemp(suffix='.py')
-      atexit.register(cleanup, descriptor, tmp_filepath)
-
-      with open(tmp_filepath, 'w') as f:
-        f.write(cleaned_source)
-
-      if not source_parser.has_argparse(cleaned_source):
-        show_config = False
-
-      build_spec = config_generator.create_from_module(tmp_filepath, payload_name=payload.__name__, **params)
+      build_spec = config_generator.create_from_parser(self, source_path, payload_name=payload.__name__, **params)
 
       if dump_build_config:
         config_path = os.path.join(os.getcwd(), 'gooey_config.json')
@@ -100,8 +117,13 @@ def Gooey(f=None,
 
       application.run(build_spec)
 
-    inner.__name__ = payload.__name__
-    return inner
+    def inner2(*args, **kwargs):
+      ArgumentParser.original_parse_args = ArgumentParser.parse_args
+      ArgumentParser.parse_args = run_gooey
+      return f(*args, **kwargs)
+
+    inner2.__name__ = payload.__name__
+    return inner2
 
   if callable(f):
     return build(f)

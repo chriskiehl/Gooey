@@ -4,15 +4,15 @@ from gooey.gui.windows import layouts
 from gooey.python_bindings import source_parser
 
 
-def create_from_module(module_path, payload_name, **kwargs):
+def create_from_parser(parser, source_path, **kwargs):
   show_config = kwargs.get('show_config', False)
 
-  run_cmd = 'python {}'.format(module_path)
-  a = os.path.basename(module_path).replace('.py', '')
+  run_cmd = 'python {}'.format(source_path)
+
   build_spec = {
     'language':             kwargs.get('language', 'english'),
     'target':               run_cmd,
-    'program_name':         kwargs.get('program_name') or os.path.basename(module_path).replace('.py', ''),
+    'program_name':         kwargs.get('program_name') or os.path.basename(source_path).replace('.py', ''),
     'program_description':  kwargs.get('program_description', ''),
     'show_config':          show_config,
     'show_advanced':        kwargs.get('show_advanced', True),
@@ -23,7 +23,6 @@ def create_from_module(module_path, payload_name, **kwargs):
   }
 
   if show_config:
-    parser = source_parser.extract_parser(module_path, payload_name)
     build_spec['program_description'] = parser.description or build_spec['program_description']
 
     layout_data = argparse_to_json.convert(parser) if build_spec['show_advanced'] else layouts.basic_config.items()

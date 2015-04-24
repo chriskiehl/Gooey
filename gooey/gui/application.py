@@ -49,7 +49,7 @@ def do_build_script(module_path):
     if not source_parser.has_argparse(f.read()):
       raise AssertionError('Argparse not found in module. Unable to continue')
 
-  gooey_config = config_generator.create_from_module(module_path, show_config=True)
+  gooey_config = config_generator.create_from_parser(module_path, show_config=True)
   outfile = os.path.join(os.getcwd(), 'gooey_config.json')
 
   print 'Writing config file to: {}'.format(outfile)
