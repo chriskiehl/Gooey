@@ -120,7 +120,7 @@ def Gooey(f=None,
     def inner2(*args, **kwargs):
       ArgumentParser.original_parse_args = ArgumentParser.parse_args
       ArgumentParser.parse_args = run_gooey
-      return f(*args, **kwargs)
+      return payload(*args, **kwargs)
 
     inner2.__name__ = payload.__name__
     return inner2

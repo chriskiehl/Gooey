@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse_to_json
 from gooey.gui.windows import layouts
 from gooey.python_bindings import source_parser
@@ -12,7 +13,7 @@ def create_from_parser(parser, source_path, **kwargs):
   build_spec = {
     'language':             kwargs.get('language', 'english'),
     'target':               run_cmd,
-    'program_name':         kwargs.get('program_name') or os.path.basename(source_path).replace('.py', ''),
+    'program_name':         kwargs.get('program_name') or os.path.basename(sys.argv[0]).replace('.py', ''),
     'program_description':  kwargs.get('program_description', ''),
     'show_config':          show_config,
     'show_advanced':        kwargs.get('show_advanced', True),
