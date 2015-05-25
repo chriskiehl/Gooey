@@ -43,10 +43,10 @@ class AbstractFooter(wx.Panel):
       Refactor image tools into their own module. The resize code is
       getting spread around a bit.
     '''
-    self.cancel_button = self._Button(i18n.translate('cancel'), wx.ID_CANCEL)
-    self.start_button = self._Button(i18n.translate('start'), wx.ID_OK)
+    self.cancel_button = self._Button(i18n._('cancel'), wx.ID_CANCEL)
+    self.start_button = self._Button(i18n._('start'), wx.ID_OK)
     self.running_animation = wx.animate.GIFAnimationCtrl(self, -1, image_repository.loader)
-    self.close_button = self._Button(i18n.translate("close"), wx.ID_OK)
+    self.close_button = self._Button(i18n._("close"), wx.ID_OK)
     self.stop_button = self._Button('Stop', wx.ID_OK)  # TODO: i18n
     self.restart_button = self._Button('Restart', wx.ID_OK)  # TODO: i18n
 

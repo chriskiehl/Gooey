@@ -79,16 +79,16 @@ class FrameHeader(wx.Panel):
   def _init_pages(self):
 
     def PageOne():
-      self._header.SetLabel(i18n.translate("running_title"))
-      self._subheader.SetLabel(i18n.translate('running_msg'))
+      self._header.SetLabel(i18n._("running_title"))
+      self._subheader.SetLabel(i18n._('running_msg'))
       self._check_mark.Hide()
       self._settings_img.Hide()
       self._running_img.Show()
       self.Layout()
 
     def PageTwo():
-      self._header.SetLabel(i18n.translate('finished_title'))
-      self._subheader.SetLabel(i18n.translate('finished_msg'))
+      self._header.SetLabel(i18n._('finished_title'))
+      self._subheader.SetLabel(i18n._('finished_msg'))
       self._running_img.Hide()
       self._check_mark.Show()
       self.Layout()

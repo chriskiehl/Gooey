@@ -46,7 +46,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     container.AddSpacer(15)
 
     if self.widgets.required_args:
-      container.Add(wx_util.h1(self, i18n.translate("required_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
+      container.Add(wx_util.h1(self, i18n._("required_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
       container.AddSpacer(5)
       container.Add(wx_util.horizontal_rule(self), *STD_LAYOUT)
       container.AddSpacer(20)
@@ -58,7 +58,7 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
     if self.widgets.optional_args:
       container.AddSpacer(10)
-      container.Add(wx_util.h1(self, i18n.translate("optional_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
+      container.Add(wx_util.h1(self, i18n._("optional_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
       container.AddSpacer(5)
       container.Add(wx_util.horizontal_rule(self), *STD_LAYOUT)
       container.AddSpacer(20)

@@ -32,8 +32,8 @@ class Controller(object):
     self.build_spec = build_spec
 
   def OnCancelButton(self, widget, event):
-    msg = i18n.translate('sure_you_want_to_exit')
-    dlg = wx.MessageDialog(None, msg, i18n.translate('close_program'), wx.YES_NO)
+    msg = i18n._('sure_you_want_to_exit')
+    dlg = wx.MessageDialog(None, msg, i18n._('close_program'), wx.YES_NO)
     result = dlg.ShowModal()
     if result == YES:
       dlg.Destroy()
@@ -47,7 +47,7 @@ class Controller(object):
     if not self.build_spec['manual_start']:
       _required = self.core_gui.GetRequiredArgs()
       if _required and any(req == '' for req in _required):
-        self.ShowDialog(i18n.translate('error_title'), "Must fill in all fields in the Required section!", wx.ICON_ERROR)
+        self.ShowDialog(i18n._('error_title'), "Must fill in all fields in the Required section!", wx.ICON_ERROR)
         return
 
     command = '{0} {1}'.format(self.build_spec['target'], cmd_line_args)
@@ -86,13 +86,13 @@ class Controller(object):
     sys.exit()
 
   def ShowGoodFinishedDialog(self):
-    self.ShowDialog(i18n.translate("execution_finished"),
-                    i18n.translate('success_message'),
+    self.ShowDialog(i18n._("execution_finished"),
+                    i18n._('success_message'),
                     wx.ICON_INFORMATION)
 
   def ShowBadFinishedDialog(self, error_msg):
-    msg = i18n.translate('uh_oh').format(error_msg)
-    self.ShowDialog(i18n.translate('error_title'), msg, wx.ICON_ERROR)
+    msg = i18n._('uh_oh').format(error_msg)
+    self.ShowDialog(i18n._('error_title'), msg, wx.ICON_ERROR)
 
 
   def ShowDialog(self, title, content, style):

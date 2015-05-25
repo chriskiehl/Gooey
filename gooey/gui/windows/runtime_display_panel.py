@@ -35,7 +35,7 @@ class RuntimeDisplay(wx.Panel):
     self.SetBackgroundColour('#F0F0F0')
 
   def _init_components(self):
-    self.text = wx.StaticText(self, label=i18n.translate("status"))
+    self.text = wx.StaticText(self, label=i18n._("status"))
     self.cmd_textbox = wx.TextCtrl(
       self, -1, "",
       style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH)

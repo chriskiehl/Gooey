@@ -51,7 +51,7 @@ class BaseWindow(wx.Frame):
     # init gui
     _desc = self.build_spec['program_description']
     self.head_panel = header.FrameHeader(
-        heading=i18n.translate("settings_title"),
+        heading=i18n._("settings_title"),
         subheading=_desc or '',
         parent=self)
     self.config_panel = AdvancedConfigPanel(self, self.build_spec)
