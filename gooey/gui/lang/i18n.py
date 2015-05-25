@@ -43,6 +43,9 @@ def load(filename):
 def translate(key):
   return _DICTIONARY[key]
 
+def _(key):
+  return _DICTIONARY[key]
+
 if __name__ == '__main__':
   pass
 
