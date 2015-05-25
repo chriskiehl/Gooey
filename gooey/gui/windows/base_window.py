@@ -3,9 +3,6 @@ Created on Jan 19, 2014
 @author: Chris
 '''
 
-import os
-import sys
-
 import wx
 from wx.lib.pubsub import pub
 
@@ -13,9 +10,9 @@ from gooey.gui.controller import Controller
 from gooey.gui.lang import i18n
 from gooey.gui.windows.advanced_config import AdvancedConfigPanel
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
-from gooey.gui import styling, image_repository
+from gooey.gui import image_repository
+from gooey.gui.util import styling
 from gooey.gui.windows import footer, header, layouts
-from gooey.gui.windows.sidebar import Sidebar
 
 
 class BaseWindow(wx.Frame):

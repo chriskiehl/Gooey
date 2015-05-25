@@ -1,7 +1,7 @@
 import wx
-from gooey.gui import styling
+
+from gooey.gui.util import styling
 from gooey.gui.widgets import widget_pack
-from collections import namedtuple
 
 
 class BaseGuiComponent(object):

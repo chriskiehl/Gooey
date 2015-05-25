@@ -7,7 +7,7 @@ Created on Dec 23, 2013
 import wx
 
 from gooey.gui import imageutil, image_repository
-from gooey.gui import styling
+from gooey.gui.util import styling
 from gooey.gui.lang import i18n
 
 

@@ -1,10 +1,8 @@
-
 import wx
 
 from gooey.gui.windows.advanced_config import AdvancedConfigPanel
 from gooey.gui.windows.sidebar import Sidebar
-
-from gooey.gui import styling
+from gooey.gui.util import styling
 
 basic_config = {
     'required': [{

@@ -4,16 +4,16 @@ Managed the internal layout for configuration options
 @author: Chris
 """
 
-import wx
 import itertools
 from itertools import chain
+
+import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
-from gooey.gui import styling
+from gooey.gui.util import styling
 from gooey.gui.lang import i18n
 from gooey.gui import component_builder
 from gooey.gui.option_reader import OptionReader
-
 
 PADDING = 10
 

@@ -1,8 +1,8 @@
-
 import wx
 from wx.lib.pubsub import pub
 
-from gooey.gui import styling
+from gooey.gui.util import styling
+
 
 class Sidebar(wx.Panel):
 
