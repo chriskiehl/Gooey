@@ -27,7 +27,7 @@ class AbstractChooser(object):
 
   def do_layout(self, parent):
     self.panel = wx.Panel(parent)
-
+    self.panel.SetDoubleBuffered(True)
     self.title = self.CreateNameLabelWidget(self.panel)
     self.help_msg = self.CreateHelpMsgWidget(self.panel)
     self.text_box = wx.TextCtrl(self.panel)

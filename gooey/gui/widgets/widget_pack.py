@@ -44,7 +44,6 @@ class BaseChooser(WidgetPack):
     self.button = None
 
   def build(self, parent, data=None):
-
     self.parent = parent
     self.option_string = data['commands'][0] if data['commands'] else ''
     self.text_box = wx.TextCtrl(self.parent)
@@ -70,6 +69,11 @@ class BaseChooser(WidgetPack):
 
   def onButton(self, evt):
     raise NotImplementedError
+
+
+  def __repr__(self):
+    return self.__class__.__name__
+
 
 class BaseFileChooser(BaseChooser):
   def __init__(self, dialog):
