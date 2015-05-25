@@ -20,7 +20,8 @@ def create_from_parser(parser, source_path, **kwargs):
     'default_size':         kwargs.get('default_size', (610, 530)),
     'requireds_cols':       kwargs.get('required_cols', 1),
     'optionals_cols':       kwargs.get('optional_cols', 3),
-    'manual_start':         False
+    'manual_start':         False,
+    'layout_type':          'column'
   }
 
   if show_config:

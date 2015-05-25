@@ -3,88 +3,21 @@ Created on Jan 24, 2014
 
 @author: Chris
 
-Hey, whaduya know. This is out of date again. TODO: update giant doctring.
-
-
-##How things work these days (though, likely to change)
-
-The decorator is used solely as a nice way to get the location
-of the executing script. It no longer returns a decorated version
-of the client code, but in fact completely hijacks the execution.
-So, rather than returning a reference to the client's main, it now
-returns itself, thus short-circuiting the execution of the client
-program.
-
-What it DOES do now is grab where the client module is stored and
-read it in as a file so that it can hack away at it.
-
-The first step, as before, is getting the ArgumentParser reference
-so that the needed values can be extracted. This is done by reading
-the source file up to the point where the `parse_args()` method is
-called. This puts us smack in the middle of the client's `main` method.
-
-This first half guarantees that all imports, modules, variable assignments,
-etc.. are caught (unlike before).
-
-Next step: getting the rest of the source code that's relevant
-
-The file is again read up to the `parse_args` call, but this time everything
-leading up to that point is dropped and we keep only the remainder of the file.
-So, now the top and the bottom is located, but the bottom needs to be trimmed a
-little more -- we want to drop everything remaining in the main method.
-
-So, we `dropwhile` lines are currently indented (and thus still part of the `main`
-method)
-
-Finally, we arrive at the end, which gives us an exact copy of the original source
-file, minus all of it's main logic. The two pieces are then sandwiched together,
-saved to a file, and imported as a new module. Now all that has to be done is call
-it (moddified) main function, and bam! It returns to fully populated parser object
-to us. No more complicated ast stuff. Just a little bit of string parsing and we're
-done.
-
+TODO: this
 '''
-from argparse import ArgumentParser
-import json
 
 import os
-import sys
+import json
 import atexit
 import tempfile
-import source_parser
-import config_generator
+
+from . import source_parser
+from . import config_generator
 
 from gooey.gui import application
-from gooey.gui.windows import layouts
-from gooey.python_bindings import argparse_to_json
 
+from argparse import ArgumentParser
 
-def decorator(func):
-    def graphical_parse_args(self, args=None, namespace=None):
-        values = [raw_input("Enter %s (%s):" % (a.dest, a.help)) for a in self._actions]
-        raw_input('Press enter to start')
-        # update new args with what you get from the graphical widgets
-        return self.original_parse_args(arg_lst, namespace)
-
-    def inner(*args, **kwargs):
-        ArgumentParser.original_parse_args = ArgumentParser.parse_args
-        ArgumentParser.parse_args = graphical_parse_args
-        return func(*args, **kwargs)
-
-
-    return inner
-
-def store_executable_copy():
-  main_module_path = get_caller_path()
-  _, filename = os.path.split(main_module_path)
-  cleaned_source = clean_source(main_module_path)
-
-  descriptor, tmp_filepath = tempfile.mkstemp(suffix='.py')
-  atexit.register(cleanup, descriptor, tmp_filepath)
-
-  with open(tmp_filepath, 'w') as f:
-    f.write(cleaned_source)
-  return tmp_filepath
 
 def Gooey(f=None,
           advanced=True,
@@ -93,7 +26,7 @@ def Gooey(f=None,
           program_name=None,
           program_description=None,
           default_size=(610, 530),
-          required_cols=3,
+          required_cols=2,
           optional_cols=2,
           dump_build_config=False):
   '''
@@ -111,7 +44,7 @@ def Gooey(f=None,
 
       if dump_build_config:
         config_path = os.path.join(os.getcwd(), 'gooey_config.json')
-        print 'Writing Build Config to: {}'.format(config_path)
+        print( 'Writing Build Config to: {}'.format(config_path))
         with open(config_path, 'w') as f:
           f.write(json.dumps(build_spec, indent=2))
 
@@ -130,6 +63,19 @@ def Gooey(f=None,
   return build
 
 
+def store_executable_copy():
+  main_module_path = get_caller_path()
+  _, filename = os.path.split(main_module_path)
+  cleaned_source = clean_source(main_module_path)
+
+  descriptor, tmp_filepath = tempfile.mkstemp(suffix='.py')
+  atexit.register(cleanup, descriptor, tmp_filepath)
+
+  with open(tmp_filepath, 'w') as f:
+    f.write(cleaned_source)
+  return tmp_filepath
+
+
 def clean_source(module_path):
   with open(module_path, 'r') as f:
     return ''.join(
@@ -139,6 +85,7 @@ def clean_source(module_path):
 
 def get_parser(module_path):
   return source_parser.extract_parser(module_path)
+
 
 def get_caller_path():
   tmp_sys = __import__('sys')
