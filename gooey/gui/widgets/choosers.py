@@ -60,13 +60,13 @@ class AbstractChooser(object):
     base_text = wx.StaticText(parent, label=self.data['help_msg'])
     # if self.data['nargs']:
     #   base_text.SetLabelText(base_text.GetLabelText() + self.CreateNargsMsg(action))
-    wx_util.MakeDarkGrey(base_text)
+    wx_util.dark_grey(base_text)
     return base_text
 
   def CreateNameLabelWidget(self, parent):
     label = self.data['title'].title()
     text = wx.StaticText(parent, label=label)
-    wx_util.MakeBold(text)
+    wx_util.make_bold(text)
     return text
 
   def OnResize(self, evt):

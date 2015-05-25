@@ -39,7 +39,7 @@ class FrameHeader(wx.Panel):
     self.SetMinSize((120, 80))
 
   def _init_components(self, heading, subheading):
-    self._header = wx_util.H1(self, heading)
+    self._header = wx_util.h1(self, heading)
 
     self._subheader = wx.StaticText(self, label=subheading)
 

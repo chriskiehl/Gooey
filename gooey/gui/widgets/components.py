@@ -56,12 +56,12 @@ class BaseGuiComponent(object):
                   if self.data['nargs']
                   else self.data['help'])
     base_text = wx.StaticText(parent, label=label_text or '')
-    wx_util.MakeDarkGrey(base_text)
+    wx_util.dark_grey(base_text)
     return base_text
 
   def createTitle(self, parent):
     text = wx.StaticText(parent, label=self.data['display_name'].title())
-    wx_util.MakeBold(text)
+    wx_util.make_bold(text)
     return text
 
   def formatExtendedHelpMsg(self, data):

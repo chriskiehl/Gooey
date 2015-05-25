@@ -31,7 +31,7 @@ class Sidebar(wx.Panel):
 
     container = wx.BoxSizer(wx.VERTICAL)
     container.AddSpacer(15)
-    container.Add(wx_util.H1(self, 'Actions'), *STD_LAYOUT)
+    container.Add(wx_util.h1(self, 'Actions'), *STD_LAYOUT)
     container.AddSpacer(5)
     thing = wx.ListBox(self, -1, choices=['Connect', 'process', 'commit', 'fetch'])
     container.Add(thing, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 10)

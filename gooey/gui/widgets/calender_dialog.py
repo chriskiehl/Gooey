@@ -16,7 +16,7 @@ class CalendarDlg(wx.Dialog):
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
     vertical_container.AddSpacer(10)
-    vertical_container.Add(wx_util.H1(self, label='Select a Date'), 0, wx.LEFT | wx.RIGHT, 15)
+    vertical_container.Add(wx_util.h1(self, label='Select a Date'), 0, wx.LEFT | wx.RIGHT, 15)
     vertical_container.AddSpacer(10)
     vertical_container.Add(self.datepicker, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 15)
 

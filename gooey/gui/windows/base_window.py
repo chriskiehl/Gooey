@@ -62,7 +62,7 @@ class BaseWindow(wx.Frame):
   def _do_layout(self):
     sizer = wx.BoxSizer(wx.VERTICAL)
     sizer.Add(self.head_panel, 0, wx.EXPAND)
-    sizer.Add(wx_util.HorizontalRule(self), 0, wx.EXPAND)
+    sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
 
     if self.build_spec['layout_type'] == 'column':
       print 'hello!'
@@ -75,7 +75,7 @@ class BaseWindow(wx.Frame):
     sizer.Add(self.runtime_display, 1, wx.EXPAND)
 
     self.runtime_display.Hide()
-    sizer.Add(wx_util.HorizontalRule(self), 0, wx.EXPAND)
+    sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
     sizer.Add(self.foot_panel, 0, wx.EXPAND)
     self.SetSizer(sizer)
 
