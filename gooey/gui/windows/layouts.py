@@ -2,7 +2,7 @@ import wx
 
 from gooey.gui.windows.advanced_config import AdvancedConfigPanel
 from gooey.gui.windows.sidebar import Sidebar
-from gooey.gui.util import styling
+from gooey.gui.util import wx_util
 
 basic_config = {
     'required': [{
@@ -49,7 +49,7 @@ class ColumnLayout(wx.Panel):
     sizer = wx.BoxSizer(wx.HORIZONTAL)
 
     sizer.Add(self.sidebar, 1, wx.EXPAND)
-    sizer.Add(styling.vertical_rule(self), 0, wx.EXPAND)
+    sizer.Add(wx_util.vertical_rule(self), 0, wx.EXPAND)
     sizer.Add(self.main_content, 3, wx.EXPAND)
     self.SetSizer(sizer)
 

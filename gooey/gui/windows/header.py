@@ -7,7 +7,7 @@ Created on Dec 23, 2013
 import wx
 
 from gooey.gui import imageutil, image_repository
-from gooey.gui.util import styling
+from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n
 
 
@@ -39,7 +39,7 @@ class FrameHeader(wx.Panel):
     self.SetMinSize((120, 80))
 
   def _init_components(self, heading, subheading):
-    self._header = styling.H1(self, heading)
+    self._header = wx_util.H1(self, heading)
 
     self._subheader = wx.StaticText(self, label=subheading)
 

@@ -11,7 +11,7 @@ from gooey.gui.lang import i18n
 from gooey.gui.windows.advanced_config import AdvancedConfigPanel
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
 from gooey.gui import image_repository
-from gooey.gui.util import styling
+from gooey.gui.util import wx_util
 from gooey.gui.windows import footer, header, layouts
 
 
@@ -62,7 +62,7 @@ class BaseWindow(wx.Frame):
   def _do_layout(self):
     sizer = wx.BoxSizer(wx.VERTICAL)
     sizer.Add(self.head_panel, 0, wx.EXPAND)
-    sizer.Add(styling.HorizontalRule(self), 0, wx.EXPAND)
+    sizer.Add(wx_util.HorizontalRule(self), 0, wx.EXPAND)
 
     if self.build_spec['layout_type'] == 'column':
       print 'hello!'
@@ -75,7 +75,7 @@ class BaseWindow(wx.Frame):
     sizer.Add(self.runtime_display, 1, wx.EXPAND)
 
     self.runtime_display.Hide()
-    sizer.Add(styling.HorizontalRule(self), 0, wx.EXPAND)
+    sizer.Add(wx_util.HorizontalRule(self), 0, wx.EXPAND)
     sizer.Add(self.foot_panel, 0, wx.EXPAND)
     self.SetSizer(sizer)
 

@@ -1,6 +1,6 @@
 import wx
 
-from gooey.gui.util import styling
+from gooey.gui.util import wx_util
 from gooey.gui.widgets import widget_pack
 
 
@@ -56,12 +56,12 @@ class BaseGuiComponent(object):
                   if self.data['nargs']
                   else self.data['help'])
     base_text = wx.StaticText(parent, label=label_text or '')
-    styling.MakeDarkGrey(base_text)
+    wx_util.MakeDarkGrey(base_text)
     return base_text
 
   def createTitle(self, parent):
     text = wx.StaticText(parent, label=self.data['display_name'].title())
-    styling.MakeBold(text)
+    wx_util.MakeBold(text)
     return text
 
   def formatExtendedHelpMsg(self, data):

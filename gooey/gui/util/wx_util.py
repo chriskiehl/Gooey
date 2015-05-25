@@ -1,5 +1,5 @@
 """
-Collection of Utility methods for styling the GUI
+Collection of Utility methods for creating pre-styled wxWidgets items
 """
 
 __author__ = 'Chris'

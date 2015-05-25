@@ -2,7 +2,7 @@ __author__ = 'Chris'
 
 import wx
 
-from gooey.gui.util import styling
+from gooey.gui.util import wx_util
 
 
 class CalendarDlg(wx.Dialog):
@@ -16,7 +16,7 @@ class CalendarDlg(wx.Dialog):
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
     vertical_container.AddSpacer(10)
-    vertical_container.Add(styling.H1(self, label='Select a Date'), 0, wx.LEFT | wx.RIGHT, 15)
+    vertical_container.Add(wx_util.H1(self, label='Select a Date'), 0, wx.LEFT | wx.RIGHT, 15)
     vertical_container.AddSpacer(10)
     vertical_container.Add(self.datepicker, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 15)
 

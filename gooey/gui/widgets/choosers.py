@@ -2,7 +2,7 @@ __author__ = 'Chris'
 
 import wx
 
-from gooey.gui.util import styling
+from gooey.gui.util import wx_util
 from gooey.gui.widgets.calender_dialog import CalendarDlg
 
 
@@ -60,13 +60,13 @@ class AbstractChooser(object):
     base_text = wx.StaticText(parent, label=self.data['help_msg'])
     # if self.data['nargs']:
     #   base_text.SetLabelText(base_text.GetLabelText() + self.CreateNargsMsg(action))
-    styling.MakeDarkGrey(base_text)
+    wx_util.MakeDarkGrey(base_text)
     return base_text
 
   def CreateNameLabelWidget(self, parent):
     label = self.data['title'].title()
     text = wx.StaticText(parent, label=label)
-    styling.MakeBold(text)
+    wx_util.MakeBold(text)
     return text
 
   def OnResize(self, evt):

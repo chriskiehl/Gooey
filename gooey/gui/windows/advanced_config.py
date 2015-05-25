@@ -10,7 +10,7 @@ from itertools import chain
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
-from gooey.gui.util import styling
+from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n
 from gooey.gui import component_builder
 from gooey.gui.option_reader import OptionReader
@@ -46,9 +46,9 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
     container.AddSpacer(15)
 
     if self.widgets.required_args:
-      container.Add(styling.H1(self, i18n.translate("required_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
+      container.Add(wx_util.H1(self, i18n.translate("required_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
       container.AddSpacer(5)
-      container.Add(styling.HorizontalRule(self), *STD_LAYOUT)
+      container.Add(wx_util.HorizontalRule(self), *STD_LAYOUT)
       container.AddSpacer(20)
 
       self.CreateComponentGrid(container, self.widgets.required_args, cols=self._build_spec['requireds_cols'])
@@ -58,9 +58,9 @@ class AdvancedConfigPanel(ScrolledPanel, OptionReader):
 
     if self.widgets.optional_args:
       container.AddSpacer(10)
-      container.Add(styling.H1(self, i18n.translate("optional_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
+      container.Add(wx_util.H1(self, i18n.translate("optional_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
       container.AddSpacer(5)
-      container.Add(styling.HorizontalRule(self), *STD_LAYOUT)
+      container.Add(wx_util.HorizontalRule(self), *STD_LAYOUT)
       container.AddSpacer(20)
 
       self.CreateComponentGrid(container, self.widgets.optional_args, cols=self._build_spec['optionals_cols'])
