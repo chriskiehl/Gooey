@@ -30,8 +30,20 @@ def H1(parent, label):
   text.SetFont(font)
   return text
 
+def H2(parent, label):
+  text = wx.StaticText(parent, label=label)
+  font_size = text.GetFont().GetPointSize()
+  font = wx.Font(font_size * 1.2, wx.FONTFAMILY_DEFAULT, wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_NORMAL, False)
+  text.SetFont(font)
+  return text
+
 def HorizontalRule(parent):
   line = wx.StaticLine(parent, -1, style=wx.LI_HORIZONTAL)
+  line.SetSize((10, 10))
+  return line
+
+def vertical_rule(parent):
+  line = wx.StaticLine(parent, -1, style=wx.LI_VERTICAL)
   line.SetSize((10, 10))
   return line
 
