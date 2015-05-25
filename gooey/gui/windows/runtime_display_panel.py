@@ -67,5 +67,3 @@ class RuntimeDisplay(wx.Panel):
 
   def OnMsg(self, evt):
     pass
-    # print 'It workded!!'
-    # print locals()

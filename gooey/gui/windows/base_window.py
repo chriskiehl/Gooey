@@ -7,21 +7,26 @@ import os
 import sys
 
 import wx
+from wx.lib.pubsub import pub
 
 from gooey.gui.controller import Controller
 from gooey.gui.lang import i18n
+from gooey.gui.windows.advanced_config import AdvancedConfigPanel
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
 from gooey.gui import styling, image_repository
-from gooey.gui.windows import footer, header
+from gooey.gui.windows import footer, header, layouts
+from gooey.gui.windows.sidebar import Sidebar
 
 
 class BaseWindow(wx.Frame):
-  def __init__(self, BodyPanel, build_spec):
+  def __init__(self, build_spec):
     wx.Frame.__init__(self, parent=None, id=-1)
 
     self.build_spec = build_spec
 
     self._controller = None
+
+    self.SetDoubleBuffered(True)
 
     # Components
     self.icon = None
@@ -32,7 +37,7 @@ class BaseWindow(wx.Frame):
     self.panels = None
 
     self._init_properties()
-    self._init_components(BodyPanel)
+    self._init_components()
     self._do_layout()
     self._init_controller()
     self.registerControllers()
@@ -45,14 +50,14 @@ class BaseWindow(wx.Frame):
     self.icon = wx.Icon(image_repository.icon, wx.BITMAP_TYPE_ICO)
     self.SetIcon(self.icon)
 
-  def _init_components(self, BodyPanel):
+  def _init_components(self):
     # init gui
     _desc = self.build_spec['program_description']
     self.head_panel = header.FrameHeader(
         heading=i18n.translate("settings_title"),
         subheading=_desc or '',
         parent=self)
-    self.config_panel = BodyPanel(self)
+    self.config_panel = AdvancedConfigPanel(self, self.build_spec)
     self.runtime_display = RuntimeDisplay(self)
     self.foot_panel = footer.Footer(self, self._controller)
     self.panels = [self.head_panel, self.config_panel, self.foot_panel]
@@ -61,12 +66,34 @@ class BaseWindow(wx.Frame):
     sizer = wx.BoxSizer(wx.VERTICAL)
     sizer.Add(self.head_panel, 0, wx.EXPAND)
     sizer.Add(styling.HorizontalRule(self), 0, wx.EXPAND)
-    sizer.Add(self.config_panel, 1, wx.EXPAND)
-    self.runtime_display.Hide()
+
+    if self.build_spec['layout_type'] == 'column':
+      print 'hello!'
+      self.config_panel = layouts.ColumnLayout(self)
+      sizer.Add(self.config_panel, 1, wx.EXPAND)
+    else:
+      self.config_panel = layouts.FlatLayout(self, build_spec=self.build_spec)
+      sizer.Add(self.config_panel, 1, wx.EXPAND)
+
     sizer.Add(self.runtime_display, 1, wx.EXPAND)
+
+    self.runtime_display.Hide()
     sizer.Add(styling.HorizontalRule(self), 0, wx.EXPAND)
     sizer.Add(self.foot_panel, 0, wx.EXPAND)
     self.SetSizer(sizer)
+
+    self.sizer = sizer
+
+    pub.subscribe(self.myListener, "panelListener")
+
+  def myListener(self, message):
+    print message
+    print message == 'fetch'
+    if message == 'fetch':
+      del self.config_panel
+
+
+
 
   def _init_controller(self):
     self._controller = Controller(base_frame=self, build_spec=self.build_spec)

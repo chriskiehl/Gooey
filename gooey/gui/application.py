@@ -14,7 +14,6 @@ from gooey.gui.lang import i18n
 from gooey.gui.windows.base_window import BaseWindow
 from gooey.gui.windows.advanced_config import AdvancedConfigPanel
 
-# C:\Users\Chris\Dropbox\pretty_gui\Gooey\gooey\gui\application.py
 from gooey.python_bindings import config_generator, source_parser
 
 
@@ -75,10 +74,7 @@ def run(build_spec):
 
   i18n.load(build_spec['language'])
 
-  BodyPanel = partial(AdvancedConfigPanel, build_spec=build_spec)
-
-  frame = BaseWindow(BodyPanel, build_spec)
-
+  frame = BaseWindow(build_spec)
   frame.Show(True)
   app.MainLoop()
 
