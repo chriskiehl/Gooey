@@ -9,8 +9,10 @@ from argparse import (
   _StoreConstAction,
   _StoreFalseAction,
   _StoreTrueAction,
-  ArgumentParser)
+  ArgumentParser, _SubParsersAction)
 
+from collections import OrderedDict
+from functools import partial
 
 VALID_WIDGETS = (
   'FileChooser',
@@ -29,15 +31,34 @@ VALID_WIDGETS = (
 class UnknownWidgetType(Exception):
   pass
 
+class UnsupportedConfiguration(Exception):
+  pass
+
 
 def convert(parser):
   widget_dict = getattr(parser, 'widgets', {})
+  actions = parser._actions
 
+  if has_subparsers(actions):
+    if has_required(actions):
+      raise UnsupportedConfiguration("Gooey doesn't currently support required arguments when subprocesers are present.")
+    layout_type = 'column'
+    layout_data = {name: process(sub_parser, widget_dict) for name, sub_parser in get_subparser(actions).choices.iteritems()}
+  else:
+    layout_type = 'standard'
+    layout_data = process(parser, widget_dict)
+
+  return {
+    'layout_type': layout_type,
+    'widgets': layout_data
+  }
+
+
+def process(parser, widget_dict):
   mutually_exclusive_group = [
                   mutex_action
                   for group_actions in parser._mutually_exclusive_groups
                   for mutex_action in group_actions._group_actions]
-
 
   base_actions = [action for action in parser._actions
                   if action not in mutually_exclusive_group
@@ -46,24 +67,24 @@ def convert(parser):
   required_actions = filter(is_required, base_actions)
   optional_actions = filter(is_optional, base_actions)
 
-  return {
-    'required': list(categorize(required_actions, widget_dict)),
-    'optional': list(categorize(optional_actions, widget_dict)) + build_radio_group(mutually_exclusive_group)
-  }
+  return list(categorize(required_actions, widget_dict, required=True)) + \
+         list(categorize(optional_actions, widget_dict)) + \
+         build_radio_group(mutually_exclusive_group)
 
-def categorize(actions, widget_dict):
+def categorize(actions, widget_dict, required=False):
+  _get_widget = partial(get_widget, widgets=widget_dict)
   for action in actions:
     if is_standard(action):
-      yield as_json(action, get_widget(action, widget_dict) or 'TextField')
+      yield as_json(action, _get_widget(action) or 'TextField', required)
     elif is_choice(action):
-      yield as_json(action, get_widget(action, widget_dict) or 'Dropdown')
+      yield as_json(action, _get_widget(action) or 'Dropdown', required)
+    elif is_flag(action):
+      yield as_json(action, _get_widget(action) or 'CheckBox', required)
     elif is_counter(action):
-      _json = as_json(action, get_widget(action, widget_dict) or 'Dropdown')
-      # prefill the 'counter' dropdown
+      _json = as_json(action, _get_widget(action) or 'Dropdown', required)
+      # pre-fill the 'counter' dropdown
       _json['choices'] = range(1, 11)
       yield _json
-    elif is_flag(action):
-      yield as_json(action, get_widget(action, widget_dict) or 'CheckBox')
     else:
       raise UnknownWidgetType(action)
 
@@ -74,7 +95,19 @@ def get_widget(action, widgets):
 
 def is_required(action):
   '''_actions which are positional or possessing the `required` flag '''
-  return not action.option_strings or action.required == True
+  return not action.option_strings and not isinstance(action, _SubParsersAction) or action.required == True
+
+def has_required(actions):
+  return filter(None, filter(is_required, actions))
+
+def is_subparser(action):
+  return isinstance(action,_SubParsersAction)
+
+def has_subparsers(actions):
+    return filter(is_subparser, actions)
+
+def get_subparser(actions):
+    return filter(is_subparser, actions)[0]
 
 def is_optional(action):
   '''_actions not positional or possessing the `required` flag'''
@@ -124,17 +157,18 @@ def build_radio_group(mutex_group):
   return [{
     'type': 'RadioGroup',
     'group_name': 'Choose Option',
+    'required': False,
     'data': options
   }]
 
 
-def as_json(action, widget):
+def as_json(action, widget, required):
   if widget not in VALID_WIDGETS:
     raise UnknownWidgetType('Widget Type {0} is unrecognized'.format(widget))
 
-  option_strings = action.option_strings
   return {
     'type': widget,
+    'required': required,
     'data': {
       'display_name': action.dest,
       'help': action.help,
@@ -143,7 +177,6 @@ def as_json(action, widget):
       'choices': action.choices or [],
     }
   }
-
 
 
 
