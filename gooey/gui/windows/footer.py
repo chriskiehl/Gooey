@@ -7,8 +7,10 @@ Created on Dec 23, 2013
 import wx
 import wx.animate
 
-from gooey.gui import imageutil, image_repository
+from wx.lib.pubsub import pub
+
 from gooey.gui.lang import i18n
+from gooey.gui import imageutil, image_repository, events
 
 
 class AbstractFooter(wx.Panel):
@@ -29,6 +31,7 @@ class AbstractFooter(wx.Panel):
     self.close_button = None
     self.stop_button = None
     self.restart_button = None
+    self.buttons = None
 
     self._init_components()
     self._init_pages()
@@ -36,19 +39,14 @@ class AbstractFooter(wx.Panel):
 
 
   def _init_components(self):
-    '''
-    initialize all of the gui used in the footer
-    TODO:
-      Add Checkmark image for when the program has finished running.
-      Refactor image tools into their own module. The resize code is
-      getting spread around a bit.
-    '''
-    self.cancel_button = self._Button(i18n._('cancel'), wx.ID_CANCEL)
-    self.start_button = self._Button(i18n._('start'), wx.ID_OK)
-    self.running_animation = wx.animate.GIFAnimationCtrl(self, -1, image_repository.loader)
-    self.close_button = self._Button(i18n._("close"), wx.ID_OK)
-    self.stop_button = self._Button('Stop', wx.ID_OK)  # TODO: i18n
-    self.restart_button = self._Button('Restart', wx.ID_OK)  # TODO: i18n
+    self.cancel_button      = self.button(i18n._('cancel'),  wx.ID_CANCEL,  event_id=int(events.WINDOW_CANCEL))
+    self.stop_button        = self.button(i18n._('stop'),    wx.ID_OK,      event_id=int(events.WINDOW_STOP))
+    self.start_button       = self.button(i18n._('start'),   wx.ID_OK,      event_id=int(events.WINDOW_START))
+    self.close_button       = self.button(i18n._("close"),   wx.ID_OK,      event_id=int(events.WINDOW_CLOSE))
+    self.restart_button     = self.button(i18n._('restart'), wx.ID_OK,      event_id=int(events.WINDOW_RESTART))
+    self.running_animation  = wx.animate.GIFAnimationCtrl(self, -1, image_repository.loader)
+
+    self.buttons = [self.cancel_button, self.start_button, self.stop_button, self.close_button, self.restart_button]
 
   def _init_pages(self):
     if self.restart_button.IsShown(): self.restart_button.Hide()
@@ -96,10 +94,10 @@ class AbstractFooter(wx.Panel):
     v_sizer.AddStretchSpacer(1)
     self.SetSizer(v_sizer)
 
-  def _Button(self, label=None, style=None):
+  def button(self, label=None, style=None, event_id=-1):
     return wx.Button(
       parent=self,
-      id=-1,
+      id=event_id,
       size=(90, 24),
       label=label,
       style=style)
@@ -116,10 +114,7 @@ class AbstractFooter(wx.Panel):
       next(self._pages)()
 
   def _load_image(self, img_path, height=70):
-    return imageutil.resize_bitmap(
-      self,
-      imageutil._load_image(img_path),
-      height)
+    return imageutil.resize_bitmap(self, imageutil._load_image(img_path), height)
 
 
 class Footer(AbstractFooter):
@@ -132,27 +127,15 @@ class Footer(AbstractFooter):
     controller: controller class used in delagating all the commands
   '''
 
-  def __init__(self, parent, controller, **kwargs):
+  def __init__(self, parent, **kwargs):
     AbstractFooter.__init__(self, parent, **kwargs)
+    for button in self.buttons:
+      print button.GetId()
+      self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
 
-    self.Bind(wx.EVT_BUTTON, self.OnCancelButton, self.cancel_button)
-    self.Bind(wx.EVT_BUTTON, self.OnStartButton, self.start_button)
-    self.Bind(wx.EVT_BUTTON, self.OnCloseButton, self.close_button)
-    self.Bind(wx.EVT_BUTTON, self.OnRestartButton, self.restart_button)
-
-  def OnCancelButton(self, event):
-    self._controller.OnCancelButton(self, event)
+  def dispatch_click(self, event):
+    pub.sendMessage(str(event.GetId()))
     event.Skip()
 
-  def OnCloseButton(self, event):
-    self._controller.OnCloseButton(self, event)
-    event.Skip()
 
-  def OnStartButton(self, event):
-    self._controller.OnStartButton(event, self)
-    event.Skip()
-
-  def OnRestartButton(self, event):
-    self._controller.OnStartButton(event, self)
-    event.Skip()
 

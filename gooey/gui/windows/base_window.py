@@ -56,7 +56,7 @@ class BaseWindow(wx.Frame):
         parent=self)
     self.config_panel = AdvancedConfigPanel(self, self.build_spec)
     self.runtime_display = RuntimeDisplay(self)
-    self.foot_panel = footer.Footer(self, self._controller)
+    self.foot_panel = footer.Footer(self)
     self.panels = [self.head_panel, self.config_panel, self.foot_panel]
 
   def _do_layout(self):
@@ -117,7 +117,7 @@ class BaseWindow(wx.Frame):
     self.Layout()
 
   def ManualStart(self):
-    self._controller.ManualStart()
+    self._controller.manual_restart()
 
   def onResize(self, evt):
     evt.Skip()

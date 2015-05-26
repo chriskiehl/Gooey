@@ -7,7 +7,11 @@ Created on Dec 22, 2013
 import wx
 import sys
 import subprocess
+
+from wx.lib.pubsub import pub
+
 from multiprocessing.dummy import Pool
+from gooey.gui import events
 from gooey.gui.lang import i18n
 
 
@@ -31,7 +35,23 @@ class Controller(object):
     self.core_gui = base_frame
     self.build_spec = build_spec
 
-  def OnCancelButton(self, widget, event):
+    # wire up all the observers
+    pub.subscribe(self.on_cancel,   events.WINDOW_CANCEL)
+    pub.subscribe(self.on_start,    events.WINDOW_START)
+    pub.subscribe(self.on_restart,  events.WINDOW_RESTART)
+    pub.subscribe(self.on_close,    events.WINDOW_CLOSE)
+
+  def on_close(self):
+    self.core_gui.Destroy()
+    sys.exit()
+
+  def on_restart(self):
+    self.on_start()
+
+  def manual_restart(self):
+    self.on_start()
+
+  def on_cancel(self):
     msg = i18n._('sure_you_want_to_exit')
     dlg = wx.MessageDialog(None, msg, i18n._('close_program'), wx.YES_NO)
     result = dlg.ShowModal()
@@ -41,61 +61,51 @@ class Controller(object):
       sys.exit()
     dlg.Destroy()
 
-  def OnStartButton(self, widget, event):
+  def on_start(self):
+    if not self.skipping_config() and not self.required_section_complete():
+      return self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
+
     cmd_line_args = self.core_gui.GetOptions()
-
-    if not self.build_spec['manual_start']:
-      _required = self.core_gui.GetRequiredArgs()
-      if _required and any(req == '' for req in _required):
-        self.ShowDialog(i18n._('error_title'), "Must fill in all fields in the Required section!", wx.ICON_ERROR)
-        return
-
     command = '{0} {1}'.format(self.build_spec['target'], cmd_line_args)
     self.core_gui.NextPage()
-    self.RunClientCode(command)
+    self.run_client_code(command)
 
-  def RunClientCode(self, command):
-    def doInBackground(process, callback):
-      while True:
-        line = process.stdout.readline()
-        if not line:
-          break
-        wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
-      wx.CallAfter(callback, process)
+  def run_client_code(self, command):
     p = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    _pool = Pool(1)
-    _pool.apply_async(doInBackground, (p, self.HandleResult))
+    pool = Pool(1)
+    pool.apply_async(self.read_stdout, (p, self.process_result))
 
-  def HandleResult(self, process):
+  def read_stdout(self, process, callback):
+    while True:
+      line = process.stdout.readline()
+      if not line:
+        break
+      wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
+    wx.CallAfter(callback, process)
+
+  def process_result(self, process):
     _stdout, _stderr = process.communicate()
     if process.returncode == 0:
       self.core_gui.NextPage()
-      self.ShowGoodFinishedDialog()
+      self.success_dialog()
     else:
       self.core_gui.NextPage()
-      self.ShowBadFinishedDialog(_stderr)
+      self.error_dialog(_stderr)
 
-  def OnRestartButton(self, widget, event):
-    self.OnStartButton(None, event)
+  def skipping_config(self):
+    return self.build_spec['manual_start']
 
-  def ManualStart(self):
-    self.OnStartButton(None, None)
+  def required_section_complete(self):
+    _required = self.core_gui.GetRequiredArgs()
+    return _required and not any(req == '' for req in _required)
 
-  def OnCloseButton(self, widget, event):
-    self.core_gui.Destroy()
-    sys.exit()
+  def success_dialog(self):
+    self.show_dialog(i18n._("execution_finished"), i18n._('success_message'), wx.ICON_INFORMATION)
 
-  def ShowGoodFinishedDialog(self):
-    self.ShowDialog(i18n._("execution_finished"),
-                    i18n._('success_message'),
-                    wx.ICON_INFORMATION)
+  def error_dialog(self, error_msg):
+    self.show_dialog(i18n._('error_title'), i18n._('uh_oh').format(error_msg), wx.ICON_ERROR)
 
-  def ShowBadFinishedDialog(self, error_msg):
-    msg = i18n._('uh_oh').format(error_msg)
-    self.ShowDialog(i18n._('error_title'), msg, wx.ICON_ERROR)
-
-
-  def ShowDialog(self, title, content, style):
+  def show_dialog(self, title, content, style):
     a = wx.MessageDialog(None, content, title, style)
     a.ShowModal()
     a.Destroy()
