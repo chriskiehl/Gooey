@@ -78,13 +78,20 @@ class BaseFileChooser(BaseChooser):
 
   def onButton(self, evt):
     dlg = self.dialog(self.parent)
-    result = (dlg.GetPath()
+    result = (self.get_path(dlg)
               if dlg.ShowModal() == wx.ID_OK
               else None)
     if result:
       # self.text_box references a field on the class this is passed into
       # kinda hacky, but avoided a buncha boilerplate
       self.text_box.SetValue(result)
+
+  def get_path(self, dlg):
+    if isinstance(dlg, wx.DirDialog):
+      return dlg.GetPath()
+    else:
+      paths = dlg.GetPaths()
+      return paths[0] if len(paths) < 2 else ' '.join(paths)
 
 
 def build_dialog(style, exist_constraint=True, **kwargs):
