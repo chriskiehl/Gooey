@@ -47,7 +47,6 @@ def Gooey(f=None,
         print( 'Writing Build Config to: {}'.format(config_path))
         with open(config_path, 'w') as f:
           f.write(json.dumps(build_spec, indent=2))
-
       application.run(build_spec)
 
     def inner2(*args, **kwargs):

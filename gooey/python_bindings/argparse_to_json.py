@@ -41,9 +41,9 @@ def convert(parser):
 
   if has_subparsers(actions):
     if has_required(actions):
-      raise UnsupportedConfiguration("Gooey doesn't currently support required arguments when subprocesers are present.")
+      raise UnsupportedConfiguration("Gooey doesn't currently support required arguments when subparsers are present.")
     layout_type = 'column'
-    layout_data = {name: process(sub_parser, widget_dict) for name, sub_parser in get_subparser(actions).choices.iteritems()}
+    layout_data = {name.lower(): process(sub_parser, widget_dict) for name, sub_parser in get_subparser(actions).choices.iteritems()}
   else:
     layout_type = 'standard'
     layout_data = process(parser, widget_dict)
