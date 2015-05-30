@@ -12,7 +12,7 @@ from functools import partial
 
 from gooey.gui.lang import i18n
 from gooey.gui.windows.base_window import BaseWindow
-from gooey.gui.windows.advanced_config import AdvancedConfigPanel
+from gooey.gui.windows.advanced_config import ConfigPanel
 
 from gooey.python_bindings import config_generator, source_parser
 
