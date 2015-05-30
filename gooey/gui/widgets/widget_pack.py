@@ -65,7 +65,7 @@ class BaseChooser(WidgetPack):
     if self.option_string and value:
       return '{0} "{1}"'.format(self.option_string, value)
     else:
-      return '"{}"'.format(value) if value else None
+      return '"{}"'.format(value) if value else ''
 
   def onButton(self, evt):
     raise NotImplementedError
@@ -86,8 +86,6 @@ class BaseFileChooser(BaseChooser):
               if dlg.ShowModal() == wx.ID_OK
               else None)
     if result:
-      # self.text_box references a field on the class this is passed into
-      # kinda hacky, but avoided a buncha boilerplate
       self.text_box.SetValue(result)
 
 
@@ -120,10 +118,11 @@ class TextInputPayload(WidgetPack):
     return self.widget
 
   def getValue(self):
-    if self.widget.GetValue() and self.option_string:
-      return '{} {}'.format(self.option_string, self.widget.GetValue())
+    value = self.widget.GetValue()
+    if value and self.option_string:
+      return '{} {}'.format(self.option_string, value)
     else:
-      return self.widget.GetValue()
+      return '"{}"'.format(value) if value else ''
 
   def _SetValue(self, text):
     # used for testing

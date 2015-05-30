@@ -15,10 +15,10 @@ def build_components(widget_list):
   Converts the Json widget information into concrete wx Widget types
   '''
   required_args, optional_args  = partition(widget_list, is_required)
-  checkbox_args, general_args   = partition(optional_args, is_checkbox)
+  checkbox_args, general_args = partition(map(build_widget, optional_args), is_checkbox)
 
   required_args = map(build_widget, required_args)
-  optional_args = map(build_widget, general_args) + map(build_widget, checkbox_args)
+  optional_args = general_args + checkbox_args
 
   return ComponentList(required_args, optional_args)
 

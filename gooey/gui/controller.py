@@ -67,6 +67,7 @@ class Controller(object):
 
     cmd_line_args = self.core_gui.GetOptions()
     command = '{0} {1}'.format(self.build_spec['target'], cmd_line_args)
+    print command
     self.core_gui.NextPage()
     self.run_client_code(command)
 
@@ -96,8 +97,10 @@ class Controller(object):
     return self.build_spec['manual_start']
 
   def required_section_complete(self):
-    _required = self.core_gui.GetRequiredArgs()
-    return _required and not any(req == '' for req in _required)
+    required_section = self.core_gui.GetRequiredArgs()
+    if len(required_section) == 0:
+      return True  # no requirements!
+    return not any(req == '' for req in required_section)
 
   def success_dialog(self):
     self.show_dialog(i18n._("execution_finished"), i18n._('success_message'), wx.ICON_INFORMATION)

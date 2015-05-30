@@ -1,5 +1,6 @@
 import wx
 from wx.lib.pubsub import pub
+from gooey.gui import events
 
 from gooey.gui.util import wx_util
 
@@ -33,13 +34,14 @@ class Sidebar(wx.Panel):
     container.AddSpacer(15)
     container.Add(wx_util.h1(self, 'Actions'), *STD_LAYOUT)
     container.AddSpacer(5)
-    thing = wx.ListBox(self, -1, choices=['Connect', 'process', 'commit', 'fetch'])
+    thing = wx.ListBox(self, -1, choices=self.contents)
     container.Add(thing, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 10)
     container.AddSpacer(20)
     self.SetSizer(container)
+    thing.SetSelection(0)
 
     self.Bind(wx.EVT_LISTBOX, self.onClick, thing)
 
   def onClick(self, evt):
-    pub.sendMessage("panelListener", message=evt.GetString())
+    pub.sendMessage(events.PANEL_CHANGE, view_name=evt.GetString())
     evt.Skip()

@@ -8,7 +8,7 @@ from wx.lib.pubsub import pub
 
 from gooey.gui.controller import Controller
 from gooey.gui.lang import i18n
-from gooey.gui.windows.advanced_config import AdvancedConfigPanel
+from gooey.gui.windows.advanced_config import ConfigPanel
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
 from gooey.gui import image_repository
 from gooey.gui.util import wx_util
@@ -54,7 +54,9 @@ class BaseWindow(wx.Frame):
         heading=i18n._("settings_title"),
         subheading=_desc or '',
         parent=self)
-    self.config_panel = AdvancedConfigPanel(self, self.build_spec)
+
+    # self.config_panel = AdvancedConfigPanel(self, self.build_spec)
+
     self.runtime_display = RuntimeDisplay(self)
     self.foot_panel = footer.Footer(self)
     self.panels = [self.head_panel, self.config_panel, self.foot_panel]
@@ -65,8 +67,7 @@ class BaseWindow(wx.Frame):
     sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
 
     if self.build_spec['layout_type'] == 'column':
-      print 'hello!'
-      self.config_panel = layouts.ColumnLayout(self)
+      self.config_panel = layouts.ColumnLayout(self, build_spec=self.build_spec)
       sizer.Add(self.config_panel, 1, wx.EXPAND)
     else:
       self.config_panel = layouts.FlatLayout(self, build_spec=self.build_spec)
@@ -97,7 +98,7 @@ class BaseWindow(wx.Frame):
 
   def registerControllers(self):
     for panel in self.panels:
-      panel.RegisterController(self._controller)
+      pass
 
   def GetOptions(self):
     return self.config_panel.GetOptions()

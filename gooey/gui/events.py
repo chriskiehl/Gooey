@@ -14,5 +14,4 @@ WINDOW_CLOSE    = new_id()
 WINDOW_START    = new_id()
 WINDOW_RESTART  = new_id()
 
-
-
+PANEL_CHANGE    = new_id()
