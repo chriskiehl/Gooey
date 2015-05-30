@@ -5,8 +5,9 @@ Created on Dec 23, 2013
 '''
 
 import wx
+from wx.lib.pubsub import pub
 
-from gooey.gui import imageutil, image_repository
+from gooey.gui import imageutil, image_repository, events
 from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n
 
@@ -16,10 +17,12 @@ PAD_SIZE = 10
 
 class FrameHeader(wx.Panel):
   def __init__(self, heading, subheading, **kwargs):
-
     wx.Panel.__init__(self, **kwargs)
     self.SetDoubleBuffered(True)
     self._controller = None
+
+    self.heading_msg = heading
+    self.subheading_msg = subheading
 
     self._header = None
     self._subheader = None
@@ -27,11 +30,14 @@ class FrameHeader(wx.Panel):
     self._running_img = None
     self._check_mark = None
 
+    self.layouts = {}
+
     self._init_properties()
     self._init_components(heading, subheading)
     self._init_pages()
     self._do_layout()
 
+    pub.subscribe(self.load_view, events.WINDOW_CHANGE)
 
   def _init_properties(self):
     self.SetBackgroundColour('#ffffff')
@@ -78,7 +84,15 @@ class FrameHeader(wx.Panel):
 
   def _init_pages(self):
 
-    def PageOne():
+    def config():
+      self._header.SetLabel(self.heading_msg)
+      self._subheader.SetLabel(self.subheading_msg)
+      self._settings_img.Show()
+      self._check_mark.Hide()
+      self._running_img.Hide()
+      self.Layout()
+
+    def running():
       self._header.SetLabel(i18n._("running_title"))
       self._subheader.SetLabel(i18n._('running_msg'))
       self._check_mark.Hide()
@@ -86,18 +100,18 @@ class FrameHeader(wx.Panel):
       self._running_img.Show()
       self.Layout()
 
-    def PageTwo():
+    def success():
       self._header.SetLabel(i18n._('finished_title'))
       self._subheader.SetLabel(i18n._('finished_msg'))
       self._running_img.Hide()
       self._check_mark.Show()
       self.Layout()
 
-    self._pages = iter([PageOne, PageTwo])
+    def error():
+      success()
 
-  def NextPage(self):
-    try:
-      next(self._pages)()
-    except:
-      self._init_pages()
-      next(self._pages)()
+    self.layouts = locals()
+
+  def load_view(self, view_name=None):
+    self.layouts.get(view_name, lambda: None)()
+

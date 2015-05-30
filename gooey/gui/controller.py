@@ -13,7 +13,7 @@ from wx.lib.pubsub import pub
 from multiprocessing.dummy import Pool
 from gooey.gui import events
 from gooey.gui.lang import i18n
-
+from gooey.gui.windows import views
 
 YES = 5103
 NO = 5104
@@ -40,6 +40,10 @@ class Controller(object):
     pub.subscribe(self.on_start,    events.WINDOW_START)
     pub.subscribe(self.on_restart,  events.WINDOW_RESTART)
     pub.subscribe(self.on_close,    events.WINDOW_CLOSE)
+    pub.subscribe(self.on_edit,     events.WINDOW_EDIT)
+
+  def on_edit(self):
+    pub.sendMessage(events.WINDOW_CHANGE, view_name=views.CONFIG_SCREEN)
 
   def on_close(self):
     self.core_gui.Destroy()
@@ -67,8 +71,7 @@ class Controller(object):
 
     cmd_line_args = self.core_gui.GetOptions()
     command = '{0} {1}'.format(self.build_spec['target'], cmd_line_args)
-    print command
-    self.core_gui.NextPage()
+    pub.sendMessage(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
     self.run_client_code(command)
 
   def run_client_code(self, command):
@@ -87,10 +90,10 @@ class Controller(object):
   def process_result(self, process):
     _stdout, _stderr = process.communicate()
     if process.returncode == 0:
-      self.core_gui.NextPage()
+      pub.sendMessage(events.WINDOW_CHANGE, view_name=views.SUCCESS_SCREEN)
       self.success_dialog()
     else:
-      self.core_gui.NextPage()
+      pub.sendMessage(events.WINDOW_CHANGE, view_name=views.ERROR_SCREEN)
       self.error_dialog(_stderr)
 
   def skipping_config(self):

@@ -17,6 +17,7 @@
     "stop": "Stop",
     "status": "Status",
     "restart": "Restart",
+    "edit": "Edit",
     "success_message": "Program completed Sucessfully!\nPress the OK button to exit", 
     "sure_you_want_to_exit": "Are you sure you want to exit?", 
     "uh_oh": "\nUh oh! Looks like there was a problem. \nCopy the below error to let your developer know what went wrong.\n\n{} \t\t\n\t\t"

@@ -10,7 +10,7 @@ from gooey.gui.controller import Controller
 from gooey.gui.lang import i18n
 from gooey.gui.windows.advanced_config import ConfigPanel
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
-from gooey.gui import image_repository
+from gooey.gui import image_repository, events
 from gooey.gui.util import wx_util
 from gooey.gui.windows import footer, header, layouts
 
@@ -36,6 +36,7 @@ class BaseWindow(wx.Frame):
     self._init_properties()
     self._init_components()
     self._do_layout()
+    self._init_pages()
     self._init_controller()
     self.registerControllers()
     self.Bind(wx.EVT_SIZE, self.onResize)
@@ -54,8 +55,6 @@ class BaseWindow(wx.Frame):
         heading=i18n._("settings_title"),
         subheading=_desc or '',
         parent=self)
-
-    # self.config_panel = AdvancedConfigPanel(self, self.build_spec)
 
     self.runtime_display = RuntimeDisplay(self)
     self.foot_panel = footer.Footer(self)
@@ -83,15 +82,15 @@ class BaseWindow(wx.Frame):
     self.sizer = sizer
 
     pub.subscribe(self.myListener, "panelListener")
+    pub.subscribe(self.load_view, events.WINDOW_CHANGE)
+
+
 
   def myListener(self, message):
     print message
     print message == 'fetch'
     if message == 'fetch':
       del self.config_panel
-
-
-
 
   def _init_controller(self):
     self._controller = Controller(base_frame=self, build_spec=self.build_spec)
@@ -110,12 +109,27 @@ class BaseWindow(wx.Frame):
     return self.config_panel.GetOptionalArgs()
 
 
-  def NextPage(self):
-    self.head_panel.NextPage()
-    self.foot_panel.NextPage()
-    self.config_panel.Hide()
-    self.runtime_display.Show()
-    self.Layout()
+  def _init_pages(self):
+
+    def config():
+      self.config_panel.Show()
+      self.runtime_display.Hide()
+
+    def running():
+      self.config_panel.Hide()
+      self.runtime_display.Show()
+      self.Layout()
+
+    def success():
+      running()
+
+    def error():
+      running()
+
+    self.layouts = locals()
+
+  def load_view(self, view_name=None):
+    self.layouts.get(view_name, lambda: None)()
 
   def ManualStart(self):
     self._controller.manual_restart()
