@@ -3,6 +3,7 @@ Created on Dec 21, 2013
 
 @author: Chris
 '''
+
 import sys
 import hashlib
 from time import time as _time
@@ -11,52 +12,67 @@ from time import sleep as _sleep
 from gooey import Gooey
 from gooey import GooeyParser
 
+welcome_message = \
+r'''
+ __          __  _
+ \ \        / / | |
+  \ \  /\  / /__| | ___ ___  _ __ ___   ___
+   \ \/  \/ / _ \ |/ __/ _ \| '_ ` _ \ / _ \
+    \  /\  /  __/ | (_| (_) | | | | | |  __/
+  ___\/__\/ \___|_|\___\___/|_| |_| |_|\___|
+ |__   __|
+    | | ___
+    | |/ _ \
+    | | (_) |
+   _|_|\___/                    _ _
+  / ____|                      | | |
+ | |  __  ___   ___   ___ _   _| | |
+ | | |_ |/ _ \ / _ \ / _ \ | | | | |
+ | |__| | (_) | (_) |  __/ |_| |_|_|
+  \_____|\___/ \___/ \___|\__, (_|_)
+                           __/ |
+                          |___/
+'''
 
-
-@Gooey
+@Gooey(dump_build_config=True)
 def arbitrary_function():
   desc = "Example application to show Gooey's various widgets"
   file_help_msg = "Name of the file you want to process"
   my_cool_parser = GooeyParser(description=desc)
   my_cool_parser.add_argument("FileChooser", help=file_help_msg, widget="FileChooser")   # positional
-  my_cool_parser.add_argument("DirectoryChooser", help=file_help_msg, widget="DirChooser")   # positional
-  my_cool_parser.add_argument("FileSaver", help=file_help_msg, widget="FileSaver")   # positional
+  # my_cool_parser.add_argument("DirectoryChooser", help=file_help_msg, widget="DirChooser")   # positional
+  # my_cool_parser.add_argument("FileSaver", help=file_help_msg, widget="FileSaver")   # positional
   my_cool_parser.add_argument("MultiFileSaver", help=file_help_msg, widget="MultiFileChooser")   # positional
-  my_cool_parser.add_argument("directory", help="Directory to store output")          # positional
+  # my_cool_parser.add_argument("directory", help="Directory to store output")          # positional
 
-  my_cool_parser.add_argument('-c', '--countdown', default=2, type=int, help='sets the time to count down from you see its quite simple!')
-  my_cool_parser.add_argument('-j', '--cron-schedule', type=int, help='Set the datetime when the cron should begin', widget='DateChooser')
-  my_cool_parser.add_argument("-s", "--showtime", action="store_true", help="display the countdown timer")
-  my_cool_parser.add_argument("-d", "--delay", action="store_true", help="Delay execution for a bit")
+  my_cool_parser.add_argument('-d', '--duration', default=2, type=int, help='Duration (in seconds) of the program output')
+  my_cool_parser.add_argument('-s', '--cron-schedule', type=int, help='datetime when the cron should begin', widget='DateChooser')
+  my_cool_parser.add_argument("-c", "--showtime", action="store_true", help="display the countdown timer")
+  my_cool_parser.add_argument("-p", "--pause", action="store_true", help="Pause execution")
   my_cool_parser.add_argument('-v', '--verbose', action='count')
-  my_cool_parser.add_argument("-o", "--obfuscate", action="store_true", help="obfuscate the countdown timer!")
+  my_cool_parser.add_argument("-o", "--overwrite", action="store_true", help="Overwrite output file (if present)")
   my_cool_parser.add_argument('-r', '--recursive', choices=['yes', 'no'], help='Recurse into subfolders')
-  my_cool_parser.add_argument("-w", "--writelog", default="No, NOT whatevs", help="write log to some file or something")
-  my_cool_parser.add_argument("-e", "--expandAll", action="store_true", help="expand all processes")
+  my_cool_parser.add_argument("-w", "--writelog", default="writelogs", help="Dump output to local file")
+  my_cool_parser.add_argument("-e", "--error", action="store_true", help="Stop process on error (default: No)")
   verbosity = my_cool_parser.add_mutually_exclusive_group()
   verbosity.add_argument('-t', '--verbozze', dest='verbose', action="store_true", help="Show more details")
   verbosity.add_argument('-q', '--quiet', dest='quiet', action="store_true", help="Only output on error")
-  print my_cool_parser._actions
-  print 'inside of main(), my_cool_parser =', my_cool_parser
+  # print my_cool_parser._actions
+  # print 'inside of main(), my_cool_parser =', my_cool_parser
 
   args = my_cool_parser.parse_args()
   main(args)
 
 
 def main(args):
-  print sys.argv
-  print args.countdown
-  print args.showtime
+  message = welcome_message.split('\n')
 
-  start_time = _time()
-  print 'Counting down from %s' % args.countdown
-  while _time() - start_time < args.countdown:
-    if args.showtime:
-      print 'printing message at: %s' % _time()
-    else:
-      print 'printing message at: %s' % hashlib.md5(str(_time())).hexdigest()
-    _sleep(.5)
-  print 'Finished running the program. Byeeeeesss!'
+  delay = float(args.duration) / len(message)
+  print('Printing welcome message over a period of %s seconds' % args.duration)
+  for line in message:
+    print line
+    _sleep(delay)
+  print('All done!')
 
 def here_is_smore():
   pass
