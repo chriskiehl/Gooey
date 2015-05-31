@@ -313,7 +313,7 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 Final Screen
 ------------  
 <p align="center">
-    <img src="(https://cloud.githubusercontent.com/assets/1408720/7904378/f54df162-07c5-11e5-9956-b0369685103f.png">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904378/f54df162-07c5-11e5-9956-b0369685103f.png">
 </p>
 
 ----------------------------------------------  
