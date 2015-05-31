@@ -340,12 +340,12 @@ Screenshots
 ###Change Log
 ----------
 
+- Subparser Support! 
 - Moved all internal messaging to pubsub
 - expanded i18n converage
 - allowed returning to the main configuration screen 
 - Fixed success checkmark showing on failure 
 - Refactoring to beauty 
-
 - Removed parsing code, replaced it with @SylvainDe patch
 - Fixed issue #87
 - Fixed issue #85
