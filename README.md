@@ -22,6 +22,7 @@ Table of Contents
 - [How does it work](#how-does-it-work)
 - [Internationalization](#internationalization)
 - [Configuration](#configuration)
+- [Run Modes](#run-modes)
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
@@ -248,16 +249,15 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 | dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
 
 
-Gooey comes in three main flavors.  
+
+Run Modes
+---------
+
+Gooey has three main run modes 
 
 - Full/Advanced 
 - Basic
 - No config  
-
-Each has the following options: 
-
-
-
 
 
 
