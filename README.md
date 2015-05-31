@@ -197,7 +197,7 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 Internationalization
 -------------------- 
 
-<img src="https://cloud.githubusercontent.com/assets/1408720/7904365/f52e9f1a-07c5-11e5-8f31-36a8fc14ac02.jpg" />
+<img src="https://cloud.githubusercontent.com/assets/1408720/7904365/f52e9f1a-07c5-11e5-8f31-36a8fc14ac02.jpg" align="right" />
 
 Gooey is international ready and easily ported to your host language. Languages are controlled via an argument to the `Gooey` decorator. 
 
