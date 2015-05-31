@@ -26,7 +26,8 @@ Table of Contents
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
-- [Final Screen](#final-screen)
+- [Examples](#examples)
+- [Screenshots](#screenshots)
 - [Change Log](#change-log)
 - [TODO](#todo)
 - [Contributing](#wanna-help)
@@ -310,7 +311,24 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 
 ---------------------------------------  
 
-Final Screen
+
+Examples
+--------
+
+Examples are located in the `examples` directory inside of the root `gooey` package. However, the easiest way to play with them is to import them into a python project and execute their `main` function. 
+
+    from gooey.examples import widget_demo 
+    widget_demo.main() 
+    
+or    
+    
+    from gooey.examples import subparser_demo
+    subparser_demo.main() 
+    
+>Note: The examples *must* be run from a Python file! Due to Gooey's file requirements, it won't work from the comman line.     
+
+
+Screenshots
 ------------  
 <p align="center">
     <img src="https://cloud.githubusercontent.com/assets/1408720/7904378/f54df162-07c5-11e5-9956-b0369685103f.png">
