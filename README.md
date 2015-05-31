@@ -20,6 +20,7 @@ Table of Contents
 - [Why Is It](#why)
 - [Who is this for](#who-is-this-for)
 - [How does it work](#how-does-it-work)
+- [Internationalization](#internationalization)
 - [Configuration](#configuration)
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
@@ -192,6 +193,33 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 |  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/datechooser.gif" width="400"></p> |  
  
   
+Internationalization
+-------------------- 
+
+<img src="http://i.imgur.com/IKYqEvD.jpg" align="right" width="350px" />
+
+Gooey is international ready and easily ported to your host language. Languages are controlled via an argument to the `Gooey` decorator. 
+
+    @Gooey(language='russian')
+    def main(): 
+        ... 
+
+All program text is stored externally in `json` files. So adding new langauge support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
+
+Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with the following language sets: 
+
+- English
+- Dutch
+- French
+- Portuguese 
+
+Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/Gooey/compare)
+
+
+
+
+
+
 
 
    
@@ -283,6 +311,12 @@ Final Screen
 ###Change Log
 ----------
 
+- Moved all internal messaging to pubsub
+- expanded i18n converage
+- allowed returning to the main configuration screen 
+- Fixed success checkmark showing on failure 
+- Refactoring to beauty 
+
 - Removed parsing code, replaced it with @SylvainDe patch
 - Fixed issue #87
 - Fixed issue #85
@@ -303,19 +337,6 @@ Tada!
     - Side Note: This was done with big strides towards making Gooey language agnostic. Coming Soon! 
 - Fixed GUI layout so that resizing works better
 
-
-###Planned Features: 
-- Language agnostic! 
-- Stop/cancel button on run screen 
-    
-    
-
-TODO
-----  
-
-* Add to pypi
-* Update graphics
-* Get OS X version working. 
 
 
 
