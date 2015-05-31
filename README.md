@@ -231,7 +231,22 @@ Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/
 
 
 Configuration 
-------------   
+-------------
+
+Just about everything in Gooey can be customized by passing arguments to the decorator. 
+
+| Parameter | Summary | 
+|-----------|---------|
+| advanced | Toggles whether to show the 'full' configuration screen, or a simplified version | 
+| show_config | Skips the configuration all together and runs the program immediately |
+| language | Tells Gooey which language set to load from the `gooey/languages` directory.|
+|program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
+| program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
+| default_size | Initial size of the window | 
+| required_cols | Controls how many columns are in the Required Arguments section |
+| optional_cols | Controls how many columns are in the Optional Arguments section |
+| dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
+
 
 Gooey comes in three main flavors.  
 
@@ -242,11 +257,7 @@ Gooey comes in three main flavors.
 Each has the following options: 
 
 
-| Parameter | Summary | 
-|-----------|---------|
-| language | Gooey is (kind of) international ready (sans Unicode issues (TODO)). All program text is stored in an external `json` file. Translating to your host language only requires filling in the key/value pairs.|
-|program_name | The name displayed in the title bar of the GUI window. If the value is `None`, the title is pulled from `sys.argv[0]`. |
-| program_description | Sets the text displayed in the top panel of the `Settings` screen. If `None` the description is pulled from the  `ArgumentParser`. |  
+
 
 
 
