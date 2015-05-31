@@ -3,8 +3,8 @@ Gooey (Beta)
 Turn (almost) any Python Console Program into a GUI application with one line  
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/primary.png"/>
-</p> 
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904381/f54f97f6-07c5-11e5-9bcb-c3c102920769.png" />
+</p>
 
 
 Table of Contents
@@ -147,14 +147,14 @@ Gooey does its best to choose sensible defaults based on the options it finds. C
 
 | Parser Action    | Widget    | Example |
 |:----------------------|-----------|------|
-| store  |  TextCtrl |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"/>|
-| store_const   |     CheckBox |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>|
-|   store_true|        CheckBox | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>|
-|  store_False  |      CheckBox|  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>   |
-|       append |       TextCtrl |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"/>  | 
-|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/count_dropdown.png"/> | 
-| Mutually Exclusive Group | RadioGroup | <img src="https://github.com/chriskiehl/Gooey/blob/master/resources/radio_group.png"/>
-|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/options_dropdown.png"/> |
+| store  |  TextCtrl |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904380/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>|
+| store_const   |     CheckBox |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
+|   store_true|        CheckBox | <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
+|  store_False  |      CheckBox|  <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>   |
+|       append |       TextCtrl |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904380/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>  | 
+|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://cloud.githubusercontent.com/assets/1408720/7904371/f53ccbe4-07c5-11e5-80e5-510e2aa22922.png"/> | 
+| Mutually Exclusive Group | RadioGroup | <img src="https://cloud.githubusercontent.com/assets/1408720/7904383/f553feb8-07c5-11e5-9d5b-eaa4772075a9.png"/>
+|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://cloud.githubusercontent.com/assets/1408720/7904379/f54e4da6-07c5-11e5-9e66-d8e6d7f18ac6.png"/> |
 
 ###GooeyParser
 
@@ -171,7 +171,7 @@ If the above defaults aren't cutting it, you can control the exact widget type b
 
 Given then above, Gooey would select a normal `TextField` as the widget type like this: 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/textfield_demo.PNG">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904368/f5393e20-07c5-11e5-88e9-c153fc3ecfaa.PNG">
 </p>
 
 However, by dropping in `GooeyParser` and supplying a `widget` name, you can display a much more user friendly `FileChooser`
@@ -184,20 +184,20 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
         parser = GooeyParser(description="My Cool Gooey App!")
         parser.add_argument('filename', help="name of the file to process", widget='FileChooser') 
         
-<p align="center"><img src="https://github.com/chriskiehl/Gooey/blob/master/resources/chooser_demo.PNG"></p>
+<p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904370/f53ae23e-07c5-11e5-8757-c8aa6f3013b5.PNG"></p>
 
 **Custom Widgets:**
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  Directory/FileChooser   | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p> | 
-|  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/datechooser.gif" width="400"></p> |  
+|  Directory/FileChooser   | <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904377/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
+|  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904376/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |  
  
   
 Internationalization
 -------------------- 
 
-<img src="http://i.imgur.com/IKYqEvD.jpg" align="right" width="350px" />
+<img src="https://cloud.githubusercontent.com/assets/1408720/7904365/f52e9f1a-07c5-11e5-8f31-36a8fc14ac02.jpg" />
 
 Gooey is international ready and easily ported to your host language. Languages are controlled via an argument to the `Gooey` decorator. 
 
@@ -278,7 +278,7 @@ The default view is the "full" or "advanced" configuration screen. It can be tog
         
 This view presents each action in the `Argument Parser` as a unique GUI component. This view is ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/advanced_config.png">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904366/f5380cda-07c5-11e5-8052-fcd301d7dfd9.png">
 </p>
 
 --------------------------------------------  
@@ -294,7 +294,7 @@ The basic view is best for times when the user is familiar with Console Applicat
         # rest of code  
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/basic_config.png">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904369/f53a4306-07c5-11e5-8e63-b510d6db9953.png">
 </p>
 
 
@@ -305,7 +305,7 @@ The basic view is best for times when the user is familiar with Console Applicat
 No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. 
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/no_config.png">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904382/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
 </p>
 
 ---------------------------------------  
@@ -313,7 +313,7 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 Final Screen
 ------------  
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/final_screen.png">
+    <img src="(https://cloud.githubusercontent.com/assets/1408720/7904378/f54df162-07c5-11e5-9956-b0369685103f.png">
 </p>
 
 ----------------------------------------------  
@@ -335,7 +335,7 @@ Final Screen
 - Drag and Drop support (`Issue #28`)
 
 <p align="center">
- <img src="https://github.com/chriskiehl/Gooey/blob/master/resources/dragdrop.gif" width="500">
+ <img src="https://cloud.githubusercontent.com/assets/1408720/7904375/f543ba9e-07c5-11e5-8f6b-55f6ac24c5b4.gif" width="500">
 </p>
 
 Tada!
