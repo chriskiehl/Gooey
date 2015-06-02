@@ -220,15 +220,7 @@ Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/
 
 
 
-
-
-
-
-   
-
 -------------------------------------------    
-
-
 
 
 
@@ -254,12 +246,7 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 Run Modes
 ---------
 
-Gooey has three main run modes 
-
-- Full/Advanced 
-- Basic
-- No config  
-
+Gooey has a handful of presentation modes so you can tailor its layout to your content type and user's level or experience. 
 
 
 
@@ -267,7 +254,28 @@ Gooey has three main run modes
 ###Advanced 
 
 
-The default view is the "full" or "advanced" configuration screen. It can be toggled via the `advanced` parameter in the `Gooey` decorator. 
+
+
+The default view is the "full" or "advanced" configuration screen. It comes in two different modes depending on the type of command line interface it's wrapping. For most applications, the flat layout will be the one to go with, as its layout matches best to the familiar CLI schema of a primary command followed by many options (e.g. Curl, FFMPEG). 
+
+On the other side is the Column Layout. This is best suited for CLIs that have multiple paths or are made up of multiple tools (think: git). It displays the primary paths along the left column, and their corresponding arguments in the right. 
+
+<p align="center">
+<img src="https://cloud.githubusercontent.com/assets/1408720/7927433/f06a36cc-08ad-11e5-843e-9322df96d4d6.png">
+</p>
+
+**Setting the layout style:**
+
+Currently, the layouts can't be explicitely specified via a parameter. The layouts are built depending on whether or not there are `subparsers` used in your code base. So, if you want to trigger the `Column Layout`, you'll need to add a `subparser` to your `argparse` code. 
+
+
+
+
+
+
+
+
+It can be toggled via the `advanced` parameter in the `Gooey` decorator. 
 
 
 
@@ -278,9 +286,7 @@ The default view is the "full" or "advanced" configuration screen. It can be tog
 
         
 This view presents each action in the `Argument Parser` as a unique GUI component. This view is ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
-<p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1408720/7904366/f5380cda-07c5-11e5-8052-fcd301d7dfd9.png">
-</p>
+
 
 --------------------------------------------  
 
