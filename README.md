@@ -3,8 +3,8 @@ Gooey (Beta)
 Turn (almost) any Python Console Program into a GUI application with one line  
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/primary.png"/>
-</p> 
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904381/f54f97f6-07c5-11e5-9bcb-c3c102920769.png" />
+</p>
 
 
 Table of Contents
@@ -22,10 +22,12 @@ Table of Contents
 - [How does it work](#how-does-it-work)
 - [Internationalization](#internationalization)
 - [Configuration](#configuration)
+- [Run Modes](#run-modes)
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
-- [Final Screen](#final-screen)
+- [Examples](#examples)
+- [Screenshots](#screenshots)
 - [Change Log](#change-log)
 - [TODO](#todo)
 - [Contributing](#wanna-help)
@@ -146,14 +148,14 @@ Gooey does its best to choose sensible defaults based on the options it finds. C
 
 | Parser Action    | Widget    | Example |
 |:----------------------|-----------|------|
-| store  |  TextCtrl |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"/>|
-| store_const   |     CheckBox |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>|
-|   store_true|        CheckBox | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>|
-|  store_False  |      CheckBox|  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/check_box.png"/>   |
-|       append |       TextCtrl |  <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/general_tb.png"/>  | 
-|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/count_dropdown.png"/> | 
-| Mutually Exclusive Group | RadioGroup | <img src="https://github.com/chriskiehl/Gooey/blob/master/resources/radio_group.png"/>
-|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/options_dropdown.png"/> |
+| store  |  TextCtrl |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904380/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>|
+| store_const   |     CheckBox |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
+|   store_true|        CheckBox | <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
+|  store_False  |      CheckBox|  <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>   |
+|       append |       TextCtrl |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904380/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>  | 
+|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://cloud.githubusercontent.com/assets/1408720/7904371/f53ccbe4-07c5-11e5-80e5-510e2aa22922.png"/> | 
+| Mutually Exclusive Group | RadioGroup | <img src="https://cloud.githubusercontent.com/assets/1408720/7904383/f553feb8-07c5-11e5-9d5b-eaa4772075a9.png"/>
+|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://cloud.githubusercontent.com/assets/1408720/7904379/f54e4da6-07c5-11e5-9e66-d8e6d7f18ac6.png"/> |
 
 ###GooeyParser
 
@@ -170,7 +172,7 @@ If the above defaults aren't cutting it, you can control the exact widget type b
 
 Given then above, Gooey would select a normal `TextField` as the widget type like this: 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/textfield_demo.PNG">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904368/f5393e20-07c5-11e5-88e9-c153fc3ecfaa.PNG">
 </p>
 
 However, by dropping in `GooeyParser` and supplying a `widget` name, you can display a much more user friendly `FileChooser`
@@ -183,20 +185,20 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
         parser = GooeyParser(description="My Cool Gooey App!")
         parser.add_argument('filename', help="name of the file to process", widget='FileChooser') 
         
-<p align="center"><img src="https://github.com/chriskiehl/Gooey/blob/master/resources/chooser_demo.PNG"></p>
+<p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904370/f53ae23e-07c5-11e5-8757-c8aa6f3013b5.PNG"></p>
 
 **Custom Widgets:**
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  Directory/FileChooser   | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/filechooser.gif" width="400"></p> | 
-|  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/datechooser.gif" width="400"></p> |  
+|  Directory/FileChooser   | <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904377/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
+|  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904376/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |  
  
   
 Internationalization
 -------------------- 
 
-<img src="http://i.imgur.com/IKYqEvD.jpg" align="right" width="350px" />
+<img src="https://cloud.githubusercontent.com/assets/1408720/7904365/f52e9f1a-07c5-11e5-8f31-36a8fc14ac02.jpg" align="right" />
 
 Gooey is international ready and easily ported to your host language. Languages are controlled via an argument to the `Gooey` decorator. 
 
@@ -218,36 +220,33 @@ Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/
 
 
 
-
-
-
-
-   
-
 -------------------------------------------    
 
 
 
-
-
 Configuration 
-------------   
+-------------
 
-Gooey comes in three main flavors.  
-
-- Full/Advanced 
-- Basic
-- No config  
-
-Each has the following options: 
-
+Just about everything in Gooey can be customized by passing arguments to the decorator. 
 
 | Parameter | Summary | 
 |-----------|---------|
-| language | Gooey is (kind of) international ready (sans Unicode issues (TODO)). All program text is stored in an external `json` file. Translating to your host language only requires filling in the key/value pairs.|
-|program_name | The name displayed in the title bar of the GUI window. If the value is `None`, the title is pulled from `sys.argv[0]`. |
-| program_description | Sets the text displayed in the top panel of the `Settings` screen. If `None` the description is pulled from the  `ArgumentParser`. |  
+| advanced | Toggles whether to show the 'full' configuration screen, or a simplified version | 
+| show_config | Skips the configuration all together and runs the program immediately |
+| language | Tells Gooey which language set to load from the `gooey/languages` directory.|
+|program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
+| program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
+| default_size | Initial size of the window | 
+| required_cols | Controls how many columns are in the Required Arguments section |
+| optional_cols | Controls how many columns are in the Optional Arguments section |
+| dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
 
+
+
+Run Modes
+---------
+
+Gooey has a handful of presentation modes so you can tailor its layout to your content type and user's level or experience. 
 
 
 
@@ -255,8 +254,23 @@ Each has the following options:
 ###Advanced 
 
 
-The default view is the "full" or "advanced" configuration screen. It can be toggled via the `advanced` parameter in the `Gooey` decorator. 
 
+
+The default view is the "full" or "advanced" configuration screen. It has two different layouts depending on the type of command line interface it's wrapping. For most applications, the flat layout will be the one to go with, as its layout matches best to the familiar CLI schema of a primary command followed by many options (e.g. Curl, FFMPEG). 
+
+On the other side is the Column Layout. This one is best suited for CLIs that have multiple paths or are made up of multiple little tools each with their own arguments and options (think: git). It displays the primary paths along the left column, and their corresponding arguments in the right. This is a great way to package a lot of varied functionality into a single app. 
+
+<p align="center">
+<img src="https://cloud.githubusercontent.com/assets/1408720/7927433/f06a36cc-08ad-11e5-843e-9322df96d4d6.png">
+</p>
+
+Both views present each action in the `Argument Parser` as a unique GUI component. It makes it ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
+
+**Setting the layout style:**
+
+Currently, the layouts can't be explicitely specified via a parameter (on the TODO!). The layouts are built depending on whether or not there are `subparsers` used in your code base. So, if you want to trigger the `Column Layout`, you'll need to add a `subparser` to your `argparse` code. 
+
+It can be toggled via the `advanced` parameter in the `Gooey` decorator. 
 
 
     @gooey(advanced=True)
@@ -264,11 +278,6 @@ The default view is the "full" or "advanced" configuration screen. It can be tog
         # rest of code   
         
 
-        
-This view presents each action in the `Argument Parser` as a unique GUI component. This view is ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
-<p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/advanced_config.png">
-</p>
 
 --------------------------------------------  
 
@@ -283,7 +292,7 @@ The basic view is best for times when the user is familiar with Console Applicat
         # rest of code  
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/basic_config.png">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904369/f53a4306-07c5-11e5-8e63-b510d6db9953.png">
 </p>
 
 
@@ -294,16 +303,36 @@ The basic view is best for times when the user is familiar with Console Applicat
 No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. 
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/no_config.png">
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904382/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
 </p>
 
 ---------------------------------------  
 
-Final Screen
+
+Examples
+--------
+
+Gooey comes with a bunch of example programs. Examples are located in the `examples` directory inside of the root `gooey` package. However, the easiest way to play with them is to import them into a python project and execute their `main` function. 
+
+    from gooey.examples import widget_demo 
+    widget_demo.main() 
+    
+or    
+    
+    from gooey.examples import subparser_demo
+    subparser_demo.main() 
+    
+>Note: The examples *must* be run from a Python file! Due to Gooey's file requirements, it won't work from the comman line.     
+
+
+Screenshots
 ------------  
-<p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/final_screen.png">
-</p>
+
+| Flat Layout | Column Layout |Success Screen | Error Screen | Warning Dialog |
+|-------------|---------------|---------------|--------------|----------------|
+| <img src="https://cloud.githubusercontent.com/assets/1408720/7950190/4414e54e-0965-11e5-964b-f717a7adaac6.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950189/4411b824-0965-11e5-905a-3a2b5df0efb3.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950192/44165442-0965-11e5-8edf-b8305353285f.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950188/4410dcce-0965-11e5-8243-c1d832c05887.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950191/4415432c-0965-11e5-9190-17f55460faf3.jpg"> | 
+
+
 
 ----------------------------------------------  
 
@@ -311,24 +340,17 @@ Final Screen
 ###Change Log
 ----------
 
+- Subparser Support! 
 - Moved all internal messaging to pubsub
 - expanded i18n converage
 - allowed returning to the main configuration screen 
 - Fixed success checkmark showing on failure 
 - Refactoring to beauty 
-
 - Removed parsing code, replaced it with @SylvainDe patch
 - Fixed issue #87
 - Fixed issue #85
 - Argparse no longer required to me in `main` (issue 84)
 - Drag and Drop support (`Issue #28`)
-
-<p align="center">
- <img src="https://github.com/chriskiehl/Gooey/blob/master/resources/dragdrop.gif" width="500">
-</p>
-
-Tada!
-
 - Added drag and drop support
 - Added new widget packs: DateChooser, FileChooser, DirChooser
 - fixed several parsing related issues. 
