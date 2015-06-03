@@ -29,6 +29,7 @@ class FrameHeader(wx.Panel):
     self._settings_img = None
     self._running_img = None
     self._check_mark = None
+    self._error_symbol = None
 
     self.layouts = {}
 
@@ -52,6 +53,7 @@ class FrameHeader(wx.Panel):
     self._settings_img = self._load_image(image_repository.settings2, height=79)
     self._running_img = self._load_image(image_repository.computer3, 79)
     self._check_mark = self._load_image(image_repository.alessandro_rei_checkmark, height=75)
+    self._error_symbol = self._load_image(image_repository.error, height=75)
 
 
   def _do_layout(self):
@@ -62,8 +64,10 @@ class FrameHeader(wx.Panel):
     sizer.Add(self._settings_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
     sizer.Add(self._running_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
     sizer.Add(self._check_mark, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+    sizer.Add(self._error_symbol, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
     self._running_img.Hide()
     self._check_mark.Hide()
+    self._error_symbol.Hide()
     vsizer.Add(sizer, 1, wx.EXPAND)
     self.SetSizer(vsizer)
 
@@ -90,6 +94,7 @@ class FrameHeader(wx.Panel):
       self._settings_img.Show()
       self._check_mark.Hide()
       self._running_img.Hide()
+      self._error_symbol.Hide()
       self.Layout()
 
     def running():
@@ -98,6 +103,7 @@ class FrameHeader(wx.Panel):
       self._check_mark.Hide()
       self._settings_img.Hide()
       self._running_img.Show()
+      self._error_symbol.Hide()
       self.Layout()
 
     def success():
@@ -108,7 +114,11 @@ class FrameHeader(wx.Panel):
       self.Layout()
 
     def error():
-      success()
+      self._header.SetLabel(i18n._('finished_title'))
+      self._subheader.SetLabel(i18n._('finished_error'))
+      self._running_img.Hide()
+      self._error_symbol.Show()
+      self.Layout()
 
     self.layouts = locals()
 

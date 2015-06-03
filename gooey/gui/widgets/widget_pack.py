@@ -1,4 +1,5 @@
 from functools import partial
+from gooey.gui.lang import i18n
 from gooey.gui.util.filedrop import FileDrop
 
 __author__ = 'Chris'
@@ -36,8 +37,8 @@ class WidgetPack(object):
 
 
 class BaseChooser(WidgetPack):
-  def __init__(self, button_text='Browse'):
-    self.button_text = button_text
+  def __init__(self, button_text=''):
+    self.button_text = i18n._('browse')
     self.option_string = None
     self.parent = None
     self.text_box = None

@@ -14,6 +14,7 @@ icon = os.path.join(image_dir, "icon.ico")
 images = os.path.join(image_dir, "images.jpg")
 loader = os.path.join(image_dir, "loader.gif")
 settings2 = os.path.join(image_dir, "settings2.png")
+error = os.path.join(image_dir, "error.png")
 
 
 def _list_images():

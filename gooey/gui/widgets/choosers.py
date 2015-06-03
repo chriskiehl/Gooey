@@ -1,3 +1,5 @@
+from gooey.gui.lang import i18n
+
 __author__ = 'Chris'
 
 import wx
@@ -13,7 +15,7 @@ class AbstractChooser(object):
     # parent
     self.panel = None
 
-    self.button_text = 'Browse'
+    self.button_text = i18n._('browse')
 
     # Widgets
     self.title = None
