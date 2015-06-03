@@ -39,3 +39,5 @@ nosetests.xml
 .idea
 .settings
 MANIFEST
+
+resources/
