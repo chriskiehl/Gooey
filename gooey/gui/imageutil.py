@@ -22,22 +22,11 @@ def resize_bitmap(parent, _bitmap, target_height):
   image = wx.ImageFromBitmap(_bitmap)
   _width, _height = image.GetSize()
   if _height < target_height:
-    # print 'returning image without resizing'
     return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
-  # print 'returning resized image'
   ratio = float(_width) / _height
-  image = image.Scale(target_height * ratio, target_height,
-                      wx.IMAGE_QUALITY_HIGH
-  )
+  image = image.Scale(target_height * ratio, target_height, wx.IMAGE_QUALITY_HIGH)
   return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
 
-
-def _GetTargetSize(size):
-  width, height = size
-  aspect_ratio = float(width) / height
-  tHeight = 79
-  tWidth = int(tHeight * aspect_ratio)
-  return (tWidth, tHeight)
 
 
 if __name__ == '__main__':

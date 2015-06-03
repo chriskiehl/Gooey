@@ -8,9 +8,9 @@ from gooey import Gooey
 
 @Gooey
 def main():
-  end = time.time() + 10
+  end = time.time() + 3
   while end > time.time():
-    print 'Jello!', time.time()
+    print 'Hello!', time.time()
     time.sleep(.8)
 
 

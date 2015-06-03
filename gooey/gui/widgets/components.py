@@ -1,14 +1,15 @@
-
-from gooey.gui.widgets import widget_pack
-
-__author__ = 'Chris'
-
 import wx
-from gooey.gui import styling
+
+from gooey.gui.util import wx_util
+from gooey.gui.widgets import widget_pack
 
 
 class BaseGuiComponent(object):
   def __init__(self, data, widget_pack):
+    '''
+    :param data: field info (title, help, etc..)
+    :param widget_pack: internal wxWidgets to render
+    '''
     self.data = data
 
     # parent
@@ -21,15 +22,12 @@ class BaseGuiComponent(object):
     # Internal WidgetPack
     self.widget_pack = widget_pack
 
-    # used to throttle resizing (to avoid widget jiggle)
-    # TODO: figure out anti-jiggle technology
-    # self.event_stack = []
-
   def build(self, parent):
     return self.do_layout(parent)
 
   def do_layout(self, parent):
     self.panel = wx.Panel(parent)
+
 
     self.title = self.createTitle(self.panel)
     self.help_msg = self.createHelpMsgWidget(self.panel)
@@ -50,7 +48,7 @@ class BaseGuiComponent(object):
     vertical_container.Add(core_widget_set, 0, wx.EXPAND)
     self.panel.SetSizer(vertical_container)
 
-    self.panel.Bind(wx.EVT_SIZE, self.onResize)
+    # self.panel.Bind(wx.EVT_SIZE, self.onResize)
     return self.panel
 
   def createHelpMsgWidget(self, parent):
@@ -58,12 +56,12 @@ class BaseGuiComponent(object):
                   if self.data['nargs']
                   else self.data['help'])
     base_text = wx.StaticText(parent, label=label_text or '')
-    styling.MakeDarkGrey(base_text)
+    wx_util.dark_grey(base_text)
     return base_text
 
   def createTitle(self, parent):
     text = wx.StaticText(parent, label=self.data['display_name'].title())
-    styling.MakeBold(text)
+    wx_util.make_bold(text)
     return text
 
   def formatExtendedHelpMsg(self, data):
@@ -77,12 +75,12 @@ class BaseGuiComponent(object):
 
   def onResize(self, evt):
     # handle internal widgets
-    self.panel.Freeze()
+    # self.panel.Freeze()
     self._onResize(evt)
     # propagate event to child widgets
     self.widget_pack.onResize(evt)
     evt.Skip()
-    self.panel.Thaw()
+    # self.panel.Thaw()
 
   def _onResize(self, evt):
     if not self.help_msg:
@@ -102,6 +100,9 @@ class BaseGuiComponent(object):
   def _GetWidget(self):
     # used only for unittesting
     return self.widget_pack.widget
+
+  def __repr__(self):
+    return self.__class__.__name__
 
 
 class CheckBox(BaseGuiComponent):
@@ -214,17 +215,13 @@ class RadioGroup(object):
 
   def GetValue(self):
     vals = [button.GetValue() for button in self.radio_buttons]
-    # print self.option_stings[vals.index(True)]
     try:
-      opts = self.option_stings[vals.index(True)][0]
+      return self.option_stings[vals.index(True)][0]
     except:
       return ''
 
   def _GetWidget(self):
     return self.radio_buttons
-
-
-
 
 
 FileChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileChooserPayload())
@@ -235,7 +232,4 @@ DateChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_
 TextField         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload())
 Dropdown          = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DropdownPayload())
 Counter           = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.CounterPayload())
-
-
-
 
