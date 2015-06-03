@@ -1,19 +1,5 @@
 '''
 Created on Dec 21, 2013
-
-@author: Chris
-'''
-
-import sys
-import hashlib
-from time import time as _time
-from time import sleep as _sleep
-
-from gooey import Gooey
-from gooey import GooeyParser
-
-welcome_message = \
-r'''
  __          __  _
  \ \        / / | |
   \ \  /\  / /__| | ___ ___  _ __ ___   ___
@@ -32,10 +18,17 @@ r'''
   \_____|\___/ \___/ \___|\__, (_|_)
                            __/ |
                           |___/
+
+@author: Chris
 '''
 
-@Gooey(dump_build_config=True)
-def arbitrary_function():
+from gooey import Gooey
+from gooey import GooeyParser
+from gooey.examples import display_message
+
+
+@Gooey(dump_build_config=True, program_name="Widget Demo")
+def main():
   desc = "Example application to show Gooey's various widgets"
   file_help_msg = "Name of the file you want to process"
   my_cool_parser = GooeyParser(description=desc)
@@ -57,26 +50,13 @@ def arbitrary_function():
   verbosity = my_cool_parser.add_mutually_exclusive_group()
   verbosity.add_argument('-t', '--verbozze', dest='verbose', action="store_true", help="Show more details")
   verbosity.add_argument('-q', '--quiet', dest='quiet', action="store_true", help="Only output on error")
-  # print my_cool_parser._actions
-  # print 'inside of main(), my_cool_parser =', my_cool_parser
 
   args = my_cool_parser.parse_args()
-  main(args)
-
-
-def main(args):
-  message = welcome_message.split('\n')
-
-  delay = float(args.duration) / len(message)
-  print('Printing welcome message over a period of %s seconds' % args.duration)
-  for line in message:
-    print line
-    _sleep(delay)
-  print('All done!')
+  display_message()
 
 def here_is_smore():
   pass
 
 
 if __name__ == '__main__':
-  arbitrary_function()
+  main()

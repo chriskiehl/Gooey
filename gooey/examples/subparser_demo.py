@@ -5,11 +5,12 @@ Example program to demonstrate Gooey's presentation of subparsers
 import argparse
 
 from gooey import Gooey, GooeyParser
+from gooey.examples import display_message
 
 running = True
 
 
-@Gooey(optional_cols=2)
+@Gooey(optional_cols=2, program_name="Subparser Demo")
 def main():
   settings_msg = 'Subparser example demonstating bundled configurations ' \
                  'for Siege, Curl, and FFMPEG'
@@ -62,7 +63,7 @@ def main():
   ffmpeg_parser = subs.add_parser('ffmpeg', help='Siege is an http/https regression testing and benchmarking utility')
   ffmpeg_parser.add_argument('Output',
                              help='Pull down headers from the server and display HTTP transaction',
-                             widget='FileSaver')
+                             widget='FileSaver', type=argparse.FileType)
   ffmpeg_parser.add_argument('--bitrate',
                              help='set the video bitrate in kbit/s (default = 200 kb/s)',
                              type=str)
@@ -86,6 +87,10 @@ def main():
                              type=str)
 
   parser.parse_args()
+
+  display_message()
+
+
 
 
 if __name__ == '__main__':
