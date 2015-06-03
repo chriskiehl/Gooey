@@ -256,36 +256,27 @@ Gooey has a handful of presentation modes so you can tailor its layout to your c
 
 
 
-The default view is the "full" or "advanced" configuration screen. It comes in two different modes depending on the type of command line interface it's wrapping. For most applications, the flat layout will be the one to go with, as its layout matches best to the familiar CLI schema of a primary command followed by many options (e.g. Curl, FFMPEG). 
+The default view is the "full" or "advanced" configuration screen. It has two different layouts depending on the type of command line interface it's wrapping. For most applications, the flat layout will be the one to go with, as its layout matches best to the familiar CLI schema of a primary command followed by many options (e.g. Curl, FFMPEG). 
 
-On the other side is the Column Layout. This is best suited for CLIs that have multiple paths or are made up of multiple tools (think: git). It displays the primary paths along the left column, and their corresponding arguments in the right. 
+On the other side is the Column Layout. This one is best suited for CLIs that have multiple paths or are made up of multiple little tools each with their own arguments and options (think: git). It displays the primary paths along the left column, and their corresponding arguments in the right. This is a great way to package a lot of varied functionality into a single app. 
 
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/1408720/7927433/f06a36cc-08ad-11e5-843e-9322df96d4d6.png">
 </p>
 
+Both views present each action in the `Argument Parser` as a unique GUI component. It makes it ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
+
 **Setting the layout style:**
 
-Currently, the layouts can't be explicitely specified via a parameter. The layouts are built depending on whether or not there are `subparsers` used in your code base. So, if you want to trigger the `Column Layout`, you'll need to add a `subparser` to your `argparse` code. 
-
-
-
-
-
-
-
+Currently, the layouts can't be explicitely specified via a parameter (on the TODO!). The layouts are built depending on whether or not there are `subparsers` used in your code base. So, if you want to trigger the `Column Layout`, you'll need to add a `subparser` to your `argparse` code. 
 
 It can be toggled via the `advanced` parameter in the `Gooey` decorator. 
-
 
 
     @gooey(advanced=True)
     def main():
         # rest of code   
         
-
-        
-This view presents each action in the `Argument Parser` as a unique GUI component. This view is ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
 
 
 --------------------------------------------  
@@ -321,7 +312,7 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 Examples
 --------
 
-Examples are located in the `examples` directory inside of the root `gooey` package. However, the easiest way to play with them is to import them into a python project and execute their `main` function. 
+Gooey comes with a bunch of example programs. Examples are located in the `examples` directory inside of the root `gooey` package. However, the easiest way to play with them is to import them into a python project and execute their `main` function. 
 
     from gooey.examples import widget_demo 
     widget_demo.main() 
@@ -336,9 +327,12 @@ or
 
 Screenshots
 ------------  
-<p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1408720/7904378/f54df162-07c5-11e5-9956-b0369685103f.png">
-</p>
+
+| Flat Layout | Column Layout |Success Screen | Error Screen | Warning Dialog |
+|-------------|---------------|---------------|--------------|----------------|
+| <img src="https://cloud.githubusercontent.com/assets/1408720/7950190/4414e54e-0965-11e5-964b-f717a7adaac6.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950189/4411b824-0965-11e5-905a-3a2b5df0efb3.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950192/44165442-0965-11e5-8edf-b8305353285f.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950188/4410dcce-0965-11e5-8243-c1d832c05887.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950191/4415432c-0965-11e5-9190-17f55460faf3.jpg"> | 
+
+
 
 ----------------------------------------------  
 
@@ -357,13 +351,6 @@ Screenshots
 - Fixed issue #85
 - Argparse no longer required to me in `main` (issue 84)
 - Drag and Drop support (`Issue #28`)
-
-<p align="center">
- <img src="https://cloud.githubusercontent.com/assets/1408720/7904375/f543ba9e-07c5-11e5-8f6b-55f6ac24c5b4.gif" width="500">
-</p>
-
-Tada!
-
 - Added drag and drop support
 - Added new widget packs: DateChooser, FileChooser, DirChooser
 - fixed several parsing related issues. 
