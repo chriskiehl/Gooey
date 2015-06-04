@@ -7,6 +7,7 @@ __author__ = 'Chris'
 from abc import ABCMeta, abstractmethod
 
 import wx
+import os
 import wx.lib.agw.multidirdialog as MDD
 
 from gooey.gui.widgets.calender_dialog import CalendarDlg
