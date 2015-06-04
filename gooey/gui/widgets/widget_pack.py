@@ -102,7 +102,7 @@ class BaseFileChooser(BaseChooser):
 
 def correctPath(path): # This had to be made because it was returning a weird ass Path looking like : Local Disk (C:)/Users/..../Folder
   tab = path.split('\\')
-  disk = re.split("[()]", tmpTab)[1]
+  disk = re.split("[()]", tab[0])[1]
   tab.pop(0)
   for line in tab:
     disk += u"/" + line
