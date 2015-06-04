@@ -232,4 +232,6 @@ DateChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_
 TextField         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload())
 Dropdown          = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DropdownPayload())
 Counter           = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.CounterPayload())
+MultiDirChooser   = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.MultiDirChooserPayload())
+
 
