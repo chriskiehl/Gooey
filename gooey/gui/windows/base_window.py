@@ -4,7 +4,7 @@ Created on Jan 19, 2014
 '''
 
 import wx
-from wx.lib.pubsub import pub
+from gooey.gui.pubsub import pub
 
 from gooey.gui.controller import Controller
 from gooey.gui.lang import i18n

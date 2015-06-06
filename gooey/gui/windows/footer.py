@@ -7,7 +7,7 @@ Created on Dec 23, 2013
 import wx
 import wx.animate
 
-from wx.lib.pubsub import pub
+from gooey.gui.pubsub import pub
 
 from gooey.gui.lang import i18n
 from gooey.gui import imageutil, image_repository, events
@@ -148,7 +148,7 @@ class Footer(AbstractFooter):
       self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
 
   def dispatch_click(self, event):
-    pub.sendMessage(str(event.GetId()))
+    pub.send_message(str(event.GetId()))
     event.Skip()
 
 

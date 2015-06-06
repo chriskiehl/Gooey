@@ -1,5 +1,5 @@
 import wx
-from wx.lib.pubsub import pub
+from gooey.gui.pubsub import pub
 from gooey.gui import events
 
 from gooey.gui.util import wx_util
@@ -43,5 +43,5 @@ class Sidebar(wx.Panel):
     self.Bind(wx.EVT_LISTBOX, self.onClick, thing)
 
   def onClick(self, evt):
-    pub.sendMessage(events.PANEL_CHANGE, view_name=evt.GetString())
+    pub.send_message(events.PANEL_CHANGE, view_name=evt.GetString())
     evt.Skip()

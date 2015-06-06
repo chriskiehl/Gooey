@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import wx
-from wx.lib.pubsub import pub
+from gooey.gui.pubsub import pub
 
 from gooey.gui import events
 from gooey.gui.windows.advanced_config import ConfigPanel

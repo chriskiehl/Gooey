@@ -5,7 +5,7 @@ Created on Dec 23, 2013
 '''
 
 import wx
-from wx.lib.pubsub import pub
+from gooey.gui.pubsub import pub
 
 from gooey.gui import imageutil, image_repository, events
 from gooey.gui.util import wx_util
