@@ -96,7 +96,6 @@ class BaseFileChooser(BaseChooser):
       paths = dlg.GetPaths()
       return paths[0] if len(paths) < 2 else ' '.join(paths)
 
-
 def build_dialog(style, exist_constraint=True, **kwargs):
   if exist_constraint:
     return lambda panel: wx.FileDialog(panel, style=style | wx.FD_FILE_MUST_EXIST, **kwargs)
@@ -109,7 +108,7 @@ FileSaverPayload      = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE,
 MultiFileSaverPayload = partial(BaseFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
 DirChooserPayload     = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE))
 DateChooserPayload    = partial(BaseFileChooser, dialog=CalendarDlg)
-
+MultiDirChooserPayload = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE | wx.DIRCTRL_MULTIPLE))
 
 class TextInputPayload(WidgetPack):
   def __init__(self):
