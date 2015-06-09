@@ -93,7 +93,6 @@ class BaseFileChooser(BaseChooser):
       self.text_box.SetValue(result)
 
   def get_path(self, dlg):
-    print("In get_path")
     if isinstance(dlg, wx.DirDialog):
       return dlg.GetPath()
     else:
