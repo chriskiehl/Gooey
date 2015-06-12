@@ -24,7 +24,8 @@ VALID_WIDGETS = (
   'Dropdown',
   'Counter',
   'RadioGroup',
-  'CheckBox'
+  'CheckBox',
+  'MultiDirDialog'
 )
 
 
