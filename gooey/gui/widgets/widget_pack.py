@@ -6,6 +6,7 @@ __author__ = 'Chris'
 
 from abc import ABCMeta, abstractmethod
 
+import os
 import wx
 import wx.lib.agw.multidirdialog as MDD
 
