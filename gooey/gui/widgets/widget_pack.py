@@ -105,36 +105,18 @@ def build_dialog(style, exist_constraint=True, **kwargs):
     return lambda panel: wx.FileDialog(panel, style=style, **kwargs)
 
 
-class multiDirChooser(BaseChooser):
-  def __init__(self, dialog):
-    BaseChooser.__init__(self)
-    self.dialog = dialog
-
-  def onButton(self, evt):
-    dlg = self.dialog(self.parent)
-    result = (self.get_path(dlg)
-              if dlg.ShowModal() == wx.ID_OK
-              else None)
-    if result:
-      self.text_box.SetValue(result)
-
-  def get_path(self, dlg):
-    paths = dlg.dirCtrl.GetPaths()
-    return paths[0] if len(paths) < 2 else ' '.join(paths)
-
-
-def build_dialog(style, exist_constraint=True, **kwargs):
-  if exist_constraint:
-    return lambda panel: wx.FileDialog(panel, style=style | wx.FD_FILE_MUST_EXIST, **kwargs)
-  else:
-    return lambda panel: wx.FileDialog(panel, style=style, **kwargs)
+class MyMultiDirChooser(MDD.MultiDirDialog):
+  def __init(self, dialog):
+    super(MyMultiDirChooser,self).__init__(*args, **kwargs)
+  def GetPaths(self):
+    return (self.dirCtrl.GetPaths())
 
 FileChooserPayload    = partial(BaseFileChooser, dialog=build_dialog(wx.FD_OPEN))
 FileSaverPayload      = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename"))
 MultiFileSaverPayload = partial(BaseFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
 DirChooserPayload     = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE))
 DateChooserPayload    = partial(BaseFileChooser, dialog=CalendarDlg)
-MultiDirChooserPayload = partial(multiDirChooser, dialog=lambda parent: MDD.MultiDirDialog(None, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
+MultiDirChooserPayload = partial(BaseFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
 
 class TextInputPayload(WidgetPack):
   def __init__(self):
