@@ -93,23 +93,28 @@ class BaseFileChooser(BaseChooser):
 
   def get_path(self, dlg):
     if isinstance(dlg, wx.DirDialog):
-      return dlg.GetPath()
+      return wrap_quotes(dlg.GetPath())
     else:
       paths = dlg.GetPaths()
-      return paths[0] if len(paths) < 2 else ' '.join(paths)
+      return wrap_quotes(paths[0]) if len(paths) < 2 else ' '.join(map(wrap_quotes, paths))
+
+
+def wrap_quotes(string):
+  return '"{}"'.format(string)
+
+class MyMultiDirChooser(MDD.MultiDirDialog):
+  def __init(self, *args, **kwargs):
+    super(MyMultiDirChooser,self).__init__(*args, **kwargs)
+
+  def GetPaths(self):
+    return self.dirCtrl.GetPaths()
+
 
 def build_dialog(style, exist_constraint=True, **kwargs):
   if exist_constraint:
     return lambda panel: wx.FileDialog(panel, style=style | wx.FD_FILE_MUST_EXIST, **kwargs)
   else:
     return lambda panel: wx.FileDialog(panel, style=style, **kwargs)
-
-
-class MyMultiDirChooser(MDD.MultiDirDialog):
-  def __init(self, dialog):
-    super(MyMultiDirChooser,self).__init__(*args, **kwargs)
-  def GetPaths(self):
-    return (self.dirCtrl.GetPaths())
 
 FileChooserPayload    = partial(BaseFileChooser, dialog=build_dialog(wx.FD_OPEN))
 FileSaverPayload      = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename"))
