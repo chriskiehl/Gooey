@@ -16,6 +16,7 @@ Table of Contents
 - [Quick Start](#quick-start)
     - [Installation Instructions](#installation-instructions)
     - [Usage](#usage)
+    - [Examples](#examples)
 - [What It Is](#what-is-it)
 - [Why Is It](#why)
 - [Who is this for](#who-is-this-for)
@@ -26,7 +27,6 @@ Table of Contents
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
-- [Examples](#examples)
 - [Screenshots](#screenshots)
 - [Change Log](#change-log)
 - [TODO](#todo)
@@ -112,6 +112,13 @@ Gooey will do its best to choose sensible widget defaults to display in the GUI.
       parser.add_argument('Filename', widget="FileChooser")
       parser.add_argument('Date', widget="DateChooser")
       ...
+
+###Examples
+
+Gooey downloaded and installed? Great! Wanna see it in action? Head over the the [Examples Repository](https://github.com/chriskiehl/GooeyExamples) to download a few ready-to-go example scripts. They'll give you a quick tour of all Gooey's various layouts, widgets, and features. 
+
+[Direct Download](https://github.com/chriskiehl/GooeyExamples/archive/master.zip)
+
 
     
 What is it? 
@@ -309,20 +316,6 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 ---------------------------------------  
 
 
-Examples
---------
-
-Gooey comes with a bunch of example programs. Examples are located in the `examples` directory inside of the root `gooey` package. However, the easiest way to play with them is to import them into a python project and execute their `main` function. 
-
-    from gooey.examples import widget_demo 
-    widget_demo.main() 
-    
-or    
-    
-    from gooey.examples import subparser_demo
-    subparser_demo.main() 
-    
->Note: The examples *must* be run from a Python file! Due to Gooey's file requirements, it won't work from the comman line.     
 
 
 Screenshots
