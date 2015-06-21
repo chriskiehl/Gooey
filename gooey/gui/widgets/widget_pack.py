@@ -1,6 +1,8 @@
 from functools import partial
+import re
 from gooey.gui.lang import i18n
 from gooey.gui.util.filedrop import FileDrop
+from gooey.gui.util.quoting import maybe_quote
 
 __author__ = 'Chris'
 
@@ -66,9 +68,9 @@ class BaseChooser(WidgetPack):
   def getValue(self):
     value = self.text_box.GetValue()
     if self.option_string and value:
-      return '{0} "{1}"'.format(self.option_string, value)
+      return '{0} {1}'.format(self.option_string, maybe_quote(value))
     else:
-      return '"{}"'.format(value) if value else ''
+      return maybe_quote(value) if value else ''
 
   def onButton(self, evt):
     raise NotImplementedError
@@ -93,14 +95,10 @@ class BaseFileChooser(BaseChooser):
 
   def get_path(self, dlg):
     if isinstance(dlg, wx.DirDialog):
-      return wrap_quotes(dlg.GetPath())
+      return maybe_quote(dlg.GetPath())
     else:
       paths = dlg.GetPaths()
-      return wrap_quotes(paths[0]) if len(paths) < 2 else ' '.join(map(wrap_quotes, paths))
-
-
-def wrap_quotes(string):
-  return '"{}"'.format(string)
+      return maybe_quote(paths[0]) if len(paths) < 2 else ' '.join(map(maybe_quote, paths))
 
 class MyMultiDirChooser(MDD.MultiDirDialog):
   def __init(self, *args, **kwargs):
