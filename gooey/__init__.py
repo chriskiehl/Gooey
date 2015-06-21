@@ -5,4 +5,4 @@ from gooey.python_bindings.gooey_parser import GooeyParser
 
 version_file = os.path.join(os.path.dirname(__file__), 'version')
 
-__version__ = '0.8.4'
+__version__ = '0.8.5'
