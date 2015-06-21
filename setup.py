@@ -35,7 +35,7 @@ setup(
 <h3>Turn (almost) any Python Console Program into a GUI application with one line</h3>
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/chriskiehl/Gooey/master/resources/primary.png"/>
+    <img src="https://cloud.githubusercontent.com/assets/1408720/7904381/f54f97f6-07c5-11e5-9bcb-c3c102920769.png"/>
 </p>
 
 
