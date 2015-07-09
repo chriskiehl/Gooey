@@ -84,7 +84,7 @@ def categorize(actions, widget_dict, required=False):
     elif is_counter(action):
       _json = as_json(action, _get_widget(action) or 'Dropdown', required)
       # pre-fill the 'counter' dropdown
-      _json['choices'] = range(1, 11)
+      _json['data']['choices'] = map(str, range(1, 11))
       yield _json
     else:
       raise UnknownWidgetType(action)
@@ -176,6 +176,7 @@ def as_json(action, widget, required):
       'nargs': action.nargs or '',
       'commands': action.option_strings,
       'choices': action.choices or [],
+      'default': action.default
     }
   }
 
