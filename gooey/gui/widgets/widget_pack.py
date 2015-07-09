@@ -171,7 +171,7 @@ class DropdownPayload(WidgetPack):
     elif self.widget.GetValue() and self.option_string:
       return '{} {}'.format(self.option_string, self.widget.GetValue())
     else:
-      self.widget.GetValue()
+      return self.widget.GetValue()
 
   def _SetValue(self, text):
     # used for testing
