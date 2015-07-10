@@ -52,6 +52,7 @@ class BaseChooser(WidgetPack):
     self.parent = parent
     self.option_string = data['commands'][0] if data['commands'] else ''
     self.text_box = wx.TextCtrl(self.parent)
+    self.text_box.AppendText(safe_default(data, ''))
     self.text_box.SetMinSize((0, -1))
     dt = FileDrop(self.text_box)
     self.text_box.SetDropTarget(dt)
@@ -133,6 +134,7 @@ class TextInputPayload(WidgetPack):
     self.widget.SetDropTarget(dt)
     self.widget.SetMinSize((0, -1))
     self.widget.SetDoubleBuffered(True)
+    self.widget.AppendText(safe_default(data, ''))
     return self.widget
 
   def getValue(self):
@@ -159,7 +161,7 @@ class DropdownPayload(WidgetPack):
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,
-      value=self.default_value,
+      value=safe_default(data, self.default_value),
       choices=data['choices'],
       style=wx.CB_DROPDOWN
     )
@@ -188,8 +190,8 @@ class CounterPayload(WidgetPack):
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,
-      value='',
-      choices=[str(x) for x in range(1, 7)],
+      value=safe_default(data, ''),
+      choices=map(str, range(1, 11)),
       style=wx.CB_DROPDOWN
     )
     return self.widget
@@ -208,3 +210,6 @@ class CounterPayload(WidgetPack):
     repeated_args = arg * int(dropdown_value)
     return '-' + repeated_args
 
+def safe_default(data, default):
+  # str(None) is 'None'!? Whaaaaat...?
+  return str(data['default']) if data['default'] else ''
