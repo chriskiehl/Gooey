@@ -124,6 +124,8 @@ class CheckBox(BaseGuiComponent):
     self.help_msg = self.createHelpMsgWidget(self.panel)
     self.help_msg.SetMinSize((0, -1))
 
+    self.help_msg.Bind(wx.EVT_LEFT_UP, lambda event: self.widget.SetValue(not self.widget.GetValue()))
+
     vertical_container = wx.BoxSizer(wx.VERTICAL)
     vertical_container.Add(self.title)
 
