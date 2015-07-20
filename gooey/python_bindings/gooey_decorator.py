@@ -13,11 +13,14 @@ import tempfile
 
 from . import source_parser
 from . import config_generator
+import sys
 
 from gooey.gui import application
 
 from argparse import ArgumentParser
 
+
+IGNORE_COMMAND = '--ignore-gooey'
 
 def Gooey(f=None,
           advanced=True,
@@ -38,8 +41,7 @@ def Gooey(f=None,
 
   def build(payload):
     def run_gooey(self, args=None, namespace=None):
-      source_path = store_executable_copy()
-
+      source_path = sys.argv[0]
       build_spec = config_generator.create_from_parser(self, source_path, payload_name=payload.__name__, **params)
 
       if dump_build_config:
@@ -56,6 +58,15 @@ def Gooey(f=None,
 
     inner2.__name__ = payload.__name__
     return inner2
+
+  def run_without_gooey(func):
+    return lambda: func()
+
+  if IGNORE_COMMAND in sys.argv:
+    sys.argv.remove(IGNORE_COMMAND)
+    if callable(f):
+      return run_without_gooey(f)
+    return run_without_gooey
 
   if callable(f):
     return build(f)

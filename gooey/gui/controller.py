@@ -70,7 +70,7 @@ class Controller(object):
       return self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
 
     cmd_line_args = self.core_gui.GetOptions()
-    command = '{0} {1}'.format(self.build_spec['target'], cmd_line_args)
+    command = '{0} --ignore-gooey {1}'.format(self.build_spec['target'], cmd_line_args)
     pub.send_message(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
     self.run_client_code(command)
 
