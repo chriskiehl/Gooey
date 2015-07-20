@@ -144,7 +144,6 @@ class Footer(AbstractFooter):
   def __init__(self, parent, **kwargs):
     AbstractFooter.__init__(self, parent, **kwargs)
     for button in self.buttons:
-      print button.GetId()
       self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
 
   def dispatch_click(self, event):

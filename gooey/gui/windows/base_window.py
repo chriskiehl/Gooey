@@ -87,8 +87,6 @@ class BaseWindow(wx.Frame):
 
 
   def myListener(self, message):
-    print message
-    print message == 'fetch'
     if message == 'fetch':
       del self.config_panel
 

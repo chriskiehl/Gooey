@@ -65,7 +65,6 @@ def do_run(args):
 
   with open(gooey_config, 'r') as f:
     build_spec = json.load(f)
-  print json.dumps(build_spec)
   run(build_spec)
 
 
