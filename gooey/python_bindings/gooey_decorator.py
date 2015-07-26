@@ -31,7 +31,8 @@ def Gooey(f=None,
           default_size=(610, 530),
           required_cols=2,
           optional_cols=2,
-          dump_build_config=False):
+          dump_build_config=False,
+          monospace_display=False):
   '''
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end

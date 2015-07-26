@@ -21,7 +21,8 @@ def create_from_parser(parser, source_path, **kwargs):
     'num_required_cols':    kwargs.get('required_cols', 1),
     'num_optional_cols':    kwargs.get('optional_cols', 3),
     'manual_start':         False,
-    'layout_type':          'column'
+    'layout_type':          'column',
+    'monospace_display':    kwargs.get('monospace_display', False)
   }
 
   if show_config:

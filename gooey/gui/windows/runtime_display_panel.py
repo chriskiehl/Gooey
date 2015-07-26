@@ -23,8 +23,10 @@ class MessagePump(object):
 
 
 class RuntimeDisplay(wx.Panel):
-  def __init__(self, parent, **kwargs):
+  def __init__(self, parent, build_spec, **kwargs):
     wx.Panel.__init__(self, parent, **kwargs)
+
+    self.build_spec = build_spec
 
     self._init_properties()
     self._init_components()
@@ -39,6 +41,11 @@ class RuntimeDisplay(wx.Panel):
     self.cmd_textbox = wx.TextCtrl(
       self, -1, "",
       style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH)
+    if self.build_spec.get('monospace_display'):
+      pointsize = self.cmd_textbox.GetFont().GetPointSize()
+      font = wx.Font(pointsize, wx.FONTFAMILY_MODERN,
+                   wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False)
+      self.cmd_textbox.SetFont(font)
 
   def _do_layout(self):
     sizer = wx.BoxSizer(wx.VERTICAL)

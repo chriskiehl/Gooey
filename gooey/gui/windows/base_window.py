@@ -56,7 +56,7 @@ class BaseWindow(wx.Frame):
         subheading=_desc or '',
         parent=self)
 
-    self.runtime_display = RuntimeDisplay(self)
+    self.runtime_display = RuntimeDisplay(self, self.build_spec)
     self.foot_panel = footer.Footer(self)
     self.panels = [self.head_panel, self.config_panel, self.foot_panel]
 
