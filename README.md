@@ -71,6 +71,8 @@ Alternatively, you can install Gooey by cloning the project to your local direct
 run `setup.py` 
 
     python setup.py install
+    
+After Gooey is installed, make sure [wxPython](http://www.wxpython.org/download.php) is installed on your machine as well. Unfortanately, this cannot be done from the CLI and should be manually downloaded from the [wxPython website](http://www.wxpython.org/download.php).
 
 ###Usage  
 
