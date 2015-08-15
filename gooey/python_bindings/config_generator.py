@@ -8,7 +8,11 @@ from gooey.python_bindings import source_parser
 def create_from_parser(parser, source_path, **kwargs):
   show_config = kwargs.get('show_config', False)
 
-  run_cmd = 'python {}'.format(source_path)
+  #If script has been frozen execute it straight
+  if hasattr(sys, 'frozen'):
+    run_cmd = source_path
+  else:
+    run_cmd = 'python {}'.format(source_path)
 
   build_spec = {
     'language':             kwargs.get('language', 'english'),
