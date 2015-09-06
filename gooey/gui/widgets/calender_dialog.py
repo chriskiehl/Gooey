@@ -11,7 +11,7 @@ class CalendarDlg(wx.Dialog):
 
     self.SetBackgroundColour('#ffffff')
 
-    self.ok_button = wx.Button(self, label='Ok')
+    self.ok_button = wx.Button(self, wx.ID_OK, label='Ok')
     self.datepicker = wx.DatePickerCtrl(self, style=wx.DP_DROPDOWN)
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
@@ -33,7 +33,7 @@ class CalendarDlg(wx.Dialog):
 
   def OnOkButton(self, event):
     self.Close()
-    return wx.ID_OK
+    event.Skip()
 
   def OnCancellButton(self, event):
     try:
@@ -43,3 +43,4 @@ class CalendarDlg(wx.Dialog):
 
   def GetPath(self):
     return str(self.datepicker.GetValue()).split(' ')[0]
+  

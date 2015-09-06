@@ -95,7 +95,7 @@ class BaseFileChooser(BaseChooser):
       self.text_box.SetValue(result)
 
   def get_path(self, dlg):
-    if isinstance(dlg, wx.DirDialog):
+    if isinstance(dlg, wx.DirDialog) or isinstance(dlg, CalendarDlg):
       return maybe_quote(dlg.GetPath())
     else:
       paths = dlg.GetPaths()
