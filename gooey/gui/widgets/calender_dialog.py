@@ -42,5 +42,7 @@ class CalendarDlg(wx.Dialog):
       self.Close()
 
   def GetPath(self):
-    return str(self.datepicker.GetValue()).split(' ')[0]
+    return self.datepicker.GetValue().FormatISODate()
+  
+  
   
