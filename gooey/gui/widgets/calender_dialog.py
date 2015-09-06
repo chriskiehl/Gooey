@@ -32,7 +32,7 @@ class CalendarDlg(wx.Dialog):
     self.Bind(wx.EVT_BUTTON, self.OnOkButton, self.ok_button)
 
   def OnOkButton(self, event):
-    self.Close()
+    self.EndModal(wx.ID_OK)
     event.Skip()
 
   def OnCancellButton(self, event):
