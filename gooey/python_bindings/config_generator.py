@@ -12,7 +12,7 @@ def create_from_parser(parser, source_path, **kwargs):
   if hasattr(sys, 'frozen'):
     run_cmd = source_path
   else:
-    run_cmd = 'python {}'.format(source_path)
+    run_cmd = 'python -u {}'.format(source_path)
 
   build_spec = {
     'language':             kwargs.get('language', 'english'),
