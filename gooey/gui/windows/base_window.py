@@ -41,6 +41,8 @@ class BaseWindow(wx.Frame):
     self.registerControllers()
     self.Bind(wx.EVT_SIZE, self.onResize)
 
+    self.Bind(wx.EVT_CLOSE, lambda x: pub.send_message(str(events.WINDOW_CLOSE)))
+
   def _init_properties(self):
     self.SetTitle(self.build_spec['program_name'])
     self.SetSize(self.build_spec['default_size'])
