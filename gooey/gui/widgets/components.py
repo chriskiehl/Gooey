@@ -182,7 +182,7 @@ class RadioGroup(object):
     self.option_stings = [btn_data['commands'] for btn_data in self.data]
 
     # box = wx.StaticBox(self.panel, -1, label=self.data['group_name'])
-    box = wx.StaticBox(self.panel, -1, label='Set Verbosity Level')
+    box = wx.StaticBox(self.panel, -1, label='')
     vertical_container = wx.StaticBoxSizer(box, wx.VERTICAL)
 
     for button, name, help in zip(self.radio_buttons, self.btn_names, self.help_msgs):
