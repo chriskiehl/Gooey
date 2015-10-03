@@ -13,6 +13,7 @@ from argparse import (
 
 from collections import OrderedDict
 from functools import partial
+from itertools import chain
 
 VALID_WIDGETS = (
   'FileChooser',
@@ -56,13 +57,14 @@ def convert(parser):
 
 
 def process(parser, widget_dict):
-  mutually_exclusive_group = [
-                  mutex_action
-                  for group_actions in parser._mutually_exclusive_groups
-                  for mutex_action in group_actions._group_actions]
+  mutually_exclusive_groups = [
+                  [mutex_action for mutex_action in group_actions._group_actions]
+                  for group_actions in parser._mutually_exclusive_groups]
+
+  group_options = list(chain(*mutually_exclusive_groups))
 
   base_actions = [action for action in parser._actions
-                  if action not in mutually_exclusive_group
+                  if action not in group_options
                   and action.dest != 'help']
 
   required_actions = filter(is_required, base_actions)
@@ -70,7 +72,7 @@ def process(parser, widget_dict):
 
   return list(categorize(required_actions, widget_dict, required=True)) + \
          list(categorize(optional_actions, widget_dict)) + \
-         build_radio_group(mutually_exclusive_group)
+         map(build_radio_group, mutually_exclusive_groups)
 
 def categorize(actions, widget_dict, required=False):
   _get_widget = partial(get_widget, widgets=widget_dict)
@@ -155,12 +157,12 @@ def build_radio_group(mutex_group):
     } for mutex_arg in mutex_group
   ]
 
-  return [{
+  return {
     'type': 'RadioGroup',
     'group_name': 'Choose Option',
     'required': False,
     'data': options
-  }]
+  }
 
 
 def as_json(action, widget, required):
