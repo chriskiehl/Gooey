@@ -112,6 +112,7 @@ class CheckBox(BaseGuiComponent):
     self.widget = None
     #  data
     self.option_strings = data['commands'][0]
+    self.default_value = bool(data['default'])
 
   def build(self, parent):
     return self.do_layout(parent)
@@ -120,6 +121,7 @@ class CheckBox(BaseGuiComponent):
     self.panel = wx.Panel(parent)
 
     self.widget = wx.CheckBox(self.panel)
+    self.widget.SetValue(self.default_value)
     self.title = self.createTitle(self.panel)
     self.help_msg = self.createHelpMsgWidget(self.panel)
     self.help_msg.SetMinSize((0, -1))
@@ -218,7 +220,7 @@ class RadioGroup(object):
   def GetValue(self):
     vals = [button.GetValue() for button in self.radio_buttons]
     try:
-      return self.option_stings[vals.index(True)][0]
+      return self.option_strings[vals.index(True)][0]
     except:
       return ''
 
