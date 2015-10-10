@@ -96,7 +96,9 @@ Different styling and functionality can be configured by passing arguments into 
            default_size=(610, 530),   # starting size of the GUI
            required_cols=1,           # number of columns in the "Required" section
            optional_cols=2,           # number of columbs in the "Optional" section
-           dump_build_config=False)   # Dump the JSON Gooey uses to configure itself
+           dump_build_config=False,   # Dump the JSON Gooey uses to configure itself
+           load_build_config=None,    # Loads a JSON Gooey-generated configuration
+           monospace_display=False)   # Uses a mono-spaced font in the output screen
     )
     def main():
       parser = ArgumentParser(...)
@@ -249,6 +251,8 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 | required_cols | Controls how many columns are in the Required Arguments section |
 | optional_cols | Controls how many columns are in the Optional Arguments section |
 | dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
+| load_build_config | Loads a `json` copy of its build configuration from disk | 
+| monospace_display | Uses a mono-spaced font in the output screen | 
 
 
 
