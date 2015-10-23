@@ -9,7 +9,7 @@ from gooey.gui.util import wx_util
 
 basic_config = {
     'required': [{
-      'type': 'TextField',
+      'type': 'CommandField',
       'data': {
         'display_name': 'Enter Commands',
         'help': 'Enter command line arguments',
