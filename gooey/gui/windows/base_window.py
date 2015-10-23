@@ -40,6 +40,7 @@ class BaseWindow(wx.Frame):
     self._init_controller()
     self.registerControllers()
     self.Bind(wx.EVT_SIZE, self.onResize)
+    self.Bind(wx.EVT_CLOSE, self.onClose)
 
     self.Bind(wx.EVT_CLOSE, lambda x: pub.send_message(str(events.WINDOW_CLOSE)))
 
@@ -135,6 +136,18 @@ class BaseWindow(wx.Frame):
     self._controller.manual_restart()
 
   def onResize(self, evt):
+    evt.Skip()
+
+  def onClose(self, evt):
+    if evt.CanVeto():
+      if self._controller.on_stop():
+        self._controller.on_close()
+      else:
+        evt.Veto()
+        return
+    else:
+      self._controller.stop()
+      self._controller.on_close()
     evt.Skip()
 
   def PublishConsoleMsg(self, text):

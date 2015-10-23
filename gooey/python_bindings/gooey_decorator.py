@@ -6,6 +6,7 @@ Created on Jan 24, 2014
 TODO: this
 '''
 
+import sys
 import os
 import json
 import atexit
@@ -13,7 +14,6 @@ import tempfile
 
 from . import source_parser
 from . import config_generator
-import sys
 
 from gooey.gui import application
 
@@ -58,7 +58,7 @@ def Gooey(f=None,
 
       if dump_build_config:
         config_path = os.path.join(os.getcwd(), 'gooey_config.json')
-        print( 'Writing Build Config to: {}'.format(config_path))
+        print 'Writing Build Config to: {}'.format(config_path)
         with open(config_path, 'w') as f:
           f.write(json.dumps(build_spec, indent=2))
       application.run(build_spec)

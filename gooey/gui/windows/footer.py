@@ -64,6 +64,7 @@ class AbstractFooter(wx.Panel):
 
     def running():
       self.hide_all_buttons()
+      self.stop_button.Show()
       self.running_animation.Show()
       self.running_animation.Play()
       self.Layout()
@@ -99,6 +100,7 @@ class AbstractFooter(wx.Panel):
     h_sizer.AddStretchSpacer(1)
     h_sizer.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
     h_sizer.Add(self.start_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
+    h_sizer.Add(self.stop_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
 
     v_sizer.AddStretchSpacer(1)
     v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)

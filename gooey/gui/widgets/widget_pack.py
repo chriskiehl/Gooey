@@ -60,7 +60,7 @@ class BaseChooser(WidgetPack):
     widget_sizer = wx.BoxSizer(wx.HORIZONTAL)
     widget_sizer.Add(self.text_box, 1, wx.EXPAND)
     widget_sizer.AddSpacer(10)
-    widget_sizer.Add(self.button, 0)
+    widget_sizer.Add(self.button, 0, wx.ALIGN_CENTER_VERTICAL)
 
     parent.Bind(wx.EVT_BUTTON, self.onButton, self.button)
     return widget_sizer

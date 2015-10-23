@@ -25,17 +25,18 @@ if __name__ == '__main__':
                'required_args_msg': 'Required Arguments',
                'optional_args_msg': 'Optional Arguments',  # popup dialogs
                "sure_you_want_to_exit": "Are you sure you want to exit?",
-               'close_program': 'Close Program?',
+               'close_program': 'Close program?',
+               'sure_you_want_to_stop': 'Are you sure you want to stop the task? ' +
+                                        '\nInterruption can corrupt your data!',
+               'stop_task': 'Stop task?',
                'status': 'Status',
                'uh_oh': '''
-Uh oh! Looks like there was a problem. 
-Copy the below error to let your developer know what went wrong.
-
-{} 		
-		''',
+Uh oh! Looks like there was a problem.
+Copy the text from status window to let your developer know what went wrong.
+''',
                'error_title': "Error",
-               'execution_finished': 'Execution Finished',
-               'success_message': 'Program completed Sucessfully!',
+               'execution_finished': 'Execution finished',
+               'success_message': 'Program completed sucessfully!',
 
   }
 
