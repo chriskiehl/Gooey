@@ -11,12 +11,13 @@ import os
 import json
 
 from gooey.gui.lang import i18n_config
+from gooey.gui.util.freeze import get_resource_path
 
 
 __all__ = ['translate']
 
 _LANG = i18n_config.LANG
-_DEFAULT_DIR = os.path.join(os.path.dirname(__file__), '../../languages')
+_DEFAULT_DIR = get_resource_path("languages")
 
 _DICTIONARY = None
 
@@ -41,13 +42,7 @@ def load(filename):
                   'translation file is in the languages directory, ')
 
 def translate(key):
-  return _DICTIONARY[key]
+  return _DICTIONARY.get(key, key)
 
 def _(key):
-  return _DICTIONARY[key]
-
-if __name__ == '__main__':
-  pass
-
-
-
+  return translate(key)
