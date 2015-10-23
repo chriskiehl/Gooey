@@ -10,7 +10,7 @@ import wx.animate
 from gooey.gui.pubsub import pub
 
 from gooey.gui.lang import i18n
-from gooey.gui import imageutil, image_repository, events
+from gooey.gui import imageutil, events
 
 
 class AbstractFooter(wx.Panel):
@@ -27,7 +27,7 @@ class AbstractFooter(wx.Panel):
     # components
     self.cancel_button = None
     self.start_button = None
-    self.running_animation = None
+    self.progress_bar = None
     self.close_button = None
     self.stop_button = None
     self.restart_button = None
@@ -50,7 +50,7 @@ class AbstractFooter(wx.Panel):
     self.restart_button     = self.button(i18n._('restart'), wx.ID_OK,      event_id=int(events.WINDOW_RESTART))
     self.edit_button        = self.button(i18n._('edit'),    wx.ID_OK,      event_id=int(events.WINDOW_EDIT))
 
-    self.running_animation  = wx.animate.GIFAnimationCtrl(self, -1, image_repository.loader)
+    self.progress_bar  = wx.Gauge(self, range=100)
 
     self.buttons = [self.cancel_button, self.start_button, self.stop_button, self.close_button, self.restart_button, self.edit_button]
 
@@ -59,20 +59,18 @@ class AbstractFooter(wx.Panel):
       self.hide_all_buttons()
       self.cancel_button.Show()
       self.start_button.Show()
-      self.running_animation.Stop()
       self.Layout()
 
     def running():
       self.hide_all_buttons()
       self.stop_button.Show()
-      self.running_animation.Show()
-      self.running_animation.Play()
+      self.progress_bar.Show()
+      self.progress_bar.Pulse()
       self.Layout()
 
     def success():
       self.hide_all_buttons()
-      self.running_animation.Stop()
-      self.running_animation.Hide()
+      self.progress_bar.Hide()
       self.edit_button.Show()
       self.restart_button.Show()
       self.close_button.Show()
@@ -97,6 +95,9 @@ class AbstractFooter(wx.Panel):
     v_sizer = wx.BoxSizer(wx.VERTICAL)
     h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
+    h_sizer.Add(self.progress_bar, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 20)
+    self.progress_bar.Hide()
+
     h_sizer.AddStretchSpacer(1)
     h_sizer.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
     h_sizer.Add(self.start_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
@@ -104,8 +105,6 @@ class AbstractFooter(wx.Panel):
 
     v_sizer.AddStretchSpacer(1)
     v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
-    v_sizer.Add(self.running_animation, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALIGN_RIGHT | wx.RIGHT, 20)
-    self.running_animation.Hide()
 
     h_sizer.Add(self.edit_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
     h_sizer.Add(self.restart_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)

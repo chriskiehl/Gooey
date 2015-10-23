@@ -6,6 +6,7 @@ Created on Dec 22, 2013
 
 import wx
 import os
+import re
 import sys
 import subprocess
 
@@ -113,7 +114,41 @@ class Controller(object):
       if not line:
         break
       wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
+      progress = self.progress_from_line(line)
+      if progress is not None:
+        wx.CallAfter(self.core_gui.UpdateProgressBar, progress)
     wx.CallAfter(callback, process)
+
+  def progress_from_line(self, text):
+    progress_regex = self.build_spec['progress_regex']
+    if not progress_regex:
+      return None
+    match = re.search(progress_regex, text.strip())
+    if not match:
+      return None
+    progress_expr = self.build_spec['progress_expr']
+    if progress_expr:
+      def safe_float(x):
+        try:
+          return float(x)
+        except ValueError:
+          return x
+      eval_locals = {k: safe_float(v) for k, v in match.groupdict().items()}
+      if "x" not in eval_locals:
+        eval_locals["x"] = [safe_float(x) for x in match.groups()]
+      try:
+        value = eval(progress_expr, {}, eval_locals)
+      except:
+        return None
+    else:
+      try:
+        value = match.group(1)
+      except IndexError:
+        return None
+    try:
+      return int(value)
+    except ValueError:
+      return None
 
   def process_result(self, process):
     _stdout, _ = process.communicate()

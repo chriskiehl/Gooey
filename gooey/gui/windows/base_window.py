@@ -153,6 +153,13 @@ class BaseWindow(wx.Frame):
   def PublishConsoleMsg(self, text):
     self.runtime_display.cmd_textbox.AppendText(text)
 
+  def UpdateProgressBar(self, value):
+    pb = self.foot_panel.progress_bar
+    if value < 0:
+      pb.Pulse()
+    else:
+      pb.SetValue(min(value, pb.GetRange()))
+
 
 if __name__ == '__main__':
   pass
