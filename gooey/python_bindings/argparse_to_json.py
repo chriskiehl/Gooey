@@ -9,7 +9,8 @@ from argparse import (
   _StoreConstAction,
   _StoreFalseAction,
   _StoreTrueAction,
-  ArgumentParser, _SubParsersAction)
+  ArgumentParser,
+  _SubParsersAction)
 
 from collections import OrderedDict
 from functools import partial
@@ -150,7 +151,7 @@ def build_radio_group(mutex_group):
 
   options = [
     {
-      'display_name': mutex_arg.dest,
+      'display_name': mutex_arg.metavar or mutex_arg.dest,
       'help': mutex_arg.help,
       'nargs': mutex_arg.nargs or '',
       'commands': mutex_arg.option_strings,
@@ -174,7 +175,7 @@ def as_json(action, widget, required):
     'type': widget,
     'required': required,
     'data': {
-      'display_name': action.dest,
+      'display_name': action.metavar or action.dest,
       'help': action.help,
       'nargs': action.nargs or '',
       'commands': action.option_strings,
