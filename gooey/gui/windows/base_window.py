@@ -3,6 +3,8 @@ Created on Jan 19, 2014
 @author: Chris
 '''
 
+import sys
+
 import wx
 from gooey.gui.pubsub import pub
 
@@ -158,7 +160,17 @@ class BaseWindow(wx.Frame):
     if value < 0:
       pb.Pulse()
     else:
-      pb.SetValue(min(value, pb.GetRange()))
+      value = min(int(value), pb.GetRange())
+      if pb.GetValue() != value:
+        # Windows 7 progress bar animation hack
+        if not self.build_spec["progress_animation"] \
+           and sys.platform.startswith("win"):
+          if pb.GetRange() == value:
+            pb.SetValue(value)
+            pb.SetValue(value-1)
+          else:
+            pb.SetValue(value+1)
+        pb.SetValue(value)
 
 
 if __name__ == '__main__':

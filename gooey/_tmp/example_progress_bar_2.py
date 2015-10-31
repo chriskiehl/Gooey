@@ -9,7 +9,8 @@ from gooey import Gooey, GooeyParser
 
 
 @Gooey(progress_regex=r"^progress: (\d+)/(\d+)$",
-       progress_expr="x[0] / x[1] * 100")
+       progress_expr="x[0] / x[1] * 100",
+       progress_animation=False)
 def main():
     parser = GooeyParser(prog="example_progress_bar_2")
     parser.add_argument("steps", type=int, default=15)

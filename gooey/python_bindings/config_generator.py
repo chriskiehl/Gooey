@@ -28,6 +28,7 @@ def create_from_parser(parser, source_path, **kwargs):
     'monospace_display':    kwargs.get('monospace_display', False),
     'progress_regex':       kwargs.get('progress_regex'),
     'progress_expr':        kwargs.get('progress_expr'),
+    'progress_animation':   kwargs.get('progress_animation'),
   }
 
   if show_config:
