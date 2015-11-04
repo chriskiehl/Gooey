@@ -11,4 +11,4 @@ else:  # POSIX shell
 
 
 def maybe_quote(string):
-  return '"{}"'.format(string) if not re.match(r'^".*"$', string) else string
+  return u'"{}"'.format(string) if not re.match(r'^".*"$', string) else string
