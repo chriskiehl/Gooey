@@ -1,18 +1,17 @@
 import os
 import sys
-import argparse_to_json
 from gooey.gui.windows import layouts
-from gooey.python_bindings import source_parser
+from gooey.python_bindings import argparse_to_json
+from gooey.gui.util.quoting import quote
 
 
 def create_from_parser(parser, source_path, **kwargs):
   show_config = kwargs.get('show_config', False)
 
-  #If script has been frozen execute it straight
-  if hasattr(sys, 'frozen'):
-    run_cmd = source_path
+  if source_path.endswith(".py"):
+    run_cmd = '{} {}'.format(quote(sys.executable), quote(source_path))
   else:
-    run_cmd = 'python -u {}'.format(source_path)
+    run_cmd = quote(source_path)
 
   build_spec = {
     'language':             kwargs.get('language', 'english'),
