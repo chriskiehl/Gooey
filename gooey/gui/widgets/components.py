@@ -145,7 +145,7 @@ class CheckBox(BaseGuiComponent):
     return self.panel
 
   def onSetter(self, evt):
-    self.getValue()
+    self.GetValue()
 
   def onResize(self, evt):
     msg = self.help_msg
@@ -211,7 +211,7 @@ class RadioGroup(object):
     return self.panel
 
   def onSetter(self, evt):
-    self.getValue()
+    self.GetValue()
 
   def onResize(self, evt):
     msg = self.help_msgs[0]

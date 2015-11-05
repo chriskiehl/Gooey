@@ -47,9 +47,9 @@ class BaseChooser(WidgetPack):
     self.text_box = None
     self.button = None
 
-  def build(self, parent, data=None):
+  def build(self, parent, data):
     self.parent = parent
-    self.option_string = data['commands'][0] if data['commands'] else ''
+    self.option_string = self.get_command(data)
     self.text_box = wx.TextCtrl(self.parent)
     self.text_box.AppendText(safe_default(data, ''))
     self.text_box.SetMinSize((0, -1))
@@ -166,7 +166,7 @@ class TextInputPayload(WidgetPack):
     if self.no_quoting:
       _quote = lambda value: value
     else:
-      _quote = lambda value: quote(value)
+      _quote = quote
     value = self.widget.GetValue()
     if value and self.option_string:
       return '{} {}'.format(self.option_string, _quote(value))
@@ -242,4 +242,4 @@ class CounterPayload(WidgetPack):
 
 def safe_default(data, default):
   # str(None) is 'None'!? Whaaaaat...?
-  return str(data['default']) if data['default'] else ''
+  return str(data['default']) if data['default'] else default
