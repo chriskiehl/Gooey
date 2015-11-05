@@ -85,7 +85,7 @@ def categorize(actions, widget_dict, required=False):
     elif is_flag(action):
       yield as_json(action, _get_widget(action) or 'CheckBox', required)
     elif is_counter(action):
-      _json = as_json(action, _get_widget(action) or 'Dropdown', required)
+      _json = as_json(action, _get_widget(action) or 'Counter', required)
       # pre-fill the 'counter' dropdown
       _json['data']['choices'] = map(str, range(1, 11))
       yield _json

@@ -86,11 +86,10 @@ class BaseFileChooser(BaseChooser):
     self.dialog = dialog
 
   def getValue(self):
-    value = ' '.join(quote(x) for x in self.text_box.GetValue().split(os.pathsep))
+    value = self.text_box.GetValue()
     if self.option_string and value:
-      return '{} {}'.format(self.option_string, value)
-    else:
-      return value or ''
+      return '{} {}'.format(self.option_string, quote(value))
+    return quote(value) if value else ''
 
   def onButton(self, evt):
     dlg = self.dialog(self.parent)
@@ -101,10 +100,30 @@ class BaseFileChooser(BaseChooser):
       self.text_box.SetValue(result)
 
   def get_path(self, dlg):
-    if isinstance(dlg, wx.DirDialog) or isinstance(dlg, CalendarDlg):
-      return dlg.GetPath()
-    else:
-      return os.pathsep.join(dlg.GetPaths())
+    return dlg.GetPath()
+
+
+class BaseMultiFileChooser(BaseFileChooser):
+  def __init__(self, dialog):
+    BaseFileChooser.__init__(self, dialog)
+
+  def getValue(self):
+    value = ' '.join(quote(x) for x in self.text_box.GetValue().split(os.pathsep) if x)
+    if self.option_string and value:
+      return '{} {}'.format(self.option_string, value)
+    return value or ''
+
+  def onButton(self, evt):
+    dlg = self.dialog(self.parent)
+    result = (self.get_path(dlg)
+              if dlg.ShowModal() == wx.ID_OK
+              else None)
+    if result:
+      self.text_box.SetValue(result)
+
+  def get_path(self, dlg):
+    return os.pathsep.join(dlg.GetPaths())
+
 
 class MyMultiDirChooser(MDD.MultiDirDialog):
   def __init(self, *args, **kwargs):
@@ -122,10 +141,10 @@ def build_dialog(style, exist_constraint=True, **kwargs):
 
 FileChooserPayload    = partial(BaseFileChooser, dialog=build_dialog(wx.FD_OPEN))
 FileSaverPayload      = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename"))
-MultiFileSaverPayload = partial(BaseFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
+MultiFileSaverPayload = partial(BaseMultiFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
 DirChooserPayload     = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE))
 DateChooserPayload    = partial(BaseFileChooser, dialog=CalendarDlg)
-MultiDirChooserPayload = partial(BaseFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
+MultiDirChooserPayload = partial(BaseMultiFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
 
 class TextInputPayload(WidgetPack):
   def __init__(self, no_quoting=False):
