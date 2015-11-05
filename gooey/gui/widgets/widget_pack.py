@@ -36,7 +36,12 @@ class WidgetPack(object):
   def get_command(data):
     return data['commands'][0] if data['commands'] else ''
 
-
+  @staticmethod
+  def disable_quoting(data):
+    nargs = data.get('nargs', None)
+    if not nargs:
+      return False
+    return nargs not in (1, '?')
 
 
 class BaseChooser(WidgetPack):
@@ -75,7 +80,6 @@ class BaseChooser(WidgetPack):
   def onButton(self, evt):
     raise NotImplementedError
 
-
   def __repr__(self):
     return self.__class__.__name__
 
@@ -84,12 +88,6 @@ class BaseFileChooser(BaseChooser):
   def __init__(self, dialog):
     BaseChooser.__init__(self)
     self.dialog = dialog
-
-  def getValue(self):
-    value = self.text_box.GetValue()
-    if self.option_string and value:
-      return '{} {}'.format(self.option_string, quote(value))
-    return quote(value) if value else ''
 
   def onButton(self, evt):
     dlg = self.dialog(self.parent)
@@ -127,7 +125,7 @@ class BaseMultiFileChooser(BaseFileChooser):
 
 class MyMultiDirChooser(MDD.MultiDirDialog):
   def __init(self, *args, **kwargs):
-    super(MyMultiDirChooser,self).__init__(*args, **kwargs)
+    super(MyMultiDirChooser, self).__init__(*args, **kwargs)
 
   def GetPaths(self):
     return self.dirCtrl.GetPaths()
@@ -154,6 +152,8 @@ class TextInputPayload(WidgetPack):
 
   def build(self, parent, data):
     self.option_string = self.get_command(data)
+    if self.disable_quoting(data):
+      self.no_quoting = True
     self.widget = wx.TextCtrl(parent)
     dt = FileDrop(self.widget)
     self.widget.SetDropTarget(dt)
@@ -181,12 +181,15 @@ class TextInputPayload(WidgetPack):
 class DropdownPayload(WidgetPack):
   default_value = 'Select Option'
 
-  def __init__(self):
-    self.option_string = None
+  def __init__(self, no_quoting=False):
     self.widget = None
+    self.option_string = None
+    self.no_quoting = no_quoting
 
   def build(self, parent, data):
     self.option_string = self.get_command(data)
+    if self.disable_quoting(data):
+      self.no_quoting = True
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,
@@ -197,13 +200,17 @@ class DropdownPayload(WidgetPack):
     return self.widget
 
   def getValue(self):
+    if self.no_quoting:
+      _quote = lambda value: value
+    else:
+      _quote = quote
     value = self.widget.GetValue()
     if value == self.default_value:
       return ''
     elif value and self.option_string:
-      return '{} {}'.format(self.option_string, quote(value))
+      return '{} {}'.format(self.option_string, _quote(value))
     else:
-      return quote(value) if value else ''
+      return _quote(value) if value else ''
 
   def _SetValue(self, text):
     # used for testing
