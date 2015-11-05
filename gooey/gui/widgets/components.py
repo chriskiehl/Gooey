@@ -97,6 +97,9 @@ class BaseGuiComponent(object):
   def GetValue(self):
     return self.widget_pack.getValue()
 
+  def HasOptionString(self):
+    return bool(self.widget_pack.option_string)
+
   def _GetWidget(self):
     # used only for unittesting
     return self.widget_pack.widget
@@ -157,6 +160,9 @@ class CheckBox(BaseGuiComponent):
   def GetValue(self):
     return self.option_strings if self.widget.GetValue() else ''
 
+  def HasOptionString(self):
+    return bool(self.option_strings)
+
   def _GetWidget(self):
     return self.widget
 
@@ -168,7 +174,7 @@ class RadioGroup(object):
     self.data = data
 
     self.radio_buttons = []
-    self.option_stings = []
+    self.option_strings = []
     self.help_msgs = []
     self.btn_names = []
 
@@ -181,7 +187,7 @@ class RadioGroup(object):
     self.radio_buttons = [wx.RadioButton(self.panel, -1) for _ in self.data]
     self.btn_names = [wx.StaticText(self.panel, label=btn_data['display_name'].title()) for btn_data in self.data]
     self.help_msgs = [wx.StaticText(self.panel, label=btn_data['help'].title()) for btn_data in self.data]
-    self.option_stings = [btn_data['commands'] for btn_data in self.data]
+    self.option_strings = [btn_data['commands'] for btn_data in self.data]
 
     # box = wx.StaticBox(self.panel, -1, label=self.data['group_name'])
     box = wx.StaticBox(self.panel, -1, label='')
@@ -223,6 +229,9 @@ class RadioGroup(object):
       return self.option_strings[vals.index(True)][0]
     except:
       return ''
+
+  def HasOptionString(self):
+    return bool(self.option_strings)
 
   def _GetWidget(self):
     return self.radio_buttons

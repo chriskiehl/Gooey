@@ -93,10 +93,12 @@ class ConfigPanel(ScrolledPanel, OptionReader):
     """
     returns the collective values from all of the
     widgets contained in the panel"""
-    values = [c.GetValue()
-              for c in chain(*self.widgets)
-              if c.GetValue() is not None]
-    return ' '.join(values)
+    _f = lambda lst: [x for x in lst if x is not None]
+    optional_args = _f([c.GetValue() for c in self.widgets.optional_args])
+    required_args = _f([c.GetValue() for c in self.widgets.required_args if c.HasOptionString()])
+    position_args = _f([c.GetValue() for c in self.widgets.required_args if not c.HasOptionString()])
+    if position_args: position_args.insert(0, "--")
+    return ' '.join(chain(required_args, optional_args, position_args))
 
   def GetRequiredArgs(self):
     return [arg.GetValue() for arg in self.widgets.required_args]
