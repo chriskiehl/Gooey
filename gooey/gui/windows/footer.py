@@ -50,7 +50,7 @@ class AbstractFooter(wx.Panel):
     self.restart_button     = self.button(i18n._('restart'), wx.ID_OK,      event_id=int(events.WINDOW_RESTART))
     self.edit_button        = self.button(i18n._('edit'),    wx.ID_OK,      event_id=int(events.WINDOW_EDIT))
 
-    self.running_animation  = wx.animate.GIFAnimationCtrl(self, -1, image_repository.loader)
+    self.running_animation  = wx.animate.GIFAnimationCtrl(self, -1, image_repository.loading_icon)
 
     self.buttons = [self.cancel_button, self.start_button, self.stop_button, self.close_button, self.restart_button, self.edit_button]
 

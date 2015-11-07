@@ -50,10 +50,10 @@ class FrameHeader(wx.Panel):
 
     self._subheader = wx.StaticText(self, label=subheading)
 
-    self._settings_img = self._load_image(image_repository.settings2, height=79)
-    self._running_img = self._load_image(image_repository.computer3, 79)
-    self._check_mark = self._load_image(image_repository.alessandro_rei_checkmark, height=75)
-    self._error_symbol = self._load_image(image_repository.error, height=75)
+    self._settings_img = self._load_image(image_repository.config_icon, height=79)
+    self._running_img = self._load_image(image_repository.running_icon, 79)
+    self._check_mark = self._load_image(image_repository.success_icon, height=75)
+    self._error_symbol = self._load_image(image_repository.error_icon, height=75)
 
 
   def _do_layout(self):
