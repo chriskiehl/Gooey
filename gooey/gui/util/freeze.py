@@ -8,7 +8,9 @@ def is_frozen():
 
 def get_resource_path(*args):
   if is_frozen():
-    resource_dir = os.path.join(os.path.dirname(sys.executable), 'gooey')
+    # MEIPASS explanation:
+    # https://pythonhosted.org/PyInstaller/#run-time-operation
+    resource_dir = os.path.join(sys._MEIPASS, 'gooey')
     if not os.path.isdir(resource_dir):
       raise IOError(("cannot locate Gooey resources. It seems that the program "
                      "was frozen, but resource files were not copied to "
