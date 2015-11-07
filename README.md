@@ -27,7 +27,7 @@ Table of Contents
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
-- [Customizing Icons/Images](#customizing-icons)
+- [Customizing Icons](#customizing-icons)
 - [Screenshots](#screenshots)
 - [Change Log](#change-log)
 - [TODO](#todo)
