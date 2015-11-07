@@ -18,7 +18,7 @@ import sys
 from gooey.gui import application
 
 from argparse import ArgumentParser
-
+from gooey.gui.util.freeze import get_resource_path
 
 IGNORE_COMMAND = '--ignore-gooey'
 
@@ -33,7 +33,9 @@ def Gooey(f=None,
           optional_cols=2,
           dump_build_config=False,
           load_build_config=None,
-          monospace_display=False):
+          monospace_display=False,
+          image_dir='default',
+          language_dir=get_resource_path('languages')):
   '''
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end

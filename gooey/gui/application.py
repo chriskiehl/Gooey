@@ -15,7 +15,7 @@ from gooey.gui.windows.base_window import BaseWindow
 from gooey.gui.windows.advanced_config import ConfigPanel
 
 from gooey.python_bindings import config_generator, source_parser
-
+from gooey.gui import image_repository
 
 def main():
   parser = argparse.ArgumentParser(
@@ -71,8 +71,8 @@ def do_run(args):
 def run(build_spec):
   app = wx.App(False)
 
-  i18n.load(build_spec['language'])
-
+  i18n.load(build_spec['language_dir'], build_spec['language'])
+  image_repository.patch_images(build_spec['image_dir'])
   frame = BaseWindow(build_spec)
   frame.Show(True)
   app.MainLoop()
