@@ -253,6 +253,8 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 | dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
 | load_build_config | Loads a `json` copy of its build configuration from disk | 
 | monospace_display | Uses a mono-spaced font in the output screen | 
+| image_dir | Path to the directory in which Gooey should look for custom images/icons |
+| language_dir | Path to the directory in which Gooey should look for custom languages files |
 
 
 
@@ -322,6 +324,22 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 ---------------------------------------  
 
 
+##Customizing Icons
+
+Gooey comes with a set of six default icons. These can be overridden with your own custom images/icons by telling Gooey to search additional directories when initializing. This is done via the `image_dir` argument to the `Goeey` decorator. 
+
+    @Gooey(program_name='Custom icon demo', image_dir='/path/to/my/image/directory')
+    def main():
+        # rest of program
+        
+Images are discovered by Gooey based on their _filenames_. So, for example, in order to supply a custom configuration icon, simply place an image with the filename `config_icon.png` in your images directory. These are the filenames which can be overridden:
+
+* program_icon.ico
+* success_icon.png
+* running_icon.png
+* loading_icon.gif
+* config_icon.png
+* error_icon.png
 
 
 Screenshots
