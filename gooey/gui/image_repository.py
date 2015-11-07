@@ -1,33 +1,21 @@
+'''
+Default Gooey icons.
+
+Most icons provided by kidcomic.net
+'''
 import os
 from gooey.gui.util.freeze import get_resource_path
 
-
-__author__ = 'Chris'
-
 image_dir = get_resource_path('images')
 
-alessandro_rei_checkmark = os.path.join(image_dir, "alessandro_rei_checkmark.png")
-computer = os.path.join(image_dir, "computer.png")
-computer2 = os.path.join(image_dir, "computer2.png")
-computer3 = os.path.join(image_dir, "computer3.png")
-icon = os.path.join(image_dir, "icon.ico")
-images = os.path.join(image_dir, "images.jpg")
-loader = os.path.join(image_dir, "loader.gif")
-settings2 = os.path.join(image_dir, "settings2.png")
-error = os.path.join(image_dir, "error.png")
+program_icon = os.path.join(image_dir, "program_icon.ico")
+success_icon = os.path.join(image_dir, "success_checkmark.png")
+running_icon = os.path.join(image_dir, "running_icon.png")
+loading_icon = os.path.join(image_dir, "loading_icon.gif")
+config_icon = os.path.join(image_dir, "config_icon.png")
+error_icon = os.path.join(image_dir, "error_icon.png")
 
 
-def _list_images():
-  # convenience function to list all images
-  # the images directory in a format that can be copied
-  # and pasted
-  images = (f for f in os.listdir(image_dir))
-  stmnts = ('{0} = os.path.join(image_dir, "{1}")'
-              .format(os.path.splitext(im)[0], im)
-            for im in images)
-
-
-# _list_images()
 
 
 
