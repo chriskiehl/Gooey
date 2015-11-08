@@ -111,20 +111,12 @@ class BaseMultiFileChooser(BaseFileChooser):
       return '{} {}'.format(self.option_string, value)
     return value or ''
 
-  def onButton(self, evt):
-    dlg = self.dialog(self.parent)
-    result = (self.get_path(dlg)
-              if dlg.ShowModal() == wx.ID_OK
-              else None)
-    if result:
-      self.text_box.SetValue(result)
-
   def get_path(self, dlg):
     return os.pathsep.join(dlg.GetPaths())
 
 
 class MyMultiDirChooser(MDD.MultiDirDialog):
-  def __init(self, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     super(MyMultiDirChooser, self).__init__(*args, **kwargs)
 
   def GetPaths(self):
