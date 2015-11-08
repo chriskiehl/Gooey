@@ -1,7 +1,8 @@
 from functools import partial
+import re
 from gooey.gui.lang import i18n
 from gooey.gui.util.filedrop import FileDrop
-from gooey.gui.util.quoting import quote
+from gooey.gui.util.quoting import maybe_quote
 
 __author__ = 'Chris'
 
@@ -68,9 +69,9 @@ class BaseChooser(WidgetPack):
   def getValue(self):
     value = self.text_box.GetValue()
     if self.option_string and value:
-      return '{0} {1}'.format(self.option_string, quote(value))
+      return '{0} {1}'.format(self.option_string, maybe_quote(value))
     else:
-      return quote(value) if value else ''
+      return maybe_quote(value) if value else ''
 
   def onButton(self, evt):
     raise NotImplementedError
@@ -85,13 +86,6 @@ class BaseFileChooser(BaseChooser):
     BaseChooser.__init__(self)
     self.dialog = dialog
 
-  def getValue(self):
-    value = ' '.join(quote(x) for x in self.text_box.GetValue().split(os.pathsep))
-    if self.option_string and value:
-      return '{} {}'.format(self.option_string, value)
-    else:
-      return value or ''
-
   def onButton(self, evt):
     dlg = self.dialog(self.parent)
     result = (self.get_path(dlg)
@@ -102,9 +96,10 @@ class BaseFileChooser(BaseChooser):
 
   def get_path(self, dlg):
     if isinstance(dlg, wx.DirDialog) or isinstance(dlg, CalendarDlg):
-      return dlg.GetPath()
+      return maybe_quote(dlg.GetPath())
     else:
-      return os.pathsep.join(dlg.GetPaths())
+      paths = dlg.GetPaths()
+      return maybe_quote(paths[0]) if len(paths) < 2 else ' '.join(map(maybe_quote, paths))
 
 class MyMultiDirChooser(MDD.MultiDirDialog):
   def __init(self, *args, **kwargs):
@@ -128,10 +123,9 @@ DateChooserPayload    = partial(BaseFileChooser, dialog=CalendarDlg)
 MultiDirChooserPayload = partial(BaseFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
 
 class TextInputPayload(WidgetPack):
-  def __init__(self, no_quoting=False):
+  def __init__(self):
     self.widget = None
     self.option_string = None
-    self.no_quoting = no_quoting
 
   def build(self, parent, data):
     self.option_string = self.get_command(data)
@@ -144,15 +138,11 @@ class TextInputPayload(WidgetPack):
     return self.widget
 
   def getValue(self):
-    if self.no_quoting:
-      _quote = lambda value: value
-    else:
-      _quote = lambda value: quote(value)
     value = self.widget.GetValue()
     if value and self.option_string:
-      return '{} {}'.format(self.option_string, _quote(value))
+      return '{} {}'.format(self.option_string, value)
     else:
-      return _quote(value) if value else ''
+      return '"{}"'.format(value) if value else ''
 
   def _SetValue(self, text):
     # used for testing
@@ -178,13 +168,12 @@ class DropdownPayload(WidgetPack):
     return self.widget
 
   def getValue(self):
-    value = self.widget.GetValue()
-    if value == self.default_value:
+    if self.widget.GetValue() == self.default_value:
       return ''
-    elif value and self.option_string:
-      return '{} {}'.format(self.option_string, quote(value))
+    elif self.widget.GetValue() and self.option_string:
+      return '{} {}'.format(self.option_string, self.widget.GetValue())
     else:
-      return quote(value) if value else ''
+      return self.widget.GetValue()
 
   def _SetValue(self, text):
     # used for testing
