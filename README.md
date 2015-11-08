@@ -28,6 +28,7 @@ Table of Contents
     - [Basic](#basic)
     - [No Config](#no-config)
 - [Customizing Icons](#customizing-icons)
+- [Packaging](#packaging)
 - [Screenshots](#screenshots)
 - [Change Log](#change-log)
 - [TODO](#todo)
@@ -341,6 +342,15 @@ Images are discovered by Gooey based on their _filenames_. So, for example, in o
 * loading_icon.gif
 * config_icon.png
 * error_icon.png
+
+
+##Packaging
+
+Thanks to some [awesome contributers](https://github.com/chriskiehl/Gooey/issues/58), packaging Gooey as an executable is super easy. 
+
+The tl;dr [pyinstaller](https://github.com/pyinstaller/pyinstaller) version is to drop this [build.spec](https://github.com/chriskiehl/Gooey/files/29568/build.spec.txt) into the root directory of your application. Edit its contents so that the `application` and `name` are relevant to your project, then execute `pyinstaller build.spec` to bundle your app into a ready-to-go executable. 
+
+Detailed step by step instructions can be found [here](http://chriskiehl.com/article/packaging-gooey-with-pyinstaller/). 
 
 
 Screenshots
