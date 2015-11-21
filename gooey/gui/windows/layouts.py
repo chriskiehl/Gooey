@@ -6,10 +6,12 @@ from gooey.gui import events
 from gooey.gui.windows.advanced_config import ConfigPanel
 from gooey.gui.windows.sidebar import Sidebar
 from gooey.gui.util import wx_util
+from gooey.gui.util.quoting import quote
+
 
 basic_config = {
     'required': [{
-      'type': 'TextField',
+      'type': 'CommandField',
       'data': {
         'display_name': 'Enter Commands',
         'help': 'Enter command line arguments',
@@ -77,7 +79,7 @@ class ColumnLayout(wx.Panel):
     return panels
 
   def GetOptions(self):
-    return '{} {}'.format(self.active_panel, self.config_panels[self.active_panel].GetOptions())
+    return '{} {}'.format(quote(self.active_panel), self.config_panels[self.active_panel].GetOptions())
 
   def GetRequiredArgs(self):
     return self.config_panels[self.active_panel].GetRequiredArgs()

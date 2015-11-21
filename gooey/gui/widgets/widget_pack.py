@@ -1,8 +1,7 @@
 from functools import partial
-import re
 from gooey.gui.lang import i18n
 from gooey.gui.util.filedrop import FileDrop
-from gooey.gui.util.quoting import maybe_quote
+from gooey.gui.util.quoting import quote
 
 __author__ = 'Chris'
 
@@ -37,7 +36,12 @@ class WidgetPack(object):
   def get_command(data):
     return data['commands'][0] if data['commands'] else ''
 
-
+  @staticmethod
+  def disable_quoting(data):
+    nargs = data.get('nargs', None)
+    if not nargs:
+      return False
+    return nargs not in (1, '?')
 
 
 class BaseChooser(WidgetPack):
@@ -48,9 +52,9 @@ class BaseChooser(WidgetPack):
     self.text_box = None
     self.button = None
 
-  def build(self, parent, data=None):
+  def build(self, parent, data):
     self.parent = parent
-    self.option_string = data['commands'][0] if data['commands'] else ''
+    self.option_string = self.get_command(data)
     self.text_box = wx.TextCtrl(self.parent)
     self.text_box.AppendText(safe_default(data, ''))
     self.text_box.SetMinSize((0, -1))
@@ -69,13 +73,12 @@ class BaseChooser(WidgetPack):
   def getValue(self):
     value = self.text_box.GetValue()
     if self.option_string and value:
-      return '{0} {1}'.format(self.option_string, maybe_quote(value))
+      return '{0} {1}'.format(self.option_string, quote(value))
     else:
-      return maybe_quote(value) if value else ''
+      return quote(value) if value else ''
 
   def onButton(self, evt):
     raise NotImplementedError
-
 
   def __repr__(self):
     return self.__class__.__name__
@@ -95,15 +98,26 @@ class BaseFileChooser(BaseChooser):
       self.text_box.SetValue(result)
 
   def get_path(self, dlg):
-    if isinstance(dlg, wx.DirDialog) or isinstance(dlg, CalendarDlg):
-      return maybe_quote(dlg.GetPath())
-    else:
-      paths = dlg.GetPaths()
-      return maybe_quote(paths[0]) if len(paths) < 2 else ' '.join(map(maybe_quote, paths))
+    return dlg.GetPath()
+
+
+class BaseMultiFileChooser(BaseFileChooser):
+  def __init__(self, dialog):
+    BaseFileChooser.__init__(self, dialog)
+
+  def getValue(self):
+    value = ' '.join(quote(x) for x in self.text_box.GetValue().split(os.pathsep) if x)
+    if self.option_string and value:
+      return '{} {}'.format(self.option_string, value)
+    return value or ''
+
+  def get_path(self, dlg):
+    return os.pathsep.join(dlg.GetPaths())
+
 
 class MyMultiDirChooser(MDD.MultiDirDialog):
-  def __init(self, *args, **kwargs):
-    super(MyMultiDirChooser,self).__init__(*args, **kwargs)
+  def __init__(self, *args, **kwargs):
+    super(MyMultiDirChooser, self).__init__(*args, **kwargs)
 
   def GetPaths(self):
     return self.dirCtrl.GetPaths()
@@ -117,18 +131,21 @@ def build_dialog(style, exist_constraint=True, **kwargs):
 
 FileChooserPayload    = partial(BaseFileChooser, dialog=build_dialog(wx.FD_OPEN))
 FileSaverPayload      = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename"))
-MultiFileSaverPayload = partial(BaseFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
+MultiFileSaverPayload = partial(BaseMultiFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
 DirChooserPayload     = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE))
 DateChooserPayload    = partial(BaseFileChooser, dialog=CalendarDlg)
-MultiDirChooserPayload = partial(BaseFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
+MultiDirChooserPayload = partial(BaseMultiFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
 
 class TextInputPayload(WidgetPack):
-  def __init__(self):
+  def __init__(self, no_quoting=False):
     self.widget = None
     self.option_string = None
+    self.no_quoting = no_quoting
 
   def build(self, parent, data):
     self.option_string = self.get_command(data)
+    if self.disable_quoting(data):
+      self.no_quoting = True
     self.widget = wx.TextCtrl(parent)
     dt = FileDrop(self.widget)
     self.widget.SetDropTarget(dt)
@@ -138,11 +155,15 @@ class TextInputPayload(WidgetPack):
     return self.widget
 
   def getValue(self):
+    if self.no_quoting:
+      _quote = lambda value: value
+    else:
+      _quote = quote
     value = self.widget.GetValue()
     if value and self.option_string:
-      return '{} {}'.format(self.option_string, value)
+      return '{} {}'.format(self.option_string, _quote(value))
     else:
-      return '"{}"'.format(value) if value else ''
+      return _quote(value) if value else ''
 
   def _SetValue(self, text):
     # used for testing
@@ -152,12 +173,15 @@ class TextInputPayload(WidgetPack):
 class DropdownPayload(WidgetPack):
   default_value = 'Select Option'
 
-  def __init__(self):
-    self.option_string = None
+  def __init__(self, no_quoting=False):
     self.widget = None
+    self.option_string = None
+    self.no_quoting = no_quoting
 
   def build(self, parent, data):
     self.option_string = self.get_command(data)
+    if self.disable_quoting(data):
+      self.no_quoting = True
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,
@@ -168,12 +192,17 @@ class DropdownPayload(WidgetPack):
     return self.widget
 
   def getValue(self):
-    if self.widget.GetValue() == self.default_value:
-      return ''
-    elif self.widget.GetValue() and self.option_string:
-      return '{} {}'.format(self.option_string, self.widget.GetValue())
+    if self.no_quoting:
+      _quote = lambda value: value
     else:
-      return self.widget.GetValue()
+      _quote = quote
+    value = self.widget.GetValue()
+    if value == self.default_value:
+      return ''
+    elif value and self.option_string:
+      return '{} {}'.format(self.option_string, _quote(value))
+    else:
+      return _quote(value) if value else ''
 
   def _SetValue(self, text):
     # used for testing
@@ -212,4 +241,4 @@ class CounterPayload(WidgetPack):
 
 def safe_default(data, default):
   # str(None) is 'None'!? Whaaaaat...?
-  return str(data['default']) if data['default'] else ''
+  return str(data['default']) if data['default'] else default
