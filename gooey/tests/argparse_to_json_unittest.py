@@ -148,7 +148,7 @@ def test_is_counter(empty_parser):
 
 def test_mutually(exclusive_group):
   target_arg = find_arg_by_option(exclusive_group, '-i')
-  json_result = build_radio_group(exclusive_group)[0]
+  json_result = build_radio_group(exclusive_group)
 
   data = json_result['data'][0]
   assert 'RadioGroup' == json_result['type']
