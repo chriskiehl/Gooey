@@ -158,6 +158,15 @@ def test_mutually(exclusive_group):
   assert target_arg.dest == data['display_name']
 
 
+def test_empty_mutex_group():
+  assert not build_radio_group(None)
+
+
+def test_as_json_invalid_widget():
+  with pytest.raises(UnknownWidgetType):
+    as_json(None, 'InvalidWidget', None)
+
+
 def get_action(parser, dest):
   for action in parser._actions:
     if action.dest == dest:
@@ -168,11 +177,3 @@ def find_arg_by_option(group, option_string):
   for arg in group:
     if option_string in arg.option_strings:
       return arg
-
-
-
-
-
-
-
-
