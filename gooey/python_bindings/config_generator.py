@@ -41,8 +41,3 @@ def create_from_parser(parser, source_path, **kwargs):
     build_spec['manual_start'] = True
 
   return build_spec
-
-
-
-def has_argparse(module_path):
-  return any(['.parse_args(' in line.lower() for line in f.readlines()])
