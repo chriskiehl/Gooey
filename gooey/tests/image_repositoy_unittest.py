@@ -6,12 +6,6 @@ import pytest
 import tempfile
 
 
-@pytest.fixture
-def expected_attrs():
-  return ('program_icon', 'success_icon', 'running_icon',
-          'loading_icon', 'config_icon', 'error_icon')
-
-
 def test_variable_names_are_pushed_to_module_scope(expected_attrs):
   '''
   The dynamically initialized Globals() should contain the expected images at runtime
@@ -62,5 +56,3 @@ def make_user_files(*filenames):
 def cleanup_temp(*filenames):
   for filename in filenames:
     os.remove(os.path.join(tempfile.gettempdir(), filename))
-
-

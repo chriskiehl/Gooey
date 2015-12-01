@@ -1,11 +1,4 @@
-import argparse
-import pytest
 from gooey.python_bindings.config_generator import *
-
-# TODO: duplicated from argparse_to_json_unittest, should go into conftest.py
-@pytest.fixture
-def empty_parser():
-  return argparse.ArgumentParser(description='description')
 
 
 def test_create_from_parser(empty_parser):
