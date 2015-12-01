@@ -3,6 +3,7 @@ Created on Dec 23, 2013
 
 @author: Chris
 '''
+from builtins import object
 
 import sys
 

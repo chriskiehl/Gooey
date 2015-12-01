@@ -8,6 +8,8 @@
     :copyright: Copyright 2008 by Armin Ronacher.
     :license: BSD.
 """
+from builtins import zip
+from builtins import str
 from ast import *
 
 

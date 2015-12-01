@@ -1,3 +1,5 @@
+from builtins import zip
+from builtins import object
 import wx
 
 from gooey.gui.util import wx_util

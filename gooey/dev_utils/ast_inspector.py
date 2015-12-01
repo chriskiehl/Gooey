@@ -1,4 +1,5 @@
 from __future__ import print_function
+from builtins import str
 from gooey.python_bindings import code_prep, source_parser
 
 __author__ = 'Chris'
@@ -13,7 +14,7 @@ from _ast import Assign
 
 def pretty_print(node, indent):
   d = node.__dict__
-  for k, v in d.iteritems():
+  for k, v in d.items():
     if isinstance(v, list):
       print('-' * indent, k, ": ")
       for i in v:

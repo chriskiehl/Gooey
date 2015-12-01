@@ -6,6 +6,8 @@ Created on Dec 11, 2013
 Collection of functions for extracting argparse related statements from the 
 client code.
 '''
+from builtins import str
+from builtins import map
 
 import re
 import os
@@ -76,7 +78,7 @@ def get_nodes_by_containing_attr(nodes, attr):
 def walk_tree(node):
   yield node
   d = node.__dict__
-  for key, value in d.iteritems():
+  for key, value in d.items():
     if isinstance(value, list):
       for val in value:
         for _ in walk_tree(val): yield _
@@ -90,7 +92,7 @@ def convert_to_python(ast_source):
   """
   Converts the ast objects back into human readable Python code
   """
-  return map(codegen.to_source, ast_source)
+  return list(map(codegen.to_source, ast_source))
 
 def get_assignment_name(lines):
   nodes = ast.parse(''.join(lines))

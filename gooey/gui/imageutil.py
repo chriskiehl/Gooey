@@ -3,6 +3,8 @@ Created on Jan 20, 2014
 
 @author: Chris
 '''
+from __future__ import division
+from past.utils import old_div
 import wx
 
 
@@ -23,7 +25,7 @@ def resize_bitmap(parent, _bitmap, target_height):
   _width, _height = image.GetSize()
   if _height < target_height:
     return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
-  ratio = float(_width) / _height
+  ratio = old_div(float(_width), _height)
   image = image.Scale(target_height * ratio, target_height, wx.IMAGE_QUALITY_HIGH)
   return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
 

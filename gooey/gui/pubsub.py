@@ -1,3 +1,4 @@
+from builtins import object
 from collections import defaultdict
 
 __ALL__ = ['pub']

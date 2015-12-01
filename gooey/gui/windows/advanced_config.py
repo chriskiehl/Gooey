@@ -8,7 +8,7 @@ Managed the internal layout for configuration options
 import wx
 
 from wx.lib.scrolledpanel import ScrolledPanel
-from itertools import chain, izip_longest
+from itertools import chain, zip_longest
 
 from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n
@@ -75,7 +75,7 @@ class ConfigPanel(ScrolledPanel, OptionReader):
   def CreateComponentGrid(self, parent_sizer, components, cols=2):
     for row in self.chunk(components, cols):
       hsizer = wx.BoxSizer(wx.HORIZONTAL)
-      for widget in filter(None, row):
+      for widget in [_f for _f in row if _f]:
         hsizer.Add(widget.build(self), 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
       # hsizer.FitInside(parent_sizer)
       parent_sizer.Add(hsizer, 0, wx.EXPAND)
@@ -107,7 +107,7 @@ class ConfigPanel(ScrolledPanel, OptionReader):
     "itertools recipe: Collect data into fixed-length chunks or blocks"
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
     args = [iter(iterable)] * n
-    return izip_longest(fillvalue=fillvalue, *args)
+    return zip_longest(fillvalue=fillvalue, *args)
 
 if __name__ == '__main__':
   pass

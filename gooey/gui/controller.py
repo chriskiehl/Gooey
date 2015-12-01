@@ -3,6 +3,7 @@ Created on Dec 22, 2013
 
 @author: Chris
 '''
+from builtins import object
 
 import wx
 import sys

@@ -21,6 +21,7 @@ It defines classes_and_methods
 @deffield    updated: Updated
 '''
 from __future__ import print_function
+from builtins import str
 
 import sys
 import os

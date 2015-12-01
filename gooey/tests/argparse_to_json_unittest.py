@@ -1,4 +1,5 @@
 from __future__ import print_function
+from builtins import filter
 import pytest
 from gooey.python_bindings.argparse_to_json import *
 
@@ -20,8 +21,8 @@ def test_convert_std_parser(complete_parser):
   assert 'required' in entry
   assert 'data' in entry
 
-  required = filter(lambda x: x['required'], result['widgets'])
-  optional = filter(lambda x: not x['required'], result['widgets'])
+  required = [x for x in result['widgets'] if x['required']]
+  optional = [x for x in result['widgets'] if not x['required']]
   assert len(required) == 4
   assert len(optional) == 8
 
@@ -46,14 +47,14 @@ def test_has_subparsers(subparser, complete_parser):
 
 
 def test_is_required(complete_parser):
-  required = filter(is_required, complete_parser._actions)
+  required = list(filter(is_required, complete_parser._actions))
   assert len(required) == 4
   for action in required:
     print(action.dest.startswith('req'))
 
 
 def test_is_optional(complete_parser):
-  optional = filter(is_optional, complete_parser._actions)
+  optional = list(filter(is_optional, complete_parser._actions))
   assert len(optional) == 10
   for action in optional:
     assert 'req' not in action.dest

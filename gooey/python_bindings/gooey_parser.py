@@ -1,3 +1,4 @@
+from builtins import object
 from argparse import ArgumentParser, _SubParsersAction, _MutuallyExclusiveGroup
 
 

@@ -4,6 +4,7 @@ Created on Dec 21, 2013
 @author: Chris
 '''
 from __future__ import print_function
+from builtins import str
 import sys
 import hashlib
 from time import time as _time, time

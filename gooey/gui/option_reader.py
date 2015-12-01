@@ -3,16 +3,17 @@ Created on Jan 19, 2014
 
 @author: Chris
 '''
+from builtins import object
 
 from abc import ABCMeta, abstractmethod
+from future.utils import with_metaclass
 
 
-class OptionReader(object):
+class OptionReader(with_metaclass(ABCMeta, object)):
   '''
   Mixin for forcing subclasses to
   honor GetOptions method
   '''
-  __metaclass__ = ABCMeta
 
   @abstractmethod
   def GetOptions(self):

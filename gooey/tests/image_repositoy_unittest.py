@@ -1,6 +1,7 @@
 '''
 Image Repository acts as a funky dynamic singlton module.
 '''
+from builtins import str
 import os
 import pytest
 import tempfile
