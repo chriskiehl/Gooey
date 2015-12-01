@@ -3,6 +3,7 @@ Created on Dec 21, 2013
 
 @author: Chris
 '''
+from __future__ import print_function
 import sys
 import hashlib
 from time import time as _time, time
@@ -17,7 +18,7 @@ from gooey import GooeyParser
 
 
 def main():
-  print 'hello'
+  print('hello')
   '''
   does stuff with parser.parse_args()
   '''
@@ -39,24 +40,24 @@ def main():
   # verbosity = my_cool_parser.add_mutually_exclusive_group()
   # verbosity.add_argument('-t', '--verbozze', dest='verbose', action="store_true", help="Show more details")
   # verbosity.add_argument('-q', '--quiet', dest='quiet', action="store_true", help="Only output on error")
-  print my_cool_parser._actions
-  print 'inside of main(), my_cool_parser =', my_cool_parser
+  print(my_cool_parser._actions)
+  print('inside of main(), my_cool_parser =', my_cool_parser)
 
   args = my_cool_parser.parse_args()
-  print 'EHOOOOOOOOOOOO'
-  print sys.argv
-  print args.countdown
-  print args.showtime
+  print('EHOOOOOOOOOOOO')
+  print(sys.argv)
+  print(args.countdown)
+  print(args.showtime)
 
   start_time = _time()
-  print 'Counting down from %s' % args.countdown
+  print('Counting down from %s' % args.countdown)
   while _time() - start_time < args.countdown:
     if args.showtime:
-      print 'printing message at: %s' % _time()
+      print('printing message at: %s' % _time())
     else:
-      print 'printing message at: %s' % hashlib.md5(str(_time())).hexdigest()
+      print('printing message at: %s' % hashlib.md5(str(_time())).hexdigest())
     _sleep(.5)
-  print 'Finished running the program. Byeeeeesss!'
+  print('Finished running the program. Byeeeeesss!')
   raise ValueError("Something has gone wrong! AHHHHHHHHHHH")
 
 def here_is_smore():
@@ -64,7 +65,7 @@ def here_is_smore():
 
 
 if __name__ == '__main__':
-  print sys.argv
+  print(sys.argv)
   main()
   # import inspect
   # import dis

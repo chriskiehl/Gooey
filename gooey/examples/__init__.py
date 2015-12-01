@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 import time
 
@@ -29,6 +30,6 @@ def display_message():
   delay = 1.8 / len(message)
 
   for line in message:
-    print line
+    print(line)
     time.sleep(delay)
 

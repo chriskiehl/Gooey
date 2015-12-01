@@ -1,3 +1,4 @@
+from __future__ import print_function
 import pytest
 from gooey.python_bindings.argparse_to_json import *
 
@@ -48,7 +49,7 @@ def test_is_required(complete_parser):
   required = filter(is_required, complete_parser._actions)
   assert len(required) == 4
   for action in required:
-    print action.dest.startswith('req')
+    print(action.dest.startswith('req'))
 
 
 def test_is_optional(complete_parser):

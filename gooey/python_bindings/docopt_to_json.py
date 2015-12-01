@@ -18,6 +18,7 @@ Options:
   --drifting    Drifting mine.
 
 """
+from __future__ import print_function
 
 # Standard
 # choice
@@ -72,5 +73,5 @@ if __name__ == '__main__':
     # #return options, arguments
     # print arguments
     # print options
-    print a
+    print(a)
     a = 10

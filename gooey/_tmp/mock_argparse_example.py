@@ -1,3 +1,4 @@
+from __future__ import print_function
 __author__ = 'Chris'
 import argparse
 from gooey import Gooey
@@ -11,7 +12,7 @@ def main():
                      help='sum the integers (default: find the max)')
 
   args = parser.parse_args()
-  print args.accumulate(args.integers)
+  print(args.accumulate(args.integers))
 
 
 if __name__ == '__main__':

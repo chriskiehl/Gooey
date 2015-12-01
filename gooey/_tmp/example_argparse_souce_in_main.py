@@ -16,6 +16,7 @@ It defines classes_and_methods
 @contact:    user_email
 @deffield    updated: Updated
 '''
+from __future__ import print_function
 
 import sys
 import os
