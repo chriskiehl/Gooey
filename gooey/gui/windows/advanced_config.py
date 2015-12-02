@@ -8,7 +8,8 @@ Managed the internal layout for configuration options
 import wx
 
 from wx.lib.scrolledpanel import ScrolledPanel
-from itertools import chain, zip_longest
+from itertools import chain
+from future.moves.itertools import zip_longest
 
 from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n

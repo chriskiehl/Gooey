@@ -115,7 +115,7 @@ def has_subparsers(actions):
     return list(filter(is_subparser, actions))
 
 def get_subparser(actions):
-    return filter(is_subparser, actions)[0]
+    return list(filter(is_subparser, actions))[0]
 
 def is_optional(action):
   '''_actions not positional or possessing the `required` flag'''
