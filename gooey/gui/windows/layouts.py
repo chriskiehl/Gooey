@@ -49,16 +49,16 @@ class ColumnLayout(wx.Panel):
     super(ColumnLayout, self).__init__(*args, **kwargs)
     self.SetDoubleBuffered(True)
 
-    self.sidebar = Sidebar(self, contents=self._build_spec['widgets'].keys())
+    self.sidebar = Sidebar(self, contents=list(self._build_spec['widgets'].keys()))
 
     self.config_panels = self.build_panels(self._build_spec)
-    self.active_panel = self.config_panels.keys()[0]
+    self.active_panel = list(self.config_panels.keys())[0]
     self.config_panels[self.active_panel].Show()
 
     sizer = wx.BoxSizer(wx.HORIZONTAL)
     sizer.Add(self.sidebar, 1, wx.EXPAND)
     sizer.Add(wx_util.vertical_rule(self), 0, wx.EXPAND)
-    for panel in self.config_panels.values():
+    for panel in list(self.config_panels.values()):
       sizer.Add(panel, 3, wx.EXPAND)
     self.SetSizer(sizer)
 
@@ -72,7 +72,7 @@ class ColumnLayout(wx.Panel):
 
   def build_panels(self, build_spec):
     panels = OrderedDict()
-    for panel_name in self._build_spec['widgets'].keys():
+    for panel_name in list(self._build_spec['widgets'].keys()):
       panel = ConfigPanel(self, widgets=self._build_spec['widgets'][panel_name], opt_cols=self._build_spec['num_optional_cols'], title=panel_name.upper())
       panels[panel_name] = panel
       panel.Hide()

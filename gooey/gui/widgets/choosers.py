@@ -1,3 +1,4 @@
+from builtins import object
 from gooey.gui.lang import i18n
 
 __author__ = 'Chris'

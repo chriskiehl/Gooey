@@ -1,3 +1,6 @@
+from __future__ import print_function
+from __future__ import division
+from past.utils import old_div
 import sys
 import time
 
@@ -26,9 +29,9 @@ See ya!
 
 def display_message():
   message = program_message.format('\n-'.join(sys.argv[1:])).split('\n')
-  delay = 1.8 / len(message)
+  delay = old_div(1.8, len(message))
 
   for line in message:
-    print line
+    print(line)
     time.sleep(delay)
 

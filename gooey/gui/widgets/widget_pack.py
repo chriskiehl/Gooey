@@ -1,7 +1,12 @@
+from builtins import str
+from builtins import map
+from builtins import range
+from builtins import object
 from functools import partial
 from gooey.gui.lang import i18n
 from gooey.gui.util.filedrop import FileDrop
 from gooey.gui.util.quoting import quote
+from future.utils import with_metaclass
 
 __author__ = 'Chris'
 
@@ -14,12 +19,11 @@ import wx.lib.agw.multidirdialog as MDD
 from gooey.gui.widgets.calender_dialog import CalendarDlg
 
 
-class WidgetPack(object):
+class WidgetPack(with_metaclass(ABCMeta, object)):
   """
   Interface specifying the contract to which
   all `WidgetPack`s will adhere
   """
-  __metaclass__ = ABCMeta
 
   @abstractmethod
   def build(self, parent, data):
@@ -220,7 +224,7 @@ class CounterPayload(WidgetPack):
       parent=parent,
       id=-1,
       value=safe_default(data, ''),
-      choices=map(str, range(1, 11)),
+      choices=list(map(str, list(range(1, 11)))),
       style=wx.CB_DROPDOWN
     )
     return self.widget

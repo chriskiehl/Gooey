@@ -20,6 +20,8 @@ It defines classes_and_methods
 @contact:    user_email
 @deffield    updated: Updated
 '''
+from __future__ import print_function
+from builtins import str
 
 import sys
 import os
@@ -136,7 +138,7 @@ USAGE
   except KeyboardInterrupt:
     ### handle keyboard interrupt ###
     return 0
-  except Exception, e:
+  except Exception as e:
     if DEBUG or TESTRUN:
       raise (e)
     indent = len(program_name) * " "

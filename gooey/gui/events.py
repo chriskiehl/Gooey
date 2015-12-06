@@ -4,6 +4,7 @@ App wide event registry
 Everything in the application is communitcated via pubsub. These are the events that
 tie everythign together.
 """
+from builtins import str
 import wx
 
 new_id = lambda: str(wx.NewId())

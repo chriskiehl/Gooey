@@ -19,6 +19,7 @@ setup(
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
+    install_requires=['future']
     dependency_links = ["http://www.wxpython.org/download.php"],
     classifiers = [
         'Development Status :: 4 - Beta',

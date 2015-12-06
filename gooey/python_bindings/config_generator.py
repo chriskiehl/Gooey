@@ -34,7 +34,7 @@ def create_from_parser(parser, source_path, **kwargs):
   if show_config:
     build_spec['program_description'] = parser.description or build_spec['program_description']
 
-    layout_data = argparse_to_json.convert(parser) if build_spec['show_advanced'] else layouts.basic_config.items()
+    layout_data = argparse_to_json.convert(parser) if build_spec['show_advanced'] else list(layouts.basic_config.items())
     build_spec.update(layout_data)
 
   else:

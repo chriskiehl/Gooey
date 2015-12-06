@@ -5,6 +5,7 @@ Created on Jan 24, 2014
 
 TODO: this
 '''
+from __future__ import print_function
 
 import os
 import json
@@ -51,7 +52,7 @@ def Gooey(f=None,
       if load_build_config:
         try:
           build_spec = json.load(open(load_build_config, "r"))
-        except Exception, e:
+        except Exception as e:
           print( 'Exception loading Build Config from {0}: {1}'.format(load_build_config, e))
           sys.exit(1)
 

@@ -3,6 +3,8 @@ Created on Dec 21, 2013
 
 @author: Chris
 '''
+from __future__ import print_function
+from builtins import str
 import sys
 import hashlib
 from time import time as _time
@@ -25,22 +27,22 @@ def main():
   my_cool_parser.add_argument("-w", "--writelog", default="No, NOT whatevs", help="write log to some file or something")
   my_cool_parser.add_argument("-e", "--expandAll", action="store_true", help="expand all processes")
 
-  print 'inside of main(), my_cool_parser =', my_cool_parser
+  print('inside of main(), my_cool_parser =', my_cool_parser)
   args = my_cool_parser.parse_args()
 
-  print sys.argv
-  print args.countdown
-  print args.showtime
+  print(sys.argv)
+  print(args.countdown)
+  print(args.showtime)
 
   start_time = _time()
-  print 'Counting down from %s' % args.countdown
+  print('Counting down from %s' % args.countdown)
   while _time() - start_time < args.countdown:
     if args.showtime:
-      print 'printing message at: %s' % _time()
+      print('printing message at: %s' % _time())
     else:
-      print 'printing message at: %s' % hashlib.md5(str(_time())).hexdigest()
+      print('printing message at: %s' % hashlib.md5(str(_time())).hexdigest())
     _sleep(.5)
-  print 'Finished running the program. Byeeeeesss!'
+  print('Finished running the program. Byeeeeesss!')
 
 # 	raise ValueError("Something has gone wrong! AHHHHHHHHHHH")
 

@@ -1,3 +1,4 @@
+from builtins import next
 __author__ = 'Chris'
 
 """
@@ -43,10 +44,10 @@ def split_line(line):
 
 def update_parser_varname(new_varname, code):
   # lines = source.split('\n')[1:]
-  lines = filter(lambda x: x != '', code)
+  lines = [x for x in code if x != '']
 
   argparse_code = dropwhile(lambda line: 'import' in line, lines)
-  old_argparser_varname, _ = split_line(argparse_code.next())
+  old_argparser_varname, _ = split_line(next(argparse_code))
 
   updated_code = [line.replace(old_argparser_varname, new_varname)
                   for line in lines]

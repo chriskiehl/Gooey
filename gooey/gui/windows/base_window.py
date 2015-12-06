@@ -2,6 +2,7 @@
 Created on Jan 19, 2014
 @author: Chris
 '''
+from builtins import str
 
 import wx
 from gooey.gui.pubsub import pub

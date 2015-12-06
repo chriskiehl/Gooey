@@ -1,6 +1,7 @@
 '''
 Main runner entry point for Gooey.
 '''
+from __future__ import print_function
 
 import wx
 import os
@@ -51,7 +52,7 @@ def do_build_script(module_path):
   gooey_config = config_generator.create_from_parser(module_path, show_config=True)
   outfile = os.path.join(os.getcwd(), 'gooey_config.json')
 
-  print 'Writing config file to: {}'.format(outfile)
+  print('Writing config file to: {}'.format(outfile))
 
   with open(outfile, 'w') as f:
     f.write(json.dumps(gooey_config, indent=2))
@@ -81,7 +82,7 @@ def run(build_spec):
 def read_local_dir():
   local_files = os.listdir(os.getcwd())
   if 'gooey_config.json' not in local_files:
-    print "Bugger! gooey_config.json not found!"
+    print("Bugger! gooey_config.json not found!")
     sys.exit(1)
   return os.path.join(os.getcwd(), 'gooey_config.json')
 

@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import str
 from gooey.python_bindings import code_prep, source_parser
 
 __author__ = 'Chris'
@@ -12,15 +14,15 @@ from _ast import Assign
 
 def pretty_print(node, indent):
   d = node.__dict__
-  for k, v in d.iteritems():
+  for k, v in d.items():
     if isinstance(v, list):
-      print '-' * indent, k, ": "
+      print('-' * indent, k, ": ")
       for i in v:
         pretty_print(i, indent + 2)
     elif 'ast' in str(type(v)):
       pretty_print(v, indent + 2)
     else:
-      print '-' * indent, k, ": ", v
+      print('-' * indent, k, ": ", v)
 
 
 if __name__ == '__main__':
@@ -68,16 +70,16 @@ def main():
   nodes = ast.parse(git_example)
   assign = source_parser.get_nodes_by_instance_type(nodes, Assign)
   assignment = source_parser.get_nodes_by_containing_attr(assign, "ArgumentParser")
-  print assignment
-  print assignment[0].__dict__
+  print(assignment)
+  print(assignment[0].__dict__)
   p = source_parser.convert_to_python(assignment)[0]
-  print p
+  print(p)
 
   varname, instruction = code_prep.split_line(source_parser.convert_to_python(assignment)[0])
 
   updated_code = git_example.replace(varname, "jello_maker")
 
-  print 'Fusdo:', updated_code.split('\n')[8]
+  print('Fusdo:', updated_code.split('\n')[8])
 
   # all_code_leading_up_to_parseargs = '\n'.join(itertools.takewhile(lambda line: 'parse_args()' not in line, updated_code.split('\n')))
   # code = compile(all_code_leading_up_to_parseargs, '', 'exec')
