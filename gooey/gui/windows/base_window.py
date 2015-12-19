@@ -63,6 +63,12 @@ class BaseWindow(wx.Frame):
 
     self.runtime_display = RuntimeDisplay(self, self.build_spec)
     self.foot_panel = footer.Footer(self)
+
+    if self.build_spec['disable_stop_button']:
+      self.foot_panel.stop_button.Disable()
+    else:
+      self.foot_panel.stop_button.Enable()
+
     self.panels = [self.head_panel, self.config_panel, self.foot_panel]
 
   def _do_layout(self):
@@ -163,7 +169,8 @@ class BaseWindow(wx.Frame):
       value = min(int(value), pb.GetRange())
       if pb.GetValue() != value:
         # Windows 7 progress bar animation hack
-        if not self.build_spec["progress_animation"] \
+        # http://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
+        if not self.build_spec["disable_progress_bar_animation"] \
            and sys.platform.startswith("win"):
           if pb.GetRange() == value:
             pb.SetValue(value)

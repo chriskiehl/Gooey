@@ -9,7 +9,7 @@ from gooey import Gooey, GooeyParser
 
 
 @Gooey(progress_regex=r"^progress: (-?\d+)%$",
-       progress_animation=False)
+       disable_progress_bar_animation=False)
 def main():
     parser = GooeyParser(prog="example_progress_bar_1")
     _ = parser.parse_args(sys.argv[1:])
