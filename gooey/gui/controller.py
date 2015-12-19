@@ -51,8 +51,9 @@ class Controller(object):
     pub.send_message(events.WINDOW_CHANGE, view_name=views.CONFIG_SCREEN)
 
   def on_close(self):
-    self.core_gui.Destroy()
-    sys.exit()
+    if self.ask_stop():
+      self.core_gui.Destroy()
+      sys.exit()
 
   def on_restart(self):
     self.on_start()
@@ -75,13 +76,18 @@ class Controller(object):
       return self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
 
     cmd_line_args = self.core_gui.GetOptions()
-    command = '{0} --ignore-gooey {1}'.format(self.build_spec['target'], cmd_line_args)
+    command = '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_line_args)
     pub.send_message(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
     self.run_client_code(command)
 
   def on_stop(self):
+    self.ask_stop()
+
+  def ask_stop(self):
     if not self.running():
       return True
+    if self.build_spec['disable_stop_button']:
+      return False
     msg = i18n._('sure_you_want_to_stop')
     dlg = wx.MessageDialog(None, msg, i18n._('stop_task'), wx.YES_NO)
     result = dlg.ShowModal()

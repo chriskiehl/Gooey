@@ -44,8 +44,6 @@ class BaseWindow(wx.Frame):
     self.Bind(wx.EVT_SIZE, self.onResize)
     self.Bind(wx.EVT_CLOSE, self.onClose)
 
-    self.Bind(wx.EVT_CLOSE, lambda x: pub.send_message(str(events.WINDOW_CLOSE)))
-
   def _init_properties(self):
     self.SetTitle(self.build_spec['program_name'])
     self.SetSize(self.build_spec['default_size'])
@@ -148,15 +146,8 @@ class BaseWindow(wx.Frame):
 
   def onClose(self, evt):
     if evt.CanVeto():
-      if self._controller.on_stop():
-        self._controller.on_close()
-      else:
-        evt.Veto()
-        return
-    else:
-      self._controller.stop()
-      self._controller.on_close()
-    evt.Skip()
+      evt.Veto()
+    pub.send_message(str(events.WINDOW_CLOSE))
 
   def PublishConsoleMsg(self, text):
     self.runtime_display.cmd_textbox.AppendText(text)
