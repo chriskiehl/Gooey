@@ -134,26 +134,28 @@ class Controller(object):
       return None
     progress_expr = self.build_spec['progress_expr']
     if progress_expr:
-      def safe_float(x):
-        try:
-          return float(x)
-        except ValueError:
-          return x
-      eval_locals = {k: safe_float(v) for k, v in match.groupdict().items()}
-      if "x" not in eval_locals:
-        eval_locals["x"] = [safe_float(x) for x in match.groups()]
-      try:
-        value = eval(progress_expr, {}, eval_locals)
-      except:
-        return None
+      return self._eval_progress(match, progress_expr)
     else:
-      try:
-        value = match.group(1)
-      except IndexError:
-        return None
+      return self._search_progress(match)
+
+  def _search_progress(self, match):
     try:
-      return int(value)
-    except ValueError:
+      return int(float(match.group(1)))
+    except:
+      return None
+
+  def _eval_progress(self, match, eval_expr):
+    def safe_float(x):
+      try:
+        return float(x)
+      except ValueError:
+        return x
+    _locals = {k: safe_float(v) for k, v in match.groupdict().items()}
+    if "x" not in _locals:
+      _locals["x"] = [safe_float(x) for x in match.groups()]
+    try:
+      return int(float(eval(eval_expr, {}, _locals)))
+    except:
       return None
 
   def process_result(self, process):
