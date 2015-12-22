@@ -161,7 +161,7 @@ class BaseWindow(wx.Frame):
       if pb.GetValue() != value:
         # Windows 7 progress bar animation hack
         # http://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
-        if not self.build_spec["disable_progress_bar_animation"] \
+        if self.build_spec["disable_progress_bar_animation"] \
            and sys.platform.startswith("win"):
           if pb.GetRange() == value:
             pb.SetValue(value)
