@@ -43,3 +43,5 @@ nosetests.xml
 MANIFEST
 
 resources/
+gooey/examples/
+gooey/_tmp/
