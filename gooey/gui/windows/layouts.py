@@ -11,7 +11,7 @@ from gooey.gui.util.quoting import quote
 
 basic_config = {
     'required': [{
-      'type': 'CommandField',
+      'type': 'TextField',
       'data': {
         'display_name': 'Enter Commands',
         'help': 'Enter command line arguments',

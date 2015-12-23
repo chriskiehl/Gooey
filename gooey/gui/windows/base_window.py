@@ -3,6 +3,8 @@ Created on Jan 19, 2014
 @author: Chris
 '''
 
+import sys
+
 import wx
 from gooey.gui.pubsub import pub
 
@@ -40,8 +42,7 @@ class BaseWindow(wx.Frame):
     self._init_controller()
     self.registerControllers()
     self.Bind(wx.EVT_SIZE, self.onResize)
-
-    self.Bind(wx.EVT_CLOSE, lambda x: pub.send_message(str(events.WINDOW_CLOSE)))
+    self.Bind(wx.EVT_CLOSE, self.onClose)
 
   def _init_properties(self):
     self.SetTitle(self.build_spec['program_name'])
@@ -60,6 +61,12 @@ class BaseWindow(wx.Frame):
 
     self.runtime_display = RuntimeDisplay(self, self.build_spec)
     self.foot_panel = footer.Footer(self)
+
+    if self.build_spec['disable_stop_button']:
+      self.foot_panel.stop_button.Disable()
+    else:
+      self.foot_panel.stop_button.Enable()
+
     self.panels = [self.head_panel, self.config_panel, self.foot_panel]
 
   def _do_layout(self):
@@ -137,8 +144,31 @@ class BaseWindow(wx.Frame):
   def onResize(self, evt):
     evt.Skip()
 
+  def onClose(self, evt):
+    if evt.CanVeto():
+      evt.Veto()
+    pub.send_message(str(events.WINDOW_CLOSE))
+
   def PublishConsoleMsg(self, text):
     self.runtime_display.cmd_textbox.AppendText(text)
+
+  def UpdateProgressBar(self, value):
+    pb = self.foot_panel.progress_bar
+    if value < 0:
+      pb.Pulse()
+    else:
+      value = min(int(value), pb.GetRange())
+      if pb.GetValue() != value:
+        # Windows 7 progress bar animation hack
+        # http://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
+        if self.build_spec["disable_progress_bar_animation"] \
+           and sys.platform.startswith("win"):
+          if pb.GetRange() == value:
+            pb.SetValue(value)
+            pb.SetValue(value-1)
+          else:
+            pb.SetValue(value+1)
+        pb.SetValue(value)
 
 
 if __name__ == '__main__':

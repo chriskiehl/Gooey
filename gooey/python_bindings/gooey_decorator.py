@@ -6,6 +6,7 @@ Created on Jan 24, 2014
 TODO: this
 '''
 
+import sys
 import os
 import json
 import atexit
@@ -13,7 +14,6 @@ import tempfile
 
 from . import source_parser
 from . import config_generator
-import sys
 
 from gooey.gui import application
 
@@ -35,7 +35,11 @@ def Gooey(f=None,
           load_build_config=None,
           monospace_display=False,
           image_dir='default',
-          language_dir=get_resource_path('languages')):
+          language_dir=get_resource_path('languages'),
+          progress_regex=None,
+          progress_expr=None,
+          disable_progress_bar_animation=False,
+          disable_stop_button=False):
   '''
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end
@@ -60,7 +64,7 @@ def Gooey(f=None,
 
       if dump_build_config:
         config_path = os.path.join(os.getcwd(), 'gooey_config.json')
-        print( 'Writing Build Config to: {}'.format(config_path))
+        print 'Writing Build Config to: {}'.format(config_path)
         with open(config_path, 'w') as f:
           f.write(json.dumps(build_spec, indent=2))
       application.run(build_spec)

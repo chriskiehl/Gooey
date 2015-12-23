@@ -28,7 +28,7 @@ Options:
 # types?
 
 
-
+import re
 from docopt import docopt, Option, Argument
 
 
@@ -51,7 +51,7 @@ class MyOption(Option):
           else:
               argcount = 1
       if argcount:
-          matched = re.findall('\[default: (.*)\]', description, flags=re.I)
+          matched = re.findall(r'\[default: (.*)\]', description, flags=re.I)
           value = matched[0] if matched else None
       return class_(short, long, argcount, value, description=description.strip())
 

@@ -243,7 +243,6 @@ DirChooser        = lambda data: BaseGuiComponent(data=data, widget_pack=widget_
 FileSaver         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileSaverPayload())
 DateChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DateChooserPayload())
 TextField         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload())
-CommandField      = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload(no_qouting=True))
 Dropdown          = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DropdownPayload())
 Counter           = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.CounterPayload())
 MultiDirChooser   = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.MultiDirChooserPayload())
