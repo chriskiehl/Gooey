@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, _SubParsersAction, _MutuallyExclusiveGroup
+from gooey.gui.lang.i18n import _
 
 
 class GooeySubParser(_SubParsersAction):

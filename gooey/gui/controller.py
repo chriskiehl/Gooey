@@ -5,6 +5,8 @@ Created on Dec 22, 2013
 '''
 
 import wx
+import os
+import re
 import sys
 import subprocess
 
@@ -14,10 +16,11 @@ from multiprocessing.dummy import Pool
 from gooey.gui import events
 from gooey.gui.lang import i18n
 from gooey.gui.windows import views
+from gooey.gui.util.taskkill import taskkill
+
 
 YES = 5103
 NO = 5104
-
 
 
 class Controller(object):
@@ -34,9 +37,11 @@ class Controller(object):
     '''
     self.core_gui = base_frame
     self.build_spec = build_spec
+    self._process = None
 
     # wire up all the observers
     pub.subscribe(self.on_cancel,   events.WINDOW_CANCEL)
+    pub.subscribe(self.on_stop,     events.WINDOW_STOP)
     pub.subscribe(self.on_start,    events.WINDOW_START)
     pub.subscribe(self.on_restart,  events.WINDOW_RESTART)
     pub.subscribe(self.on_close,    events.WINDOW_CLOSE)
@@ -46,8 +51,9 @@ class Controller(object):
     pub.send_message(events.WINDOW_CHANGE, view_name=views.CONFIG_SCREEN)
 
   def on_close(self):
-    self.core_gui.Destroy()
-    sys.exit()
+    if self.ask_stop():
+      self.core_gui.Destroy()
+      sys.exit()
 
   def on_restart(self):
     self.on_start()
@@ -70,12 +76,41 @@ class Controller(object):
       return self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
 
     cmd_line_args = self.core_gui.GetOptions()
-    command = '{0} --ignore-gooey {1}'.format(self.build_spec['target'], cmd_line_args)
+    command = '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_line_args)
     pub.send_message(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
     self.run_client_code(command)
 
+  def on_stop(self):
+    self.ask_stop()
+
+  def ask_stop(self):
+    if not self.running():
+      return True
+    if self.build_spec['disable_stop_button']:
+      return False
+    msg = i18n._('sure_you_want_to_stop')
+    dlg = wx.MessageDialog(None, msg, i18n._('stop_task'), wx.YES_NO)
+    result = dlg.ShowModal()
+    dlg.Destroy()
+    if result == YES:
+      self.stop()
+      return True
+    return False
+
+  def stop(self):
+    if self.running():
+      taskkill(self._process.pid)
+
+  def running(self):
+    return self._process and self._process.poll() is None
+
   def run_client_code(self, command):
-    p = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    env = os.environ.copy()
+    env["GOOEY"] = "1"
+    print "run command:", command
+    p = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT, shell=True, env=env)
+    self._process = p
     pool = Pool(1)
     pool.apply_async(self.read_stdout, (p, self.process_result))
 
@@ -85,16 +120,52 @@ class Controller(object):
       if not line:
         break
       wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
+      progress = self.progress_from_line(line)
+      if progress is not None:
+        wx.CallAfter(self.core_gui.UpdateProgressBar, progress)
     wx.CallAfter(callback, process)
 
+  def progress_from_line(self, text):
+    progress_regex = self.build_spec['progress_regex']
+    if not progress_regex:
+      return None
+    match = re.search(progress_regex, text.strip())
+    if not match:
+      return None
+    progress_expr = self.build_spec['progress_expr']
+    if progress_expr:
+      return self._eval_progress(match, progress_expr)
+    else:
+      return self._search_progress(match)
+
+  def _search_progress(self, match):
+    try:
+      return int(float(match.group(1)))
+    except:
+      return None
+
+  def _eval_progress(self, match, eval_expr):
+    def safe_float(x):
+      try:
+        return float(x)
+      except ValueError:
+        return x
+    _locals = {k: safe_float(v) for k, v in match.groupdict().items()}
+    if "x" not in _locals:
+      _locals["x"] = [safe_float(x) for x in match.groups()]
+    try:
+      return int(float(eval(eval_expr, {}, _locals)))
+    except:
+      return None
+
   def process_result(self, process):
-    _stdout, _stderr = process.communicate()
+    _stdout, _ = process.communicate()
     if process.returncode == 0:
       pub.send_message(events.WINDOW_CHANGE, view_name=views.SUCCESS_SCREEN)
       self.success_dialog()
     else:
       pub.send_message(events.WINDOW_CHANGE, view_name=views.ERROR_SCREEN)
-      self.error_dialog(_stderr)
+      self.error_dialog()
 
   def skipping_config(self):
     return self.build_spec['manual_start']
@@ -108,8 +179,8 @@ class Controller(object):
   def success_dialog(self):
     self.show_dialog(i18n._("execution_finished"), i18n._('success_message'), wx.ICON_INFORMATION)
 
-  def error_dialog(self, error_msg):
-    self.show_dialog(i18n._('error_title'), i18n._('uh_oh').format(error_msg), wx.ICON_ERROR)
+  def error_dialog(self):
+    self.show_dialog(i18n._('error_title'), i18n._('uh_oh'), wx.ICON_ERROR)
 
   def show_dialog(self, title, content, style):
     a = wx.MessageDialog(None, content, title, style)

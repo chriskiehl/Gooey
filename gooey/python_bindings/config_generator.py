@@ -28,7 +28,10 @@ def create_from_parser(parser, source_path, **kwargs):
     'monospace_display':    kwargs.get('monospace_display', False),
     'image_dir':            kwargs.get('image_dir'),
     'language_dir':         kwargs.get('language_dir'),
-
+    'progress_regex':       kwargs.get('progress_regex'),
+    'progress_expr':        kwargs.get('progress_expr'),
+    'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
+    'disable_stop_button':  kwargs.get('disable_stop_button'),
   }
 
   if show_config:
