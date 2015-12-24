@@ -9,10 +9,7 @@ TODO: this
 import sys
 import os
 import json
-import atexit
-import tempfile
 
-from . import source_parser
 from . import config_generator
 
 from gooey.gui import application
