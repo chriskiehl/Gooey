@@ -91,39 +91,5 @@ def Gooey(f=None,
   return build
 
 
-def store_executable_copy():
-  main_module_path = get_caller_path()
-  _, filename = os.path.split(main_module_path)
-  cleaned_source = clean_source(main_module_path)
-
-  descriptor, tmp_filepath = tempfile.mkstemp(suffix='.py')
-  atexit.register(cleanup, descriptor, tmp_filepath)
-
-  with open(tmp_filepath, 'w') as f:
-    f.write(cleaned_source)
-  return tmp_filepath
-
-
-def clean_source(module_path):
-  with open(module_path, 'r') as f:
-    return ''.join(
-      line for line in f.readlines()
-      if '@gooey' not in line.lower())
-
-
-def get_parser(module_path):
-  return source_parser.extract_parser(module_path)
-
-
-def get_caller_path():
-  tmp_sys = __import__('sys')
-  return tmp_sys.argv[0]
-
-
-def cleanup(descriptor, filepath):
-  os.close(descriptor)
-  os.remove(filepath)
-
-
 if __name__ == '__main__':
   pass
