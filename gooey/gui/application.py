@@ -8,11 +8,8 @@ import sys
 import json
 import argparse
 
-from functools import partial
-
 from gooey.gui.lang import i18n
-from gooey.gui.windows.base_window import BaseWindow
-from gooey.gui.windows.advanced_config import ConfigPanel
+from gooey.gui.controller import Controller
 
 from gooey.python_bindings import config_generator, source_parser
 from gooey.gui import image_repository
@@ -73,8 +70,8 @@ def run(build_spec):
 
   i18n.load(build_spec['language_dir'], build_spec['language'])
   image_repository.patch_images(build_spec['image_dir'])
-  frame = BaseWindow(build_spec)
-  frame.Show(True)
+  controller = Controller(build_spec)
+  controller.run()
   app.MainLoop()
 
 

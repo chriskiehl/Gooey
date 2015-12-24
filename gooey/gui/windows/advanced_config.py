@@ -34,8 +34,6 @@ class ConfigPanel(ScrolledPanel, OptionReader):
     self._num_req_cols = req_cols
     self._num_opt_cols = opt_cols
 
-    self._controller = None
-
     self._do_layout()
 
     self.Bind(wx.EVT_SIZE, self.OnResize)
@@ -84,10 +82,6 @@ class ConfigPanel(ScrolledPanel, OptionReader):
   def OnResize(self, evt):
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
     evt.Skip()
-
-  def RegisterController(self, controller):
-    if self._controller is None:
-      self._controller = controller
 
   def GetOptions(self):
     """

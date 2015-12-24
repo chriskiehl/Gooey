@@ -1,42 +1,31 @@
-'''
-Created on Dec 22, 2013
-
-@author: Chris
-'''
-
-import wx
 import os
 import re
+import wx
 import sys
+
 import subprocess
 
-from gooey.gui.pubsub import pub
-
 from multiprocessing.dummy import Pool
-from gooey.gui import events
+
 from gooey.gui.lang import i18n
-from gooey.gui.windows import views
+from gooey.gui import events
+from gooey.gui.pubsub import pub
 from gooey.gui.util.taskkill import taskkill
+from gooey.gui.windows import views
+from gooey.gui.windows.base_window import BaseWindow
 
 
 YES = 5103
 NO = 5104
 
-
 class Controller(object):
-  '''
-  Main controller for the gui.
 
-  All controlls are delegated to this central control point.
-  '''
-
-  def __init__(self, base_frame, build_spec):
-    '''
-    :type base_frame: BaseWindow
-    :type build_spec: dict
-    '''
-    self.core_gui = base_frame
+  def __init__(self, build_spec):
+    # todo: model!
     self.build_spec = build_spec
+
+    self.view = BaseWindow(build_spec)
+
     self._process = None
 
     # wire up all the observers
@@ -52,7 +41,7 @@ class Controller(object):
 
   def on_close(self):
     if self.ask_stop():
-      self.core_gui.Destroy()
+      self.view.Destroy()
       sys.exit()
 
   def on_restart(self):
@@ -63,19 +52,16 @@ class Controller(object):
 
   def on_cancel(self):
     msg = i18n._('sure_you_want_to_exit')
-    dlg = wx.MessageDialog(None, msg, i18n._('close_program'), wx.YES_NO)
-    result = dlg.ShowModal()
+    result = self.view.show_dialog(msg, i18n._('close_program'), wx.YES_NO)
     if result == YES:
-      dlg.Destroy()
-      self.core_gui.Destroy()
+      self.view.Destroy()
       sys.exit()
-    dlg.Destroy()
 
   def on_start(self):
     if not self.skipping_config() and not self.required_section_complete():
-      return self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
+      return self.view.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
 
-    cmd_line_args = self.core_gui.GetOptions()
+    cmd_line_args = self.view.GetOptions()
     command = '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_line_args)
     pub.send_message(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
     self.run_client_code(command)
@@ -89,9 +75,7 @@ class Controller(object):
     if self.build_spec['disable_stop_button']:
       return False
     msg = i18n._('sure_you_want_to_stop')
-    dlg = wx.MessageDialog(None, msg, i18n._('stop_task'), wx.YES_NO)
-    result = dlg.ShowModal()
-    dlg.Destroy()
+    result = self.view.show_dialog(msg, i18n._('stop_task'), wx.YES_NO)
     if result == YES:
       self.stop()
       return True
@@ -119,10 +103,10 @@ class Controller(object):
       line = process.stdout.readline()
       if not line:
         break
-      wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
+      wx.CallAfter(self.view.PublishConsoleMsg, line)
       progress = self.progress_from_line(line)
       if progress is not None:
-        wx.CallAfter(self.core_gui.UpdateProgressBar, progress)
+        wx.CallAfter(self.view.UpdateProgressBar, progress)
     wx.CallAfter(callback, process)
 
   def progress_from_line(self, text):
@@ -171,19 +155,17 @@ class Controller(object):
     return self.build_spec['manual_start']
 
   def required_section_complete(self):
-    required_section = self.core_gui.GetRequiredArgs()
+    required_section = self.view.GetRequiredArgs()
     if len(required_section) == 0:
       return True  # no requirements!
     return not any(req == '' for req in required_section)
 
   def success_dialog(self):
-    self.show_dialog(i18n._("execution_finished"), i18n._('success_message'), wx.ICON_INFORMATION)
+    self.view.show_dialog(i18n._("execution_finished"), i18n._('success_message'), wx.ICON_INFORMATION)
 
   def error_dialog(self):
-    self.show_dialog(i18n._('error_title'), i18n._('uh_oh'), wx.ICON_ERROR)
+    self.view.show_dialog(i18n._('error_title'), i18n._('uh_oh'), wx.ICON_ERROR)
 
-  def show_dialog(self, title, content, style):
-    a = wx.MessageDialog(None, content, title, style)
-    a.ShowModal()
-    a.Destroy()
+  def run(self):
+    self.view.Show(True)
 

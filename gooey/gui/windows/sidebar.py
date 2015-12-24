@@ -14,8 +14,6 @@ class Sidebar(wx.Panel):
 
     self._parent = parent
 
-    self._controller = None
-
     self._init_components()
     self._do_layout()
 

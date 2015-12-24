@@ -129,12 +129,6 @@ def build_dialog(style, exist_constraint=True, **kwargs):
   else:
     return lambda panel: wx.FileDialog(panel, style=style, **kwargs)
 
-FileChooserPayload    = partial(BaseFileChooser, dialog=build_dialog(wx.FD_OPEN))
-FileSaverPayload      = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename"))
-MultiFileSaverPayload = partial(BaseMultiFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
-DirChooserPayload     = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE))
-DateChooserPayload    = partial(BaseFileChooser, dialog=CalendarDlg)
-MultiDirChooserPayload = partial(BaseMultiFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))
 
 class TextInputPayload(WidgetPack):
   def __init__(self, no_quoting=False):
@@ -242,3 +236,12 @@ class CounterPayload(WidgetPack):
 def safe_default(data, default):
   # str(None) is 'None'!? Whaaaaat...?
   return str(data['default']) if data['default'] else default
+
+
+
+FileChooserPayload     = partial(BaseFileChooser, dialog=build_dialog(wx.FD_OPEN))
+FileSaverPayload       = partial(BaseFileChooser, dialog=build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename"))
+MultiFileSaverPayload  = partial(BaseMultiFileChooser, dialog=build_dialog(wx.FD_MULTIPLE, False))
+DirChooserPayload      = partial(BaseFileChooser, dialog=lambda parent: wx.DirDialog(parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE))
+DateChooserPayload     = partial(BaseFileChooser, dialog=CalendarDlg)
+MultiDirChooserPayload = partial(BaseMultiFileChooser, dialog=lambda parent: MyMultiDirChooser(parent, title="Select Directories", defaultPath=os.getcwd(), agwStyle=MDD.DD_MULTIPLE|MDD.DD_DIR_MUST_EXIST))

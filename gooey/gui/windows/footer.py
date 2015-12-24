@@ -22,8 +22,6 @@ class AbstractFooter(wx.Panel):
     wx.Panel.__init__(self, parent, **kwargs)
     self.SetMinSize((30, 53))
 
-    self._controller = None
-
     # components
     self.cancel_button = None
     self.start_button = None
@@ -123,10 +121,6 @@ class AbstractFooter(wx.Panel):
       size=(90, 24),
       label=label,
       style=style)
-
-  def RegisterController(self, controller):
-    if self._controller is None:
-      self._controller = controller
 
   def _load_image(self, img_path, height=70):
     return imageutil.resize_bitmap(self, imageutil._load_image(img_path), height)

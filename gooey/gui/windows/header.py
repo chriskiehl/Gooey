@@ -19,7 +19,6 @@ class FrameHeader(wx.Panel):
   def __init__(self, heading, subheading, **kwargs):
     wx.Panel.__init__(self, **kwargs)
     self.SetDoubleBuffered(True)
-    self._controller = None
 
     self.heading_msg = heading
     self.subheading_msg = subheading
@@ -81,10 +80,6 @@ class FrameHeader(wx.Panel):
     sizer.Add(self._subheader, 0)
     sizer.AddStretchSpacer(1)
     return sizer
-
-  def RegisterController(self, controller):
-    if self._controller is None:
-      self._controller = controller
 
   def _init_pages(self):
 

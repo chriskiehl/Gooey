@@ -8,7 +8,6 @@ import sys
 import wx
 from gooey.gui.pubsub import pub
 
-from gooey.gui.controller import Controller
 from gooey.gui.lang import i18n
 from gooey.gui.windows.advanced_config import ConfigPanel
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
@@ -22,8 +21,6 @@ class BaseWindow(wx.Frame):
     wx.Frame.__init__(self, parent=None, id=-1)
 
     self.build_spec = build_spec
-
-    self._controller = None
 
     self.SetDoubleBuffered(True)
 
@@ -39,8 +36,6 @@ class BaseWindow(wx.Frame):
     self._init_components()
     self._do_layout()
     self._init_pages()
-    self._init_controller()
-    self.registerControllers()
     self.Bind(wx.EVT_SIZE, self.onResize)
     self.Bind(wx.EVT_CLOSE, self.onClose)
 
@@ -99,13 +94,6 @@ class BaseWindow(wx.Frame):
     if message == 'fetch':
       del self.config_panel
 
-  def _init_controller(self):
-    self._controller = Controller(base_frame=self, build_spec=self.build_spec)
-
-  def registerControllers(self):
-    for panel in self.panels:
-      pass
-
   def GetOptions(self):
     return self.config_panel.GetOptions()
 
@@ -114,7 +102,6 @@ class BaseWindow(wx.Frame):
 
   def GetOptionalArgs(self):
     return self.config_panel.GetOptionalArgs()
-
 
   def _init_pages(self):
 
@@ -137,9 +124,6 @@ class BaseWindow(wx.Frame):
 
   def load_view(self, view_name=None):
     self.layouts.get(view_name, lambda: None)()
-
-  def ManualStart(self):
-    self._controller.manual_restart()
 
   def onResize(self, evt):
     evt.Skip()
@@ -169,6 +153,12 @@ class BaseWindow(wx.Frame):
           else:
             pb.SetValue(value+1)
         pb.SetValue(value)
+
+  def show_dialog(self, title, content, style):
+    dlg = wx.MessageDialog(None, content, title, style)
+    result = dlg.ShowModal()
+    dlg.Destroy()
+    return result
 
 
 if __name__ == '__main__':
