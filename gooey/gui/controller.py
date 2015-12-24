@@ -11,6 +11,7 @@ from gooey.gui.lang import i18n
 from gooey.gui import events
 from gooey.gui.pubsub import pub
 from gooey.gui.util.taskkill import taskkill
+from gooey.gui.viewmodel import ViewModel
 from gooey.gui.windows import views
 from gooey.gui.windows.base_window import BaseWindow
 
@@ -23,7 +24,6 @@ class Controller(object):
   def __init__(self, build_spec):
     # todo: model!
     self.build_spec = build_spec
-
     self.view = BaseWindow(build_spec)
 
     self._process = None

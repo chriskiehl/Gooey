@@ -134,7 +134,7 @@ class BaseWindow(wx.Frame):
     pub.send_message(str(events.WINDOW_CLOSE))
 
   def PublishConsoleMsg(self, text):
-    self.runtime_display.cmd_textbox.AppendText(text)
+    self.runtime_display.append_text(text)
 
   def UpdateProgressBar(self, value):
     pb = self.foot_panel.progress_bar
