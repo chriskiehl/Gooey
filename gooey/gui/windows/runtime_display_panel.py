@@ -12,12 +12,18 @@ class RuntimeDisplay(wx.Panel):
   '''
   Textbox displayed during the client program's execution.
   '''
-  def __init__(self, parent, build_spec, **kwargs):
+  def __init__(self, parent, **kwargs):
     wx.Panel.__init__(self, parent, **kwargs)
-    self.build_spec = build_spec
     self._init_properties()
     self._init_components()
     self._do_layout()
+
+
+  def set_font_style(self, style):
+    pointsize = self.cmd_textbox.GetFont().GetPointSize()
+    font = wx.Font(pointsize, style,
+                 wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False)
+    self.cmd_textbox.SetFont(font)
 
   def _init_properties(self):
     self.SetBackgroundColour('#F0F0F0')
@@ -29,11 +35,6 @@ class RuntimeDisplay(wx.Panel):
       self, -1, "",
       style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH)
 
-    if self.build_spec.get('monospace_display'):
-      pointsize = self.cmd_textbox.GetFont().GetPointSize()
-      font = wx.Font(pointsize, wx.FONTFAMILY_MODERN,
-                   wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False)
-      self.cmd_textbox.SetFont(font)
 
   def _do_layout(self):
     sizer = wx.BoxSizer(wx.VERTICAL)

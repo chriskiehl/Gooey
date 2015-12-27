@@ -1,3 +1,5 @@
+from functools import partial
+
 import wx
 
 from gooey.gui.util import wx_util
@@ -5,34 +7,34 @@ from gooey.gui.widgets import widget_pack
 
 
 class BaseGuiComponent(object):
-  def __init__(self, data, widget_pack):
+
+  widget_class = None
+
+  def __init__(self, parent, title, msg):
     '''
     :param data: field info (title, help, etc..)
     :param widget_pack: internal wxWidgets to render
     '''
-    self.data = data
-
     # parent
-    self.panel = None
+    self.parent = parent
 
     # Widgets
     self.title = None
     self.help_msg = None
 
-    # Internal WidgetPack
-    self.widget_pack = widget_pack
+    # Internal WidgetPack set in subclasses
 
-  def build(self, parent):
-    return self.do_layout(parent)
+    self.do_layout(parent, title, msg)
 
-  def do_layout(self, parent):
+  def do_layout(self, parent, title, msg):
     self.panel = wx.Panel(parent)
 
+    self.widget_pack = self.widget_class()
 
-    self.title = self.createTitle(self.panel)
-    self.help_msg = self.createHelpMsgWidget(self.panel)
+    self.title = self.format_title(self.panel, title)
+    self.help_msg = self.format_help_msg(self.panel, msg)
     self.help_msg.SetMinSize((0, -1))
-    core_widget_set = self.widget_pack.build(self.panel, self.data)
+    core_widget_set = self.widget_pack.build(self.panel, {})
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
 
@@ -48,30 +50,29 @@ class BaseGuiComponent(object):
     vertical_container.Add(core_widget_set, 0, wx.EXPAND)
     self.panel.SetSizer(vertical_container)
 
-    # self.panel.Bind(wx.EVT_SIZE, self.onResize)
     return self.panel
 
-  def createHelpMsgWidget(self, parent):
-    label_text = (self.formatExtendedHelpMsg(self.data)
-                  if self.data['nargs']
-                  else self.data['help'])
-    base_text = wx.StaticText(parent, label=label_text or '')
+  def get_title(self):
+    return self.title.GetLabel()
+
+  def set_title(self, text):
+    self.title.SetLabel(text)
+
+  def get_help_msg(self):
+    return self.help_msg.GetLabelText()
+
+  def set_label_text(self, text):
+    self.help_msg.SetLabel(text)
+
+  def format_help_msg(self, parent, msg):
+    base_text = wx.StaticText(parent, label=msg or '')
     wx_util.dark_grey(base_text)
     return base_text
 
-  def createTitle(self, parent):
-    text = wx.StaticText(parent, label=self.data['display_name'].title())
+  def format_title(self, parent, title):
+    text = wx.StaticText(parent, label=title)
     wx_util.make_bold(text)
     return text
-
-  def formatExtendedHelpMsg(self, data):
-    base_text = data.get('help', '')
-    nargs = data['nargs']
-    if isinstance(nargs, int):
-      return '{base}\n(Note: exactly {nargs} arguments are required)'.format(base=base_text, nargs=nargs)
-    elif nargs == '+':
-      return '{base}\n(Note: at least 1 or more arguments are required)'.format(base=base_text)
-    return base_text
 
   def onResize(self, evt):
     # handle internal widgets
@@ -97,39 +98,32 @@ class BaseGuiComponent(object):
   def GetValue(self):
     return self.widget_pack.getValue()
 
-  def HasOptionString(self):
-    return bool(self.widget_pack.option_string)
-
-  def _GetWidget(self):
-    # used only for unittesting
-    return self.widget_pack.widget
+  # def HasOptionString(self):
+  #   return bool(self.widget_pack.option_string)
+  #
+  # def _GetWidget(self):
+  #   # used only for unittesting
+  #   return self.widget_pack.widget
 
   def __repr__(self):
     return self.__class__.__name__
 
 
 class CheckBox(BaseGuiComponent):
-  def __init__(self, data, widget_pack=None):
-    BaseGuiComponent.__init__(self, data, widget_pack)
 
-    self.widget = None
-    #  data
-    self.option_strings = data['commands'][0]
-    self.default_value = bool(data['default'])
+  def __init__(self, parent, title, msg):
+    BaseGuiComponent.__init__(self, parent, title, msg)
 
-  def build(self, parent):
-    return self.do_layout(parent)
-
-  def do_layout(self, parent):
+  def do_layout(self, parent, title, msg):
     self.panel = wx.Panel(parent)
 
     self.widget = wx.CheckBox(self.panel)
-    self.widget.SetValue(self.default_value)
-    self.title = self.createTitle(self.panel)
-    self.help_msg = self.createHelpMsgWidget(self.panel)
+    # self.widget.SetValue(self.default_value)
+    self.title = self.format_title(self.panel, title)
+    self.help_msg = self.format_help_msg(self.panel, msg)
     self.help_msg.SetMinSize((0, -1))
 
-    self.help_msg.Bind(wx.EVT_LEFT_UP, lambda event: self.widget.SetValue(not self.widget.GetValue()))
+    # self.help_msg.Bind(wx.EVT_LEFT_UP, lambda event: self.widget.SetValue(not self.widget.GetValue()))
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
     vertical_container.Add(self.title)
@@ -144,9 +138,6 @@ class CheckBox(BaseGuiComponent):
     self.panel.Bind(wx.EVT_SIZE, self.onResize)
     return self.panel
 
-  def onSetter(self, evt):
-    self.GetValue()
-
   def onResize(self, evt):
     msg = self.help_msg
     container_width, _ = self.panel.Size
@@ -157,37 +148,35 @@ class CheckBox(BaseGuiComponent):
       msg.Wrap(container_width)
     evt.Skip()
 
-  def GetValue(self):
-    return self.option_strings if self.widget.GetValue() else ''
-
-  def HasOptionString(self):
-    return bool(self.option_strings)
-
-  def _GetWidget(self):
-    return self.widget
+  # def GetValue(self):
+  #   return self.option_strings if self.widget.GetValue() else ''
+  #
+  # def HasOptionString(self):
+  #   return bool(self.option_strings)
+  #
+  # def _GetWidget(self):
+  #   return self.widget
 
 
 class RadioGroup(object):
-  def __init__(self, data):
+  def __init__(self, parent, title, msg):
     self.panel = None
 
-    self.data = data
+    # self.data = data
 
     self.radio_buttons = []
     self.option_strings = []
     self.help_msgs = []
     self.btn_names = []
 
-  def build(self, parent):
-    return self.do_layout(parent)
+    self.do_layout(parent, title, msg)
 
-  def do_layout(self, parent):
+  def do_layout(self, parent, titles, msgs):
     self.panel = wx.Panel(parent)
 
-    self.radio_buttons = [wx.RadioButton(self.panel, -1) for _ in self.data]
-    self.btn_names = [wx.StaticText(self.panel, label=btn_data['display_name'].title()) for btn_data in self.data]
-    self.help_msgs = [wx.StaticText(self.panel, label=btn_data['help'].title()) for btn_data in self.data]
-    self.option_strings = [btn_data['commands'] for btn_data in self.data]
+    self.radio_buttons = [wx.RadioButton(self.panel, -1) for _ in titles]
+    self.btn_names = [wx.StaticText(self.panel, label=title.title()) for title in titles]
+    self.help_msgs = [wx.StaticText(self.panel, label=msg.title()) for msg in msgs]
 
     # box = wx.StaticBox(self.panel, -1, label=self.data['group_name'])
     box = wx.StaticBox(self.panel, -1, label='')
@@ -208,10 +197,13 @@ class RadioGroup(object):
 
     self.panel.SetSizer(vertical_container)
     self.panel.Bind(wx.EVT_SIZE, self.onResize)
+    self.panel.Bind(wx.EVT_RADIOBUTTON, self.showz)
     return self.panel
 
-  def onSetter(self, evt):
-    self.GetValue()
+  def showz(self, evt):
+    print evt
+    for i in self.radio_buttons:
+      print i.GetValue()
 
   def onResize(self, evt):
     msg = self.help_msgs[0]
@@ -237,14 +229,22 @@ class RadioGroup(object):
     return self.radio_buttons
 
 
-FileChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileChooserPayload())
-MultiFileChooser  = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.MultiFileSaverPayload())
-DirChooser        = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DirChooserPayload())
-FileSaver         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.FileSaverPayload())
-DateChooser       = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DateChooserPayload())
-TextField         = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload())
-CommandField      = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.TextInputPayload(no_quoting=True))
-Dropdown          = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.DropdownPayload())
-Counter           = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.CounterPayload())
-MultiDirChooser   = lambda data: BaseGuiComponent(data=data, widget_pack=widget_pack.MultiDirChooserPayload())
+def build_subclass(name, widget_class):
+  return type(name, (BaseGuiComponent,), {'widget_class': widget_class})
 
+
+FileChooser       = build_subclass('FileChooser', widget_pack.FileChooserPayload)
+MultiFileChooser  = build_subclass('MultiFileChooser', widget_pack.MultiFileSaverPayload)
+DirChooser        = build_subclass('DirChooser', widget_pack.DirChooserPayload)
+FileSaver         = build_subclass('FileSaver', widget_pack.FileSaverPayload)
+DateChooser       = build_subclass('DateChooser', widget_pack.DateChooserPayload)
+TextField         = build_subclass('TextField', widget_pack.TextInputPayload)
+CommandField      = build_subclass('CommandField', widget_pack.TextInputPayload(no_quoting=True))
+Dropdown          = build_subclass('Dropdown', widget_pack.DropdownPayload)
+Counter           = build_subclass('Counter', widget_pack.CounterPayload)
+MultiDirChooser   = build_subclass('MultiDirChooser', widget_pack.MultiDirChooserPayload)
+
+if __name__ == '__main__':
+
+  DirChooser = type('DirChooser', (BaseGuiComponent,), {'widget_pack': widget_pack.DirChooserPayload })
+  d = DirChooser()

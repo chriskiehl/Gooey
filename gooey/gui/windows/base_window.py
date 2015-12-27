@@ -4,6 +4,7 @@ Created on Jan 19, 2014
 '''
 
 import sys
+from distutils import config
 
 import wx
 from gooey.gui.pubsub import pub
@@ -17,12 +18,15 @@ from gooey.gui.windows import footer, header, layouts
 
 
 class BaseWindow(wx.Frame):
-  def __init__(self, build_spec):
+  def __init__(self, build_spec, layout_type):
     wx.Frame.__init__(self, parent=None, id=-1)
 
     self.build_spec = build_spec
 
     self.SetDoubleBuffered(True)
+
+    # type of gui to render
+    self.layout_type = layout_type
 
     # Components
     self.icon = None
@@ -39,28 +43,122 @@ class BaseWindow(wx.Frame):
     self.Bind(wx.EVT_SIZE, self.onResize)
     self.Bind(wx.EVT_CLOSE, self.onClose)
 
+
+  @property
+  def window_size(self):
+    return self.GetSize()
+
+  @window_size.setter
+  def window_size(self, size_tuple):
+    self.SetSize(size_tuple)
+
+  @property
+  def window_title(self):
+    return self.GetTitle()
+
+  @window_title.setter
+  def window_title(self, title):
+    self.SetTitle(title)
+
+  @property
+  def heading_title(self):
+    return self.head_panel.title
+
+  @heading_title.setter
+  def heading_title(self, text):
+    self.head_panel.title = text
+
+  @property
+  def heading_subtitle(self):
+    return self.head_panel.subtitle
+
+  @heading_subtitle.setter
+  def heading_subtitle(self, text):
+    self.head_panel.subtitle = text
+
+  @property
+  def required_section(self):
+    return self.config_panel.main_content.required_section
+
+  @property
+  def optional_section(self):
+    return self.config_panel.main_content.optional_section
+
+
+  def set_display_font_style(self, style):
+    '''
+    wx.FONTFAMILY_DEFAULT	Chooses a default font.
+    wx.FONTFAMILY_DECORATIVE	A decorative font.
+    wx.FONTFAMILY_ROMAN	A formal, serif font.
+    wx.FONTFAMILY_SCRIPT	A handwriting font.
+    wx.FONTFAMILY_SWISS	A sans-serif font.
+    wx.FONTFAMILY_MODERN	Usually a fixed pitch font.
+    wx.FONTFAMILY_TELETYPE	A teletype font.
+    '''
+    # TODO: make this not stupid
+    # TODO: _actual_ font support
+    self.runtime_display.set_font_style(
+      wx.MODERN if style == 'monospace' else wx.DEFAULT)
+
+
+
   def _init_properties(self):
-    self.SetTitle(self.build_spec['program_name'])
-    self.SetSize(self.build_spec['default_size'])
-    # self.SetMinSize((400, 300))
+    # self.SetTitle(self.build_spec['program_name'])
+    # self.SetSize(self.build_spec['default_size'])
+    # # self.SetMinSize((400, 300))
     self.icon = wx.Icon(image_repository.program_icon, wx.BITMAP_TYPE_ICO)
     self.SetIcon(self.icon)
 
+  def enable_stop_button(self):
+    self.foot_panel.stop_button.Enable()
+
+  def disable_stop_button(self):
+    self.foot_panel.stop_button.Disable()
+
+  def show(self, *args):
+    '''
+    Looks up the attribute across all available
+    panels and calls `Show()`
+    '''
+    self._set_visibility('Show', *args)
+
+  def hide(self, *args):
+    '''
+    Looks up the attribute across all available
+    panels and calls `Show()`
+    '''
+    self._set_visibility('Hide', *args)
+
+  def _set_visibility(self, action, *args):
+    '''
+    Checks for the existence `attr` on a given `panel` and
+    performs `action` if found
+    '''
+    def _set_visibility(obj, attrs):
+      for attr in attrs:
+        if hasattr(obj, attr):
+          instance = getattr(obj, attr)
+          getattr(instance, action)()
+          instance.Layout()
+    for panel in [self, self.head_panel, self.foot_panel, self.config_panel]:
+      _set_visibility(panel, args)
+
+
   def _init_components(self):
     # init gui
-    _desc = self.build_spec['program_description']
-    self.head_panel = header.FrameHeader(
-        heading=i18n._("settings_title"),
-        subheading=_desc or '',
-        parent=self)
-
-    self.runtime_display = RuntimeDisplay(self, self.build_spec)
+    # _desc = self.build_spec['program_description']
+    # self.head_panel = header.FrameHeader(
+    #     heading=i18n._("settings_title"),
+    #     subheading=_desc or '',
+    #     parent=self)
+    self.runtime_display = RuntimeDisplay(self)
+    self.head_panel = header.FrameHeader(parent=self)
     self.foot_panel = footer.Footer(self)
 
-    if self.build_spec['disable_stop_button']:
-      self.foot_panel.stop_button.Disable()
-    else:
-      self.foot_panel.stop_button.Enable()
+    # if self.build_spec['disable_stop_button']:
+    #   self.foot_panel.stop_button.Disable()
+    # else:
+    #   self.foot_panel.stop_button.Enable()
 
     self.panels = [self.head_panel, self.config_panel, self.foot_panel]
 
@@ -69,12 +167,12 @@ class BaseWindow(wx.Frame):
     sizer.Add(self.head_panel, 0, wx.EXPAND)
     sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
 
-    if self.build_spec['layout_type'] == 'column':
-      self.config_panel = layouts.ColumnLayout(self, build_spec=self.build_spec)
-      sizer.Add(self.config_panel, 1, wx.EXPAND)
+    if self.layout_type == layouts.COLUMN:
+      self.config_panel = layouts.ColumnLayout(self)
     else:
       self.config_panel = layouts.FlatLayout(self, build_spec=self.build_spec)
-      sizer.Add(self.config_panel, 1, wx.EXPAND)
+
+    sizer.Add(self.config_panel, 1, wx.EXPAND)
 
     sizer.Add(self.runtime_display, 1, wx.EXPAND)
 

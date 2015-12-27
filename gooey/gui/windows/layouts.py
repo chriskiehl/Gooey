@@ -25,13 +25,18 @@ basic_config = {
 }
 
 
+FLAT = 'standard'
+COLUMN = 'column'
+
+
 class FlatLayout(wx.Panel):
   def __init__(self, *args, **kwargs):
-    self._build_spec = kwargs.pop('build_spec')
+    self._build_spec = kwargs.pop('build_spec', None)
     super(FlatLayout, self).__init__(*args, **kwargs)
     self.SetDoubleBuffered(True)
 
-    self.main_content = ConfigPanel(self, widgets=self._build_spec['widgets'], opt_cols=self._build_spec['num_optional_cols'])
+    # self.main_content = ConfigPanel(self, widgets=self._build_spec['widgets'], opt_cols=self._build_spec['num_optional_cols'])
+    self.main_content = ConfigPanel(self, widgets=self._build_spec['widgets'], opt_cols=3)
 
     sizer = wx.BoxSizer(wx.HORIZONTAL)
     sizer.Add(self.main_content, 3, wx.EXPAND)

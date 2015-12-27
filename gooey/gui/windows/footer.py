@@ -13,9 +13,14 @@ from gooey.gui.lang import i18n
 from gooey.gui import imageutil, events
 
 
-class AbstractFooter(wx.Panel):
+class Footer(wx.Panel):
   '''
-  Abstract class for the Footer panels.
+  Footer section used on the configuration
+  screen of the application
+
+  args:
+    parent: wxPython parent windows
+    controller: controller class used in delagating all the commands
   '''
 
   def __init__(self, parent, **kwargs):
@@ -39,6 +44,9 @@ class AbstractFooter(wx.Panel):
 
     pub.subscribe(self.load_view, events.WINDOW_CHANGE)
 
+    for button in self.buttons:
+      self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
+
 
   def _init_components(self):
     self.cancel_button      = self.button(i18n._('cancel'),  wx.ID_CANCEL,  event_id=int(events.WINDOW_CANCEL))
@@ -50,7 +58,13 @@ class AbstractFooter(wx.Panel):
 
     self.progress_bar  = wx.Gauge(self, range=100)
 
-    self.buttons = [self.cancel_button, self.start_button, self.stop_button, self.close_button, self.restart_button, self.edit_button]
+    self.buttons = [self.cancel_button, self.start_button,
+                    self.stop_button, self.close_button,
+                    self.restart_button, self.edit_button]
+
+  def dispatch_click(self, event):
+    pub.send_message(str(event.GetId()))
+    event.Skip()
 
   def _init_pages(self):
     def config():
@@ -126,24 +140,7 @@ class AbstractFooter(wx.Panel):
     return imageutil.resize_bitmap(self, imageutil._load_image(img_path), height)
 
 
-class Footer(AbstractFooter):
-  '''
-  Footer section used on the configuration
-  screen of the application
 
-  args:
-    parent: wxPython parent windows
-    controller: controller class used in delagating all the commands
-  '''
-
-  def __init__(self, parent, **kwargs):
-    AbstractFooter.__init__(self, parent, **kwargs)
-    for button in self.buttons:
-      self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
-
-  def dispatch_click(self, event):
-    pub.send_message(str(event.GetId()))
-    event.Skip()
 
 
 

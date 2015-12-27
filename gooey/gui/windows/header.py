@@ -16,43 +16,56 @@ PAD_SIZE = 10
 
 
 class FrameHeader(wx.Panel):
-  def __init__(self, heading, subheading, **kwargs):
-    wx.Panel.__init__(self, **kwargs)
+  def __init__(self, parent=None, **kwargs):
+    wx.Panel.__init__(self, parent, **kwargs)
     self.SetDoubleBuffered(True)
-
-    self.heading_msg = heading
-    self.subheading_msg = subheading
 
     self._header = None
     self._subheader = None
-    self._settings_img = None
-    self._running_img = None
-    self._check_mark = None
-    self._error_symbol = None
+    self.settings_img = None
+    self.running_img = None
+    self.check_mark = None
+    self.error_symbol = None
 
     self.layouts = {}
 
     self._init_properties()
-    self._init_components(heading, subheading)
+    # self._init_components(heading, subheading)
+    self._init_components()
     self._init_pages()
     self._do_layout()
 
     pub.subscribe(self.load_view, events.WINDOW_CHANGE)
+
+  @property
+  def title(self):
+    return self._header.GetLabel()
+
+  @title.setter
+  def title(self, text):
+    self._header.SetLabel(text)
+
+  @property
+  def subtitle(self):
+    return self._subheader.GetLabel()
+
+  @subtitle.setter
+  def subtitle(self, text):
+    self._subheader.SetLabel(text)
 
   def _init_properties(self):
     self.SetBackgroundColour('#ffffff')
     self.SetSize((30, 90))
     self.SetMinSize((120, 80))
 
-  def _init_components(self, heading, subheading):
-    self._header = wx_util.h1(self, heading)
+  def _init_components(self):
+    self._header = wx_util.h1(self, '')
+    self._subheader = wx.StaticText(self, label='')
 
-    self._subheader = wx.StaticText(self, label=subheading)
-
-    self._settings_img = self._load_image(image_repository.config_icon, height=79)
-    self._running_img = self._load_image(image_repository.running_icon, 79)
-    self._check_mark = self._load_image(image_repository.success_icon, height=75)
-    self._error_symbol = self._load_image(image_repository.error_icon, height=75)
+    self.settings_img = self._load_image(image_repository.config_icon, height=79)
+    self.running_img = self._load_image(image_repository.running_icon, 79)
+    self.check_mark = self._load_image(image_repository.success_icon, height=75)
+    self.error_symbol = self._load_image(image_repository.error_icon, height=75)
 
 
   def _do_layout(self):
@@ -60,13 +73,13 @@ class FrameHeader(wx.Panel):
     sizer = wx.BoxSizer(wx.HORIZONTAL)
     headings_sizer = self.build_heading_sizer()
     sizer.Add(headings_sizer, 1, wx.ALIGN_LEFT | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND | wx.LEFT, PAD_SIZE)
-    sizer.Add(self._settings_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
-    sizer.Add(self._running_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
-    sizer.Add(self._check_mark, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
-    sizer.Add(self._error_symbol, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
-    self._running_img.Hide()
-    self._check_mark.Hide()
-    self._error_symbol.Hide()
+    sizer.Add(self.settings_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+    sizer.Add(self.running_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+    sizer.Add(self.check_mark, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+    sizer.Add(self.error_symbol, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+    self.running_img.Hide()
+    self.check_mark.Hide()
+    self.error_symbol.Hide()
     vsizer.Add(sizer, 1, wx.EXPAND)
     self.SetSizer(vsizer)
 
@@ -86,33 +99,33 @@ class FrameHeader(wx.Panel):
     def config():
       self._header.SetLabel(self.heading_msg)
       self._subheader.SetLabel(self.subheading_msg)
-      self._settings_img.Show()
-      self._check_mark.Hide()
-      self._running_img.Hide()
-      self._error_symbol.Hide()
+      self.settings_img.Show()
+      self.check_mark.Hide()
+      self.running_img.Hide()
+      self.error_symbol.Hide()
       self.Layout()
 
     def running():
       self._header.SetLabel(i18n._("running_title"))
       self._subheader.SetLabel(i18n._('running_msg'))
-      self._check_mark.Hide()
-      self._settings_img.Hide()
-      self._running_img.Show()
-      self._error_symbol.Hide()
+      self.check_mark.Hide()
+      self.settings_img.Hide()
+      self.running_img.Show()
+      self.error_symbol.Hide()
       self.Layout()
 
     def success():
       self._header.SetLabel(i18n._('finished_title'))
       self._subheader.SetLabel(i18n._('finished_msg'))
-      self._running_img.Hide()
-      self._check_mark.Show()
+      self.running_img.Hide()
+      self.check_mark.Show()
       self.Layout()
 
     def error():
       self._header.SetLabel(i18n._('finished_title'))
       self._subheader.SetLabel(i18n._('finished_error'))
-      self._running_img.Hide()
-      self._error_symbol.Show()
+      self.running_img.Hide()
+      self.error_symbol.Show()
       self.Layout()
 
     self.layouts = locals()

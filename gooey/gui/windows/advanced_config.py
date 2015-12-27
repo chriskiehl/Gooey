@@ -12,11 +12,56 @@ from itertools import chain, izip_longest
 
 from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n
-from gooey.gui import component_builder
 from gooey.gui.option_reader import OptionReader
-
+from gooey.gui.widgets import components
 
 PADDING = 10
+
+
+class WidgetContainer(wx.Panel):
+  def __init__(self, parent, section_name, *args, **kwargs):
+    wx.Panel.__init__(self, parent, *args, **kwargs)
+    self.section_name = section_name
+    self.title = None
+    self.widgets = []
+
+    self.container = wx.BoxSizer(wx.VERTICAL)
+    self.SetSizer(self.container)
+
+  def populate(self, widgets):
+    for w in widgets:
+      widget_class = getattr(components, w.type)
+      self.widgets.append(widget_class(self, w.title, w.msg))
+    self.layout()
+
+  def layout(self):
+    STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
+
+    if self.title:
+      self.container.Add(wx_util.h0(self, self.title), 0, wx.LEFT | wx.RIGHT, PADDING)
+      self.container.AddSpacer(30)
+
+    if self.widgets:
+      self.container.Add(wx_util.h1(self, self.section_name), 0, wx.LEFT | wx.RIGHT, PADDING)
+      self.container.AddSpacer(5)
+      self.container.Add(wx_util.horizontal_rule(self), *STD_LAYOUT)
+      self.container.AddSpacer(20)
+      self.create_component_grid(self.container, self.widgets, cols=2)
+      self.container.AddSpacer(10)
+
+  def create_component_grid(self, parent_sizer, components, cols=2):
+    for row in self.chunk(components, cols):
+      hsizer = wx.BoxSizer(wx.HORIZONTAL)
+      for widget in filter(None, row):
+        hsizer.Add(widget.panel, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
+      parent_sizer.Add(hsizer, 0, wx.EXPAND)
+      parent_sizer.AddSpacer(20)
+
+  def chunk(self, iterable, n, fillvalue=None):
+    "itertools recipe: Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
+    args = [iter(iterable)] * n
+    return izip_longest(fillvalue=fillvalue, *args)
 
 
 class ConfigPanel(ScrolledPanel, OptionReader):
@@ -29,10 +74,11 @@ class ConfigPanel(ScrolledPanel, OptionReader):
 
     self.title = title
 
-    self.widgets = component_builder.build_components(widgets)
-
     self._num_req_cols = req_cols
     self._num_opt_cols = opt_cols
+
+    self.required_section = WidgetContainer(self, i18n._("required_args_msg"))
+    self.optional_section = WidgetContainer(self, i18n._("optional_args_msg"))
 
     self._do_layout()
 
@@ -44,40 +90,10 @@ class ConfigPanel(ScrolledPanel, OptionReader):
 
     container = wx.BoxSizer(wx.VERTICAL)
     container.AddSpacer(15)
-
-    if self.title:
-      container.Add(wx_util.h0(self, self.title), 0, wx.LEFT | wx.RIGHT, PADDING)
-      container.AddSpacer(30)
-
-    if self.widgets.required_args:
-      container.Add(wx_util.h1(self, i18n._("required_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
-      container.AddSpacer(5)
-      container.Add(wx_util.horizontal_rule(self), *STD_LAYOUT)
-      container.AddSpacer(20)
-
-      self.CreateComponentGrid(container, self.widgets.required_args, cols=self._num_req_cols)
-
-      container.AddSpacer(10)
-
-    if self.widgets.optional_args:
-      # container.AddSpacer(10)
-      container.Add(wx_util.h1(self, i18n._("optional_args_msg")), 0, wx.LEFT | wx.RIGHT, PADDING)
-      container.AddSpacer(5)
-      container.Add(wx_util.horizontal_rule(self), *STD_LAYOUT)
-      container.AddSpacer(20)
-
-      self.CreateComponentGrid(container, self.widgets.optional_args, cols=self._num_opt_cols)
+    container.Add(self.required_section, *STD_LAYOUT)
+    container.Add(self.optional_section, *STD_LAYOUT)
 
     self.SetSizer(container)
-
-  def CreateComponentGrid(self, parent_sizer, components, cols=2):
-    for row in self.chunk(components, cols):
-      hsizer = wx.BoxSizer(wx.HORIZONTAL)
-      for widget in filter(None, row):
-        hsizer.Add(widget.build(self), 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
-      # hsizer.FitInside(parent_sizer)
-      parent_sizer.Add(hsizer, 0, wx.EXPAND)
-      parent_sizer.AddSpacer(20)
 
   def OnResize(self, evt):
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
@@ -96,12 +112,6 @@ class ConfigPanel(ScrolledPanel, OptionReader):
 
   def GetRequiredArgs(self):
     return [arg.GetValue() for arg in self.widgets.required_args]
-
-  def chunk(self, iterable, n, fillvalue=None):
-    "itertools recipe: Collect data into fixed-length chunks or blocks"
-    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
-    args = [iter(iterable)] * n
-    return izip_longest(fillvalue=fillvalue, *args)
 
 if __name__ == '__main__':
   pass
