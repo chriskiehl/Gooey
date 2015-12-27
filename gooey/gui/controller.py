@@ -9,6 +9,7 @@ from multiprocessing.dummy import Pool
 
 from gooey.gui.lang import i18n
 from gooey.gui import events
+from gooey.gui.presenter import Presenter
 from gooey.gui.pubsub import pub
 from gooey.gui.util.taskkill import taskkill
 from gooey.gui.viewmodel import ViewModel
@@ -24,7 +25,9 @@ class Controller(object):
   def __init__(self, build_spec):
     # todo: model!
     self.build_spec = build_spec
-    self.view = BaseWindow(build_spec)
+    self.view = BaseWindow(build_spec, layout_type=self.build_spec['layout_type'])
+    self.presentation = Presenter(self.view, self.build_spec)
+    self.presentation.initialize_view()
 
     self._process = None
 
