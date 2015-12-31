@@ -119,10 +119,11 @@ class Controller(object):
       line = process.stdout.readline()
       if not line:
         break
-      wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
       progress = self.progress_from_line(line)
       if progress is not None:
         wx.CallAfter(self.core_gui.UpdateProgressBar, progress)
+      if progress is not None and not self.build_spec['progress_consume_line']:
+        wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
     wx.CallAfter(callback, process)
 
   def progress_from_line(self, text):

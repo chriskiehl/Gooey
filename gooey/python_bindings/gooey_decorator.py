@@ -38,6 +38,7 @@ def Gooey(f=None,
           language_dir=get_resource_path('languages'),
           progress_regex=None,
           progress_expr=None,
+          progress_consume_line=False,
           disable_progress_bar_animation=False,
           disable_stop_button=False):
   '''

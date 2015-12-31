@@ -30,6 +30,7 @@ def create_from_parser(parser, source_path, **kwargs):
     'language_dir':         kwargs.get('language_dir'),
     'progress_regex':       kwargs.get('progress_regex'),
     'progress_expr':        kwargs.get('progress_expr'),
+    'progress_consume_line': kwargs.get('progress_consume_line'),
     'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
     'disable_stop_button':  kwargs.get('disable_stop_button'),
   }
