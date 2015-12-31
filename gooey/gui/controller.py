@@ -38,6 +38,7 @@ class Controller(object):
     self.core_gui = base_frame
     self.build_spec = build_spec
     self._process = None
+    self._task_terminated = False
 
     # wire up all the observers
     pub.subscribe(self.on_cancel,   events.WINDOW_CANCEL)
@@ -74,7 +75,7 @@ class Controller(object):
   def on_start(self):
     if not self.skipping_config() and not self.required_section_complete():
       return self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
-
+    self._task_terminated = False
     cmd_line_args = self.core_gui.GetOptions()
     command = '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_line_args)
     pub.send_message(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
@@ -99,6 +100,7 @@ class Controller(object):
 
   def stop(self):
     if self.running():
+      self._task_terminated = True
       taskkill(self._process.pid)
 
   def running(self):
@@ -159,8 +161,12 @@ class Controller(object):
       return None
 
   def process_result(self, process):
-    _stdout, _ = process.communicate()
-    if process.returncode == 0:
+    process.communicate()
+    if self._task_terminated:
+      wx.CallAfter(self.core_gui.PublishConsoleMsg, i18n._('terminated'))
+      pub.send_message(events.WINDOW_CHANGE, view_name=views.ERROR_SCREEN)
+      self.terminated_dialog()
+    elif process.returncode == 0:
       pub.send_message(events.WINDOW_CHANGE, view_name=views.SUCCESS_SCREEN)
       self.success_dialog()
     else:
@@ -182,8 +188,10 @@ class Controller(object):
   def error_dialog(self):
     self.show_dialog(i18n._('error_title'), i18n._('uh_oh'), wx.ICON_ERROR)
 
+  def terminated_dialog(self):
+    self.show_dialog(i18n._('error_title'), i18n._('terminated'), wx.ICON_ERROR)
+
   def show_dialog(self, title, content, style):
     a = wx.MessageDialog(None, content, title, style)
     a.ShowModal()
     a.Destroy()
-
