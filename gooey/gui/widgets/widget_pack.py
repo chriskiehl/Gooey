@@ -45,29 +45,32 @@ class BaseChooser(WidgetPack):
     self.button_text = i18n._('browse')
     self.option_string = None
     self.parent = None
-    self.text_box = None
+    self.widget = None
     self.button = None
 
   def build(self, parent, data):
     self.parent = parent
     self.option_string = self.get_command(data)
-    self.text_box = wx.TextCtrl(self.parent)
-    self.text_box.AppendText(safe_default(data, ''))
-    self.text_box.SetMinSize((0, -1))
-    dt = FileDrop(self.text_box)
-    self.text_box.SetDropTarget(dt)
+    self.widget = wx.TextCtrl(self.parent)
+    self.widget.AppendText(safe_default(data, ''))
+    self.widget.SetMinSize((0, -1))
+    dt = FileDrop(self.widget)
+    self.widget.SetDropTarget(dt)
     self.button = wx.Button(self.parent, label=self.button_text, size=(73, 23))
 
     widget_sizer = wx.BoxSizer(wx.HORIZONTAL)
-    widget_sizer.Add(self.text_box, 1, wx.EXPAND)
+    widget_sizer.Add(self.widget, 1, wx.EXPAND)
     widget_sizer.AddSpacer(10)
     widget_sizer.Add(self.button, 0, wx.ALIGN_CENTER_VERTICAL)
 
     parent.Bind(wx.EVT_BUTTON, self.onButton, self.button)
     return widget_sizer
 
+  def get_value(self):
+    return self.widget.GetValue()
+
   # def getValue(self):
-  #   value = self.text_box.GetValue()
+  #   value = self.widget.GetValue()
   #   if self.option_string and value:
   #     return '{0} {1}'.format(self.option_string, quote(value))
   #   else:
@@ -91,7 +94,7 @@ class BaseFileChooser(BaseChooser):
               if dlg.ShowModal() == wx.ID_OK
               else None)
     if result:
-      self.text_box.SetValue(result)
+      self.widget.SetValue(result)
 
   def get_path(self, dlg):
     return dlg.GetPath()
@@ -103,7 +106,7 @@ class BaseMultiFileChooser(BaseFileChooser):
     self.dialog = dialog
 
   # def getValue(self):
-  #   value = ' '.join(quote(x) for x in self.text_box.GetValue().split(os.pathsep) if x)
+  #   value = ' '.join(quote(x) for x in self.widget.GetValue().split(os.pathsep) if x)
   #   if self.option_string and value:
   #     return '{} {}'.format(self.option_string, value)
   #   return value or ''
@@ -151,6 +154,9 @@ class TextInputPayload(WidgetPack):
     self.widget.AppendText(safe_default(data, ''))
     return self.widget
 
+  def get_value(self):
+    return self.widget.GetValue()
+
   # def getValue(self):
   #   if self.no_quoting:
   #     _quote = lambda value: value
@@ -188,18 +194,21 @@ class DropdownPayload(WidgetPack):
     )
     return self.widget
 
-  def getValue(self):
-    if self.no_quoting:
-      _quote = lambda value: value
-    else:
-      _quote = quote
-    value = self.widget.GetValue()
-    if value == self.default_value:
-      return ''
-    elif value and self.option_string:
-      return '{} {}'.format(self.option_string, _quote(value))
-    else:
-      return _quote(value) if value else ''
+  def get_value(self):
+    return self.widget.GetValue()
+
+  # def getValue(self):
+  #   if self.no_quoting:
+  #     _quote = lambda value: value
+  #   else:
+  #     _quote = quote
+  #   value = self.widget.GetValue()
+  #   if value == self.default_value:
+  #     return ''
+  #   elif value and self.option_string:
+  #     return '{} {}'.format(self.option_string, _quote(value))
+  #   else:
+  #     return _quote(value) if value else ''
 
   def _SetValue(self, text):
     # used for testing
@@ -222,19 +231,36 @@ class CounterPayload(WidgetPack):
     )
     return self.widget
 
-  def getValue(self):
-    '''
-    Returns
-      str(option_string * DropDown Value)
-      e.g.
-      -vvvvv
-    '''
-    dropdown_value = self.widget.GetValue()
-    if not str(dropdown_value).isdigit():
-      return ''
-    arg = str(self.option_string).replace('-', '')
-    repeated_args = arg * int(dropdown_value)
-    return '-' + repeated_args
+  def get_value(self):
+    return self.widget.GetValue()
+
+  # def getValue(self):
+  #   '''
+  #   Returns
+  #     str(option_string * DropDown Value)
+  #     e.g.
+  #     -vvvvv
+  #   '''
+  #   return self.widget.GetValue()
+    # if not str(dropdown_value).isdigit():
+    #   return ''
+    # arg = str(self.option_string).replace('-', '')
+    # repeated_args = arg * int(dropdown_value)
+    # return '-' + repeated_args
+
+  # def getValue(self):
+  #   '''
+  #   Returns
+  #     str(option_string * DropDown Value)
+  #     e.g.
+  #     -vvvvv
+  #   '''
+  #   dropdown_value = self.widget.GetValue()
+  #   if not str(dropdown_value).isdigit():
+  #     return ''
+  #   arg = str(self.option_string).replace('-', '')
+  #   repeated_args = arg * int(dropdown_value)
+  #   return '-' + repeated_args
 
 class DirDialog(wx.DirDialog):
   def __init__(self, parent, *args, **kwargs):

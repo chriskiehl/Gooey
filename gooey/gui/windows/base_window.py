@@ -258,6 +258,9 @@ class BaseWindow(wx.Frame):
     dlg.Destroy()
     return result
 
+  def show_missing_args_dialog(self):
+    self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
+
 
 if __name__ == '__main__':
   pass

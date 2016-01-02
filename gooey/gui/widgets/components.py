@@ -52,6 +52,9 @@ class BaseGuiComponent(object):
 
     return self.panel
 
+  def bind(self, *args, **kwargs):
+    print self.widget_pack.widget.Bind(*args, **kwargs)
+
   def get_title(self):
     return self.title.GetLabel()
 
@@ -95,8 +98,8 @@ class BaseGuiComponent(object):
       self.help_msg.Wrap(container_width)
     evt.Skip()
 
-  def GetValue(self):
-    return self.widget_pack.getValue()
+  def get_value(self):
+    return self.widget_pack.get_value()
 
   # def HasOptionString(self):
   #   return bool(self.widget_pack.option_string)
@@ -148,6 +151,8 @@ class CheckBox(BaseGuiComponent):
       msg.Wrap(container_width)
     evt.Skip()
 
+  def get_value(self):
+    return self.widget.GetValue()
   # def GetValue(self):
   #   return self.option_strings if self.widget.GetValue() else ''
   #
@@ -215,12 +220,15 @@ class RadioGroup(object):
       msg.Wrap(container_width)
     evt.Skip()
 
-  def GetValue(self):
-    vals = [button.GetValue() for button in self.radio_buttons]
-    try:
-      return self.option_strings[vals.index(True)][0]
-    except:
-      return ''
+  def get_value(self):
+    return [button.GetValue() for button in self.radio_buttons]
+
+  # def GetValue(self):
+  #   vals = [button.GetValue() for button in self.radio_buttons]
+  #   try:
+  #     return self.option_strings[vals.index(True)][0]
+  #   except:
+  #     return ''
 
   def HasOptionString(self):
     return bool(self.option_strings)
@@ -230,6 +238,7 @@ class RadioGroup(object):
 
 
 def build_subclass(name, widget_class):
+  # this seemed faster than typing class X a bunch
   return type(name, (BaseGuiComponent,), {'widget_class': widget_class})
 
 

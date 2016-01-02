@@ -32,6 +32,7 @@ def create_from_parser(parser, source_path, **kwargs):
     'progress_expr':        kwargs.get('progress_expr'),
     'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
     'disable_stop_button':  kwargs.get('disable_stop_button'),
+    'group_by_type':        kwargs.get('group_by_type', True)
   }
 
   if show_config:

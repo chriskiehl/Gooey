@@ -6,7 +6,7 @@ Managed the internal layout for configuration options
 
 
 import wx
-
+from bson import ObjectId
 from wx.lib.scrolledpanel import ScrolledPanel
 from itertools import chain, izip_longest
 
@@ -29,10 +29,18 @@ class WidgetContainer(wx.Panel):
     self.SetSizer(self.container)
 
   def populate(self, widgets):
-    for w in widgets:
-      widget_class = getattr(components, w.type)
-      self.widgets.append(widget_class(self, w.title, w.msg))
+    for index, widget in enumerate(widgets):
+      widget_class = getattr(components, widget.type)
+      widget_instance = widget_class(self, widget.title, widget.help)
+      # widget_instance.bind(wx.EVT_TEXT, self.publish_change)
+      self.widgets.append(widget_instance)
     self.layout()
+
+  def publish_change(self, evt):
+    evt.Skip()
+
+  def get_values(self):
+    return [x.get_value() for x in self.widgets]
 
   def layout(self):
     STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)

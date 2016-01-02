@@ -9,6 +9,7 @@ from multiprocessing.dummy import Pool
 
 from gooey.gui.lang import i18n
 from gooey.gui import events
+from gooey.gui.model import MyModel
 from gooey.gui.presenter import Presenter
 from gooey.gui.pubsub import pub
 from gooey.gui.util.taskkill import taskkill
@@ -26,7 +27,7 @@ class Controller(object):
     # todo: model!
     self.build_spec = build_spec
     self.view = BaseWindow(build_spec, layout_type=self.build_spec['layout_type'])
-    self.presentation = Presenter(self.view, self.build_spec)
+    self.presentation = Presenter(self.view, MyModel(self.build_spec))
     self.presentation.initialize_view()
 
     self._process = None
@@ -34,7 +35,7 @@ class Controller(object):
     # wire up all the observers
     pub.subscribe(self.on_cancel,   events.WINDOW_CANCEL)
     pub.subscribe(self.on_stop,     events.WINDOW_STOP)
-    pub.subscribe(self.on_start,    events.WINDOW_START)
+    # pub.subscribe(self.on_start,    events.WINDOW_START)
     pub.subscribe(self.on_restart,  events.WINDOW_RESTART)
     pub.subscribe(self.on_close,    events.WINDOW_CLOSE)
     pub.subscribe(self.on_edit,     events.WINDOW_EDIT)
@@ -61,13 +62,15 @@ class Controller(object):
       sys.exit()
 
   def on_start(self):
-    if not self.skipping_config() and not self.required_section_complete():
-      return self.view.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
-
-    cmd_line_args = self.view.GetOptions()
-    command = '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_line_args)
-    pub.send_message(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
-    self.run_client_code(command)
+    print self.presentation.view.required_section.get_values()
+    print self.presentation.view.optional_section.get_values()
+    # if not self.skipping_config() and not self.required_section_complete():
+    #   return self.view.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
+    #
+    # cmd_line_args = self.view.GetOptions()
+    # command = '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_line_args)
+    # pub.send_message(events.WINDOW_CHANGE, view_name=views.RUNNING_SCREEN)
+    # self.run_client_code(command)
 
   def on_stop(self):
     self.ask_stop()
@@ -154,14 +157,14 @@ class Controller(object):
       pub.send_message(events.WINDOW_CHANGE, view_name=views.ERROR_SCREEN)
       self.error_dialog()
 
-  def skipping_config(self):
-    return self.build_spec['manual_start']
-
-  def required_section_complete(self):
-    required_section = self.view.GetRequiredArgs()
-    if len(required_section) == 0:
-      return True  # no requirements!
-    return not any(req == '' for req in required_section)
+  # def skipping_config(self):
+  #   return self.build_spec['manual_start']
+  #
+  # def required_section_complete(self):
+  #   required_section = self.view.GetRequiredArgs()
+  #   if len(required_section) == 0:
+  #     return True  # no requirements!
+  #   return not any(req == '' for req in required_section)
 
   def success_dialog(self):
     self.view.show_dialog(i18n._("execution_finished"), i18n._('success_message'), wx.ICON_INFORMATION)
