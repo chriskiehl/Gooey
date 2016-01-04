@@ -105,9 +105,9 @@ class Controller(object):
     return self._process and self._process.poll() is None
 
   def run_client_code(self, command):
-    env = os.environ.copy()
-    env["GOOEY"] = "1"
     print "run command:", command
+    env = os.environ.copy()
+    env["GOOEY"] = str(os.getpid())
     p = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, shell=True, env=env)
     self._process = p
@@ -119,10 +119,11 @@ class Controller(object):
       line = process.stdout.readline()
       if not line:
         break
-      wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
       progress = self.progress_from_line(line)
       if progress is not None:
         wx.CallAfter(self.core_gui.UpdateProgressBar, progress)
+      if progress is None or not self.build_spec['progress_consume_line']:
+        wx.CallAfter(self.core_gui.PublishConsoleMsg, line)
     wx.CallAfter(callback, process)
 
   def progress_from_line(self, text):
@@ -186,4 +187,3 @@ class Controller(object):
     a = wx.MessageDialog(None, content, title, style)
     a.ShowModal()
     a.Destroy()
-
