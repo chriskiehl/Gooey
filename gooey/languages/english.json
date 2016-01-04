@@ -24,5 +24,6 @@
     "sure_you_want_to_exit": "Are you sure you want to exit?",
     "sure_you_want_to_stop": "Are you sure you want to stop the task? \nInterruption can corrupt your data!",
     "uh_oh": "\nUh oh! Looks like there was a problem. \nCopy the text from status window to let your developer know what went wrong.\n",
+    "terminated": "The task has been terminated by user.",
     "browse": "Browse"
 }
