@@ -22,7 +22,7 @@ IGNORE_COMMAND = '--ignore-gooey'
 def Gooey(f=None,
           advanced=True,
           language='english',
-          show_config=True,
+          autostart=False,  # TODO: add this to the docs. Used to be `show_config=True`
           program_name=None,
           program_description=None,
           default_size=(610, 530),
