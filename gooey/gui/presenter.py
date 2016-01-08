@@ -155,4 +155,4 @@ class Presenter(object):
     for index, val in enumerate(new_values):
       collection[index].value = val
 
-      
+

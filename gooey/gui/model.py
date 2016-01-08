@@ -83,9 +83,6 @@ class States(object):
 
 class MyModel(object):
   '''
-  Needs to:
-  - sort the args based on a strategy
-  -
   '''
 
   def __init__(self, build_spec):
@@ -133,7 +130,6 @@ class MyModel(object):
     text = self.text_states[state]
     self.heading_title = text['title']
     self.heading_subtitle = text['subtitle']
-
 
   def is_valid(self):
     # TODO: fix skipping_config.. whatever that did

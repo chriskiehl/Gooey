@@ -6,13 +6,11 @@ Managed the internal layout for configuration options
 
 
 import wx
-from bson import ObjectId
 from wx.lib.scrolledpanel import ScrolledPanel
 from itertools import chain, izip_longest
 
 from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n
-from gooey.gui.option_reader import OptionReader
 from gooey.gui.widgets import components
 
 PADDING = 10
@@ -75,7 +73,7 @@ class WidgetContainer(wx.Panel):
     return iter(self.widgets)
 
 
-class ConfigPanel(ScrolledPanel, OptionReader):
+class ConfigPanel(ScrolledPanel):
 
   def __init__(self, parent, widgets=None, req_cols=1, opt_cols=3, title=None, **kwargs):
     ScrolledPanel.__init__(self, parent, **kwargs)
