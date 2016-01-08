@@ -21,10 +21,8 @@ YES = 5103
 NO = 5104
 
 class BaseWindow(wx.Frame):
-  def __init__(self, build_spec, layout_type):
+  def __init__(self, layout_type):
     wx.Frame.__init__(self, parent=None, id=-1)
-
-    self.build_spec = build_spec
 
     self.SetDoubleBuffered(True)
 
@@ -178,7 +176,7 @@ class BaseWindow(wx.Frame):
     if self.layout_type == layouts.COLUMN:
       self.config_panel = layouts.ColumnLayout(self)
     else:
-      self.config_panel = layouts.FlatLayout(self, build_spec=self.build_spec)
+      self.config_panel = layouts.FlatLayout(self)
 
     sizer.Add(self.config_panel, 1, wx.EXPAND)
 
@@ -190,15 +188,6 @@ class BaseWindow(wx.Frame):
     self.SetSizer(sizer)
 
     self.sizer = sizer
-
-    pub.subscribe(self.myListener, "panelListener")
-    # pub.subscribe(self.load_view, events.WINDOW_CHANGE)
-
-
-
-  def myListener(self, message):
-    if message == 'fetch':
-      del self.config_panel
 
   def GetOptions(self):
     return self.config_panel.GetOptions()

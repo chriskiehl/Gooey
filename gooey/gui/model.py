@@ -90,6 +90,7 @@ class MyModel(object):
     self.current_state = States.CONFIGURING
 
     self.build_spec = build_spec
+    self.layout_type = self.build_spec['layout_type']
     self.progress_regex = self.build_spec['progress_regex']
     self.progress_expr = self.build_spec['progress_expr']
     self.program_name = self.build_spec['program_name']
@@ -101,7 +102,7 @@ class MyModel(object):
     self.use_monospace_font = self.build_spec.get('monospace_display')
     self.stop_button_disabled = self.build_spec['disable_stop_button']
 
-    reqs, opts = self.group_arguments(self.build_spec['widgets'])
+    reqs, opts = self.group_arguments(self.build_spec.get('widgets', []))
     self.required_args = reqs
     self.optional_args = opts
 

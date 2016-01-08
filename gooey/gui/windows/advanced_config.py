@@ -75,7 +75,7 @@ class WidgetContainer(wx.Panel):
 
 class ConfigPanel(ScrolledPanel):
 
-  def __init__(self, parent, widgets=None, req_cols=1, opt_cols=3, title=None, **kwargs):
+  def __init__(self, parent, req_cols=1, opt_cols=3, title=None, **kwargs):
     ScrolledPanel.__init__(self, parent, **kwargs)
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
 

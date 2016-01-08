@@ -1,5 +1,6 @@
-from collections import OrderedDict
 import wx
+
+from collections import OrderedDict
 from gooey.gui.pubsub import pub
 
 from gooey.gui import events
@@ -31,12 +32,10 @@ COLUMN = 'column'
 
 class FlatLayout(wx.Panel):
   def __init__(self, *args, **kwargs):
-    self._build_spec = kwargs.pop('build_spec', None)
     super(FlatLayout, self).__init__(*args, **kwargs)
     self.SetDoubleBuffered(True)
 
-    # self.main_content = ConfigPanel(self, widgets=self._build_spec['widgets'], opt_cols=self._build_spec['num_optional_cols'])
-    self.main_content = ConfigPanel(self, widgets=self._build_spec['widgets'], opt_cols=3)
+    self.main_content = ConfigPanel(self, opt_cols=3)
 
     sizer = wx.BoxSizer(wx.HORIZONTAL)
     sizer.Add(self.main_content, 3, wx.EXPAND)

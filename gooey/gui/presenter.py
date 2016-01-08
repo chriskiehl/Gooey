@@ -54,8 +54,6 @@ class Presenter(object):
     # update heading titles
     self.view.heading_title = self.model.heading_title
     self.view.heading_subtitle = self.model.heading_subtitle
-    if not self.model.stop_button_disabled:
-      self.view.enable_stop_button()
 
     # refresh the widgets
     for index, widget in enumerate(self.view.required_section):

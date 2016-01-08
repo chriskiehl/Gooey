@@ -9,9 +9,9 @@ NO = 5104
 class Controller(object):
 
   def __init__(self, build_spec):
-    self.build_spec = build_spec
-    self.view = BaseWindow(build_spec, layout_type=self.build_spec['layout_type'])
-    self.presentation = Presenter(self.view, MyModel(self.build_spec))
+    self.model = MyModel(build_spec)
+    self.view = BaseWindow(layout_type=self.model.layout_type)
+    self.presentation = Presenter(self.view, self.model)
     self.presentation.initialize_view()
 
 
