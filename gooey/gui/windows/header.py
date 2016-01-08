@@ -27,15 +27,15 @@ class FrameHeader(wx.Panel):
     self.check_mark = None
     self.error_symbol = None
 
-    self.layouts = {}
+    # self.layouts = {}
 
     self._init_properties()
     # self._init_components(heading, subheading)
     self._init_components()
-    self._init_pages()
+    # self._init_pages()
     self._do_layout()
 
-    pub.subscribe(self.load_view, events.WINDOW_CHANGE)
+    # pub.subscribe(self.load_view, events.WINDOW_CHANGE)
 
   @property
   def title(self):
@@ -94,42 +94,42 @@ class FrameHeader(wx.Panel):
     sizer.AddStretchSpacer(1)
     return sizer
 
-  def _init_pages(self):
-
-    def config():
-      self._header.SetLabel(self.heading_msg)
-      self._subheader.SetLabel(self.subheading_msg)
-      self.settings_img.Show()
-      self.check_mark.Hide()
-      self.running_img.Hide()
-      self.error_symbol.Hide()
-      self.Layout()
-
-    def running():
-      self._header.SetLabel(i18n._("running_title"))
-      self._subheader.SetLabel(i18n._('running_msg'))
-      self.check_mark.Hide()
-      self.settings_img.Hide()
-      self.running_img.Show()
-      self.error_symbol.Hide()
-      self.Layout()
-
-    def success():
-      self._header.SetLabel(i18n._('finished_title'))
-      self._subheader.SetLabel(i18n._('finished_msg'))
-      self.running_img.Hide()
-      self.check_mark.Show()
-      self.Layout()
-
-    def error():
-      self._header.SetLabel(i18n._('finished_title'))
-      self._subheader.SetLabel(i18n._('finished_error'))
-      self.running_img.Hide()
-      self.error_symbol.Show()
-      self.Layout()
-
-    self.layouts = locals()
-
-  def load_view(self, view_name=None):
-    self.layouts.get(view_name, lambda: None)()
+  # def _init_pages(self):
+  #
+  #   def config():
+  #     self._header.SetLabel(self.heading_msg)
+  #     self._subheader.SetLabel(self.subheading_msg)
+  #     self.settings_img.Show()
+  #     self.check_mark.Hide()
+  #     self.running_img.Hide()
+  #     self.error_symbol.Hide()
+  #     self.Layout()
+  #
+  #   def running():
+  #     self._header.SetLabel(i18n._("running_title"))
+  #     self._subheader.SetLabel(i18n._('running_msg'))
+  #     self.check_mark.Hide()
+  #     self.settings_img.Hide()
+  #     self.running_img.Show()
+  #     self.error_symbol.Hide()
+  #     self.Layout()
+  #
+  #   def success():
+  #     self._header.SetLabel(i18n._('finished_title'))
+  #     self._subheader.SetLabel(i18n._('finished_msg'))
+  #     self.running_img.Hide()
+  #     self.check_mark.Show()
+  #     self.Layout()
+  #
+  #   def error():
+  #     self._header.SetLabel(i18n._('finished_title'))
+  #     self._subheader.SetLabel(i18n._('finished_error'))
+  #     self.running_img.Hide()
+  #     self.error_symbol.Show()
+  #     self.Layout()
+  #
+  #   self.layouts = locals()
+  #
+  # def load_view(self, view_name=None):
+  #   self.layouts.get(view_name, lambda: None)()
 

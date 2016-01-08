@@ -101,6 +101,10 @@ class BaseGuiComponent(object):
   def get_value(self):
     return self.widget_pack.get_value()
 
+  def set_value(self, val):
+    if val:
+      self.widget_pack.widget.SetValue(str(val))
+
   # def HasOptionString(self):
   #   return bool(self.widget_pack.option_string)
   #
@@ -153,6 +157,11 @@ class CheckBox(BaseGuiComponent):
 
   def get_value(self):
     return self.widget.GetValue()
+
+  def set_value(self, val):
+    self.widget.SetValue(val)
+
+
   # def GetValue(self):
   #   return self.option_strings if self.widget.GetValue() else ''
   #
@@ -222,6 +231,9 @@ class RadioGroup(object):
 
   def get_value(self):
     return [button.GetValue() for button in self.radio_buttons]
+
+  def set_value(self, val):
+    pass
 
   # def GetValue(self):
   #   vals = [button.GetValue() for button in self.radio_buttons]

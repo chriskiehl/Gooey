@@ -39,7 +39,7 @@ class BaseWindow(wx.Frame):
     self._init_properties()
     self._init_components()
     self._do_layout()
-    self._init_pages()
+    # self._init_pages()
     self.Bind(wx.EVT_SIZE, self.onResize)
     self.Bind(wx.EVT_CLOSE, self.onClose)
 
@@ -84,6 +84,9 @@ class BaseWindow(wx.Frame):
   def optional_section(self):
     return self.config_panel.main_content.optional_section
 
+  @property
+  def progress_bar(self):
+    return self.foot_panel.progress_bar
 
   def set_display_font_style(self, style):
     '''
@@ -143,6 +146,8 @@ class BaseWindow(wx.Frame):
     for panel in [self, self.head_panel, self.foot_panel, self.config_panel]:
       _set_visibility(panel, args)
 
+  def hide_all_buttons(self):
+    self.foot_panel.hide_all_buttons()
 
   def _init_components(self):
     # init gui
@@ -184,7 +189,7 @@ class BaseWindow(wx.Frame):
     self.sizer = sizer
 
     pub.subscribe(self.myListener, "panelListener")
-    pub.subscribe(self.load_view, events.WINDOW_CHANGE)
+    # pub.subscribe(self.load_view, events.WINDOW_CHANGE)
 
 
 
@@ -201,27 +206,35 @@ class BaseWindow(wx.Frame):
   def GetOptionalArgs(self):
     return self.config_panel.GetOptionalArgs()
 
-  def _init_pages(self):
 
-    def config():
-      self.config_panel.Show()
-      self.runtime_display.Hide()
+  def update_console_async(self, msg):
+    wx.CallAfter(self.PublishConsoleMsg, msg)
 
-    def running():
-      self.config_panel.Hide()
-      self.runtime_display.Show()
-      self.Layout()
+  def update_progress_aync(self, progress):
+    wx.CallAfter(self.UpdateProgressBar, progress)
 
-    def success():
-      running()
 
-    def error():
-      running()
-
-    self.layouts = locals()
-
-  def load_view(self, view_name=None):
-    self.layouts.get(view_name, lambda: None)()
+  # def _init_pages(self):
+  #
+  #   def config():
+  #     self.config_panel.Show()
+  #     self.runtime_display.Hide()
+  #
+  #   def running():
+  #     self.config_panel.Hide()
+  #     self.runtime_display.Show()
+  #     self.Layout()
+  #
+  #   def success():
+  #     running()
+  #
+  #   def error():
+  #     running()
+  #
+  #   self.layouts = locals()
+  #
+  # def load_view(self, view_name=None):
+  #   self.layouts.get(view_name, lambda: None)()
 
   def onResize(self, evt):
     evt.Skip()

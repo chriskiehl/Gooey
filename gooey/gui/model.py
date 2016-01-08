@@ -1,10 +1,6 @@
 import os
-from collections import namedtuple
 from itertools import chain
-
 from gooey.gui.lang.i18n import _
-
-# MyWidget = namedtuple('MyWidget', 'type title help nargs commands choices')
 from gooey.gui.util.quoting import quote
 
 
@@ -77,14 +73,28 @@ class MyWidget(object):
 
 
 
+class States(object):
+  CONFIGURING = 'configuring'
+  RUNNNING = 'running'
+  SUCCESS = 'success'
+  ERROR = 'error'
+  STOPPED = 'stopped'
+
+
 class MyModel(object):
   '''
   Needs to:
   - sort the args based on a strategy
   -
   '''
+
   def __init__(self, build_spec):
+
+    self.current_state = States.CONFIGURING
+
     self.build_spec = build_spec
+    self.progress_regex = self.build_spec['progress_regex']
+    self.progress_expr = self.build_spec['progress_expr']
     self.program_name = self.build_spec['program_name']
     self.default_size = self.build_spec['default_size']
 
@@ -97,6 +107,33 @@ class MyModel(object):
     reqs, opts = self.group_arguments(self.build_spec['widgets'])
     self.required_args = reqs
     self.optional_args = opts
+
+    self.text_states = {
+      States.CONFIGURING: {
+        'title': _("settings_title"),
+        'subtitle': self.build_spec['program_description'] or ''
+      },
+      States.RUNNNING: {
+        'title': _("running_title"),
+        'subtitle': _('running_msg')
+      },
+      States.SUCCESS: {
+        'title': _('finished_title'),
+        'subtitle': _('finished_msg')
+      },
+      States.ERROR: {
+        'title': _('finished_title'),
+        'subtitle': _('finished_error')
+      }
+    }
+
+  def update_state(self, state):
+    self.current_state = state
+
+    text = self.text_states[state]
+    self.heading_title = text['title']
+    self.heading_subtitle = text['subtitle']
+
 
   def is_valid(self):
     # TODO: fix skipping_config.. whatever that did
@@ -112,16 +149,13 @@ class MyModel(object):
     return len(self.required_args) == len(completed_values)
 
   def build_command_line_string(self):
-    """
-    returns the collective values from all of the
-    widgets contained in the panel"""
-    # _f = lambda lst: [x for x in lst if x is not None]
     optional_args = [arg.value for arg in self.optional_args]
     required_args = [c.value for c in self.required_args if c.commands]
     position_args = [c.value for c in self.required_args if not c.commands]
     if position_args:
       position_args.insert(0, "--")
-    return ' '.join(filter(None, chain(required_args, optional_args, position_args)))
+    cmd_string = ' '.join(filter(None, chain(required_args, optional_args, position_args)))
+    return '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
 
   def group_arguments(self, widget_list):
     is_required = lambda widget: widget['required']
@@ -157,9 +191,6 @@ class MyModel(object):
       return collection[attr]
     except:
       return None
-
-
-
 
 
 

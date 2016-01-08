@@ -39,10 +39,10 @@ class Footer(wx.Panel):
     self.layouts = {}
 
     self._init_components()
-    self._init_pages()
+    # self._init_pages()
     self._do_layout()
 
-    pub.subscribe(self.load_view, events.WINDOW_CHANGE)
+    # pub.subscribe(self.load_view, events.WINDOW_CHANGE)
 
     for button in self.buttons:
       self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
@@ -66,35 +66,35 @@ class Footer(wx.Panel):
     pub.send_message(str(event.GetId()))
     event.Skip()
 
-  def _init_pages(self):
-    def config():
-      self.hide_all_buttons()
-      self.cancel_button.Show()
-      self.start_button.Show()
-      self.Layout()
-
-    def running():
-      self.hide_all_buttons()
-      self.stop_button.Show()
-      self.progress_bar.Show()
-      self.progress_bar.Pulse()
-      self.Layout()
-
-    def success():
-      self.hide_all_buttons()
-      self.progress_bar.Hide()
-      self.edit_button.Show()
-      self.restart_button.Show()
-      self.close_button.Show()
-      self.Layout()
-
-    def error():
-      success()
-
-    self.layouts = locals()
-
-  def load_view(self, view_name=None):
-    self.layouts.get(view_name, lambda: None)()
+  # def _init_pages(self):
+  #   def config():
+  #     self.hide_all_buttons()
+  #     self.cancel_button.Show()
+  #     self.start_button.Show()
+  #     self.Layout()
+  #
+  #   def running():
+  #     self.hide_all_buttons()
+  #     self.stop_button.Show()
+  #     self.progress_bar.Show()
+  #     self.progress_bar.Pulse()
+  #     self.Layout()
+  #
+  #   def success():
+  #     self.hide_all_buttons()
+  #     self.progress_bar.Hide()
+  #     self.edit_button.Show()
+  #     self.restart_button.Show()
+  #     self.close_button.Show()
+  #     self.Layout()
+  #
+  #   def error():
+  #     success()
+  #
+  #   self.layouts = locals()
+  #
+  # def load_view(self, view_name=None):
+  #   self.layouts.get(view_name, lambda: None)()
 
   def hide_all_buttons(self):
     for button in self.buttons:

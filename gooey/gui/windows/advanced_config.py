@@ -71,6 +71,9 @@ class WidgetContainer(wx.Panel):
     args = [iter(iterable)] * n
     return izip_longest(fillvalue=fillvalue, *args)
 
+  def __iter__(self):
+    return iter(self.widgets)
+
 
 class ConfigPanel(ScrolledPanel, OptionReader):
 
