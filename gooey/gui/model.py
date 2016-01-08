@@ -91,8 +91,10 @@ class MyModel(object):
 
     self.build_spec = build_spec
     self.layout_type = self.build_spec['layout_type']
+    self.auto_start = self.build_spec['auto_start']
     self.progress_regex = self.build_spec['progress_regex']
     self.progress_expr = self.build_spec['progress_expr']
+
     self.program_name = self.build_spec['program_name']
     self.default_size = self.build_spec['default_size']
 

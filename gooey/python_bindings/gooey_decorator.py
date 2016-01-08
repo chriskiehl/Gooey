@@ -6,23 +6,21 @@ Created on Jan 24, 2014
 TODO: this
 '''
 
-import sys
-import os
 import json
-
-from . import config_generator
+import os
+import sys
+from argparse import ArgumentParser
 
 from gooey.gui import application
-
-from argparse import ArgumentParser
 from gooey.gui.util.freeze import get_resource_path
+from . import config_generator
 
 IGNORE_COMMAND = '--ignore-gooey'
 
 def Gooey(f=None,
           advanced=True,
           language='english',
-          autostart=False,  # TODO: add this to the docs. Used to be `show_config=True`
+          auto_start=False,  # TODO: add this to the docs. Used to be `show_config=True`
           program_name=None,
           program_description=None,
           default_size=(610, 530),

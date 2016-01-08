@@ -43,6 +43,9 @@ class Presenter(object):
     else:
       self.view.enable_stop_button()
 
+    if self.model.auto_start:
+      self.model.update_state(States.RUNNNING)
+      self.on_start()
     self.syncronize_from_model()
 
   def update_model(self):

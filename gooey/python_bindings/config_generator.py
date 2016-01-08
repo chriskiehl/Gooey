@@ -18,7 +18,7 @@ def create_from_parser(parser, source_path, **kwargs):
     'target':               run_cmd,
     'program_name':         kwargs.get('program_name') or os.path.basename(sys.argv[0]).replace('.py', ''),
     'program_description':  kwargs.get('program_description', ''),
-    'show_config':          show_config,
+    'auto_start':           kwargs.get('auto_start', False),
     'show_advanced':        kwargs.get('advanced', True),
     'default_size':         kwargs.get('default_size', (610, 530)),
     'num_required_cols':    kwargs.get('required_cols', 1),
