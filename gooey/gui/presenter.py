@@ -3,8 +3,10 @@ from collections import namedtuple
 
 import subprocess
 
+import sys
+
 from gooey.gui import component_builder
-from gooey.gui.controller2 import ProcessController
+from gooey.gui.processor import ProcessController
 from gooey.gui.lang.i18n import _
 from gooey.gui.model import States
 from gooey.gui.pubsub import pub
@@ -21,7 +23,14 @@ class Presenter(object):
       self.model.progress_expr
     )
 
+    pub.subscribe(self.on_cancel, events.WINDOW_CANCEL)
+    pub.subscribe(self.on_stop, events.WINDOW_STOP)
     pub.subscribe(self.on_start, events.WINDOW_START)
+    pub.subscribe(self.on_restart,  events.WINDOW_RESTART)
+    pub.subscribe(self.on_edit, events.WINDOW_EDIT)
+    pub.subscribe(self.on_close, events.WINDOW_CLOSE)
+
+
 
     # console statuses from the other thread
     pub.subscribe(self.on_new_message, 'console_update')
@@ -46,14 +55,19 @@ class Presenter(object):
 
     self.syncronize_from_model()
 
+  def on_edit(self):
+    self.model.update_state(States.CONFIGURING)
+    self.syncronize_from_model()
+
+  def on_restart(self):
+    self.on_start()
 
   def on_start(self):
     self.update_model()
     if not self.model.is_valid():
-      self.view.show_missing_args_dialog()
+      return self.view.show_missing_args_dialog()
     command = self.model.build_command_line_string()
     self.client_runner.run(command)
-
     self.model.update_state(States.RUNNNING)
     self.syncronize_from_model()
 
@@ -63,7 +77,6 @@ class Presenter(object):
 
   def on_progress_change(self, progress):
     # observes changes coming from the subprocess
-    print 'Progress:', progress
     self.view.update_progress_aync(progress)
 
   def on_client_done(self):
@@ -73,14 +86,32 @@ class Presenter(object):
       self.model.update_state(States.ERROR)
     self.syncronize_from_model()
 
-
-
-
   def update_model(self):
     self.update_list(self.model.required_args, self.view.required_section.get_values())
     self.update_list(self.model.optional_args, self.view.optional_section.get_values())
     self.syncronize_from_model()
 
+  def on_cancel(self):
+    if self.view.confirm_exit_dialog():
+      self.view.Destroy()
+      sys.exit()
+
+  def on_stop(self):
+    self.ask_stop()
+
+  def on_close(self):
+    if self.ask_stop():
+      self.view.Destroy()
+      sys.exit()
+
+  def ask_stop(self):
+    if self.view.confirm_stop_dialog():
+      self.stop()
+      return True
+    return False
+
+  def stop(self):
+    self.client_runner.stop()
 
   def update_list(self, collection, new_values):
     for index, val in enumerate(new_values):
@@ -94,6 +125,8 @@ class Presenter(object):
     # update heading titles
     self.view.heading_title = self.model.heading_title
     self.view.heading_subtitle = self.model.heading_subtitle
+    if not self.model.stop_button_disabled:
+      self.view.enable_stop_button()
 
     # refresh the widgets
     for index, widget in enumerate(self.view.required_section):
@@ -132,63 +165,3 @@ class Presenter(object):
     self.view.show('error_symbol', 'edit_button', 'restart_button', 'close_button', 'runtime_display')
     self.view.Layout()
 
-  # def process_result(self, process):
-  #   _stdout, _ = process.communicate()
-  #   if process.returncode == 0:
-  #     self.model.update_state(States.SUCCESS)
-  #     self.syncronize_from_model()
-  #     # pub.send_message(events.WINDOW_CHANGE, view_name=views.SUCCESS_SCREEN)
-  #     # self.success_dialog()
-  #   else:
-  #     self.model.update_state(States.ERROR)
-  #     self.syncronize_from_model()
-  #     # pub.send_message(events.WINDOW_CHANGE, view_name=views.ERROR_SCREEN)
-  #     # self.error_dialog()
-
-  # # FOOTER
-  # def _init_pages(self):
-  #   def config():
-  #     self.hide_all_buttons()
-  #     self.cancel_button.Show()
-  #     self.start_button.Show()
-  #     self.Layout()
-  #
-  #   def running():
-  #     self.hide_all_buttons()
-  #     self.stop_button.Show()
-  #     self.progress_bar.Show()
-  #     self.progress_bar.Pulse()
-  #     self.Layout()
-  #
-  #   def success():
-  #     self.hide_all_buttons()
-  #     self.progress_bar.Hide()
-  #     self.edit_button.Show()
-  #     self.restart_button.Show()
-  #     self.close_button.Show()
-  #     self.Layout()
-  #
-  #   def error():
-  #     success()
-  #
-  #   self.layouts = locals()
-  #
-  # # BODY
-  # def _init_pages(self):
-  #
-  #   def config():
-  #     self.config_panel.Show()
-  #     self.runtime_display.Hide()
-  #
-  #   def running():
-  #     self.config_panel.Hide()
-  #     self.runtime_display.Show()
-  #     self.Layout()
-  #
-  #   def success():
-  #     running()
-  #
-  #   def error():
-  #     running()
-  #
-  #   self.layouts = locals()

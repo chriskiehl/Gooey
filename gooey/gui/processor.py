@@ -8,6 +8,7 @@ from multiprocessing.dummy import Pool
 from gooey.gui.pubsub import pub
 from gooey.gui.util.casting import safe_float
 from gooey.gui.util.functional import unit, bind
+from gooey.gui.util.taskkill import taskkill
 
 
 class ProcessController(object):
@@ -24,6 +25,13 @@ class ProcessController(object):
     if not self._process:
       raise Exception('Not started!')
     self._process.poll()
+
+  def stop(self):
+    if self.running():
+      taskkill(self._process.pid)
+
+  def running(self):
+    return self._process and self.poll() is None
 
   def run(self, command):
     env = os.environ.copy()

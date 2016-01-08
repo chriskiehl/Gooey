@@ -9,13 +9,16 @@ from distutils import config
 import wx
 from gooey.gui.pubsub import pub
 
-from gooey.gui.lang import i18n
+from gooey.gui.lang.i18n import _
 from gooey.gui.windows.advanced_config import ConfigPanel
 from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
 from gooey.gui import image_repository, events
 from gooey.gui.util import wx_util
 from gooey.gui.windows import footer, header, layouts
 
+
+YES = 5103
+NO = 5104
 
 class BaseWindow(wx.Frame):
   def __init__(self, build_spec, layout_type):
@@ -153,7 +156,7 @@ class BaseWindow(wx.Frame):
     # init gui
     # _desc = self.build_spec['program_description']
     # self.head_panel = header.FrameHeader(
-    #     heading=i18n._("settings_title"),
+    #     heading=_("settings_title"),
     #     subheading=_desc or '',
     #     parent=self)
     self.runtime_display = RuntimeDisplay(self)
@@ -272,8 +275,15 @@ class BaseWindow(wx.Frame):
     return result
 
   def show_missing_args_dialog(self):
-    self.show_dialog(i18n._('error_title'), i18n._('error_required_fields'), wx.ICON_ERROR)
+    self.show_dialog(_('error_title'), _('error_required_fields'), wx.ICON_ERROR)
 
+  def confirm_exit_dialog(self):
+    result = self.show_dialog(_('sure_you_want_to_exit'), _('close_program'), wx.YES_NO)
+    return result == YES
+
+  def confirm_stop_dialog(self):
+    result = self.show_dialog(_('sure_you_want_to_stop'), _('stop_task'), wx.YES_NO)
+    return result == YES
 
 if __name__ == '__main__':
   pass
