@@ -121,15 +121,6 @@ class Presenter(object):
   def stop(self):
     self.client_runner.stop()
 
-  @staticmethod
-  def partition(collection, condition):
-    return filter(condition, collection), filter(lambda x: not condition(x), collection)
-
-  def update_list(self, collection, new_values):
-    # convenience method for syncronizing the model -> widget list collections
-    for index, val in enumerate(new_values):
-      collection[index].value = val
-
   def configuring(self):
     self.view.hide_all_buttons()
     self.view.hide('check_mark', 'running_img', 'error_symbol', 'runtime_display')
@@ -155,3 +146,13 @@ class Presenter(object):
     self.view.show('error_symbol', 'edit_button', 'restart_button', 'close_button', 'runtime_display')
     self.view.Layout()
 
+  @staticmethod
+  def partition(collection, condition):
+    return filter(condition, collection), filter(lambda x: not condition(x), collection)
+
+  def update_list(self, collection, new_values):
+    # convenience method for syncronizing the model -> widget list collections
+    for index, val in enumerate(new_values):
+      collection[index].value = val
+
+      
