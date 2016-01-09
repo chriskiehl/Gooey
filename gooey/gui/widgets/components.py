@@ -105,13 +105,6 @@ class BaseGuiComponent(object):
     if val:
       self.widget_pack.widget.SetValue(str(val))
 
-  # def HasOptionString(self):
-  #   return bool(self.widget_pack.option_string)
-  #
-  # def _GetWidget(self):
-  #   # used only for unittesting
-  #   return self.widget_pack.widget
-
   def __repr__(self):
     return self.__class__.__name__
 
@@ -162,21 +155,9 @@ class CheckBox(BaseGuiComponent):
     self.widget.SetValue(val)
 
 
-  # def GetValue(self):
-  #   return self.option_strings if self.widget.GetValue() else ''
-  #
-  # def HasOptionString(self):
-  #   return bool(self.option_strings)
-  #
-  # def _GetWidget(self):
-  #   return self.widget
-
-
 class RadioGroup(object):
   def __init__(self, parent, title, msg):
     self.panel = None
-
-    # self.data = data
 
     self.radio_buttons = []
     self.option_strings = []
@@ -207,7 +188,6 @@ class RadioGroup(object):
 
       vertical_container.Add(help, 1, wx.EXPAND | wx.LEFT, 25)
       vertical_container.AddSpacer(5)
-      # self.panel.Bind(wx.EVT_RADIOBUTTON, self.onSetter, button)
 
     self.panel.SetSizer(vertical_container)
     self.panel.Bind(wx.EVT_SIZE, self.onResize)
@@ -235,18 +215,6 @@ class RadioGroup(object):
   def set_value(self, val):
     pass
 
-  # def GetValue(self):
-  #   vals = [button.GetValue() for button in self.radio_buttons]
-  #   try:
-  #     return self.option_strings[vals.index(True)][0]
-  #   except:
-  #     return ''
-
-  def HasOptionString(self):
-    return bool(self.option_strings)
-
-  def _GetWidget(self):
-    return self.radio_buttons
 
 
 def build_subclass(name, widget_class):
@@ -265,7 +233,3 @@ Dropdown          = build_subclass('Dropdown', widget_pack.DropdownPayload)
 Counter           = build_subclass('Counter', widget_pack.CounterPayload)
 MultiDirChooser   = build_subclass('MultiDirChooser', widget_pack.MultiDirChooserPayload)
 
-if __name__ == '__main__':
-
-  DirChooser = type('DirChooser', (BaseGuiComponent,), {'widget_pack': widget_pack.DirChooserPayload })
-  d = DirChooser()

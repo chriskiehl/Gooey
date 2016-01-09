@@ -17,6 +17,9 @@ PADDING = 10
 
 
 class WidgetContainer(wx.Panel):
+  '''
+  Collection of widgets
+  '''
   def __init__(self, parent, section_name, *args, **kwargs):
     wx.Panel.__init__(self, parent, *args, **kwargs)
     self.section_name = section_name
@@ -30,12 +33,8 @@ class WidgetContainer(wx.Panel):
     for index, widget in enumerate(widgets):
       widget_class = getattr(components, widget.type)
       widget_instance = widget_class(self, widget.title, widget.help)
-      # widget_instance.bind(wx.EVT_TEXT, self.publish_change)
       self.widgets.append(widget_instance)
     self.layout()
-
-  def publish_change(self, evt):
-    evt.Skip()
 
   def get_values(self):
     return [x.get_value() for x in self.widgets]
@@ -65,7 +64,6 @@ class WidgetContainer(wx.Panel):
 
   def chunk(self, iterable, n, fillvalue=None):
     "itertools recipe: Collect data into fixed-length chunks or blocks"
-    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
     args = [iter(iterable)] * n
     return izip_longest(fillvalue=fillvalue, *args)
 
@@ -78,19 +76,15 @@ class ConfigPanel(ScrolledPanel):
   def __init__(self, parent, req_cols=1, opt_cols=3, title=None, **kwargs):
     ScrolledPanel.__init__(self, parent, **kwargs)
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
-
     self.SetDoubleBuffered(True)
 
     self.title = title
-
     self._num_req_cols = req_cols
     self._num_opt_cols = opt_cols
-
     self.required_section = WidgetContainer(self, i18n._("required_args_msg"))
     self.optional_section = WidgetContainer(self, i18n._("optional_args_msg"))
 
     self._do_layout()
-
     self.Bind(wx.EVT_SIZE, self.OnResize)
 
 
@@ -101,26 +95,9 @@ class ConfigPanel(ScrolledPanel):
     container.AddSpacer(15)
     container.Add(self.required_section, *STD_LAYOUT)
     container.Add(self.optional_section, *STD_LAYOUT)
-
     self.SetSizer(container)
 
   def OnResize(self, evt):
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
     evt.Skip()
 
-  def GetOptions(self):
-    """
-    returns the collective values from all of the
-    widgets contained in the panel"""
-    _f = lambda lst: [x for x in lst if x is not None]
-    optional_args = _f([c.GetValue() for c in self.widgets.optional_args])
-    required_args = _f([c.GetValue() for c in self.widgets.required_args if c.HasOptionString()])
-    position_args = _f([c.GetValue() for c in self.widgets.required_args if not c.HasOptionString()])
-    if position_args: position_args.insert(0, "--")
-    return ' '.join(chain(required_args, optional_args, position_args))
-
-  def GetRequiredArgs(self):
-    return [arg.GetValue() for arg in self.widgets.required_args]
-
-if __name__ == '__main__':
-  pass

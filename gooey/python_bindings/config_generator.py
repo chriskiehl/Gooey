@@ -6,7 +6,7 @@ from gooey.gui.util.quoting import quote
 
 
 def create_from_parser(parser, source_path, **kwargs):
-  show_config = kwargs.get('show_config', False)
+  auto_start = kwargs.get('auto_start', False)
 
   if hasattr(sys, 'frozen'):
     run_cmd = quote(source_path)
@@ -35,13 +35,10 @@ def create_from_parser(parser, source_path, **kwargs):
     'group_by_type':        kwargs.get('group_by_type', True)
   }
 
-  if show_config:
+  if not auto_start:
     build_spec['program_description'] = parser.description or build_spec['program_description']
 
     layout_data = argparse_to_json.convert(parser) if build_spec['show_advanced'] else layouts.basic_config.items()
     build_spec.update(layout_data)
-
-  else:
-    build_spec['manual_start'] = True
 
   return build_spec

@@ -4,23 +4,24 @@ Created on Jan 19, 2014
 '''
 
 import sys
-from distutils import config
 
 import wx
-from gooey.gui.pubsub import pub
 
-from gooey.gui.lang.i18n import _
-from gooey.gui.windows.advanced_config import ConfigPanel
-from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
 from gooey.gui import image_repository, events
+from gooey.gui.lang.i18n import _
+from gooey.gui.pubsub import pub
 from gooey.gui.util import wx_util
 from gooey.gui.windows import footer, header, layouts
-
+from gooey.gui.windows.runtime_display_panel import RuntimeDisplay
 
 YES = 5103
 NO = 5104
 
 class BaseWindow(wx.Frame):
+  '''
+  Primary Frame under which all sub-Panels are organized.
+  '''
+
   def __init__(self, layout_type):
     wx.Frame.__init__(self, parent=None, id=-1)
 
@@ -40,10 +41,9 @@ class BaseWindow(wx.Frame):
     self._init_properties()
     self._init_components()
     self._do_layout()
-    # self._init_pages()
+
     self.Bind(wx.EVT_SIZE, self.onResize)
     self.Bind(wx.EVT_CLOSE, self.onClose)
-
 
   @property
   def window_size(self):
@@ -90,21 +90,10 @@ class BaseWindow(wx.Frame):
     return self.foot_panel.progress_bar
 
   def set_display_font_style(self, style):
-    '''
-    wx.FONTFAMILY_DEFAULT	Chooses a default font.
-    wx.FONTFAMILY_DECORATIVE	A decorative font.
-    wx.FONTFAMILY_ROMAN	A formal, serif font.
-    wx.FONTFAMILY_SCRIPT	A handwriting font.
-    wx.FONTFAMILY_SWISS	A sans-serif font.
-    wx.FONTFAMILY_MODERN	Usually a fixed pitch font.
-    wx.FONTFAMILY_TELETYPE	A teletype font.
-    '''
     # TODO: make this not stupid
     # TODO: _actual_ font support
     self.runtime_display.set_font_style(
       wx.MODERN if style == 'monospace' else wx.DEFAULT)
-
-
 
   def _init_properties(self):
     # self.SetTitle(self.build_spec['program_name'])
@@ -112,6 +101,33 @@ class BaseWindow(wx.Frame):
     # # self.SetMinSize((400, 300))
     self.icon = wx.Icon(image_repository.program_icon, wx.BITMAP_TYPE_ICO)
     self.SetIcon(self.icon)
+
+  def _init_components(self):
+    self.runtime_display = RuntimeDisplay(self)
+    self.head_panel = header.FrameHeader(parent=self)
+    self.foot_panel = footer.Footer(self)
+    self.panels = [self.head_panel, self.config_panel, self.foot_panel]
+
+  def _do_layout(self):
+    sizer = wx.BoxSizer(wx.VERTICAL)
+    sizer.Add(self.head_panel, 0, wx.EXPAND)
+    sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
+
+    if self.layout_type == layouts.COLUMN:
+      self.config_panel = layouts.ColumnLayout(self)
+    else:
+      self.config_panel = layouts.FlatLayout(self)
+
+    sizer.Add(self.config_panel, 1, wx.EXPAND)
+
+    sizer.Add(self.runtime_display, 1, wx.EXPAND)
+
+    self.runtime_display.Hide()
+    sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
+    sizer.Add(self.foot_panel, 0, wx.EXPAND)
+    self.SetSizer(sizer)
+
+    self.sizer = sizer
 
   def enable_stop_button(self):
     self.foot_panel.stop_button.Enable()
@@ -150,83 +166,11 @@ class BaseWindow(wx.Frame):
   def hide_all_buttons(self):
     self.foot_panel.hide_all_buttons()
 
-  def _init_components(self):
-    # init gui
-    # _desc = self.build_spec['program_description']
-    # self.head_panel = header.FrameHeader(
-    #     heading=_("settings_title"),
-    #     subheading=_desc or '',
-    #     parent=self)
-    self.runtime_display = RuntimeDisplay(self)
-    self.head_panel = header.FrameHeader(parent=self)
-    self.foot_panel = footer.Footer(self)
-
-    # if self.build_spec['disable_stop_button']:
-    #   self.foot_panel.stop_button.Disable()
-    # else:
-    #   self.foot_panel.stop_button.Enable()
-
-    self.panels = [self.head_panel, self.config_panel, self.foot_panel]
-
-  def _do_layout(self):
-    sizer = wx.BoxSizer(wx.VERTICAL)
-    sizer.Add(self.head_panel, 0, wx.EXPAND)
-    sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
-
-    if self.layout_type == layouts.COLUMN:
-      self.config_panel = layouts.ColumnLayout(self)
-    else:
-      self.config_panel = layouts.FlatLayout(self)
-
-    sizer.Add(self.config_panel, 1, wx.EXPAND)
-
-    sizer.Add(self.runtime_display, 1, wx.EXPAND)
-
-    self.runtime_display.Hide()
-    sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
-    sizer.Add(self.foot_panel, 0, wx.EXPAND)
-    self.SetSizer(sizer)
-
-    self.sizer = sizer
-
-  def GetOptions(self):
-    return self.config_panel.GetOptions()
-
-  def GetRequiredArgs(self):
-    return self.config_panel.GetRequiredArgs()
-
-  def GetOptionalArgs(self):
-    return self.config_panel.GetOptionalArgs()
-
-
   def update_console_async(self, msg):
-    wx.CallAfter(self.PublishConsoleMsg, msg)
+    wx.CallAfter(self.runtime_display.append_text, msg)
 
   def update_progress_aync(self, progress):
     wx.CallAfter(self.UpdateProgressBar, progress)
-
-
-  # def _init_pages(self):
-  #
-  #   def config():
-  #     self.config_panel.Show()
-  #     self.runtime_display.Hide()
-  #
-  #   def running():
-  #     self.config_panel.Hide()
-  #     self.runtime_display.Show()
-  #     self.Layout()
-  #
-  #   def success():
-  #     running()
-  #
-  #   def error():
-  #     running()
-  #
-  #   self.layouts = locals()
-  #
-  # def load_view(self, view_name=None):
-  #   self.layouts.get(view_name, lambda: None)()
 
   def onResize(self, evt):
     evt.Skip()
@@ -235,9 +179,6 @@ class BaseWindow(wx.Frame):
     if evt.CanVeto():
       evt.Veto()
     pub.send_message(str(events.WINDOW_CLOSE))
-
-  def PublishConsoleMsg(self, text):
-    self.runtime_display.append_text(text)
 
   def UpdateProgressBar(self, value):
     pb = self.foot_panel.progress_bar

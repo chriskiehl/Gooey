@@ -1,16 +1,11 @@
-from functools import partial
-from gooey.gui.lang import i18n
-from gooey.gui.util.filedrop import FileDrop
-from gooey.gui.util.quoting import quote
-
-__author__ = 'Chris'
-
-from abc import ABCMeta, abstractmethod
-
 import os
 import wx
-import wx.lib.agw.multidirdialog as MDD
 
+import wx.lib.agw.multidirdialog as MDD
+from abc import ABCMeta, abstractmethod
+
+from gooey.gui.lang import i18n
+from gooey.gui.util.filedrop import FileDrop
 from gooey.gui.widgets.calender_dialog import CalendarDlg
 
 
@@ -63,21 +58,10 @@ class BaseChooser(WidgetPack):
     widget_sizer.AddSpacer(10)
     widget_sizer.Add(self.button, 0, wx.ALIGN_CENTER_VERTICAL)
 
-    parent.Bind(wx.EVT_BUTTON, self.onButton, self.button)
     return widget_sizer
 
   def get_value(self):
     return self.widget.GetValue()
-
-  # def getValue(self):
-  #   value = self.widget.GetValue()
-  #   if self.option_string and value:
-  #     return '{0} {1}'.format(self.option_string, quote(value))
-  #   else:
-  #     return quote(value) if value else ''
-  #
-  # def onButton(self, evt):
-  #   raise NotImplementedError
 
   def __repr__(self):
     return self.__class__.__name__
@@ -105,12 +89,6 @@ class BaseMultiFileChooser(BaseFileChooser):
     BaseFileChooser.__init__(self)
     self.dialog = dialog
 
-  # def getValue(self):
-  #   value = ' '.join(quote(x) for x in self.widget.GetValue().split(os.pathsep) if x)
-  #   if self.option_string and value:
-  #     return '{} {}'.format(self.option_string, value)
-  #   return value or ''
-
   def get_path(self, dlg):
     return os.pathsep.join(dlg.GetPaths())
 
@@ -135,7 +113,6 @@ class MultiDirChooserPayload(BaseMultiFileChooser):
     BaseMultiFileChooser.__init__(self, MultiDirChooserPayload.MyMultiDirChooser)
 
 
-
 class TextInputPayload(WidgetPack):
   def __init__(self, no_quoting=False):
     self.widget = None
@@ -156,22 +133,6 @@ class TextInputPayload(WidgetPack):
 
   def get_value(self):
     return self.widget.GetValue()
-
-  # def getValue(self):
-  #   if self.no_quoting:
-  #     _quote = lambda value: value
-  #   else:
-  #     _quote = quote
-  #   value = self.widget.GetValue()
-  #   if value and self.option_string:
-  #     return '{} {}'.format(self.option_string, _quote(value))
-  #   else:
-  #     return _quote(value) if value else ''
-  #
-  # def _SetValue(self, text):
-  #   # used for testing
-  #   self.widget.SetLabelText(text)
-
 
 class DropdownPayload(WidgetPack):
   default_value = 'Select Option'
@@ -197,22 +158,9 @@ class DropdownPayload(WidgetPack):
   def get_value(self):
     return self.widget.GetValue()
 
-  # def getValue(self):
-  #   if self.no_quoting:
-  #     _quote = lambda value: value
-  #   else:
-  #     _quote = quote
-  #   value = self.widget.GetValue()
-  #   if value == self.default_value:
-  #     return ''
-  #   elif value and self.option_string:
-  #     return '{} {}'.format(self.option_string, _quote(value))
-  #   else:
-  #     return _quote(value) if value else ''
-
-  def _SetValue(self, text):
-    # used for testing
-    self.widget.SetLabelText(text)
+  def set_value(self, text):
+    # TODO: can we set dropdowns this way?
+    self.widget.SetValue(text)
 
 
 class CounterPayload(WidgetPack):
@@ -234,41 +182,12 @@ class CounterPayload(WidgetPack):
   def get_value(self):
     return self.widget.GetValue()
 
-  # def getValue(self):
-  #   '''
-  #   Returns
-  #     str(option_string * DropDown Value)
-  #     e.g.
-  #     -vvvvv
-  #   '''
-  #   return self.widget.GetValue()
-    # if not str(dropdown_value).isdigit():
-    #   return ''
-    # arg = str(self.option_string).replace('-', '')
-    # repeated_args = arg * int(dropdown_value)
-    # return '-' + repeated_args
-
-  # def getValue(self):
-  #   '''
-  #   Returns
-  #     str(option_string * DropDown Value)
-  #     e.g.
-  #     -vvvvv
-  #   '''
-  #   dropdown_value = self.widget.GetValue()
-  #   if not str(dropdown_value).isdigit():
-  #     return ''
-  #   arg = str(self.option_string).replace('-', '')
-  #   repeated_args = arg * int(dropdown_value)
-  #   return '-' + repeated_args
-
 class DirDialog(wx.DirDialog):
   def __init__(self, parent, *args, **kwargs):
     wx.DirDialog.__init__(self, parent, 'Select Directory', style=wx.DD_DEFAULT_STYLE)
 
+
 def safe_default(data, default):
-  # str(None) is 'None'!? Whaaaaat...?
-  # return str(data['default']) if data['default'] else default
   return ''
 
 def build_dialog(style, exist_constraint=True, **kwargs):
@@ -277,9 +196,9 @@ def build_dialog(style, exist_constraint=True, **kwargs):
   else:
     return lambda panel: wx.FileDialog(panel, style=style, **kwargs)
 
-
 def build_subclass(subclass, dialog):
   return type(subclass, (BaseFileChooser,), {'dialog': dialog})
+
 
 FileSaverPayload   = build_subclass('FileSaverPayload', staticmethod(build_dialog(wx.FD_SAVE, False, defaultFile="Enter Filename")))
 FileChooserPayload = build_subclass('FileChooserPayload', staticmethod(build_dialog(wx.FD_OPEN)))

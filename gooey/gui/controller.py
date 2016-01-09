@@ -3,9 +3,6 @@ from gooey.gui.presenter import Presenter
 from gooey.gui.windows.base_window import BaseWindow
 
 
-YES = 5103
-NO = 5104
-
 class Controller(object):
 
   def __init__(self, build_spec):
