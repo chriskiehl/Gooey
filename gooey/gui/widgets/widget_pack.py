@@ -58,6 +58,8 @@ class BaseChooser(WidgetPack):
     widget_sizer.AddSpacer(10)
     widget_sizer.Add(self.button, 0, wx.ALIGN_CENTER_VERTICAL)
 
+    parent.Bind(wx.EVT_BUTTON, self.on_button, self.button)
+
     return widget_sizer
 
   def get_value(self):
@@ -72,7 +74,7 @@ class BaseFileChooser(BaseChooser):
   def __init__(self):
     BaseChooser.__init__(self)
 
-  def onButton(self, evt):
+  def on_button(self, evt):
     dlg = self.dialog(self.parent)
     result = (self.get_path(dlg)
               if dlg.ShowModal() == wx.ID_OK
