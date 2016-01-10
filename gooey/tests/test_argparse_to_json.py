@@ -7,23 +7,63 @@ def test_parser_converts_to_correct_type(empty_parser, complete_parser, subparse
   assert convert(empty_parser)['layout_type'] == 'standard'
   assert convert(complete_parser)['layout_type'] == 'standard'
 
+def test_parser_without_subparser_recieves_root_entry(complete_parser):
+  '''
+  Non-subparser setups should receive a default root key called 'primary'
+  '''
+  result = convert(complete_parser)
+  assert 'primary' in result['widgets']
+
+def test_grouping_structure(complete_parser):
+  '''
+  The output of the 'widgets' branch is now wrapped in another
+  layer to facilitate interop with the subparser structure
+
+  old: widgets: []
+  new: widgets: {'a': {}, 'b': {}, ..}
+  '''
+  result = convert(complete_parser)
+  groupings = result['widgets']
+  # should now be a dict rather than a list
+  assert isinstance(groupings, dict)
+  # make sure our expected root keys are there
+  for name, group in groupings.iteritems():
+    assert 'command' in group
+    assert 'contents' in group
+    # contents should be the old list of widget info
+    assert isinstance(group['contents'], list)
+
+def test_subparser_uses_prog_value_if_available():
+  parser = argparse.ArgumentParser(description='qidev')
+  parser.add_argument('--verbose', help='be verbose', dest='verbose', action='store_true', default=False)
+  subs = parser.add_subparsers(help='commands', dest='command')
+  # NO prog definition for the sub parser
+  subs.add_parser('config', help='configure defaults for qidev')
+
+  # The stock parser name supplied above (e.g. config) is
+  # now in the converted doc
+  result = convert(parser)
+  assert 'config' in result['widgets']
+
+  # new subparser
+  parser = argparse.ArgumentParser(description='qidev')
+  parser.add_argument('--verbose', help='be verbose', dest='verbose', action='store_true', default=False)
+  subs = parser.add_subparsers(help='commands', dest='command')
+  # prog definition for the sub parser IS supplied
+  subs.add_parser('config', prog="My Config", help='configure defaults for qidev')
+
+  # Should've picked up the prog value
+  result = convert(parser)
+  assert 'My Config' in result['widgets']
 
 def test_convert_std_parser(complete_parser):
   result = convert(complete_parser)
-  assert result['layout_type'] == 'standard'
-  assert result['widgets']
-  assert isinstance(result['widgets'], list)
-
-  entry = result['widgets'][0]
+  # grab the first entry from the dict
+  entry = result['widgets']['primary']['contents'][0]
+  print entry
   assert 'type' in entry
   assert 'required' in entry
   assert 'data' in entry
-
-  required = filter(lambda x: x['required'], result['widgets'])
-  optional = filter(lambda x: not x['required'], result['widgets'])
-  assert len(required) == 4
-  assert len(optional) == 8
-
 
 def test_convert_sub_parser(subparser):
   result = convert(subparser)
