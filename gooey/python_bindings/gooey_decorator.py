@@ -35,7 +35,7 @@ def Gooey(f=None,
           progress_expr=None,
           disable_progress_bar_animation=False,
           disable_stop_button=False,
-          group_by_type=False):
+          group_by_type=True):
   '''
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end
