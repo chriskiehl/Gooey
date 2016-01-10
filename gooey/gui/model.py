@@ -131,10 +131,6 @@ class MyModel(object):
     self.argument_groups = self.wrap(self.build_spec.get('widgets', {}))
     self.active_group = iter(self.argument_groups).next()
 
-    # reqs, opts = self.group_arguments(self.argument_groups[self.active_group]['contents'])
-    # self._required_args = reqs
-    # self._optional_args = opts
-
     self.text_states = {
       States.CONFIGURING: {
         'title': _("settings_title"),
