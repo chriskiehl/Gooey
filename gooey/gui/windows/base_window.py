@@ -89,6 +89,9 @@ class BaseWindow(wx.Frame):
   def progress_bar(self):
     return self.foot_panel.progress_bar
 
+  def set_list_contents(self, contents):
+    self.config_panel.sidebar.set_list_contents(contents)
+
   def set_display_font_style(self, style):
     # TODO: make this not stupid
     # TODO: _actual_ font support
@@ -128,6 +131,12 @@ class BaseWindow(wx.Frame):
     self.SetSizer(sizer)
 
     self.sizer = sizer
+
+  def freeze(self):
+    self.Freeze()
+
+  def thaw(self):
+    self.Thaw()
 
   def enable_stop_button(self):
     self.foot_panel.stop_button.Enable()

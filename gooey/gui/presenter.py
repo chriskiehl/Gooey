@@ -4,6 +4,8 @@ from gooey.gui.processor import ProcessController
 from gooey.gui.model import States
 from gooey.gui.pubsub import pub
 from gooey.gui import events
+from gooey.gui.windows import layouts
+
 
 class Presenter(object):
   def __init__(self, view, model):
@@ -28,10 +30,21 @@ class Presenter(object):
     pub.subscribe(self.on_client_done, 'execution_complete')
 
 
+    pub.subscribe(self.on_selection_change, events.LIST_BOX)
+
+
+  def on_selection_change(self, selection):
+    self.update_model()
+    self.model.active_group = selection
+    self.redraw_from_model()
+    self.syncronize_from_model()
+
   def initialize_view(self):
     self.view.window_title = self.model.program_name
     self.view.window_size = self.model.default_size
 
+    self.view.required_section.clear()
+    self.view.optional_section.clear()
     self.view.required_section.populate(self.model.required_args)
     self.view.optional_section.populate(self.model.optional_args)
 
@@ -42,6 +55,9 @@ class Presenter(object):
       self.view.disable_stop_button()
     else:
       self.view.enable_stop_button()
+
+    if self.model.layout_type == layouts.COLUMN:
+      self.view.set_list_contents(self.model.argument_groups.keys())
 
     if self.model.auto_start:
       self.model.update_state(States.RUNNNING)
@@ -66,6 +82,15 @@ class Presenter(object):
 
     # swap the views
     getattr(self, self.model.current_state)()
+
+  def redraw_from_model(self):
+    self.view.freeze()
+    self.view.required_section.clear()
+    self.view.optional_section.clear()
+    self.view.required_section.populate(self.model.required_args)
+    self.view.optional_section.populate(self.model.optional_args)
+    getattr(self, self.model.current_state)()
+    self.view.thaw()
 
   def should_disable_stop_button(self):
     return self.model.stop_button_disabled

@@ -8,17 +8,12 @@ from gooey.gui.util import wx_util
 class Sidebar(wx.Panel):
 
   def __init__(self, parent, *args, **kwargs):
-    self.contents = kwargs.pop('contents', [])
     super(Sidebar, self).__init__(parent, *args, **kwargs)
     self.SetDoubleBuffered(True)
 
     self._parent = parent
 
-    self._init_components()
     self._do_layout()
-
-  def _init_components(self):
-    pass
 
   def _do_layout(self):
     self.SetDoubleBuffered(True)
@@ -32,14 +27,19 @@ class Sidebar(wx.Panel):
     container.AddSpacer(15)
     container.Add(wx_util.h1(self, 'Actions'), *STD_LAYOUT)
     container.AddSpacer(5)
-    thing = wx.ListBox(self, -1, choices=self.contents)
-    container.Add(thing, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 10)
+    self.listbox = wx.ListBox(self, -1)
+    container.Add(self.listbox, 1, wx.LEFT | wx.RIGHT | wx.EXPAND, 10)
     container.AddSpacer(20)
     self.SetSizer(container)
-    thing.SetSelection(0)
 
-    self.Bind(wx.EVT_LISTBOX, self.onClick, thing)
+    self.Bind(wx.EVT_LISTBOX, self.selection_change, self.listbox)
 
-  def onClick(self, evt):
-    pub.send_message(events.PANEL_CHANGE, view_name=evt.GetString())
+  def set_list_contents(self, contents):
+    self.listbox.AppendItems(contents)
+    self.listbox.SetSelection(0)
+
+  def selection_change(self, evt):
+    pub.send_message(
+      events.LIST_BOX,
+      selection=self.listbox.GetItems()[self.listbox.GetSelection()])
     evt.Skip()

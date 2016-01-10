@@ -3,6 +3,7 @@ Converts argparse parser actions into json "Build Specs"
 """
 
 import argparse
+import os
 from argparse import (
   _CountAction,
   _HelpAction,
@@ -15,6 +16,8 @@ from argparse import (
 from collections import OrderedDict
 from functools import partial
 from itertools import chain
+
+import sys
 
 VALID_WIDGETS = (
   'FileChooser',
@@ -38,6 +41,15 @@ class UnsupportedConfiguration(Exception):
   pass
 
 
+{
+  'siege': {
+    'command': 'siege',
+    'display_name': 'Siege',
+    'contents': []
+  }
+}
+
+
 def convert(parser):
   widget_dict = getattr(parser, 'widgets', {})
   actions = parser._actions
@@ -46,11 +58,20 @@ def convert(parser):
     if has_required(actions):
       raise UnsupportedConfiguration("Gooey doesn't currently support required arguments when subparsers are present.")
     layout_type = 'column'
-    layout_data = {name.lower(): process(sub_parser, getattr(sub_parser, 'widgets', {}))
-                   for name, sub_parser in get_subparser(actions).choices.iteritems()}
+    layout_data = OrderedDict(
+      (choose_name(name, sub_parser), {
+        'command': name.lower(),
+        'contents': process(sub_parser, getattr(sub_parser, 'widgets', {}))
+      }) for name, sub_parser in get_subparser(actions).choices.iteritems())
+
   else:
     layout_type = 'standard'
-    layout_data = process(parser, widget_dict)
+    layout_data = OrderedDict([
+      ('primary', {
+        'command': None,
+        'contents': process(parser, widget_dict)
+      })
+    ])
 
   return {
     'layout_type': layout_type,
@@ -144,6 +165,12 @@ def is_flag(action):
 def is_counter(action):
   """ _actions which are of type _CountAction """
   return isinstance(action, _CountAction)
+
+def is_default_progname(name, subparser):
+  return subparser.prog == '{} {}'.format(os.path.split(sys.argv[0])[-1], name)
+
+def choose_name(name, subparser):
+  return name if is_default_progname(name, subparser) else subparser.prog
 
 def build_radio_group(mutex_group):
   if not mutex_group:

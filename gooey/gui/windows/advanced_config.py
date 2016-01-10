@@ -29,16 +29,6 @@ class WidgetContainer(wx.Panel):
     self.container = wx.BoxSizer(wx.VERTICAL)
     self.SetSizer(self.container)
 
-  def populate(self, widgets):
-    for index, widget in enumerate(widgets):
-      widget_class = getattr(components, widget.type)
-      widget_instance = widget_class(self, widget.title, widget.help)
-      self.widgets.append(widget_instance)
-    self.layout()
-
-  def get_values(self):
-    return [x.get_value() for x in self.widgets]
-
   def layout(self):
     STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
 
@@ -53,6 +43,20 @@ class WidgetContainer(wx.Panel):
       self.container.AddSpacer(20)
       self.create_component_grid(self.container, self.widgets, cols=2)
       self.container.AddSpacer(10)
+
+  def populate(self, widgets):
+    for index, widget in enumerate(widgets):
+      widget_class = getattr(components, widget.type)
+      widget_instance = widget_class(self, widget.title, widget.help)
+      self.widgets.append(widget_instance)
+    self.layout()
+
+  def get_values(self):
+    return [x.get_value() for x in self.widgets]
+
+  def clear(self):
+    self.container.Clear(True)
+    self.widgets = []
 
   def create_component_grid(self, parent_sizer, components, cols=2):
     for row in self.chunk(components, cols):
@@ -87,7 +91,6 @@ class ConfigPanel(ScrolledPanel):
     self._do_layout()
     self.Bind(wx.EVT_SIZE, self.OnResize)
 
-
   def _do_layout(self):
     STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
 
@@ -100,4 +103,8 @@ class ConfigPanel(ScrolledPanel):
   def OnResize(self, evt):
     self.SetupScrolling(scroll_x=False, scrollToTop=False)
     evt.Skip()
+
+  def clear(self):
+    self.required_section.clear()
+    self.optional_section.clear()
 

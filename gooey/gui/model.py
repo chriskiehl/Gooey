@@ -1,7 +1,18 @@
 import os
+from collections import OrderedDict, namedtuple
 from itertools import chain
 from gooey.gui.lang.i18n import _
 from gooey.gui.util.quoting import quote
+
+
+# class ArgumentGroup(object):
+#   def __init__(self, name, data):
+#     self.name = name
+#     self.command = data['command']
+#     self.required_args = data['contents']
+#     self.optional_args = data['contents']
+
+ArgumentGroup = namedtuple('ArgumentGroup', 'name command required_args optional_args')
 
 
 class MyWidget(object):
@@ -81,22 +92,35 @@ class States(object):
   STOPPED = 'stopped'
 
 
+
 class MyModel(object):
   '''
   '''
+
+  def wrap(self, groups):
+    output = OrderedDict()
+    for name, group in groups.items():
+      output[name] = ArgumentGroup(
+        name,
+        group['command'],
+        *self.group_arguments(group['contents'])
+      )
+    return output
+
 
   def __init__(self, build_spec):
 
     self.current_state = States.CONFIGURING
 
     self.build_spec = build_spec
-    self.layout_type = self.build_spec['layout_type']
-    self.auto_start = self.build_spec['auto_start']
-    self.progress_regex = self.build_spec['progress_regex']
-    self.progress_expr = self.build_spec['progress_expr']
+    self.layout_type = self.build_spec.get('layout_type')
 
-    self.program_name = self.build_spec['program_name']
-    self.default_size = self.build_spec['default_size']
+    self.auto_start = self.build_spec.get('auto_start')
+    self.progress_regex = self.build_spec.get('progress_regex')
+    self.progress_expr = self.build_spec.get('progress_expr')
+
+    self.program_name = self.build_spec.get('program_name')
+    self.default_size = self.build_spec.get('default_size')
 
     self.heading_title = _("settings_title")
     self.heading_subtitle = self.build_spec['program_description'] or ''
@@ -104,9 +128,12 @@ class MyModel(object):
     self.use_monospace_font = self.build_spec.get('monospace_display')
     self.stop_button_disabled = self.build_spec['disable_stop_button']
 
-    reqs, opts = self.group_arguments(self.build_spec.get('widgets', []))
-    self.required_args = reqs
-    self.optional_args = opts
+    self.argument_groups = self.wrap(self.build_spec.get('widgets', {}))
+    self.active_group = iter(self.argument_groups).next()
+
+    # reqs, opts = self.group_arguments(self.argument_groups[self.active_group]['contents'])
+    # self._required_args = reqs
+    # self._optional_args = opts
 
     self.text_states = {
       States.CONFIGURING: {
@@ -126,6 +153,14 @@ class MyModel(object):
         'subtitle': _('finished_error')
       }
     }
+
+  @property
+  def required_args(self):
+    return self.argument_groups[self.active_group].required_args
+
+  @property
+  def optional_args(self):
+    return self.argument_groups[self.active_group].optional_args
 
   def update_state(self, state):
     self.current_state = state

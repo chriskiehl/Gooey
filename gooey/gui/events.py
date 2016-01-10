@@ -17,3 +17,4 @@ WINDOW_EDIT     = new_id()
 
 WINDOW_CHANGE   = new_id()
 PANEL_CHANGE    = new_id()
+LIST_BOX        = new_id()
