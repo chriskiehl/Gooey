@@ -5,13 +5,6 @@ from gooey.gui.lang.i18n import _
 from gooey.gui.util.quoting import quote
 
 
-# class ArgumentGroup(object):
-#   def __init__(self, name, data):
-#     self.name = name
-#     self.command = data['command']
-#     self.required_args = data['contents']
-#     self.optional_args = data['contents']
-
 ArgumentGroup = namedtuple('ArgumentGroup', 'name command required_args optional_args')
 
 
