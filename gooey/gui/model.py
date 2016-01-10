@@ -185,6 +185,8 @@ class MyModel(object):
     if position_args:
       position_args.insert(0, "--")
     cmd_string = ' '.join(filter(None, chain(required_args, optional_args, position_args)))
+    if self.layout_type == 'column':
+      cmd_string = '{} {}'.format(self.argument_groups[self.active_group].command, cmd_string)
     return '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
 
   def group_arguments(self, widget_list):
