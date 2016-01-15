@@ -111,6 +111,7 @@ class MyModel(object):
     self.auto_start = self.build_spec.get('auto_start')
     self.progress_regex = self.build_spec.get('progress_regex')
     self.progress_expr = self.build_spec.get('progress_expr')
+    self.disable_progress_bar_animation = self.build_spec['disable_progress_bar_animation']
 
     self.program_name = self.build_spec.get('program_name')
     self.default_size = self.build_spec.get('default_size')

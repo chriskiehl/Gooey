@@ -129,7 +129,7 @@ class Presenter(object):
 
   def on_progress_change(self, progress):
     # observes changes coming from the subprocess
-    self.view.update_progress_aync(progress)
+    self.view.update_progress_aync(progress, self.model.disable_progress_bar_animation)
 
   def on_client_done(self):
     if self.client_runner.was_success():

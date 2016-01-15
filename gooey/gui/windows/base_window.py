@@ -178,8 +178,8 @@ class BaseWindow(wx.Frame):
   def update_console_async(self, msg):
     wx.CallAfter(self.runtime_display.append_text, msg)
 
-  def update_progress_aync(self, progress):
-    wx.CallAfter(self.UpdateProgressBar, progress)
+  def update_progress_aync(self, progress, disable_animation=False):
+    wx.CallAfter(self.UpdateProgressBar, progress, disable_animation)
 
   def onResize(self, evt):
     evt.Skip()
@@ -189,7 +189,7 @@ class BaseWindow(wx.Frame):
       evt.Veto()
     pub.send_message(str(events.WINDOW_CLOSE))
 
-  def UpdateProgressBar(self, value):
+  def UpdateProgressBar(self, value, disable_animation=False):
     pb = self.foot_panel.progress_bar
     if value < 0:
       pb.Pulse()
@@ -198,8 +198,7 @@ class BaseWindow(wx.Frame):
       if pb.GetValue() != value:
         # Windows 7 progress bar animation hack
         # http://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
-        if self.build_spec["disable_progress_bar_animation"] \
-           and sys.platform.startswith("win"):
+        if disable_animation and sys.platform.startswith("win"):
           if pb.GetRange() == value:
             pb.SetValue(value)
             pb.SetValue(value-1)
