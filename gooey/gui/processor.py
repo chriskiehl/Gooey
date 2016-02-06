@@ -67,7 +67,7 @@ class ProcessController(object):
       if progress is None or not self.progress_consume:
         pub.send_message('console_update', msg=line)
     if self._stop_urgency > 0:
-      pub.send_message('console_update', msg=_('terminated'))
+      pub.send_message('console_update', msg=_('terminated') + "\n")
     pub.send_message('execution_complete')
 
   def _extract_progress(self, text):
