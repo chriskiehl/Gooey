@@ -14,7 +14,8 @@ class Presenter(object):
 
     self.client_runner = ProcessController(
       self.model.progress_regex,
-      self.model.progress_expr
+      self.model.progress_expr,
+      self.model.progress_consume,
     )
 
     pub.subscribe(self.on_cancel, events.WINDOW_CANCEL)

@@ -13,11 +13,12 @@ from gooey.gui.util.taskkill import taskkill, MAX_URGENCY
 
 
 class ProcessController(object):
-  def __init__(self, progress_regex, progress_expr):
+  def __init__(self, progress_regex, progress_expr, progress_consume):
     self._process = None
     self._stop_urgency = 0
     self.progress_regex = progress_regex
     self.progress_expr = progress_expr
+    self.progress_consume = progress_consume
 
   def was_success(self):
     self._process.communicate()
@@ -60,10 +61,11 @@ class ProcessController(object):
       line = process.stdout.readline()
       if not line:
         break
-      pub.send_message('console_update', msg=line)
       progress = self._extract_progress(line)
       if progress is not None:
         pub.send_message('progress_update', progress=progress)
+      if progress is None or not self.progress_consume:
+        pub.send_message('console_update', msg=line)
     if self._stop_urgency > 0:
       pub.send_message('console_update', msg=_('terminated'))
     pub.send_message('execution_complete')
