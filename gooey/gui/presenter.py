@@ -105,7 +105,7 @@ class Presenter(object):
     self.syncronize_from_model()
 
   def on_stop(self):
-    if self.view.confirm_stop_dialog():
+    if self.confirm_stop():
       self.stop()
 
   def on_edit(self):
@@ -124,7 +124,7 @@ class Presenter(object):
     if self.model.stop_button_disabled:
       return
     if self.client_runner.running():
-      if not self.view.confirm_stop_dialog():
+      if not self.confirm_stop():
         return
       self.stop(force=True)
     self.view.Destroy()
@@ -144,6 +144,11 @@ class Presenter(object):
     else:
       self.model.update_state(States.ERROR)
     self.syncronize_from_model()
+
+  def confirm_stop(self):
+    if self.client_runner.stopping():
+      return True
+    return self.view.confirm_stop_dialog()
 
   def stop(self, force=False):
     self.client_runner.stop(force)
