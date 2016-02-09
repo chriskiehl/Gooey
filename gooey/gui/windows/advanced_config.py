@@ -47,7 +47,7 @@ class WidgetContainer(wx.Panel):
   def populate(self, widgets):
     for index, widget in enumerate(widgets):
       widget_class = getattr(components, widget.type)
-      widget_instance = widget_class(self, widget.title, widget.help)
+      widget_instance = widget_class(self, widget.title, widget.help, widget.choices)
       self.widgets.append(widget_instance)
     self.layout()
 

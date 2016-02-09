@@ -17,7 +17,7 @@ class WidgetPack(object):
   __metaclass__ = ABCMeta
 
   @abstractmethod
-  def build(self, parent, data):
+  def build(self, parent, data, choices=None):
     pass
 
   def onResize(self, evt):
@@ -38,16 +38,14 @@ class WidgetPack(object):
 class BaseChooser(WidgetPack):
   def __init__(self):
     self.button_text = i18n._('browse')
-    self.option_string = None
     self.parent = None
     self.widget = None
     self.button = None
 
-  def build(self, parent, data):
+  def build(self, parent, data, choices=None):
     self.parent = parent
-    self.option_string = self.get_command(data)
     self.widget = wx.TextCtrl(self.parent)
-    self.widget.AppendText(safe_default(data, ''))
+    self.widget.AppendText('')
     self.widget.SetMinSize((0, -1))
     dt = FileDrop(self.widget)
     self.widget.SetDropTarget(dt)
@@ -121,16 +119,13 @@ class TextInputPayload(WidgetPack):
     self.option_string = None
     self.no_quoting = no_quoting
 
-  def build(self, parent, data):
-    self.option_string = self.get_command(data)
-    if self.disable_quoting(data):
-      self.no_quoting = True
+  def build(self, parent, data, choices=None):
     self.widget = wx.TextCtrl(parent)
     dt = FileDrop(self.widget)
     self.widget.SetDropTarget(dt)
     self.widget.SetMinSize((0, -1))
     self.widget.SetDoubleBuffered(True)
-    self.widget.AppendText(safe_default(data, ''))
+    self.widget.AppendText('')
     return self.widget
 
   def get_value(self):
@@ -144,15 +139,12 @@ class DropdownPayload(WidgetPack):
     self.option_string = None
     self.no_quoting = no_quoting
 
-  def build(self, parent, data):
-    self.option_string = self.get_command(data)
-    if self.disable_quoting(data):
-      self.no_quoting = True
+  def build(self, parent, data, choices=None):
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,
-      value=safe_default(data, self.default_value),
-      choices=[],
+      value=self.default_value,
+      choices=[self.default_value] + choices,
       style=wx.CB_DROPDOWN
     )
     return self.widget
@@ -161,21 +153,18 @@ class DropdownPayload(WidgetPack):
     return self.widget.GetValue()
 
   def set_value(self, text):
-    # TODO: can we set dropdowns this way?
     self.widget.SetValue(text)
 
 
 class CounterPayload(WidgetPack):
   def __init__(self):
-    self.option_string = None
     self.widget = None
 
-  def build(self, parent, data):
-    self.option_string = self.get_command(data)
+  def build(self, parent, data, choices=None):
     self.widget = wx.ComboBox(
       parent=parent,
       id=-1,
-      value=safe_default(data, ''),
+      value='',
       choices=map(str, range(1, 11)),
       style=wx.CB_DROPDOWN
     )

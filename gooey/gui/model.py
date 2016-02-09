@@ -9,6 +9,9 @@ ArgumentGroup = namedtuple('ArgumentGroup', 'name command required_args optional
 
 
 class MyWidget(object):
+  # TODO: Undumbify damn
+  # TODO: Undumbify _value/value access
+  
   def __init__(self, type, title, help, default, nargs, commands, choices):
     self.type = type
     self.title = title
@@ -59,8 +62,8 @@ class MyWidget(object):
       return '-' + repeated_args
 
     if self.type == 'Dropdown':
-      if self._value == self.default:
-        return ''
+      if self._value == 'Select Option':
+        return None
       elif self.commands and self._value:
         return '{} {}'.format(self.commands[0], quote(self._value))
       else:
@@ -74,6 +77,29 @@ class MyWidget(object):
   @value.setter
   def value(self, val):
     self._value = val
+
+  @classmethod
+  def from_dict(cls, data):
+    def maybe_unpack(collection, attr):
+      # TODO: RadioGroups need to support defaults
+      try:
+        if isinstance(collection, list):
+          return [item[attr] for item in collection]
+        return collection[attr]
+      except:
+        return None
+
+    details = data['data']
+    return cls(
+      data['type'],
+      maybe_unpack(details, 'display_name'),
+      maybe_unpack(details, 'help'),
+      maybe_unpack(details, 'default'),
+      maybe_unpack(details, 'nargs'),
+      maybe_unpack(details, 'commands'),
+      maybe_unpack(details, 'choices')
+    )
+
 
 
 
