@@ -6,6 +6,7 @@ from gooey.gui.pubsub import pub
 from gooey.gui import events
 from gooey.gui.windows import layouts
 
+import wx
 
 class Presenter(object):
   def __init__(self, view, model):
@@ -70,6 +71,11 @@ class Presenter(object):
     self.syncronize_from_model()
 
   def syncronize_from_model(self):
+    #TODO move this out of the presenter
+    #TODO Make all view interactions thread safe
+    wx.CallAfter(self.syncronize_from_model_async)
+
+  def syncronize_from_model_async(self):
     # update heading titles
     self.view.heading_title = self.model.heading_title
     self.view.heading_subtitle = self.model.heading_subtitle
