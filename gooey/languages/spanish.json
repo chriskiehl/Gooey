@@ -1,7 +1,7 @@
 {
     "cancel": "Cancelar", 
     "close": "Cerrar", 
-    "close_program": "¿Cerrar Programa?", 
+    "close_program": "¿Cerrar programa?", 
     "error_title": "Error", 
     "execution_finished": "Ejecución completada", 
     "finished_msg": "¡Terminado! Ya puede cerrar el programa de forma segura.",
@@ -13,7 +13,7 @@
     "running_title": "Ejecutando", 
     "settings_title": "Ajustes", 
     "simple_config": "Introduzca parámetros de línea de comandos",
-    "error_required_fields": "¡Debe rellenar todos los campos de la sección Obligatoria!",
+    "error_required_fields": "¡Debe rellenar todos los campos de la sección obligatoria!",
     "start": "Empezar",
     "stop": "Parar",
     "status": "Estado",
@@ -21,6 +21,6 @@
     "edit": "Editar",
     "success_message": "¡EL programa terminó con éxito!\nPresione el botón OK para salir", 
     "sure_you_want_to_exit": "¿Está seguro de que desea salir?", 
-    "uh_oh": "\n¡Ops! Parece que hubo un problema. \nEnvíe el texto aquí abajo a su desarrollador para comunicar el problema.\n\n{} \t\t\n\t\t",
-    "browse": "Browse"
+    "uh_oh": "\n¡Ops! Parece que hubo un problema. \nEnvíe el texto de la ventana de estado a su desarrollador para comunicar el problema.\n",
+    "browse": "Examinar"
 }
