@@ -21,6 +21,6 @@
     "edit": "Editar",
     "success_message": "¡EL programa terminó con éxito!\nPresione el botón OK para salir", 
     "sure_you_want_to_exit": "¿Está seguro de que desea salir?", 
-    "uh_oh": "\n¡Ops! Parece que hubo un problema. \nEnvíe el texto de la ventana de estado a su desarrollador para comunicar el problema.\n",
+    "uh_oh": "\n¡Ops! Parece que hubo un problema. \nEnvíe el error que aparece debajo a su desarrollador para comunicar el problema.\n",
     "browse": "Examinar"
 }
