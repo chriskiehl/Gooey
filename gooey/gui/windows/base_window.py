@@ -195,7 +195,7 @@ class BaseWindow(wx.Frame):
       pb.Pulse()
     else:
       value = min(int(value), pb.GetRange())
-      if pb.GetValue() != value:
+      if pb.GetValue() != value or value == 0:
         # Windows 7 progress bar animation hack
         # http://stackoverflow.com/questions/5332616/disabling-net-progressbar-animation-when-changing-value
         if disable_animation and sys.platform.startswith("win"):
@@ -216,11 +216,11 @@ class BaseWindow(wx.Frame):
     self.show_dialog(_('error_title'), _('error_required_fields'), wx.ICON_ERROR)
 
   def confirm_exit_dialog(self):
-    result = self.show_dialog(_('sure_you_want_to_exit'), _('close_program'), wx.YES_NO)
+    result = self.show_dialog(_('close_program'), _('sure_you_want_to_exit'), wx.YES_NO)
     return result == YES
 
   def confirm_stop_dialog(self):
-    result = self.show_dialog(_('sure_you_want_to_stop'), _('stop_task'), wx.YES_NO)
+    result = self.show_dialog(_('stop_task'), _('sure_you_want_to_stop'), wx.YES_NO)
     return result == YES
 
 if __name__ == '__main__':

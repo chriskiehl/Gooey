@@ -15,7 +15,8 @@ class Presenter(object):
 
     self.client_runner = ProcessController(
       self.model.progress_regex,
-      self.model.progress_expr
+      self.model.progress_expr,
+      self.model.progress_consume,
     )
 
     pub.subscribe(self.on_cancel, events.WINDOW_CANCEL)
@@ -111,7 +112,8 @@ class Presenter(object):
     self.syncronize_from_model()
 
   def on_stop(self):
-    self.ask_stop()
+    if self.confirm_stop():
+      self.stop()
 
   def on_edit(self):
     self.model.update_state(States.CONFIGURING)
@@ -126,6 +128,12 @@ class Presenter(object):
       sys.exit()
 
   def on_close(self):
+    if self.model.stop_button_disabled:
+      return
+    if self.client_runner.running():
+      if not self.confirm_stop():
+        return
+      self.stop(force=True)
     self.view.Destroy()
     sys.exit()
 
@@ -144,14 +152,13 @@ class Presenter(object):
       self.model.update_state(States.ERROR)
     self.syncronize_from_model()
 
-  def ask_stop(self):
-    if self.view.confirm_stop_dialog():
-      self.stop()
+  def confirm_stop(self):
+    if self.client_runner.stopping():
       return True
-    return False
+    return self.view.confirm_stop_dialog()
 
-  def stop(self):
-    self.client_runner.stop()
+  def stop(self, force=False):
+    self.client_runner.stop(force)
 
   def configuring(self):
     self.view.hide_all_buttons()
@@ -186,5 +193,3 @@ class Presenter(object):
     # convenience method for syncronizing the model -> widget list collections
     for index, val in enumerate(new_values):
       collection[index].value = val
-
-

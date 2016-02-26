@@ -33,6 +33,7 @@ def Gooey(f=None,
           language_dir=get_resource_path('languages'),
           progress_regex=None, # TODO: add this to the docs
           progress_expr=None, # TODO: add this to the docs
+          progress_consume=False, # TODO: add this to the docs
           disable_progress_bar_animation=False,
           disable_stop_button=False,
           group_by_type=True): # TODO: add this to the docs

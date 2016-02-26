@@ -6,36 +6,48 @@ from functools import partial
 from multiprocessing.dummy import Pool
 
 from gooey.gui.pubsub import pub
+from gooey.gui.lang.i18n import _
 from gooey.gui.util.casting import safe_float
 from gooey.gui.util.functional import unit, bind
-from gooey.gui.util.taskkill import taskkill
+from gooey.gui.util.taskkill import taskkill, MAX_URGENCY
 
 
 class ProcessController(object):
-  def __init__(self, progress_regex, progress_expr):
+  def __init__(self, progress_regex, progress_expr, progress_consume):
     self._process = None
+    self._stop_urgency = 0
     self.progress_regex = progress_regex
     self.progress_expr = progress_expr
+    self.progress_consume = progress_consume
 
   def was_success(self):
     self._process.communicate()
-    return self._process.returncode == 0
+    return self._process.returncode == 0 and self._stop_urgency == 0
 
   def poll(self):
     if not self._process:
       raise Exception('Not started!')
     self._process.poll()
 
-  def stop(self):
-    if self.running():
-      taskkill(self._process.pid)
+  def stopping(self):
+    return self._stop_urgency > 0
+
+  def stop(self, force=False):
+    if not self.running():
+      return
+    if force:
+      self._stop_urgency = MAX_URGENCY
+    else:
+      self._stop_urgency += 1
+    taskkill(self._process.pid, self._stop_urgency)
 
   def running(self):
     return self._process and self.poll() is None
 
   def run(self, command):
+    self._stop_urgency = 0
     env = os.environ.copy()
-    env["GOOEY"] = "1"
+    env["GOOEY"] = str(os.getpid())
     self._process  = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE,
                      stderr=subprocess.STDOUT, shell=True, env=env)
     Pool(1).apply_async(self._forward_stdout, (self._process,))
@@ -49,8 +61,13 @@ class ProcessController(object):
       line = process.stdout.readline()
       if not line:
         break
-      pub.send_message('console_update', msg=line)
-      pub.send_message('progress_update', progress=self._extract_progress(line))
+      progress = self._extract_progress(line)
+      if progress is not None:
+        pub.send_message('progress_update', progress=progress)
+      if progress is None or not self.progress_consume:
+        pub.send_message('console_update', msg=line)
+    if self._stop_urgency > 0:
+      pub.send_message('console_update', msg=_('terminated') + "\n")
     pub.send_message('execution_complete')
 
   def _extract_progress(self, text):

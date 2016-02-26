@@ -35,6 +35,7 @@ Uh oh! Looks like there was a problem.
 Copy the text from status window to let your developer know what went wrong.
 ''',
                'error_title': "Error",
+               'terminated': 'The task has been terminated by user.',
                'execution_finished': 'Execution finished',
                'success_message': 'Program completed sucessfully!',
 
