@@ -5,6 +5,8 @@ import subprocess
 from functools import partial
 from multiprocessing.dummy import Pool
 
+import sys
+
 from gooey.gui.pubsub import pub
 from gooey.gui.util.casting import safe_float
 from gooey.gui.util.functional import unit, bind
@@ -36,8 +38,10 @@ class ProcessController(object):
   def run(self, command):
     env = os.environ.copy()
     env["GOOEY"] = "1"
-    self._process  = subprocess.Popen(command, bufsize=1, stdout=subprocess.PIPE,
-                     stderr=subprocess.STDOUT, shell=True, env=env)
+    self._process = subprocess.Popen(
+      command.encode(sys.getfilesystemencoding()),
+      bufsize=1, stdout=subprocess.PIPE,
+      stderr=subprocess.STDOUT, shell=True, env=env)
     Pool(1).apply_async(self._forward_stdout, (self._process,))
 
   def _forward_stdout(self, process):

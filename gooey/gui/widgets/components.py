@@ -104,7 +104,7 @@ class BaseGuiComponent(object):
 
   def set_value(self, val):
     if val:
-      self.widget_pack.widget.SetValue(str(val))
+      self.widget_pack.widget.SetValue(unicode(val))
 
   def __repr__(self):
     return self.__class__.__name__

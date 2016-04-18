@@ -11,7 +11,7 @@ ArgumentGroup = namedtuple('ArgumentGroup', 'name command required_args optional
 class MyWidget(object):
   # TODO: Undumbify damn
   # TODO: Undumbify _value/value access
-  
+
   def __init__(self, type, title, help, default, nargs, commands, choices):
     self.type = type
     self.title = title
@@ -35,7 +35,7 @@ class MyWidget(object):
     if self.type == 'MultiFileChooser':
       value = ' '.join(quote(x) for x in self._value.split(os.pathsep) if x)
       if self.commands and value:
-        return '{} {}'.format(self.commands[0], value)
+        return u'{} {}'.format(self.commands[0], value)
       return value or None
     # if self.type == 'TextField':
     #   if self.commands and self._value:
@@ -44,7 +44,7 @@ class MyWidget(object):
     #     return quote(self._value) if self._value else ''
     if self.type == 'CommandField':
       if self.commands and self._value:
-        return '{} {}'.format(self.commands[0], self._value)
+        return u'{} {}'.format(self.commands[0], self._value)
       else:
         return self._value or None
 
@@ -65,14 +65,23 @@ class MyWidget(object):
       if self._value == 'Select Option':
         return None
       elif self.commands and self._value:
-        return '{} {}'.format(self.commands[0], quote(self._value))
+        return u'{} {}'.format(self.commands[0], quote(self._value))
       else:
         return quote(self._value) if self._value else ''
     else:
       if self.commands and self._value:
-        return '{0} {1}'.format(self.commands[0], quote(self._value))
+        if not self.nargs:
+          v = quote(self._value)
+        else:
+          v = self._value
+        return u'{0} {1}'.format(self.commands[0], v)
       else:
-        return quote(self._value) if self._value else None
+        if not self._value:
+          return None
+        elif not self.nargs:
+          return quote(self._value)
+        else:
+          return self._value
 
   @value.setter
   def value(self, val):
@@ -206,8 +215,8 @@ class MyModel(object):
       position_args.insert(0, "--")
     cmd_string = ' '.join(filter(None, chain(required_args, optional_args, position_args)))
     if self.layout_type == 'column':
-      cmd_string = '{} {}'.format(self.argument_groups[self.active_group].command, cmd_string)
-    return '{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
+      cmd_string = u'{} {}'.format(self.argument_groups[self.active_group].command, cmd_string)
+    return u'{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
 
   def group_arguments(self, widget_list):
     is_required = lambda widget: widget['required']
