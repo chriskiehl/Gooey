@@ -207,9 +207,23 @@ def as_json(action, widget, required):
       'nargs': action.nargs or '',
       'commands': action.option_strings,
       'choices': action.choices or [],
-      'default': action.default
+      'default': clean_default(widget, action.default)
     }
   }
 
+def clean_default(widget_type, default):
+  '''
+  Attemps to safely coalesce the default value down to
+  a valid JSON type.
+
+  See: Issue #147.
+  function references supplied as arguments to the
+  `default` parameter in Argparse cause errors in Gooey.
+  '''
+  if widget_type != 'CheckBox':
+    return default.__name__ if callable(default) else default
+  # checkboxes must be handled differently, as they
+  # must be forced down to a boolean value
+  return default if isinstance(default, bool) else False
 
 
