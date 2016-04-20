@@ -8,6 +8,11 @@ from gooey.gui.windows import layouts
 
 import wx
 
+def fails_test(condition):
+  def inner(x):
+    return not condition(x)
+  return inner
+
 class Presenter(object):
   def __init__(self, view, model):
     self.view = view
@@ -180,11 +185,9 @@ class Presenter(object):
 
   @staticmethod
   def partition(collection, condition):
-    return filter(condition, collection), filter(lambda x: not condition(x), collection)
+    return filter(condition, collection), filter(fails_test(condition), collection)
 
   def update_list(self, collection, new_values):
     # convenience method for syncronizing the model -> widget list collections
     for index, val in enumerate(new_values):
       collection[index].value = val
-
-

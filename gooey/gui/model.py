@@ -8,6 +8,12 @@ from gooey.gui.util.quoting import quote
 ArgumentGroup = namedtuple('ArgumentGroup', 'name command required_args optional_args')
 
 
+def fails_test(condition):
+  def inner(x):
+    return not condition(x)
+  return inner
+
+
 class MyWidget(object):
   # TODO: Undumbify damn
   # TODO: Undumbify _value/value access
@@ -219,8 +225,10 @@ class MyModel(object):
     return u'{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
 
   def group_arguments(self, widget_list):
-    is_required = lambda widget: widget['required']
-    not_checkbox = lambda widget: widget['type'] != 'CheckBox'
+    def is_required(widget):
+      return widget['required']
+    def not_checkbox(widget):
+      return widget['type'] != 'CheckBox'
 
     required_args, optional_args  = self.partition(widget_list, is_required)
     if self.build_spec['group_by_type']:
@@ -229,7 +237,7 @@ class MyModel(object):
 
   @staticmethod
   def partition(collection, condition):
-    return filter(condition, collection), filter(lambda x: not condition(x), collection)
+    return filter(condition, collection), filter(fails_test(condition), collection)
 
   def to_object(self, data):
     details = data['data']

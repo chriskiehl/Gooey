@@ -6,7 +6,10 @@ tie everythign together.
 """
 import wx
 
-new_id = lambda: str(wx.NewId())
+
+def new_id():
+  return str(wx.NewId())
+
 
 WINDOW_STOP     = new_id()
 WINDOW_CANCEL   = new_id()

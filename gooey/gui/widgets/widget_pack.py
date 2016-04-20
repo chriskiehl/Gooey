@@ -183,9 +183,12 @@ def safe_default(data, default):
 
 def build_dialog(style, exist_constraint=True, **kwargs):
   if exist_constraint:
-    return lambda panel: wx.FileDialog(panel, style=style | wx.FD_FILE_MUST_EXIST, **kwargs)
+    def inner(panel):
+      return wx.FileDialog(panel, style=style | wx.FD_FILE_MUST_EXIST, **kwargs)
   else:
-    return lambda panel: wx.FileDialog(panel, style=style, **kwargs)
+    def inner(panel):
+      return wx.FileDialog(panel, style=style, **kwargs)
+  return inner
 
 def build_subclass(subclass, dialog):
   return type(subclass, (BaseFileChooser,), {'dialog': dialog})

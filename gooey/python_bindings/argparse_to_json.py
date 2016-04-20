@@ -157,10 +157,15 @@ def is_standard(action):
           and not isinstance(action, _HelpAction)
           and type(action) not in boolean_actions)
 
+def is_action(action):
+  def inner(Action):
+    return isinstance(action, Action)
+  return inner
+
 def is_flag(action):
   """ _actions which are either storeconst, store_bool, etc.. """
   action_types = [_StoreTrueAction, _StoreFalseAction, _StoreConstAction]
-  return any(map(lambda Action: isinstance(action, Action), action_types))
+  return any(map(is_action(action), action_types))
 
 def is_counter(action):
   """ _actions which are of type _CountAction """
