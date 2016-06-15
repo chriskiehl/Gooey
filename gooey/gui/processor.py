@@ -40,7 +40,7 @@ class ProcessController(object):
     env["GOOEY"] = "1"
     self._process = subprocess.Popen(
       command.encode(sys.getfilesystemencoding()),
-      bufsize=1, stdout=subprocess.PIPE,
+      bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
       stderr=subprocess.STDOUT, shell=True, env=env)
     Pool(1).apply_async(self._forward_stdout, (self._process,))
 
