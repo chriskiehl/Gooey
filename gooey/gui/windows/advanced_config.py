@@ -29,7 +29,7 @@ class WidgetContainer(wx.Panel):
     self.container = wx.BoxSizer(wx.VERTICAL)
     self.SetSizer(self.container)
 
-  def layout(self):
+  def layout(self, num_columns):
     STD_LAYOUT = (0, wx.LEFT | wx.RIGHT | wx.EXPAND, PADDING)
 
     if self.title:
@@ -41,15 +41,15 @@ class WidgetContainer(wx.Panel):
       self.container.AddSpacer(5)
       self.container.Add(wx_util.horizontal_rule(self), *STD_LAYOUT)
       self.container.AddSpacer(20)
-      self.create_component_grid(self.container, self.widgets, cols=2)
+      self.create_component_grid(self.container, self.widgets, cols=num_columns)
       self.container.AddSpacer(10)
 
-  def populate(self, widgets):
+  def populate(self, widgets, num_columns):
     for index, widget in enumerate(widgets):
       widget_class = getattr(components, widget.type)
       widget_instance = widget_class(self, widget.title, widget.help, widget.choices)
       self.widgets.append(widget_instance)
-    self.layout()
+    self.layout(num_columns)
 
   def get_values(self):
     return [x.get_value() for x in self.widgets]

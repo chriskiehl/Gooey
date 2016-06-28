@@ -46,8 +46,8 @@ class Presenter(object):
 
     self.view.required_section.clear()
     self.view.optional_section.clear()
-    self.view.required_section.populate(self.model.required_args)
-    self.view.optional_section.populate(self.model.optional_args)
+    self.view.required_section.populate(self.model.required_args, self.model.num_required_cols)
+    self.view.optional_section.populate(self.model.optional_args, self.model.num_optional_cols)
 
     if self.model.use_monospace_font:
       self.view.set_display_font_style('monospace')
