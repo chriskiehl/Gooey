@@ -93,8 +93,8 @@ class Presenter(object):
     self.view.freeze()
     self.view.required_section.clear()
     self.view.optional_section.clear()
-    self.view.required_section.populate(self.model.required_args)
-    self.view.optional_section.populate(self.model.optional_args)
+    self.view.required_section.populate(self.model.required_args, self.model.num_required_cols)
+    self.view.optional_section.populate(self.model.optional_args, self.model.num_optional_cols)
     getattr(self, self.model.current_state)()
     self.view.thaw()
 
