@@ -377,7 +377,7 @@ Screenshots
 - Removed parsing code, replaced it with @SylvainDe patch
 - Fixed issue #87
 - Fixed issue #85
-- Argparse no longer required to me in `main` (issue 84)
+- Argparse no longer required to be in `main` (issue 84)
 - Drag and Drop support (`Issue #28`)
 - Added drag and drop support
 - Added new widget packs: DateChooser, FileChooser, DirChooser
