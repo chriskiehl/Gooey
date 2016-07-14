@@ -37,11 +37,11 @@ class MyWidget(object):
       if self.commands and value:
         return u'{} {}'.format(self.commands[0], value)
       return value or None
-    # if self.type == 'TextField':
-    #   if self.commands and self._value:
-    #     return '{} {}'.format(self.commands[0], quote(self._value))
-    #   else:
-    #     return quote(self._value) if self._value else ''
+    if self.type == 'Textarea':
+      if self.commands and self._value:
+        return '{} {}'.format(self.commands[0], quote(self._value.encode('unicode_escape')))
+      else:
+        return quote(self._value.encode('unicode_escape')) if self._value else ''
     if self.type == 'CommandField':
       if self.commands and self._value:
         return u'{} {}'.format(self.commands[0], self._value)
