@@ -30,7 +30,8 @@ VALID_WIDGETS = (
   'Counter',
   'RadioGroup',
   'CheckBox',
-  'MultiDirChooser'
+  'MultiDirChooser',
+  'Textarea'
 )
 
 
