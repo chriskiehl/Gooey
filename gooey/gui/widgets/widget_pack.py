@@ -131,6 +131,25 @@ class TextInputPayload(WidgetPack):
   def get_value(self):
     return self.widget.GetValue()
 
+
+class TextAreaPayload(WidgetPack):
+  def __init__(self, no_quoting=False):
+    self.widget = None
+    self.option_string = None
+    self.no_quoting = no_quoting
+
+  def build(self, parent, data, choices=None):
+    self.widget = wx.TextCtrl(parent, style=wx.TE_MULTILINE)
+    dt = FileDrop(self.widget)
+    self.widget.SetDropTarget(dt)
+    self.widget.SetMinSize((0, -1))
+    self.widget.SetDoubleBuffered(True)
+    self.widget.AppendText('')
+    return self.widget
+
+  def get_value(self):
+    return self.widget.GetValue()
+
 class DropdownPayload(WidgetPack):
   default_value = 'Select Option'
 
