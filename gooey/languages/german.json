@@ -14,6 +14,8 @@
     "simple_config": "Befehlszeilenargumente eingeben",
     "start": "Start", 
     "status": "Status", 
+    "restart": "Neustart",
+    "edit": "Bearbeiten",
     "success_message": "Programm war Erfolgreich!\nOK-Button zum Beenden",
     "sure_you_want_to_exit": "Möchten Sie das Programm Beenden",
     "uh_oh": "\nupps ! Irgendwas ist schief gelaufen. \nBitte senden Sie diesen Fehler an den Entwickler.\n\n{} \t\t\n\t\t"
