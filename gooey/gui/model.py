@@ -206,11 +206,17 @@ class MyModel(object):
   def skipping_config(self):
     return self.build_spec['manual_start']
 
+  def parse_only_parser(self):
+    return self.build_spec['parse_only_parser']
+
+  def parse_only_callback(self):
+    return self.build_spec['parse_only_callback']
+
   def is_required_section_complete(self):
     completed_values = filter(None, [arg.value for arg in self.required_args])
     return len(self.required_args) == len(completed_values)
 
-  def build_command_line_string(self):
+  def build_command_line_options_string(self):
     optional_args = [arg.value for arg in self.optional_args]
     required_args = [c.value for c in self.required_args if c.commands]
     position_args = [c.value for c in self.required_args if not c.commands]
@@ -219,6 +225,10 @@ class MyModel(object):
     cmd_string = ' '.join(filter(None, chain(required_args, optional_args, position_args)))
     if self.layout_type == 'column':
       cmd_string = u'{} {}'.format(self.argument_groups[self.active_group].command, cmd_string)
+    return cmd_string
+
+  def build_command_line_string(self):
+    cmd_string = self.build_command_line_options_string()
     return u'{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
 
   def group_arguments(self, widget_list):

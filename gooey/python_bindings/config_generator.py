@@ -13,6 +13,8 @@ def create_from_parser(parser, source_path, **kwargs):
   else:
     run_cmd = '{} -u {}'.format(quote(sys.executable), quote(source_path))
 
+  parse_only = kwargs.get('parse_only', None)
+  
   build_spec = {
     'language':             kwargs.get('language', 'english'),
     'target':               run_cmd,
@@ -32,7 +34,9 @@ def create_from_parser(parser, source_path, **kwargs):
     'progress_expr':        kwargs.get('progress_expr'),
     'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
     'disable_stop_button':  kwargs.get('disable_stop_button'),
-    'group_by_type':        kwargs.get('group_by_type', True)
+    'group_by_type':        kwargs.get('group_by_type', True),
+    'parse_only_parser':    parse_only[0] if parse_only else None,
+    'parse_only_callback':  parse_only[1] if parse_only else None
   }
 
   if not auto_start:
