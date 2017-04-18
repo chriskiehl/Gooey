@@ -44,7 +44,7 @@ Table of Contents
 ----------   
 
 
-###Artist Wanted!
+### Artist Wanted!
 
 Want to contribute to Gooey? We need icons/logos!
 
@@ -55,10 +55,10 @@ Drop me an <a href="mailto:audionautic@gmail.com">email</a> if you want to help 
 
 
 
-##Quick Start
+## Quick Start
 
 
-###Installation instructions
+### Installation instructions
 
 
 The easiest way to install Gooey is via `pip` 
@@ -76,7 +76,7 @@ run `setup.py`
     
 After Gooey is installed, make sure [wxPython](http://www.wxpython.org/download.php) is installed on your machine as well. Unfortanately, this cannot be done from the CLI and should be manually downloaded from the [wxPython website](http://www.wxpython.org/download.php).
 
-###Usage  
+### Usage  
 
 Gooey is attached to your code via a simple decorator on whichever method has your `argparse` declarations (usually `main`).
 
@@ -119,7 +119,7 @@ Gooey will do its best to choose sensible widget defaults to display in the GUI.
       parser.add_argument('Date', widget="DateChooser")
       ...
 
-###Examples
+### Examples
 
 Gooey downloaded and installed? Great! Wanna see it in action? Head over the the [Examples Repository](https://github.com/chriskiehl/GooeyExamples) to download a few ready-to-go example scripts. They'll give you a quick tour of all Gooey's various layouts, widgets, and features. 
 
@@ -155,7 +155,7 @@ Gooey is attached to your code via a simple decorator on whichever method has yo
 
 At run-time, it parses your Python script for all references to `ArgumentParser`. (The older `optparse` is currently not supported.) These references are then extracted, assigned a `component type` based on the `'action'` they provide, and finally used to assemble the GUI.  
 
-####Mappings: 
+#### Mappings: 
 
 Gooey does its best to choose sensible defaults based on the options it finds. Currently, `ArgumentParser._actions` are mapped to the following `WX` components. 
 
@@ -170,7 +170,7 @@ Gooey does its best to choose sensible defaults based on the options it finds. C
 | Mutually Exclusive Group | RadioGroup | <img src="https://cloud.githubusercontent.com/assets/1408720/7904383/f553feb8-07c5-11e5-9d5b-eaa4772075a9.png"/>
 |choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://cloud.githubusercontent.com/assets/1408720/7904379/f54e4da6-07c5-11e5-9e66-d8e6d7f18ac6.png"/> |
 
-###GooeyParser
+### GooeyParser
 
 If the above defaults aren't cutting it, you can control the exact widget type by using the drop-in `ArgumentParser` replacement `GooeyParser`. This gives you the additional keyword argument `widget`, to which you can supply the name of the component you want to display. Best part? You don't have to change any of your `argparse` code to use it. Drop it in, and you're good to go. 
 
@@ -268,7 +268,7 @@ Gooey has a handful of presentation modes so you can tailor its layout to your c
 
 
 
-###Advanced 
+### Advanced 
 
 
 
@@ -300,7 +300,7 @@ It can be toggled via the `advanced` parameter in the `Gooey` decorator.
 
 
 
-###Basic  
+### Basic  
 
 The basic view is best for times when the user is familiar with Console Applications, but you still want to present something a little more polished than a simple terminal. The basic display is accessed by setting the `advanced` parameter in the `gooey` decorator to `False`. 
 
@@ -315,7 +315,7 @@ The basic view is best for times when the user is familiar with Console Applicat
 
 ----------------------------------------------  
 
-###No Config
+### No Config
 
 No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. 
 
@@ -326,7 +326,7 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 ---------------------------------------  
 
 
-##Customizing Icons
+## Customizing Icons
 
 Gooey comes with a set of six default icons. These can be overridden with your own custom images/icons by telling Gooey to search additional directories when initializing. This is done via the `image_dir` argument to the `Goeey` decorator. 
 
@@ -344,7 +344,7 @@ Images are discovered by Gooey based on their _filenames_. So, for example, in o
 * error_icon.png
 
 
-##Packaging
+## Packaging
 
 Thanks to some [awesome contributers](https://github.com/chriskiehl/Gooey/issues/58), packaging Gooey as an executable is super easy. 
 
@@ -365,7 +365,7 @@ Screenshots
 ----------------------------------------------  
 
 
-###Change Log
+### Change Log
 ----------
 
 - Subparser Support! 
