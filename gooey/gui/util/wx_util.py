@@ -8,7 +8,7 @@ import wx
 def make_bold(statictext):
   pointsize = statictext.GetFont().GetPointSize()
   font = wx.Font(pointsize, wx.FONTFAMILY_DEFAULT,
-                 wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False)
+                 wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
   statictext.SetFont(font)
 
 def dark_grey(statictext):
@@ -18,15 +18,15 @@ def dark_grey(statictext):
 def h0(parent, label):
   text = wx.StaticText(parent, label=label)
   font_size = text.GetFont().GetPointSize()
-  font = wx.Font(font_size * 1.4, *(wx.FONTFAMILY_DEFAULT, wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False))
+  font = wx.Font(font_size * 1.4, *(wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
   text.SetFont(font)
   return text
 
 def h1(parent, label):
-  return _header(parent, label, (wx.FONTFAMILY_DEFAULT, wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False))
+  return _header(parent, label, (wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False))
 
 def h2(parent, label):
-  return _header(parent, label, (wx.FONTFAMILY_DEFAULT, wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_NORMAL, False))
+  return _header(parent, label, (wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False))
 
 def _header(parent, label, styles):
   text = wx.StaticText(parent, label=label)

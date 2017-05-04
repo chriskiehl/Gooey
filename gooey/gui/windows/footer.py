@@ -5,7 +5,6 @@ Created on Dec 23, 2013
 '''
 
 import wx
-import wx.animate
 
 from gooey.gui.pubsub import pub
 
