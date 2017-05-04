@@ -19,13 +19,13 @@ def resize_bitmap(parent, _bitmap, target_height):
   size of the top panel), while keeping aspect ratio
   in tact
   '''
-  image = wx.ImageFromBitmap(_bitmap)
+  image = _bitmap.ConvertToImage()
   _width, _height = image.GetSize()
   if _height < target_height:
-    return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
+    return wx.StaticBitmap(parent, -1, wx.Bitmap(image))
   ratio = float(_width) / _height
   image = image.Scale(target_height * ratio, target_height, wx.IMAGE_QUALITY_HIGH)
-  return wx.StaticBitmap(parent, -1, wx.BitmapFromImage(image))
+  return wx.StaticBitmap(parent, -1, wx.Bitmap(image))
 
 
 
