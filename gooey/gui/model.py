@@ -158,7 +158,7 @@ class MyModel(object):
     self.stop_button_disabled = self.build_spec['disable_stop_button']
 
     self.argument_groups = self.wrap(self.build_spec.get('widgets', {}))
-    self.active_group = iter(self.argument_groups).next()
+    self.active_group = next(iter(self.argument_groups))
 
     self.num_required_cols = self.build_spec['num_required_cols']
     self.num_optional_cols = self.build_spec['num_optional_cols']
@@ -207,7 +207,7 @@ class MyModel(object):
     return self.build_spec['manual_start']
 
   def is_required_section_complete(self):
-    completed_values = filter(None, [arg.value for arg in self.required_args])
+    completed_values = list(filter(None, [arg.value for arg in self.required_args]))
     return len(self.required_args) == len(completed_values)
 
   def build_command_line_string(self):
@@ -216,7 +216,7 @@ class MyModel(object):
     position_args = [c.value for c in self.required_args if not c.commands]
     if position_args:
       position_args.insert(0, "--")
-    cmd_string = ' '.join(filter(None, chain(required_args, optional_args, position_args)))
+    cmd_string = ' '.join(list(filter(None, chain(required_args, optional_args, position_args))))
     if self.layout_type == 'column':
       cmd_string = u'{} {}'.format(self.argument_groups[self.active_group].command, cmd_string)
     return u'{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
@@ -228,11 +228,11 @@ class MyModel(object):
     required_args, optional_args  = self.partition(widget_list, is_required)
     if self.build_spec['group_by_type']:
       optional_args = chain(*self.partition(optional_args, not_checkbox))
-    return map(self.to_object, required_args), map(self.to_object, optional_args)
+    return list(map(self.to_object, required_args)), list(map(self.to_object, optional_args))
 
   @staticmethod
   def partition(collection, condition):
-    return filter(condition, collection), filter(lambda x: not condition(x), collection)
+    return list(filter(condition, collection)), list(filter(lambda x: not condition(x), collection))
 
   def to_object(self, data):
     details = data['data']

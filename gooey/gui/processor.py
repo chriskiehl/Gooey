@@ -38,10 +38,16 @@ class ProcessController(object):
   def run(self, command):
     env = os.environ.copy()
     env["GOOEY"] = "1"
-    self._process = subprocess.Popen(
-      command.encode(sys.getfilesystemencoding()),
-      bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-      stderr=subprocess.STDOUT, shell=True, env=env)
+    try:
+      self._process = subprocess.Popen(
+        command.encode(sys.getfilesystemencoding()),
+        bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+        stderr=subprocess.STDOUT, shell=True, env=env)
+    except:
+      self._process = subprocess.Popen(
+        command,
+        bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+        stderr=subprocess.STDOUT, shell=True, env=env)
     Pool(1).apply_async(self._forward_stdout, (self._process,))
 
   def _forward_stdout(self, process):

@@ -7,6 +7,7 @@ Provides Internationalization for all text within the program.
 
 '''
 
+import io
 import os
 import json
 
@@ -19,7 +20,7 @@ def load(language_dir, filename):
   global _DICTIONARY
   try:
     json_file = filename + '.json'
-    with open(os.path.join(language_dir, json_file), 'rb') as f:
+    with io.open(os.path.join(language_dir, json_file), 'r', encoding='utf-8') as f:
       _DICTIONARY = json.load(f)
   except IOError:
     raise IOError('{0} Language file not found at location {1}. '

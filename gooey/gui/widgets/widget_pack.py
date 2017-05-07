@@ -184,7 +184,7 @@ class CounterPayload(WidgetPack):
       parent=parent,
       id=-1,
       value='',
-      choices=map(str, range(1, 11)),
+      choices=list(map(str, range(1, 11))),
       style=wx.CB_DROPDOWN
     )
     return self.widget

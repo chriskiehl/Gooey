@@ -54,7 +54,7 @@ class BaseGuiComponent(object):
     return self.panel
 
   def bind(self, *args, **kwargs):
-    print self.widget_pack.widget.Bind(*args, **kwargs)
+    print(self.widget_pack.widget.Bind(*args, **kwargs))
 
   def get_title(self):
     return self.title.GetLabel()
@@ -104,7 +104,7 @@ class BaseGuiComponent(object):
 
   def set_value(self, val):
     if val:
-      self.widget_pack.widget.SetValue(unicode(val))
+      self.widget_pack.widget.SetValue(str(val))
 
   def __repr__(self):
     return self.__class__.__name__
@@ -196,9 +196,9 @@ class RadioGroup(object):
     return self.panel
 
   def showz(self, evt):
-    print evt
+    print(evt)
     for i in self.radio_buttons:
-      print i.GetValue()
+      print(i.GetValue())
 
   def onResize(self, evt):
     msg = self.help_msgs[0]
