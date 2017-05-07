@@ -27,7 +27,7 @@ def test_grouping_structure(complete_parser):
   # should now be a dict rather than a list
   assert isinstance(groupings, dict)
   # make sure our expected root keys are there
-  for name, group in groupings.iteritems():
+  for name, group in groupings.items():
     assert 'command' in group
     assert 'contents' in group
     # contents should be the old list of widget info
@@ -60,7 +60,7 @@ def test_convert_std_parser(complete_parser):
   result = convert(complete_parser)
   # grab the first entry from the dict
   entry = result['widgets']['primary']['contents'][0]
-  print entry
+  print(entry)
   assert 'type' in entry
   assert 'required' in entry
   assert 'data' in entry
@@ -85,14 +85,14 @@ def test_has_subparsers(subparser, complete_parser):
 
 
 def test_is_required(complete_parser):
-  required = filter(is_required, complete_parser._actions)
+  required = list(filter(is_required, complete_parser._actions))
   assert len(required) == 4
   for action in required:
-    print action.dest.startswith('req')
+    print(action.dest.startswith('req'))
 
 
 def test_is_optional(complete_parser):
-  optional = filter(is_optional, complete_parser._actions)
+  optional = list(filter(is_optional, complete_parser._actions))
   assert len(optional) == 10
   for action in optional:
     assert 'req' not in action.dest

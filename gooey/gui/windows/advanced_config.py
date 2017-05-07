@@ -7,7 +7,10 @@ Managed the internal layout for configuration options
 
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
-from itertools import chain, izip_longest
+try:
+    from itertools import zip_longest
+except ImportError:
+    from itertools import izip_longest as zip_longest
 
 from gooey.gui.util import wx_util
 from gooey.gui.lang import i18n
@@ -69,7 +72,7 @@ class WidgetContainer(wx.Panel):
   def chunk(self, iterable, n, fillvalue=None):
     "itertools recipe: Collect data into fixed-length chunks or blocks"
     args = [iter(iterable)] * n
-    return izip_longest(fillvalue=fillvalue, *args)
+    return zip_longest(fillvalue=fillvalue, *args)
 
   def __iter__(self):
     return iter(self.widgets)
