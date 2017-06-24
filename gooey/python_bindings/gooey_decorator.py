@@ -21,6 +21,7 @@ def Gooey(f=None,
           advanced=True,
           language='english',
           auto_start=False,  # TODO: add this to the docs. Used to be `show_config=True`
+          target=None,
           program_name=None,
           program_description=None,
           default_size=(610, 530),
