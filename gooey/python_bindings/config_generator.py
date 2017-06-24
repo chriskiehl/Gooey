@@ -8,10 +8,12 @@ from gooey.gui.util.quoting import quote
 def create_from_parser(parser, source_path, **kwargs):
   auto_start = kwargs.get('auto_start', False)
 
-  if hasattr(sys, 'frozen'):
-    run_cmd = quote(source_path)
-  else:
-    run_cmd = '{} -u {}'.format(quote(sys.executable), quote(source_path))
+  run_cmd = kwargs.get('target')
+  if run_cmd is None:
+    if hasattr(sys, 'frozen'):
+      run_cmd = quote(source_path)
+    else:
+      run_cmd = '{} -u {}'.format(quote(sys.executable), quote(source_path))
 
   build_spec = {
     'language':             kwargs.get('language', 'english'),
