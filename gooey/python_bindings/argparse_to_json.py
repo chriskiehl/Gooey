@@ -121,8 +121,11 @@ def get_widget(action, widgets):
   return supplied_widget or type_arg_widget or None
 
 def is_required(action):
-  '''_actions which are positional or possessing the `required` flag '''
-  return not action.option_strings and not isinstance(action, _SubParsersAction) or action.required == True
+  '''
+  _actions possessing the `required` flag and not implicitly optional
+  through `nargs` being '*' or '?'
+  '''
+  return not isinstance(action, _SubParsersAction) and (action.required == True and action.nargs not in ['*', '?'])
 
 def has_required(actions):
   return filter(None, filter(is_required, actions))
@@ -137,8 +140,10 @@ def get_subparser(actions):
     return filter(is_subparser, actions)[0]
 
 def is_optional(action):
-  '''_actions not positional or possessing the `required` flag'''
-  return action.option_strings and not action.required
+  '''
+  _actions either not possessing the `required` flag or implicitly optional through `nargs` being '*' or '?'
+  '''
+  return (not action.required) or action.nargs in ['*', '?']
 
 def is_choice(action):
   ''' action with choices supplied '''
