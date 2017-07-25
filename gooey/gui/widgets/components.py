@@ -234,4 +234,4 @@ CommandField      = build_subclass('CommandField', widget_pack.TextInputPayload(
 Dropdown          = build_subclass('Dropdown', widget_pack.DropdownPayload)
 Counter           = build_subclass('Counter', widget_pack.CounterPayload)
 MultiDirChooser   = build_subclass('MultiDirChooser', widget_pack.MultiDirChooserPayload)
-
+PasswordField     = build_subclass('PasswordField', widget_pack.PasswordInputPayload)
