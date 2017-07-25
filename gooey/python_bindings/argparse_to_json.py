@@ -31,7 +31,8 @@ VALID_WIDGETS = (
   'RadioGroup',
   'CheckBox',
   'MultiDirChooser',
-  'Textarea'
+  'Textarea',
+  'PasswordField'
 )
 
 
