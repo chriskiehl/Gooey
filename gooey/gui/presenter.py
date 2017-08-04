@@ -1,4 +1,5 @@
 import sys
+import shlex
 
 from gooey.gui.processor import ProcessController
 from gooey.gui.model import States
@@ -7,6 +8,7 @@ from gooey.gui import events
 from gooey.gui.windows import layouts
 
 import wx
+from argparse import ArgumentParser
 
 class Presenter(object):
   def __init__(self, view, model):
@@ -101,10 +103,27 @@ class Presenter(object):
   def should_disable_stop_button(self):
     return self.model.stop_button_disabled
 
+  def handle_parse_only(self):
+    parser = self.model.parse_only_parser()
+    callback = self.model.parse_only_callback()
+    
+    if callable(callback) and parser is not None:
+      command = self.model.build_command_line_options_string()
+      ArgumentParser.parse_args = ArgumentParser.original_parse_args
+      args = parser.parse_args(shlex.split(command))
+      callback(args)
+      return True
+    return False
+
   def on_start(self):
     self.update_model()
     if not self.model.is_valid():
       return self.view.show_missing_args_dialog()
+
+    if self.handle_parse_only():
+      self.view.Destroy()
+      return
+
     command = self.model.build_command_line_string()
     self.client_runner.run(command)
     self.model.update_state(States.RUNNNING)

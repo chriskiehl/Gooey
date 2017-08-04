@@ -250,7 +250,7 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 | advanced | Toggles whether to show the 'full' configuration screen, or a simplified version | 
 | show_config | Skips the configuration all together and runs the program immediately |
 | language | Tells Gooey which language set to load from the `gooey/languages` directory.|
-|program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
+| program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 
 | required_cols | Controls how many columns are in the Required Arguments section |
@@ -260,7 +260,7 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 | monospace_display | Uses a mono-spaced font in the output screen | 
 | image_dir | Path to the directory in which Gooey should look for custom images/icons |
 | language_dir | Path to the directory in which Gooey should look for custom languages files |
-
+| parse_only | Receive arguments from GUI and return to previous environment(mostly CLI) with arguments. Should be a tuple of (argumentParser, callback_function(parsed_arguments)) |
 
 
 Run Modes
