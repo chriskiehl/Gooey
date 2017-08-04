@@ -2,9 +2,10 @@
     "cancel": "取消",
     "close": "关闭",
     "close_program": "确认退出?",
+    "stop_task": "您确定要停止任务？",
     "error_title": "错误",
     "execution_finished": "运行完成",
-    "finished_msg": "运行结束! 你现在可以安全的关闭程序。",
+    "finished_msg": "运行结束! 您现在可以安全的关闭程序。",
     "finished_error": "运行出错",
     "finished_title": "运行结束",
     "optional_args_msg": "可选参数",
@@ -20,7 +21,8 @@
     "restart": "重启",
     "edit": "编辑",
     "success_message": "程序成功退出!\n按OK键退出",
-    "sure_you_want_to_exit": "你确定要退出?",
-    "uh_oh": "\nUh 糟糕! 程序出现了故障。 \n复制下方的错误信息给你开发员。\n\n{} \t\t\n\t\t",
+    "sure_you_want_to_exit": "您确定要退出?",
+    "sure_you_want_to_stop": "您确定您想要停止任务？ \n这可能会损坏您的数据！",
+    "uh_oh": "\nUh 糟糕! 程序出现了故障。 \n复制下方的错误信息给开发者。\n\n{} \t\t\n\t\t",
     "browse": "浏览"
 }
