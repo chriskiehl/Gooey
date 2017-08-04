@@ -191,6 +191,8 @@ class BaseWindow(wx.Frame):
 
   def UpdateProgressBar(self, value, disable_animation=False):
     pb = self.foot_panel.progress_bar
+    if value is None:
+      return
     if value < 0:
       pb.Pulse()
     else:

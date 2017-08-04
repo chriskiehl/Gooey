@@ -22,7 +22,7 @@ class RuntimeDisplay(wx.Panel):
   def set_font_style(self, style):
     pointsize = self.cmd_textbox.GetFont().GetPointSize()
     font = wx.Font(pointsize, style,
-                 wx.FONTWEIGHT_NORMAL, wx.FONTWEIGHT_BOLD, False)
+                 wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
     self.cmd_textbox.SetFont(font)
 
   def _init_properties(self):

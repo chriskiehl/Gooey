@@ -58,7 +58,7 @@ class Presenter(object):
       self.view.enable_stop_button()
 
     if self.model.layout_type == layouts.COLUMN:
-      self.view.set_list_contents(self.model.argument_groups.keys())
+      self.view.set_list_contents(list(self.model.argument_groups.keys()))
 
     if self.model.auto_start:
       self.model.update_state(States.RUNNNING)
