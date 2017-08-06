@@ -1,0 +1,55 @@
+{
+  "progress_regex": null,
+  "language_dir": "F:\\Dropbox\\pretty_gui\\Gooey\\gooey\\languages",
+  "num_required_cols": 1,
+  "disable_progress_bar_animation": false,
+  "target": "\"F:\\Dropbox\\pretty_gui\\Gooey\\venv\\Scripts\\python.exe\" -u \"F:/Dropbox/pretty_gui/Gooey/gooey/examples/widget_demo.py\"",
+  "monospace_display": false,
+  "group_by_type": false,
+  "image_dir": "default",
+  "language": "english",
+  "program_name": "Widget Demo",
+  "widgets": {
+    "primary": {
+      "contents": [
+        {
+          "type": "FileChooser",
+          "required": true,
+          "data": {
+            "commands": [],
+            "default": null,
+            "help": "Name of the file you want to process",
+            "display_name": "FileChooser",
+            "nargs": "",
+            "choices": []
+          }
+        },
+        {
+          "type": "PasswordField",
+          "required": true,
+          "data": {
+            "commands": [],
+            "default": null,
+            "help": "Name of the file you want to process",
+            "display_name": "PasswordField",
+            "nargs": "",
+            "choices": []
+          }
+        }
+      ],
+      "command": null
+    }
+  },
+  "manual_start": false,
+  "num_optional_cols": 2,
+  "disable_stop_button": false,
+  "auto_start": false,
+  "layout_type": "standard",
+  "show_advanced": true,
+  "program_description": "Example application to show Gooey's various widgets BROOOOO",
+  "default_size": [
+    610,
+    530
+  ],
+  "progress_expr": null
+}

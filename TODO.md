@@ -1,27 +1,26 @@
 TODO
 ====
 
-- Update parser to catch all argparse import styles
-- Investigate Docopt
-- better graphics
 
-- Restart Button Change :
-    * need different strategy for everything added.
+2.0 Features: 
 
-- Fix vertical stacking of restart button
-- system for supplying custom widgets to the GUI
-  -- e.g. a FileChooser, rather than just a TextBox
-- Remove debug statements current printing from program
-- add optional cancel button.
-- allow NoConfig to run without argparse (Issue #43)
-    * display warning when this happens (could be a misfire on Gooey's end)
-    * add suppress warnings flag
+- [ ] Deprecate WxPython
+   - [ ] fix critical issues 
+   - [ ] Bump Gooey version to 1.0.  
+   - [ ] End of life
+   - [ ] Move PyInstaller tribal knowledge into Wiki (multiprocessing weirdness)
+- [ ] PyQt5 + Python 3
+- [ ] PyQt4 + Python 2.7  >:(
+- [ ] Arbitrary (but limited) placement/layout of components (e.g. option 1 `width: 100%`)
+- [ ] Possible console-(ish) mode (see:  #124)
+- [ ] `-m` mode for reading straight from build config 
 
-- Implemente a simple MVC pattern for isolate gui toolkit specifique code and
-  argparse specifique code (support for tkinter, qt etc ... and docopt or unix
-  cli as text)
 
-- Make a .io site for the presentation
+Eventually: 
 
-- More comments and basic api generation + some txt for explain the global
-  design fo the project
+ - [ ] docopt
+ - [ ] Click
+ - [ ] Update .io site
+ - [ ] Better graphics 
+ 
+ 

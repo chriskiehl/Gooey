@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 with open('README.md') as readme:
     long_description = readme.read()
 
-version = __import__('gooey').__version__
+version = '2.0'
 
 setup(
     name='Gooey',
@@ -18,6 +18,10 @@ setup(
                  'application with one line'),
     license='MIT',
     packages=find_packages(),
+    install_requires=[
+        'PyQt5==5.7',
+        'Rx==1.5.9'
+    ],
     include_package_data=True,
     dependency_links = ["http://www.wxpython.org/download.php"],
     classifiers = [
