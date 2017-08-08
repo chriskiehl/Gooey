@@ -45,3 +45,6 @@ MANIFEST
 resources/
 gooey/examples/
 gooey/_tmp/
+
+venv/
+venv2/
