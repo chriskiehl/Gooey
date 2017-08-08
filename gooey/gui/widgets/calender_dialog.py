@@ -1,9 +1,10 @@
 __author__ = 'Chris'
 
 import wx
-import wx.adv
 
 from gooey.gui.util import wx_util
+
+from gooey.gui.three_to_four import Classes, Constants
 
 
 class CalendarDlg(wx.Dialog):
@@ -13,7 +14,7 @@ class CalendarDlg(wx.Dialog):
     self.SetBackgroundColour('#ffffff')
 
     self.ok_button = wx.Button(self, wx.ID_OK, label='Ok')
-    self.datepicker = wx.adv.DatePickerCtrl(self, style=wx.adv.DP_DROPDOWN)
+    self.datepicker = Classes.DatePickerCtrl(self, style=Constants.WX_DP_DROPDOWN)
 
     vertical_container = wx.BoxSizer(wx.VERTICAL)
     vertical_container.AddSpacer(10)

@@ -18,6 +18,10 @@ setup(
                  'application with one line'),
     license='MIT',
     packages=find_packages(),
+    install_requires=[
+        'wxpython==5.7',
+        'Rx==1.5.9'
+    ],
     include_package_data=True,
     dependency_links = ["http://www.wxpython.org/download.php"],
     classifiers = [

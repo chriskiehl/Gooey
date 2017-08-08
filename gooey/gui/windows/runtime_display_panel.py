@@ -7,6 +7,8 @@ Created on Dec 23, 2013
 import wx
 from gooey.gui.lang import i18n
 
+from gooey.gui.three_to_four import Constants
+
 
 class RuntimeDisplay(wx.Panel):
   '''
@@ -22,7 +24,7 @@ class RuntimeDisplay(wx.Panel):
   def set_font_style(self, style):
     pointsize = self.cmd_textbox.GetFont().GetPointSize()
     font = wx.Font(pointsize, style,
-                 wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
+                   Constants.WX_FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False)
     self.cmd_textbox.SetFont(font)
 
   def _init_properties(self):
