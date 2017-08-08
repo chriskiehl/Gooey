@@ -93,6 +93,7 @@ Different styling and functionality can be configured by passing arguments into 
     @Gooey(advanced=Boolean,          # toggle whether to show advanced config or not 
            language=language_string,  # Translations configurable via json
            show_config=True,          # skip config screens all together
+           target=executable_cmd,     # Explicitly set the subprocess executable arguments
            program_name='name',       # Defaults to script name
            program_description,       # Defaults to ArgParse Description
            default_size=(610, 530),   # starting size of the GUI
@@ -250,6 +251,7 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 | advanced | Toggles whether to show the 'full' configuration screen, or a simplified version | 
 | show_config | Skips the configuration all together and runs the program immediately |
 | language | Tells Gooey which language set to load from the `gooey/languages` directory.|
+| target | Tells Gooey how to re-invoke itself. By default Gooey will find python, but this allows you to specify the program (and arguments if supplied).|
 |program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 
