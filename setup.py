@@ -6,7 +6,8 @@ from setuptools import setup, find_packages
 with open('README.md') as readme:
     long_description = readme.read()
 
-version = __import__('gooey').__version__
+with open('version.txt', 'r') as f:
+    version = f.read()
 
 setup(
     name='Gooey',
@@ -19,7 +20,7 @@ setup(
     license='MIT',
     packages=find_packages(),
     install_requires=[
-        'wxpython==5.7',
+        'wxpython==4.0.0b1',
         'Rx==1.5.9'
     ],
     include_package_data=True,
