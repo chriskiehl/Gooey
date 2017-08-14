@@ -5,6 +5,7 @@ from gooey.python_bindings import argparse_to_json
 from gooey.gui.util.quoting import quote
 
 
+
 def create_from_parser(parser, source_path, **kwargs):
   auto_start = kwargs.get('auto_start', False)
 
@@ -34,7 +35,8 @@ def create_from_parser(parser, source_path, **kwargs):
     'progress_expr':        kwargs.get('progress_expr'),
     'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
     'disable_stop_button':  kwargs.get('disable_stop_button'),
-    'group_by_type':        kwargs.get('group_by_type', True)
+    'group_by_type':        kwargs.get('group_by_type', True),
+    'validate_inputs':      kwargs.get('validate_inputs', False)
   }
 
   if not auto_start:

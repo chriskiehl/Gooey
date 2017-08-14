@@ -14,29 +14,31 @@ from argparse import ArgumentParser
 from gooey.gui import application
 from gooey.gui.util.freeze import get_resource_path
 from . import config_generator
+from gooey.python_bindings.groupings import requiredAndOptional
 
 IGNORE_COMMAND = '--ignore-gooey'
 
 def Gooey(f=None,
-          advanced=True,
-          language='english',
-          auto_start=False,  # TODO: add this to the docs. Used to be `show_config=True`
-          target=None,
           program_name=None,
           program_description=None,
           default_size=(610, 530),
           required_cols=2,
           optional_cols=2,
-          dump_build_config=False,
-          load_build_config=None,
           monospace_display=False, # TODO: add this to the docs
           image_dir='default',
           language_dir=get_resource_path('languages'),
+          auto_start=False,  # TODO: add this to the docs. Used to be `show_config=True`
+          advanced=True,
+          target=None,
+          language='english',
+          dump_build_config=False,
+          load_build_config=None,
           progress_regex=None, # TODO: add this to the docs
           progress_expr=None, # TODO: add this to the docs
           disable_progress_bar_animation=False,
           disable_stop_button=False,
-          group_by_type=True): # TODO: add this to the docs
+          validate_inputs=True,
+          group_by=requiredAndOptional): # TODO: add this to the docs
   '''
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end
