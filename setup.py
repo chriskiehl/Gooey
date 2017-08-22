@@ -1,5 +1,5 @@
 """Script for setuptools."""
-
+import sys
 from setuptools import setup, find_packages
 
 
@@ -8,6 +8,8 @@ with open('README.md') as readme:
 
 with open('version.txt', 'r') as f:
     version = f.read()
+
+deps = ['wxpython==4.0.0b1'] if sys.version[0] == '3' else []
 
 setup(
     name='Gooey',
@@ -19,10 +21,7 @@ setup(
                  'application with one line'),
     license='MIT',
     packages=find_packages(),
-    install_requires=[
-        'wxpython==4.0.0b1',
-        'Rx==1.5.9'
-    ],
+    install_requires=deps,
     include_package_data=True,
     dependency_links = ["http://www.wxpython.org/download.php"],
     classifiers = [
