@@ -6,6 +6,8 @@ Turn (almost) any Python 2 or 3 Console Program into a GUI application with one 
     <img src="https://cloud.githubusercontent.com/assets/1408720/7904381/f54f97f6-07c5-11e5-9bcb-c3c102920769.png" />
 </p>
 
+# Gooey now supports Python 3!!
+
 
 Table of Contents
 -----------------  
