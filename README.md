@@ -1,6 +1,6 @@
 Gooey (Beta)
 =====  
-Turn (almost) any Python Console Program into a GUI application with one line  
+Turn (almost) any Python 2 or 3 Console Program into a GUI application with one line
 
 <p align="center">
     <img src="https://cloud.githubusercontent.com/assets/1408720/7904381/f54f97f6-07c5-11e5-9bcb-c3c102920769.png" />
@@ -38,10 +38,7 @@ Table of Contents
 
 
 
- 
-
-
-----------   
+----------
 
 
 ### Artist Wanted!
@@ -53,18 +50,15 @@ Drop me an <a href="mailto:audionautic@gmail.com">email</a> if you want to help 
 ----------------  
 
 
-
-
 ## Quick Start
 
 
 ### Installation instructions
 
 
-The easiest way to install Gooey is via `pip` 
+The easiest way to install Gooey is via `pip`
 
     pip install Gooey 
-
 
 Alternatively, you can install Gooey by cloning the project to your local directory
 
@@ -74,7 +68,9 @@ run `setup.py`
 
     python setup.py install
     
-After Gooey is installed, make sure [wxPython](http://www.wxpython.org/download.php) is installed on your machine as well. Unfortanately, this cannot be done from the CLI and should be manually downloaded from the [wxPython website](http://www.wxpython.org/download.php).
+**NOTE:** Python 2 users must manually install WxPython! Unfortunately, this cannot be done as part of the pip installation and should be manually downloaded from the [wxPython website](http://www.wxpython.org/download.php).
+
+
 
 ### Usage  
 
