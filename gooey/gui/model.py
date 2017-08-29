@@ -4,6 +4,7 @@ from itertools import chain
 from gooey.gui.lang.i18n import _
 from gooey.gui.util.quoting import quote
 
+import wx
 
 ArgumentGroup = namedtuple('ArgumentGroup', 'name command required_args optional_args')
 
@@ -207,8 +208,20 @@ class MyModel(object):
     return self.build_spec['manual_start']
 
   def is_required_section_complete(self):
-    completed_values = list(filter(None, [arg.value for arg in self.required_args]))
-    return len(self.required_args) == len(completed_values)
+    error_found = False
+    for arg in self.required_args:
+      widget = arg.widget_instance.widget_pack.widget
+      if arg.value:
+        widget.SetBackgroundColour(wx.NullColour)
+      else:
+        if not error_found:
+          error_found = True
+          widget.SetFocus()
+        widget.SetBackgroundColour("#EF9A9A")
+
+      widget.Refresh()
+
+    return not error_found
 
   def build_command_line_string(self):
     optional_args = [arg.value for arg in self.optional_args]
