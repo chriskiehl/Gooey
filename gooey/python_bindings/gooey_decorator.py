@@ -15,8 +15,6 @@ from gooey.gui import application
 from gooey.gui.util.freeze import get_resource_path
 from . import config_generator
 
-IGNORE_COMMAND = '--ignore-gooey'
-
 def Gooey(f=None,
           advanced=True,
           language='english',
@@ -36,7 +34,10 @@ def Gooey(f=None,
           progress_expr=None, # TODO: add this to the docs
           disable_progress_bar_animation=False,
           disable_stop_button=False,
-          group_by_type=True): # TODO: add this to the docs
+          group_by_type=True, # TODO: add this to the docs
+          ignore_command='--ignore-gooey',
+          force_command=None,
+          load_cmd_args=False):
   '''
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end
@@ -57,7 +58,14 @@ def Gooey(f=None,
           sys.exit(1)
 
       if not build_spec:
-        build_spec = config_generator.create_from_parser(self, source_path, payload_name=payload.__name__, **params)
+        cmd_args = None
+        if load_cmd_args:
+          try:
+            cmd_args = self.original_parse_args()
+          except:
+            pass
+
+        build_spec = config_generator.create_from_parser(self, source_path, cmd_args, payload_name=payload.__name__, **params)
 
       if dump_build_config:
         config_path = os.path.join(os.getcwd(), 'gooey_config.json')
@@ -75,17 +83,31 @@ def Gooey(f=None,
     return inner2
 
   def run_without_gooey(func):
-    return lambda: func()
+    def inner2(*args, **kwargs):
+      return func(*args, **kwargs)
 
-  if IGNORE_COMMAND in sys.argv:
-    sys.argv.remove(IGNORE_COMMAND)
+    inner2.__name__ = func.__name__
+    return inner2
+
+  gooey = True
+  if ignore_command and ignore_command in sys.argv:
+    sys.argv.remove(ignore_command)
+    gooey = False
+
+  if force_command:
+    if force_command in sys.argv:
+      sys.argv.remove(force_command)
+    else:
+      gooey = False
+
+  if gooey:
+    if callable(f):
+        return build(f)
+    return build
+  else:
     if callable(f):
       return run_without_gooey(f)
     return run_without_gooey
-
-  if callable(f):
-    return build(f)
-  return build
 
 
 if __name__ == '__main__':

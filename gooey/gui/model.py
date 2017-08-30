@@ -219,7 +219,7 @@ class MyModel(object):
     cmd_string = ' '.join(list(filter(None, chain(required_args, optional_args, position_args))))
     if self.layout_type == 'column':
       cmd_string = u'{} {}'.format(self.argument_groups[self.active_group].command, cmd_string)
-    return u'{} --ignore-gooey {}'.format(self.build_spec['target'], cmd_string)
+    return u'{} {} {}'.format(self.build_spec['target'], self.build_spec['ignore_command'] or '', cmd_string)
 
   def group_arguments(self, widget_list):
     is_required = lambda widget: widget['required']

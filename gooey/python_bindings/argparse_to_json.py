@@ -52,7 +52,7 @@ class UnsupportedConfiguration(Exception):
 }
 
 
-def convert(parser):
+def convert(parser, cmd_args=None):
   widget_dict = getattr(parser, 'widgets', {})
   actions = parser._actions
 
@@ -63,15 +63,15 @@ def convert(parser):
     layout_data = OrderedDict(
       (choose_name(name, sub_parser), {
         'command': name,
-        'contents': process(sub_parser, getattr(sub_parser, 'widgets', {}))
-      }) for name, sub_parser in get_subparser(actions).choices.items())
+        'contents': process(sub_parser, cmd_args, getattr(sub_parser, 'widgets', {}))
+      }) for name, sub_parser in get_subparser(actions).choices.iteritems())
 
   else:
     layout_type = 'standard'
     layout_data = OrderedDict([
       ('primary', {
         'command': None,
-        'contents': process(parser, widget_dict)
+        'contents': process(parser, cmd_args, widget_dict)
       })
     ])
 
@@ -81,7 +81,7 @@ def convert(parser):
   }
 
 
-def process(parser, widget_dict):
+def process(parser, cmd_args, widget_dict):
   mutually_exclusive_groups = [
                   [mutex_action for mutex_action in group_actions._group_actions]
                   for group_actions in parser._mutually_exclusive_groups]
@@ -95,13 +95,17 @@ def process(parser, widget_dict):
   required_actions = filter(is_required, base_actions)
   optional_actions = filter(is_optional, base_actions)
 
-  return list(categorize(required_actions, widget_dict, required=True)) + \
-         list(categorize(optional_actions, widget_dict)) + \
+  return list(categorize(required_actions, cmd_args, widget_dict, required=True)) + \
+         list(categorize(optional_actions, cmd_args, widget_dict)) + \
          list(map(build_radio_group, mutually_exclusive_groups))
 
-def categorize(actions, widget_dict, required=False):
+def categorize(actions, cmd_args, widget_dict, required=False):
   _get_widget = partial(get_widget, widgets=widget_dict)
   for action in actions:
+    if cmd_args:
+        cmd_arg_val = getattr(cmd_args, action.dest)
+        if cmd_arg_val is not None:
+            action.default = cmd_arg_val
     if is_standard(action):
       yield as_json(action, _get_widget(action) or 'TextField', required)
     elif is_choice(action):
