@@ -22,7 +22,6 @@ class GooeyArgumentGroup(_ArgumentGroup):
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
 
-
 class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
     def __init__(self, parser, widgets, *args, **kwargs):
         self.parser = parser
@@ -74,8 +73,8 @@ class GooeyParser(object):
         return group
 
     def add_argument_group(self, *args, **kwargs):
-        group = GooeyArgumentGroup(self.parser, self.widgets, **kwargs)
-        self.parser.add_argument_group(*args, **kwargs)
+        group = GooeyArgumentGroup(self.parser, self.widgets, *args, **kwargs)
+        self.parser._action_groups.append(group)
         return group
 
     def parse_args(self, args=None, namespace=None):

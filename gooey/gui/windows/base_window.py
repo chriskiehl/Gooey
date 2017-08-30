@@ -22,13 +22,14 @@ class BaseWindow(wx.Frame):
   Primary Frame under which all sub-Panels are organized.
   '''
 
-  def __init__(self, layout_type):
+  def __init__(self, layout_type, use_tabs):
     wx.Frame.__init__(self, parent=None, id=-1)
 
     self.SetDoubleBuffered(True)
 
     # type of gui to render
     self.layout_type = layout_type
+    self.use_tabs = use_tabs
 
     # Components
     self.icon = None
@@ -77,13 +78,17 @@ class BaseWindow(wx.Frame):
   def heading_subtitle(self, text):
     self.head_panel.subtitle = text
 
-  @property
-  def required_section(self):
-    return self.config_panel.main_content.required_section
+  def create_section(self, name):
+    self.config_panel.main_content.CreateSection(name)
 
-  @property
-  def optional_section(self):
-    return self.config_panel.main_content.optional_section
+  def delete_section(self, name):
+    self.config_panel.main_content.DeleteSection(name)
+
+  def do_layout(self):
+    self.config_panel.main_content._do_layout()
+
+  def section(self, name):
+    return self.config_panel.main_content.Section(name)
 
   @property
   def progress_bar(self):
