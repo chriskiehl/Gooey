@@ -217,10 +217,20 @@ class RadioGroup(object):
     pass
 
 
+class Listbox(BaseGuiComponent):
+  widget_class = widget_pack.ListboxPayload
+
+  def set_value(self, val):
+    if val:
+      self.widget_pack.set_value(val)
+
 
 def build_subclass(name, widget_class):
   # this seemed faster than typing class X a bunch
   return type(name, (BaseGuiComponent,), {'widget_class': widget_class})
+
+
+
 
 
 FileChooser       = build_subclass('FileChooser', widget_pack.FileChooserPayload)

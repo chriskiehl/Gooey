@@ -61,7 +61,11 @@ class MyWidget(object):
       arg = str(self.commands[0]).replace('-', '')
       repeated_args = arg * int(self._value)
       return '-' + repeated_args
-
+    if self.type == 'Listbox':
+      if self.commands and self._value:
+        return u'{} {}'.format(self.commands[0], ' '.join(map(quote, self._value)))
+      else:
+        return ' '.join(map(quote, self._value)) if self._value else ''
     if self.type == 'Dropdown':
       if self._value == 'Select Option':
         return None
