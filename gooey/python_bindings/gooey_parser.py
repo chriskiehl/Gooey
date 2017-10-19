@@ -1,4 +1,5 @@
-from argparse import ArgumentParser, _SubParsersAction, _MutuallyExclusiveGroup
+from argparse import ArgumentParser, _SubParsersAction
+from argparse import _MutuallyExclusiveGroup, _ArgumentGroup
 
 from gooey.gui.lang.i18n import _
 
@@ -7,13 +8,26 @@ class GooeySubParser(_SubParsersAction):
     def __init__(self, *args, **kwargs):
         super(GooeySubParser, self).__init__(*args, **kwargs)
 
+# TODO: dedupe code
+class GooeyArgumentGroup(_ArgumentGroup):
+    def __init__(self, parser, widgets, *args, **kwargs):
+        self.parser = parser
+        self.widgets = widgets
+        super(GooeyArgumentGroup, self).__init__(self.parser, *args, **kwargs)
+
+    def add_argument(self, *args, **kwargs):
+        widget = kwargs.pop('widget', None)
+        metavar = kwargs.pop('metavar', None)
+        super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
+        self.parser._actions[-1].metavar = metavar
+        self.widgets[self.parser._actions[-1].dest] = widget
+
 
 class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
     def __init__(self, parser, widgets, *args, **kwargs):
         self.parser = parser
         self.widgets = widgets
-        super(GooeyMutuallyExclusiveGroup, self).__init__(self.parser, *args,
-                                                          **kwargs)
+        super(GooeyMutuallyExclusiveGroup, self).__init__(self.parser, *args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         widget = kwargs.pop('widget', None)
@@ -60,7 +74,9 @@ class GooeyParser(object):
         return group
 
     def add_argument_group(self, *args, **kwargs):
-        return self.parser.add_argument_group(*args, **kwargs)
+        group = GooeyArgumentGroup(self.parser, self.widgets, **kwargs)
+        self.parser.add_argument_group(*args, **kwargs)
+        return group
 
     def parse_args(self, args=None, namespace=None):
         return self.parser.parse_args(args, namespace)
