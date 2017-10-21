@@ -167,6 +167,8 @@ class RadioGroup(object):
 
     self.do_layout(parent, title, msg)
 
+    self.selected_button = None
+
   def do_layout(self, parent, titles, msgs):
     self.panel = wx.Panel(parent)
 
@@ -192,13 +194,20 @@ class RadioGroup(object):
 
     self.panel.SetSizer(vertical_container)
     self.panel.Bind(wx.EVT_SIZE, self.onResize)
-    self.panel.Bind(wx.EVT_RADIOBUTTON, self.showz)
+
+    for button in self.radio_buttons:
+      button.Bind(wx.EVT_LEFT_DOWN, self.handle_selection)
+
     return self.panel
 
-  def showz(self, evt):
-    print(evt)
-    for i in self.radio_buttons:
-      print(i.GetValue())
+  def handle_selection(self, event):
+    if event.EventObject.Id == getattr(self.selected_button, 'Id', None):
+      # if it is already selected, manually deselect it
+      self.selected_button.SetValue(False)
+      self.selected_button = None
+    else:
+      event.Skip()
+      self.selected_button = event.EventObject
 
   def onResize(self, evt):
     msg = self.help_msgs[0]
