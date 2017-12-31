@@ -38,6 +38,7 @@ class ProcessController(object):
   def run(self, command):
     env = os.environ.copy()
     env["GOOEY"] = "1"
+    env["PYTHONIOENCODING"] = "utf-8"
     try:
       self._process = subprocess.Popen(
         command.encode(sys.getfilesystemencoding()),
