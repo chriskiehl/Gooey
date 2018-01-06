@@ -29,7 +29,7 @@ class FlatLayout(wx.Panel):
     super(FlatLayout, self).__init__(*args, **kwargs)
     self.SetDoubleBuffered(True)
 
-    self.main_content = ConfigPanel(self, opt_cols=3)
+    self.main_content = ConfigPanel(self, opt_cols=3, use_tabs=args[0].use_tabs)
 
     sizer = wx.BoxSizer(wx.HORIZONTAL)
     sizer.Add(self.main_content, 3, wx.EXPAND)
@@ -42,7 +42,7 @@ class ColumnLayout(wx.Panel):
     self.SetDoubleBuffered(True)
 
     self.sidebar = Sidebar(self)
-    self.main_content = ConfigPanel(self, opt_cols=2)
+    self.main_content = ConfigPanel(self, opt_cols=2, use_tabs=args[0].use_tabs)
 
     sizer = wx.BoxSizer(wx.HORIZONTAL)
     sizer.Add(self.sidebar, 1, wx.EXPAND)

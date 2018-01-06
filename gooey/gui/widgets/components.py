@@ -51,6 +51,7 @@ class BaseGuiComponent(object):
     vertical_container.Add(core_widget_set, 0, wx.EXPAND)
     self.panel.SetSizer(vertical_container)
 
+    self.panel.Bind(wx.EVT_SIZE, self.onResize)
     return self.panel
 
   def bind(self, *args, **kwargs):

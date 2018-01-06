@@ -104,9 +104,3 @@ class Footer(wx.Panel):
 
   def _load_image(self, img_path, height=70):
     return imageutil.resize_bitmap(self, imageutil._load_image(img_path), height)
-
-
-
-
-
-
