@@ -8,39 +8,64 @@ class GooeySubParser(_SubParsersAction):
     def __init__(self, *args, **kwargs):
         super(GooeySubParser, self).__init__(*args, **kwargs)
 
-# TODO: dedupe code
+
+# TODO: figure out how to correctly dispatch all of these
+#       so that the individual wrappers aren't needed
 class GooeyArgumentGroup(_ArgumentGroup):
-    def __init__(self, parser, widgets, *args, **kwargs):
+    def __init__(self, parser, widgets, options, *args, **kwargs):
         self.parser = parser
         self.widgets = widgets
+        self.options = options
         super(GooeyArgumentGroup, self).__init__(self.parser, *args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
+        options = kwargs.pop('gooey_options', None)
         super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
+        self.options[self.parser._actions[-1].dest] = options
+
+    def add_argument_group(self, *args, **kwargs):
+        options = kwargs.pop('gooey_options', {})
+        group = GooeyArgumentGroup(self.parser, self.widgets, self.options, *args, **kwargs)
+        group.gooey_options = options
+        self._action_groups.append(group)
+        return group
+
+    def add_mutually_exclusive_group(self, *args, **kwargs):
+        options = kwargs.pop('gooey_options', {})
+        container = self
+        group = GooeyMutuallyExclusiveGroup(container, self.parser, self.widgets, self.options, *args, **kwargs)
+        group.gooey_options = options
+        self.parser._mutually_exclusive_groups.append(group)
+        return group
 
 
 class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
-    def __init__(self, parser, widgets, *args, **kwargs):
+    def __init__(self, container, parser, widgets, options, *args, **kwargs):
         self.parser = parser
         self.widgets = widgets
-        super(GooeyMutuallyExclusiveGroup, self).__init__(self.parser, *args, **kwargs)
+        self.options = options
+        super(GooeyMutuallyExclusiveGroup, self).__init__(container, *args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
+        options = kwargs.pop('gooey_options', None)
         super(GooeyMutuallyExclusiveGroup, self).add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
+        self.options[self.parser._actions[-1].dest] = options
+
 
 
 class GooeyParser(object):
     def __init__(self, **kwargs):
         self.__dict__['parser'] = ArgumentParser(**kwargs)
         self.widgets = {}
+        self.options = {}
 
     @property
     def _mutually_exclusive_groups(self):
@@ -57,6 +82,7 @@ class GooeyParser(object):
     def add_argument(self, *args, **kwargs):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
+        options = kwargs.pop('gooey_options', None)
 
         if widget and widget == 'Listbox':
             if not 'nargs' in kwargs or kwargs['nargs'] not in ['*', '+']:
@@ -67,15 +93,20 @@ class GooeyParser(object):
         self.parser.add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
+        self.options[self.parser._actions[-1].dest] = options
 
-    def add_mutually_exclusive_group(self, **kwargs):
-        group = GooeyMutuallyExclusiveGroup(self.parser, self.widgets, **kwargs)
+    def add_mutually_exclusive_group(self, *args, **kwargs):
+        options = kwargs.pop('gooey_options', {})
+        group = GooeyMutuallyExclusiveGroup(self, self.parser, self.widgets, self.options, *args, **kwargs)
+        group.gooey_options = options
         self.parser._mutually_exclusive_groups.append(group)
         return group
 
     def add_argument_group(self, *args, **kwargs):
-        group = GooeyArgumentGroup(self.parser, self.widgets, **kwargs)
-        self.parser.add_argument_group(*args, **kwargs)
+        options = kwargs.pop('gooey_options', {})
+        group = GooeyArgumentGroup(self.parser, self.widgets, self.options, *args, **kwargs)
+        group.gooey_options = options
+        self.parser._action_groups.append(group)
         return group
 
     def parse_args(self, args=None, namespace=None):

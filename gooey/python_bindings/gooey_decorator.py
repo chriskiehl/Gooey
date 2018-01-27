@@ -12,11 +12,13 @@ import sys
 from argparse import ArgumentParser
 
 from gooey.gui import application
-from gooey.gui.util.freeze import get_resource_path
+from gooey.gui.util.freeze import getResourcePath
+from gooey.util.functional import merge
 from . import config_generator
 
 IGNORE_COMMAND = '--ignore-gooey'
 
+# TODO: kwargs all the things
 def Gooey(f=None,
           advanced=True,
           language='english',
@@ -25,24 +27,29 @@ def Gooey(f=None,
           program_name=None,
           program_description=None,
           default_size=(610, 530),
+          use_legacy_titles=True,
           required_cols=2,
           optional_cols=2,
           dump_build_config=False,
           load_build_config=None,
-          monospace_display=False, # TODO: add this to the docs
-          image_dir='default',
-          language_dir=get_resource_path('languages'),
-          progress_regex=None, # TODO: add this to the docs
-          progress_expr=None, # TODO: add this to the docs
+          monospace_display=False,  # TODO: add this to the docs
+          image_dir='::gooey/default',
+          language_dir=getResourcePath('languages'),
+          progress_regex=None,  # TODO: add this to the docs
+          progress_expr=None,  # TODO: add this to the docs
           disable_progress_bar_animation=False,
           disable_stop_button=False,
-          group_by_type=True): # TODO: add this to the docs
+          group_by_type=True,
+          header_height=80,
+          navigation='SIDEBAR', # TODO: add this to the docs
+          tabbed_groups=False,
+          **kwargs):
   '''
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end
   '''
 
-  params = locals()
+  params = merge(locals(), locals()['kwargs'])
 
   def build(payload):
     def run_gooey(self, args=None, namespace=None):
@@ -57,7 +64,11 @@ def Gooey(f=None,
           sys.exit(1)
 
       if not build_spec:
-        build_spec = config_generator.create_from_parser(self, source_path, payload_name=payload.__name__, **params)
+        build_spec = config_generator.create_from_parser(
+          self,
+          source_path,
+          payload_name=payload.__name__,
+          **params)
 
       if dump_build_config:
         config_path = os.path.join(os.getcwd(), 'gooey_config.json')
