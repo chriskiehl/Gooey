@@ -1,20 +1,26 @@
 """
 App wide event registry
 
-Everything in the application is communitcated via pubsub. These are the events that
-tie everythign together.
+Everything in the application is communicated via pubsub. These are the events
+that tie everything together.
 """
+
 import wx
 
-new_id = lambda: str(wx.NewId())
+WINDOW_STOP     = wx.NewId()
+WINDOW_CANCEL   = wx.NewId()
+WINDOW_CLOSE    = wx.NewId()
+WINDOW_START    = wx.NewId()
+WINDOW_RESTART  = wx.NewId()
+WINDOW_EDIT     = wx.NewId()
 
-WINDOW_STOP     = new_id()
-WINDOW_CANCEL   = new_id()
-WINDOW_CLOSE    = new_id()
-WINDOW_START    = new_id()
-WINDOW_RESTART  = new_id()
-WINDOW_EDIT     = new_id()
+WINDOW_CHANGE   = wx.NewId()
+PANEL_CHANGE    = wx.NewId()
+LIST_BOX        = wx.NewId()
 
-WINDOW_CHANGE   = new_id()
-PANEL_CHANGE    = new_id()
-LIST_BOX        = new_id()
+CONSOLE_UPDATE  = wx.NewId()
+EXECUTION_COMPLETE = wx.NewId()
+PROGRESS_UPDATE = wx.NewId()
+
+USER_INPUT = wx.NewId()
+

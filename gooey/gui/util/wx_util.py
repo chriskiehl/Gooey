@@ -3,8 +3,24 @@ Collection of Utility methods for creating often used, pre-styled wx Widgets
 """
 
 import wx
+from contextlib import contextmanager
 
 from gooey.gui.three_to_four import Constants
+
+
+@contextmanager
+def transactUI(obj):
+    """
+    Coarse grain UI locking to avoid glitchy UI updates
+    """
+    obj.Freeze()
+    try:
+        yield
+    finally:
+        obj.Layout()
+        obj.Thaw()
+
+
 
 
 styles = {
@@ -15,6 +31,8 @@ styles = {
 }
 
 
+
+
 def make_bold(statictext):
     pointsize = statictext.GetFont().GetPointSize()
     font = wx.Font(pointsize, *styles['bold'])
@@ -22,8 +40,12 @@ def make_bold(statictext):
 
 
 def dark_grey(statictext):
-    darkgray = (54, 54, 54)
-    statictext.SetForegroundColour(darkgray)
+    return withColor(statictext, (54, 54, 54))
+
+
+def withColor(statictext, hex):
+    statictext.SetForegroundColour(hex)
+    return statictext
 
 
 def h0(parent, label):
