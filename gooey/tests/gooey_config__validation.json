@@ -1,0 +1,511 @@
+{
+  "image_dir": "::gooey/default",
+  "progress_regex": null,
+  "error_color": "#ea7878",
+  "navigation": "SIDEBAR",
+  "encoding": "utf-8",
+  "run_validators": true,
+  "default_size": [
+    610,
+    530
+  ],
+  "num_required_cols": 2,
+  "program_description": "Example application to show Gooey's various widgets",
+  "poll_external_updates": false,
+  "header_bg_color": "#ffffff",
+  "footer_bg_color": "#f0f0f0",
+  "sidebar_title": "Your Custom Title",
+  "sidebar_bg_color": "#f2f2f2",
+  "program_name": "all_widgets",
+  "progress_expr": null,
+  "language": "english",
+  "auto_start": false,
+  "show_stop_warning": true,
+  "disable_stop_button": false,
+  "use_legacy_titles": true,
+  "terminal_font_family": null,
+  "show_advanced": true,
+  "header_height": 80,
+  "widgets": {
+    "all_widgets.py": {
+      "command": "::gooey/default",
+      "contents": [
+        {
+          "items": [
+            {
+              "data": {
+                "commands": [
+                  "--textfield"
+                ],
+                "help": null,
+                "display_name": "textfield",
+                "choices": [],
+                "dest": "textfield",
+                "nargs": "",
+                "default": 2,
+                "required": false
+              },
+              "id": "--textfield",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "int(user_input) > 5",
+                  "message": "number must be greater than 5"
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "TextField",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--textarea"
+                ],
+                "help": null,
+                "display_name": "textarea",
+                "choices": [],
+                "dest": "textarea",
+                "nargs": "",
+                "default": "oneline twoline",
+                "required": false
+              },
+              "id": "--textarea",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "Textarea",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--password"
+                ],
+                "help": null,
+                "display_name": "password",
+                "choices": [],
+                "dest": "password",
+                "nargs": "",
+                "default": "hunter42",
+                "required": false
+              },
+              "id": "--password",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "PasswordField",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--commandfield"
+                ],
+                "help": null,
+                "display_name": "commandfield",
+                "choices": [],
+                "dest": "commandfield",
+                "nargs": "",
+                "default": "cmdr",
+                "required": false
+              },
+              "id": "--commandfield",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "CommandField",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--dropdown"
+                ],
+                "help": null,
+                "display_name": "dropdown",
+                "choices": [
+                  "one",
+                  "two"
+                ],
+                "dest": "dropdown",
+                "nargs": "",
+                "default": "two",
+                "required": false
+              },
+              "id": "--dropdown",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "Dropdown",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--listboxie"
+                ],
+                "help": null,
+                "display_name": "listboxie",
+                "choices": [
+                  "Option one",
+                  "Option two",
+                  "Option three",
+                  "Option four"
+                ],
+                "dest": "listboxie",
+                "nargs": "+",
+                "default": [
+                  "Option three",
+                  "Option four"
+                ],
+                "required": false
+              },
+              "id": "--listboxie",
+              "options": {
+                "text_color": "",
+                "hide_text": true,
+                "validate": "",
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "heading_color": "",
+                "height": 300,
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "hide_heading": true
+              },
+              "type": "Listbox",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "-c",
+                  "--counter"
+                ],
+                "help": null,
+                "display_name": "counter",
+                "choices": [
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "10"
+                ],
+                "dest": "counter",
+                "nargs": "",
+                "default": 3,
+                "required": false
+              },
+              "id": "-c",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "Counter",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "-o",
+                  "--overwrite"
+                ],
+                "help": null,
+                "display_name": "overwrite",
+                "choices": [],
+                "dest": "overwrite",
+                "nargs": "",
+                "default": true,
+                "required": false
+              },
+              "id": "-o",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "CheckBox",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "options": {
+                "initial_selection": 1
+              },
+              "data": {
+                "commands": [
+                  [
+                    "--mutexone"
+                  ],
+                  [
+                    "--mutextwo"
+                  ]
+                ],
+                "widgets": [
+                  {
+                    "data": {
+                      "commands": [
+                        "--mutexone"
+                      ],
+                      "help": "Show more details",
+                      "display_name": "mutexone",
+                      "choices": [],
+                      "dest": "mutexone",
+                      "nargs": "",
+                      "default": true,
+                      "required": false
+                    },
+                    "id": "--mutexone",
+                    "options": {
+                      "error_color": "#ea7878",
+                      "validator": {
+                        "test": "True",
+                        "message": ""
+                      },
+                      "external_validator": {
+                        "cmd": ""
+                      }
+                    },
+                    "type": "CheckBox",
+                    "cli_type": "optional",
+                    "required": false
+                  },
+                  {
+                    "data": {
+                      "commands": [
+                        "--mutextwo"
+                      ],
+                      "help": null,
+                      "display_name": "mutextwo",
+                      "choices": [],
+                      "dest": "mutextwo",
+                      "nargs": "",
+                      "default": "mut-2",
+                      "required": false
+                    },
+                    "id": "--mutextwo",
+                    "options": {
+                      "error_color": "#ea7878",
+                      "validator": {
+                        "test": "True",
+                        "message": ""
+                      },
+                      "external_validator": {
+                        "cmd": ""
+                      }
+                    },
+                    "type": "TextField",
+                    "cli_type": "optional",
+                    "required": false
+                  }
+                ]
+              },
+              "id": "08995171-905b-4ec3-9b93-6e91fb1369d7",
+              "group_name": "Choose Option",
+              "type": "RadioGroup",
+              "cli_type": "optional",
+              "required": true
+            },
+            {
+              "data": {
+                "commands": [
+                  "--filechooser"
+                ],
+                "help": null,
+                "display_name": "filechooser",
+                "choices": [],
+                "dest": "filechooser",
+                "nargs": "",
+                "default": "fc-value",
+                "required": false
+              },
+              "id": "--filechooser",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "FileChooser",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--filesaver"
+                ],
+                "help": null,
+                "display_name": "filesaver",
+                "choices": [],
+                "dest": "filesaver",
+                "nargs": "",
+                "default": "fs-value",
+                "required": false
+              },
+              "id": "--filesaver",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "FileSaver",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--dirchooser"
+                ],
+                "help": null,
+                "display_name": "dirchooser",
+                "choices": [],
+                "dest": "dirchooser",
+                "nargs": "",
+                "default": "dc-value",
+                "required": false
+              },
+              "id": "--dirchooser",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "DirChooser",
+              "cli_type": "optional",
+              "required": false
+            },
+            {
+              "data": {
+                "commands": [
+                  "--datechooser"
+                ],
+                "help": null,
+                "display_name": "datechooser",
+                "choices": [],
+                "dest": "datechooser",
+                "nargs": "",
+                "default": "2015-01-01",
+                "required": false
+              },
+              "id": "--datechooser",
+              "options": {
+                "error_color": "#ea7878",
+                "validator": {
+                  "test": "True",
+                  "message": ""
+                },
+                "external_validator": {
+                  "cmd": ""
+                }
+              },
+              "type": "DateChooser",
+              "cli_type": "optional",
+              "required": false
+            }
+          ],
+          "name": "Optional Arguments",
+          "groups": [],
+          "options": {
+            "show_border": false,
+            "columns": 2,
+            "padding": 10
+          },
+          "description": null
+        }
+      ]
+    }
+  },
+  "num_optional_cols": 2,
+  "tabbed_groups": false,
+  "terminal_font_weight": null,
+  "terminal_panel_color": "#F0F0F0",
+  "disable_progress_bar_animation": false,
+  "target": "\"F:\\Dropbox\\pretty_gui\\Gooey\\venv3\\Scripts\\python.exe\" -u \"F:/Dropbox/pretty_gui/Gooey/gooey/tests/all_widgets.py\"",
+  "manual_start": false,
+  "group_by_type": true,
+  "header_show_title": true,
+  "show_success_modal": false,
+  "language_dir": "F:\\Dropbox\\pretty_gui\\Gooey\\gooey\\languages",
+  "header_show_subtitle": true,
+  "monospace_display": false,
+  "terminal_font_size": null,
+  "layout": "standard",
+  "header_image_center": false,
+  "body_bg_color": "#f0f0f0",
+  "terminal_font_color": "#000000",
+  "show_sidebar": true
+}

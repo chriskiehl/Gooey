@@ -1,0 +1,972 @@
+{
+  "default_size": [
+    610,
+    530
+  ],
+  "header_height": 80,
+  "language": "english",
+  "terminal_font_weight": null,
+  "auto_start": false,
+  "num_optional_cols": 2,
+  "monospace_display": false,
+  "progress_expr": null,
+  "widgets": {
+    "Parser 1": {
+      "command": "parser1",
+      "contents": [
+        {
+          "groups": [],
+          "description": null,
+          "name": "Optional Arguments",
+          "options": {
+            "show_border": false,
+            "columns": 2,
+            "padding": 10
+          },
+          "items": [
+            {
+              "id": "--textfield",
+              "type": "TextField",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "textfield",
+                "required": false,
+                "display_name": "textfield",
+                "default": 2,
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--textfield"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--textarea",
+              "type": "Textarea",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "textarea",
+                "required": false,
+                "display_name": "textarea",
+                "default": "oneline twoline",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--textarea"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--password",
+              "type": "PasswordField",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "password",
+                "required": false,
+                "display_name": "password",
+                "default": "hunter42",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--password"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--commandfield",
+              "type": "CommandField",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "commandfield",
+                "required": false,
+                "display_name": "commandfield",
+                "default": "cmdr",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--commandfield"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--dropdown",
+              "type": "Dropdown",
+              "required": false,
+              "data": {
+                "choices": [
+                  "one",
+                  "two"
+                ],
+                "dest": "dropdown",
+                "required": false,
+                "display_name": "dropdown",
+                "default": "two",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--dropdown"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--listboxie",
+              "type": "Listbox",
+              "required": false,
+              "data": {
+                "choices": [
+                  "Option one",
+                  "Option two",
+                  "Option three",
+                  "Option four"
+                ],
+                "dest": "listboxie",
+                "required": false,
+                "display_name": "listboxie",
+                "default": [
+                  "Option three",
+                  "Option four"
+                ],
+                "help": null,
+                "nargs": "+",
+                "commands": [
+                  "--listboxie"
+                ]
+              },
+              "options": {
+                "height": 300,
+                "validate": "",
+                "text_color": "",
+                "heading_color": "",
+                "hide_text": true,
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                },
+                "hide_heading": true,
+                "error_color": "#ea7878"
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "-c",
+              "type": "Counter",
+              "required": false,
+              "data": {
+                "choices": [
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "10"
+                ],
+                "dest": "counter",
+                "required": false,
+                "display_name": "counter",
+                "default": 3,
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "-c",
+                  "--counter"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "-o",
+              "type": "CheckBox",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "overwrite",
+                "required": false,
+                "display_name": "overwrite",
+                "default": true,
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "-o",
+                  "--overwrite"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "744eb075-ff4b-4731-9539-795846089b37",
+              "type": "RadioGroup",
+              "required": true,
+              "data": {
+                "widgets": [
+                  {
+                    "id": "--mutexone",
+                    "type": "CheckBox",
+                    "required": false,
+                    "data": {
+                      "choices": [],
+                      "dest": "mutexone",
+                      "required": false,
+                      "display_name": "mutexone",
+                      "default": true,
+                      "help": "Show more details",
+                      "nargs": "",
+                      "commands": [
+                        "--mutexone"
+                      ]
+                    },
+                    "options": {
+                      "error_color": "#ea7878",
+                      "external_validator": {
+                        "cmd": ""
+                      },
+                      "validator": {
+                        "message": "",
+                        "test": "True"
+                      }
+                    },
+                    "cli_type": "optional"
+                  },
+                  {
+                    "id": "--mutextwo",
+                    "type": "TextField",
+                    "required": false,
+                    "data": {
+                      "choices": [],
+                      "dest": "mutextwo",
+                      "required": false,
+                      "display_name": "mutextwo",
+                      "default": "mut-2",
+                      "help": null,
+                      "nargs": "",
+                      "commands": [
+                        "--mutextwo"
+                      ]
+                    },
+                    "options": {
+                      "error_color": "#ea7878",
+                      "external_validator": {
+                        "cmd": ""
+                      },
+                      "validator": {
+                        "message": "",
+                        "test": "True"
+                      }
+                    },
+                    "cli_type": "optional"
+                  }
+                ],
+                "commands": [
+                  [
+                    "--mutexone"
+                  ],
+                  [
+                    "--mutextwo"
+                  ]
+                ]
+              },
+              "options": {
+                "initial_selection": 1
+              },
+              "group_name": "Choose Option",
+              "cli_type": "optional"
+            },
+            {
+              "id": "--filechooser",
+              "type": "FileChooser",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "filechooser",
+                "required": false,
+                "display_name": "filechooser",
+                "default": "fc-value",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--filechooser"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--filesaver",
+              "type": "FileSaver",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "filesaver",
+                "required": false,
+                "display_name": "filesaver",
+                "default": "fs-value",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--filesaver"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--dirchooser",
+              "type": "DirChooser",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "dirchooser",
+                "required": false,
+                "display_name": "dirchooser",
+                "default": "dc-value",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--dirchooser"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--datechooser",
+              "type": "DateChooser",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "datechooser",
+                "required": false,
+                "display_name": "datechooser",
+                "default": "2015-01-01",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--datechooser"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            }
+          ]
+        }
+      ]
+    },
+    "parser 2": {
+      "command": "parser2",
+      "contents": [
+        {
+          "groups": [],
+          "description": null,
+          "name": "Optional Arguments",
+          "options": {
+            "show_border": false,
+            "columns": 2,
+            "padding": 10
+          },
+          "items": [
+            {
+              "id": "--textfield",
+              "type": "TextField",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "textfield",
+                "required": false,
+                "display_name": "textfield",
+                "default": 2,
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--textfield"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--textarea",
+              "type": "Textarea",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "textarea",
+                "required": false,
+                "display_name": "textarea",
+                "default": "oneline twoline",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--textarea"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--password",
+              "type": "PasswordField",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "password",
+                "required": false,
+                "display_name": "password",
+                "default": "hunter42",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--password"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--commandfield",
+              "type": "CommandField",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "commandfield",
+                "required": false,
+                "display_name": "commandfield",
+                "default": "cmdr",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--commandfield"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--dropdown",
+              "type": "Dropdown",
+              "required": false,
+              "data": {
+                "choices": [
+                  "one",
+                  "two"
+                ],
+                "dest": "dropdown",
+                "required": false,
+                "display_name": "dropdown",
+                "default": "two",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--dropdown"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--listboxie",
+              "type": "Listbox",
+              "required": false,
+              "data": {
+                "choices": [
+                  "Option one",
+                  "Option two",
+                  "Option three",
+                  "Option four"
+                ],
+                "dest": "listboxie",
+                "required": false,
+                "display_name": "listboxie",
+                "default": [
+                  "Option three",
+                  "Option four"
+                ],
+                "help": null,
+                "nargs": "+",
+                "commands": [
+                  "--listboxie"
+                ]
+              },
+              "options": {
+                "height": 300,
+                "validate": "",
+                "text_color": "",
+                "heading_color": "",
+                "hide_text": true,
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                },
+                "hide_heading": true,
+                "error_color": "#ea7878"
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "-c",
+              "type": "Counter",
+              "required": false,
+              "data": {
+                "choices": [
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "10"
+                ],
+                "dest": "counter",
+                "required": false,
+                "display_name": "counter",
+                "default": 3,
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "-c",
+                  "--counter"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "-o",
+              "type": "CheckBox",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "overwrite",
+                "required": false,
+                "display_name": "overwrite",
+                "default": true,
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "-o",
+                  "--overwrite"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "18fe890f-3df3-43d4-b842-cf9ad3d02178",
+              "type": "RadioGroup",
+              "required": true,
+              "data": {
+                "widgets": [
+                  {
+                    "id": "--mutexone",
+                    "type": "CheckBox",
+                    "required": false,
+                    "data": {
+                      "choices": [],
+                      "dest": "mutexone",
+                      "required": false,
+                      "display_name": "mutexone",
+                      "default": true,
+                      "help": "Show more details",
+                      "nargs": "",
+                      "commands": [
+                        "--mutexone"
+                      ]
+                    },
+                    "options": {
+                      "error_color": "#ea7878",
+                      "external_validator": {
+                        "cmd": ""
+                      },
+                      "validator": {
+                        "message": "",
+                        "test": "True"
+                      }
+                    },
+                    "cli_type": "optional"
+                  },
+                  {
+                    "id": "--mutextwo",
+                    "type": "TextField",
+                    "required": false,
+                    "data": {
+                      "choices": [],
+                      "dest": "mutextwo",
+                      "required": false,
+                      "display_name": "mutextwo",
+                      "default": "mut-2",
+                      "help": null,
+                      "nargs": "",
+                      "commands": [
+                        "--mutextwo"
+                      ]
+                    },
+                    "options": {
+                      "error_color": "#ea7878",
+                      "external_validator": {
+                        "cmd": ""
+                      },
+                      "validator": {
+                        "message": "",
+                        "test": "True"
+                      }
+                    },
+                    "cli_type": "optional"
+                  }
+                ],
+                "commands": [
+                  [
+                    "--mutexone"
+                  ],
+                  [
+                    "--mutextwo"
+                  ]
+                ]
+              },
+              "options": {
+                "initial_selection": 1
+              },
+              "group_name": "Choose Option",
+              "cli_type": "optional"
+            },
+            {
+              "id": "--filechooser",
+              "type": "FileChooser",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "filechooser",
+                "required": false,
+                "display_name": "filechooser",
+                "default": "fc-value",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--filechooser"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--filesaver",
+              "type": "FileSaver",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "filesaver",
+                "required": false,
+                "display_name": "filesaver",
+                "default": "fs-value",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--filesaver"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--dirchooser",
+              "type": "DirChooser",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "dirchooser",
+                "required": false,
+                "display_name": "dirchooser",
+                "default": "dc-value",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--dirchooser"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            },
+            {
+              "id": "--datechooser",
+              "type": "DateChooser",
+              "required": false,
+              "data": {
+                "choices": [],
+                "dest": "datechooser",
+                "required": false,
+                "display_name": "datechooser",
+                "default": "2015-01-01",
+                "help": null,
+                "nargs": "",
+                "commands": [
+                  "--datechooser"
+                ]
+              },
+              "options": {
+                "error_color": "#ea7878",
+                "external_validator": {
+                  "cmd": ""
+                },
+                "validator": {
+                  "message": "",
+                  "test": "True"
+                }
+              },
+              "cli_type": "optional"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "run_validators": true,
+  "use_legacy_titles": true,
+  "header_bg_color": "#ffffff",
+  "disable_progress_bar_animation": false,
+  "terminal_font_size": null,
+  "target": "\"F:\\Dropbox\\pretty_gui\\Gooey\\venv3\\Scripts\\python.exe\" -u \"F:/Dropbox/pretty_gui/Gooey/gooey/tests/all_widgets_subparser.py\"",
+  "body_bg_color": "#f0f0f0",
+  "show_stop_warning": true,
+  "image_dir": "::gooey/default",
+  "progress_regex": null,
+  "program_description": "",
+  "header_image_center": false,
+  "header_show_title": true,
+  "program_name": "Subparser Demo",
+  "terminal_font_family": null,
+  "footer_bg_color": "#f0f0f0",
+  "poll_external_updates": false,
+  "sidebar_title": "Actions",
+  "layout": "standard",
+  "navigation": "SIDEBAR",
+  "num_required_cols": 2,
+  "tabbed_groups": false,
+  "disable_stop_button": false,
+  "encoding": "utf-8",
+  "terminal_panel_color": "#F0F0F0",
+  "group_by_type": true,
+  "terminal_font_color": "#000000",
+  "manual_start": false,
+  "show_success_modal": false,
+  "language_dir": "F:\\Dropbox\\pretty_gui\\Gooey\\gooey\\languages",
+  "show_sidebar": true,
+  "sidebar_bg_color": "#f2f2f2",
+  "error_color": "#ea7878",
+  "show_advanced": true,
+  "header_show_subtitle": true
+}
