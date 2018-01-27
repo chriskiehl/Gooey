@@ -6,10 +6,16 @@ from setuptools import setup, find_packages
 with open('README.md') as readme:
     long_description = readme.read()
 
-with open('version.txt', 'r') as f:
-    version = f.read()
+version = '1.0.0'
 
-deps = ['wxpython==4.0.0b1'] if sys.version[0] == '3' else []
+deps = [
+    'Pillow==4.3.0',
+    'psutil==5.4.2'
+]
+
+if sys.version[0] == '3':
+    deps.append('wxpython==4.0.0b1')
+
 
 setup(
     name='Gooey',
