@@ -24,30 +24,20 @@ Table of Contents
 - [Who is this for](#who-is-this-for)
 - [How does it work](#how-does-it-work)
 - [Internationalization](#internationalization)
-- [Configuration](#configuration)
+- [Global Configuration](#global-configuration)
+- [Local Configuarion](#local-configuration)
 - [Run Modes](#run-modes)
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
+- [Input Validation](#input-validation)
 - [Customizing Icons](#customizing-icons)
 - [Packaging](#packaging)
 - [Screenshots](#screenshots)
-- [Change Log](#change-log)
-- [TODO](#todo)
 - [Contributing](#wanna-help)
 - [Image Credits](#image-credits)
 
 
-
-
-----------
-
-
-### Artist Wanted!
-
-Want to contribute to Gooey? We need icons/logos!
-
-Drop me an <a href="mailto:audionautic@gmail.com">email</a> if you want to help out!
 
 ----------------  
 
@@ -240,13 +230,15 @@ Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/
 
 
 
-Configuration 
--------------
+Global Configuration 
+--------------------
 
-Just about everything in Gooey can be customized by passing arguments to the decorator. 
+Just about everything in Gooey's overall look and feel can be customized by passing arguments to the decorator. 
 
 | Parameter | Summary | 
 |-----------|---------|
+| encoding | Text encoding to use when displaying characters (default: 'utf-8') | 
+| use_legacy_titles | Rewrites the default argparse group name from "Positional" to "Required". This is primarily for retaining backward compatibilty with previous versions of Gooey (which had poor support/awareness of groups and did its own naive bucketing of arguments). |
 | advanced | Toggles whether to show the 'full' configuration screen, or a simplified version | 
 | show_config | Skips the configuration all together and runs the program immediately |
 | language | Tells Gooey which language set to load from the `gooey/languages` directory.|
@@ -254,14 +246,38 @@ Just about everything in Gooey can be customized by passing arguments to the dec
 |program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 
-| required_cols | Controls how many columns are in the Required Arguments section |
-| optional_cols | Controls how many columns are in the Optional Arguments section |
+| required_cols | Controls how many columns are in the Required Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
+| optional_cols | Controls how many columns are in the Optional Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
 | dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
 | load_build_config | Loads a `json` copy of its build configuration from disk | 
-| monospace_display | Uses a mono-spaced font in the output screen | 
+| monospace_display | Uses a mono-spaced font in the output screen <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern font configuration| 
 | image_dir | Path to the directory in which Gooey should look for custom images/icons |
 | language_dir | Path to the directory in which Gooey should look for custom languages files |
+| disable_stop_button | Disable the `Stop` button when running |
+| progress_regex | A text regex used to pattern match runtime progress information. See: [Showing Progress](#showing-progress) for a detailed how-to | 
+| progress_expr | A python expression applied to any matches found via the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
+| disable_progress_bar_animation | Disable the progress bar | 
+| navigation | Sets the "navigation" style of Gooey's top level window. <br>Options: <table> <thead> <tr><th>TABBED</th><th>SIDEBAR</th></tr></thead> <tbody> <tr> <td><img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="200" height="auto"></td><td><img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="200" height="auto"></td></tr></tbody></table>|
+| navigation_title | <img src="https://user-images.githubusercontent.com/1408720/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
+| show_sidebar | Show/Hide the sidebar in when navigation mode == `SIDEBAR` | 
+| body_bg_color | HEX value of the main Gooey window | 
+| header_bg_color | HEX value of the header background | 
+| header_height | height in pixels of the header | 
+| header_show_title | Show/Hide the header title | 
+| header_show_subtitle | Show/Hide the header subtitle | 
+| footer_bg_color | HEX value of the Footer background | 
+| sidebar_bg_color | HEX value of the Sidebar's background | 
+| terminal_panel_color | HEX value of the terminal's panel | 
+| terminal_font_color | HEX value of the font displayed in Gooey's terminal | 
+| terminal_font_family | Name of the Font Family to use in the terminal | 
+| terminal_font_weight | Weight of the font (NORMAL|BOLD) | 
+| terminal_font_size | Point size of the font displayed in the terminal | 
+| error_color | HEX value of the text displayed when a validation error occurs |
 
+
+
+Group Configuration
+-------------------
 
 
 Run Modes
@@ -330,6 +346,76 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 ---------------------------------------  
 
 
+### Input Validation
+
+
+<img src="https://user-images.githubusercontent.com/1408720/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png" width="400" height="auto" align="right" />
+
+
+>:warning: 
+>Note! This functionality is experimental. Its API may be changed or removed alltogether. Feedback/thoughts on this feature is welcome and encouraged! 
+
+Gooey can optionally do some basic pre-flight validation on user input. Internally, it uses these validator functions to check for the presence of required arguments. However, by using [GooeyParser](#gooeyparser), you can extend these functions with your own validation rules. This allows Gooey to show much, much more user friendly feedback before it hands control off to your program. 
+
+
+**Writing a validator:**
+
+Validators are specified as part of the `gooey_options` map available to `GooeyParser`. It's a simple map structure made up of a root key named `validator` and two internal pairs: 
+
+ * `test` The inner body of the validation test you wish to perform 
+ * `message` the error message that should display given a validation failure
+ 
+e.g.
+
+```
+gooey_options={
+    'validator':{
+        'test': 'len(user_input) > 3',
+        'message': 'some helpful message'
+    }
+}
+```
+
+**The `test` function**
+
+Your test function can be made up of any valid Python expression. It receives the variable `user_input` as an argument against which to perform its validation. Note that all values coming from Gooey are in the form of a string, so you'll have to cast as needed in order to perform your validation.   
+
+**Full Code Example**
+
+```
+from gooey.python_bindings.gooey_decorator import Gooey
+from gooey.python_bindings.gooey_parser import GooeyParser
+
+@Gooey
+def main():
+    parser = GooeyParser(description='Example validator')
+    parser.add_argument(
+        'secret',
+        metavar='Super Secret Number',
+        help='A number specifically between 2 and 14',
+        gooey_options={
+            'validator': {
+                'test': '2 <= int(user_input) <= 14',
+                'message': 'Must be between 2 and 14'
+            }
+        })
+
+    args = parser.parse_args()
+
+    print("Cool! Your secret number is: ", args.secret)
+```
+
+<img src="https://user-images.githubusercontent.com/1408720/34465024-f011ac3e-ee4f-11e7-80ae-330adb4c47d6.png" width="400" height="auto" align="left" />
+
+With the validator in place, Gooey can present the error messages next to the relevant input field if any validators fail.  
+
+
+
+
+
+---------------------------------------  
+
+
 ## Customizing Icons
 
 Gooey comes with a set of six default icons. These can be overridden with your own custom images/icons by telling Gooey to search additional directories when initializing. This is done via the `image_dir` argument to the `Goeey` decorator. 
@@ -364,32 +450,18 @@ Screenshots
 |-------------|---------------|---------------|--------------|----------------|
 | <img src="https://cloud.githubusercontent.com/assets/1408720/7950190/4414e54e-0965-11e5-964b-f717a7adaac6.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950189/4411b824-0965-11e5-905a-3a2b5df0efb3.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950192/44165442-0965-11e5-8edf-b8305353285f.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950188/4410dcce-0965-11e5-8243-c1d832c05887.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950191/4415432c-0965-11e5-9190-17f55460faf3.jpg"> | 
 
+| Custom Groups | Tabbed Groups | Tabbed Navigation | Sidebar Navigation | Input Validation |
+|-------------|---------------|---------------|--------------|----------------|
+| <img src="https://user-images.githubusercontent.com/1408720/34464824-c044d57a-ee46-11e7-9c35-6e701a7c579a.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464835-5ba9b0e4-ee47-11e7-9561-55e3647c2165.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png"> | 
+
+
+
 
 
 ----------------------------------------------  
 
 
-### Change Log
-----------
 
-- Subparser Support! 
-- Moved all internal messaging to pubsub
-- expanded i18n converage
-- allowed returning to the main configuration screen 
-- Fixed success checkmark showing on failure 
-- Refactoring to beauty 
-- Removed parsing code, replaced it with @SylvainDe patch
-- Fixed issue #87
-- Fixed issue #85
-- Argparse no longer required to be in `main` (issue 84)
-- Drag and Drop support (`Issue #28`)
-- Added drag and drop support
-- Added new widget packs: DateChooser, FileChooser, DirChooser
-- fixed several parsing related issues. 
-- Gooey now has a sane setup.py (thanks to hero user LudoVio) 
-- Gooey now builds from json for easy configurability 
-    - Side Note: This was done with big strides towards making Gooey language agnostic. Coming Soon! 
-- Fixed GUI layout so that resizing works better
 
 
 
