@@ -25,7 +25,7 @@ Table of Contents
 - [How does it work](#how-does-it-work)
 - [Internationalization](#internationalization)
 - [Global Configuration](#global-configuration)
-- [Local Configuarion](#local-configuration)
+- [Layout Customization](#layout-customization)
 - [Run Modes](#run-modes)
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
@@ -282,8 +282,75 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 
 
 
-Group Configuration
--------------------
+Layout Customization
+--------------------
+
+You can achieve fairly flexible layouts with Gooey by using a few simple customizations. 
+
+At the highest level, you have several overall layout options controllable via various arguments to the Gooey decorator.
+
+
+| `show_sidebar=True` | `show_sidebar=False` | `navigation='TABBED'` |  `tabbed_groups=True` |
+|---------------------|----------------------|----------------------|------------------------|
+|<img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="400"> |<img src="https://user-images.githubusercontent.com/1408720/35487799-762aa308-0434-11e8-8eb3-1e9fab2d13ae.png" width="400"> |<img src="https://user-images.githubusercontent.com/1408720/34464835-5ba9b0e4-ee47-11e7-9561-55e3647c2165.png" width="400"> |<img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="400"> |
+
+
+**Grouping Inputs**
+
+By default, if you're using Argparse with Gooey, your inputs will be split into two buckets: `positional` and `optional`. However, these aren't always the most descriptive groups to present to your user. You can arbitrarily bucket inputs into logic groups and customize the layout of each. 
+
+With `argparse` this is done via `add_argument_group()`
+
+<img src="https://user-images.githubusercontent.com/1408720/35487956-a4c9915e-0436-11e8-8a11-fd21528aedf0.png" align="right" width="410">
+
+```
+parser = ArgumentParser()
+search_group = parser.add_argument_group(
+    "Search Options", 
+    "Customize the search options"
+)
+```
+
+You can add arguments to the group as normal 
+
+```
+search_group.add_argument(
+    '--query', 
+    help='Base search string'
+) 
+```
+
+Which will display them as part of the group within the UI. 
+
+**Customizing Group Layout**
+
+> Note: Make sure you're using GooeyParser if you want to take advantage of the layout customizations!  
+
+With a group created, we can now start tweaking how it looks! `GooeyParser` extends the API of `add_argument_group` to accept an additional keyword argument: `gooey_options`.  It accepts two keys: `show_border` and `columns`
+
+```
+gooey_options={
+    'show_border': Bool,
+    'columns': 1-100 
+}
+```
+
+<img src="https://user-images.githubusercontent.com/1408720/35488154-e201ab90-0438-11e8-9479-3a27fd1c523e.png" align="right" width="400">
+
+`show_border` is nice for visually tying together closely related items within a parent group. Setting it to `true` will draw a small border around all of the inputs and nest the title at the top. 
+
+`columns` controls how many many items get places on each row within the 
+
+
+
+
+
+
+
+
+
+
+
 
 
 Run Modes
