@@ -421,7 +421,39 @@ With the validator in place, Gooey can present the error messages next to the re
 
 ## Using Dynamic Values
 
-TODO
+>:warning: 
+>Note! This functionality is experimental. Its API may be changed or removed alltogether. Feedback on this feature is welcome and encouraged! 
+
+Gooey's Choice style fields (Dropdown, Listbox) can be fed a dynamic set of values at runtime by enabling the `poll_external_updates` option. This will cause Gooey to request updated values from your program everytime the user visits the Configuration page. This can be used to, for instance, show the result of a previous execution on the config screen without requiring that the user restart the program. 
+
+**How does it work?**
+
+<img src="https://user-images.githubusercontent.com/1408720/35487459-bd7fe938-0430-11e8-9f6d-fa8f703b9da5.gif" align="right" width="420"/>
+
+At runtime, whenever the user hits the Configuration screen, Gooey will call your program with a single CLI argument: `gooey-seed-ui`. This is a request to your program for updated values for the UI. In response to this, on `stdout`, your program should return a JSON string mapping cli-inputs to a list of options.
+
+For example, assuming a setup where you have a dropdown that lists user files:
+
+```
+ ...
+ parser.add_argument(
+        '--load',
+        metavar='Load Previous Save',
+        help='Load a Previous save file',
+        dest='filename',
+        widget='Dropdown',
+        choices=list_savefiles(),
+    )
+```
+
+Here the input we want to populate is `--load`. So, in response to the `gooey-seed-ui` request, you would return a JSON string with `--load` as the key, and a list of strings that you'd like to display to the user as the value. e.g.  
+
+```
+{"--load": ["Filename_1.txt", "filename_2.txt", ..., "filename_n.txt]}
+```
+
+Checkout the full example code in the [Examples Repository](https://github.com/chriskiehl/GooeyExamples/blob/master/examples/dynamic_updates.py). Or checkout a larger example in the silly little tool that spawned this feature: [SavingOverIt](https://github.com/chriskiehl/SavingOverIt). 
+
 
 
 --------------------------------------
