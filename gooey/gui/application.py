@@ -12,13 +12,7 @@ from gooey.util.functional import merge
 
 
 def run(build_spec):
-  app = wx.App(False)
-
-  i18n.load(build_spec['language_dir'], build_spec['language'])
-  imagesPaths = image_repository.loadImages(build_spec['image_dir'])
-  gapp = GooeyApplication(merge(build_spec, imagesPaths))
-  # wx.lib.inspection.InspectionTool().Show()
-  gapp.Show()
+  app = build_app(build_spec)
   app.MainLoop()
 
 
