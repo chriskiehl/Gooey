@@ -6,7 +6,6 @@ from concurrent import futures
 from gooey.gui import application
 from gooey.gui.lang.i18n import _
 
-
 class TestGooeyIntegration(unittest.TestCase):
     """
     A few quick integration tests that exercise Gooey's various run modes
@@ -46,7 +45,7 @@ class TestGooeyIntegration(unittest.TestCase):
     def test_gooeyNormalRun(self):
         """ Tests the happy path through the default run mode of Gooey """
         self.performTest('./gooey/tests/gooey_config__normal.json', self.gooeySanityTest)
-    
+
     def test_gooeySubparserMode(self):
         """ Tests the happy path through the subparser run mode of Gooey """
         self.performTest('./gooey/tests/gooey_config__subparser.json', self.gooeySanityTest)

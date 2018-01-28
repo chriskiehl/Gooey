@@ -7,7 +7,8 @@ from gooey import GooeyParser
     show_sidebar=True,
     dump_build_config=True,
     show_success_modal=False,
-    force_stop_is_error=False
+    force_stop_is_error=False,
+    language='chinese'
 )
 def main():
     desc = "Example application to show Gooey's various widgets"
