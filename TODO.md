@@ -1,7 +1,6 @@
 Release TODO
 ============
 
- - [ ] MUST add new entries to all language files
 
  - [ ] Fix user supplied directory path when packaged. Currently gives super cryptic failures
  - [X] need ability to call out to external seed function for dynamic defaults
@@ -9,12 +8,13 @@ Release TODO
     - [ ] extend this to all types (currently only works for Dropdowns)
     - [ ] think about stuff. Need a friendly way to specify mappings that's more
           flexible than options_strings
- - [X] success/error screen after a ForceStop should be configurable. Stopping early does not necessarily error
 
+ - [X] success/error screen after a ForceStop should be configurable. Stopping early does not necessarily error
  - [ ] customizable button text
  - [X] text encoding
  - [X] pass down the font info to the console
  - [X] pass down the style info to the console
+ - [X] MUST add new entries to all language files
 
 
 Issue #234
