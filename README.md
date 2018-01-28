@@ -31,6 +31,7 @@ Table of Contents
     - [Basic](#basic)
     - [No Config](#no-config)
 - [Input Validation](#input-validation)
+- [Using Dynamic Values](#using-dynamic-values)
 - [Customizing Icons](#customizing-icons)
 - [Packaging](#packaging)
 - [Screenshots](#screenshots)
