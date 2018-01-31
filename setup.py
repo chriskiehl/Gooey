@@ -9,12 +9,12 @@ with open('README.md') as readme:
 version = '1.0.0'
 
 deps = [
-    'Pillow==4.3.0',
-    'psutil==5.4.2'
+    'Pillow>=4.3.0',
+    'psutil>=5.4.2'
 ]
 
 if sys.version[0] == '3':
-    deps.append('wxpython==4.0.0b1')
+    deps.append('wxpython>=4.0.0b1')
 
 
 setup(
