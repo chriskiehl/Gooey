@@ -1,5 +1,6 @@
 import wx
 from gooey.gui.components.widgets.bases import BaseWidget
+from gooey.gui.lang.i18n import _
 from gooey.gui.util import wx_util
 from gooey.gui.components.widgets import CheckBox
 from gooey.util.functional import getin, findfirst, merge
@@ -52,7 +53,7 @@ class RadioGroup(BaseWidget):
 
 
     def arrange(self, *args, **kwargs):
-        title = getin(self.widgetInfo, ['options', 'title'], 'Choose One')
+        title = getin(self.widgetInfo, ['options', 'title'], _('choose_one'))
         if getin(self.widgetInfo, ['options', 'show_border'], False):
             boxDetails = wx.StaticBox(self, -1, title)
             boxSizer = wx.StaticBoxSizer(boxDetails, wx.VERTICAL)
