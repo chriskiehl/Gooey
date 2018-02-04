@@ -244,8 +244,9 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | auto_start | Skips the configuration all together and runs the program immediately |
 | language | Tells Gooey which language set to load from the `gooey/languages` directory.|
 | target | Tells Gooey how to re-invoke itself. By default Gooey will find python, but this allows you to specify the program (and arguments if supplied).|
-|program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
+| program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
+| run_on_cli_callback | Parse arguments from GUI and calls this callback function on cli(terminal). The callback function takes two parameters(positional_args, optional_args) |
 | default_size | Initial size of the window | 
 | required_cols | Controls how many columns are in the Required Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
 | optional_cols | Controls how many columns are in the Optional Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|

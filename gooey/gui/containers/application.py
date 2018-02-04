@@ -41,6 +41,7 @@ class GooeyApplication(wx.Frame):
         self.navbar = self.buildNavigation()
         self.footer = Footer(self, buildSpec)
         self.console = Console(self, buildSpec)
+        self.pendingCliAction = None
         self.layoutComponent()
 
         self.clientRunner = ProcessController(
@@ -60,6 +61,7 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
+        self.Bind(wx.EVT_UPDATE_UI, self.onUpdateUI)
 
         if self.buildSpec['poll_external_updates']:
             self.fetchExternalUpdates()
@@ -75,12 +77,15 @@ class GooeyApplication(wx.Frame):
         with transactUI(self):
             config = self.navbar.getActiveConfig()
             config.resetErrors()
-            if config.isValid():
-                self.clientRunner.run(self.buildCliString())
-                self.showConsole()
-            else:
+            if not config.isValid():
                 config.displayErrors()
                 self.Layout()
+                return
+
+            if self.shouldRunOnCli():
+                self.runOnCli(config)
+            else:
+                self.runOnGui()
 
 
     def onEdit(self):
@@ -89,6 +94,41 @@ class GooeyApplication(wx.Frame):
             if self.buildSpec['poll_external_updates']:
                 self.fetchExternalUpdates()
             self.showSettings()
+
+
+    def shouldRunOnCli(self):
+        return callable(self.buildSpec['run_on_cli_callback'])
+
+
+    def getRunOnCliCallback(self):
+        if not self.shouldRunOnCli():
+            def ignore():
+                pass
+            return ignore
+
+        return self.buildSpec['run_on_cli_callback']
+
+
+    def runOnCli(self, config):
+        self.pendingCliAction = {
+            'callback': self.getRunOnCliCallback(),
+            'positionalArgs': config.getPositionalArgs(),
+            'optionalArgs': config.getOptionalArgs()
+        }
+        self.Hide()
+
+
+    def onUpdateUI(self, event):
+        if self.pendingCliAction is not None:
+            self.Destroy()
+            self.pendingCliAction['callback'](\
+                self.pendingCliAction['positionalArgs'],\
+                self.pendingCliAction['optionalArgs'])
+
+
+    def runOnGui(self):
+        self.clientRunner.run(self.buildCliString())
+        self.showConsole()
 
 
     def buildCliString(self):
