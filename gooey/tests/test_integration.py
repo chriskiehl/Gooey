@@ -1,10 +1,15 @@
 import json
+import sys
 import time
 import unittest
 from concurrent import futures
+from os import path
 
 from gooey.gui import application
 from gooey.gui.lang.i18n import _
+from gooey.gui.util.freeze import getResourcePath
+from gooey.gui.util.quoting import quote
+
 
 class TestGooeyIntegration(unittest.TestCase):
     """
@@ -14,7 +19,7 @@ class TestGooeyIntegration(unittest.TestCase):
     running through the system, we have to execute the actual assertions in a
     different thread
     """
-
+    LOCAL_DIR = path.dirname(__file__)
 
     def performTest(self, configPath, assertionFunction):
         """
@@ -25,12 +30,13 @@ class TestGooeyIntegration(unittest.TestCase):
         """
         with open(configPath, 'r') as f:
             build_spec = json.loads(f.read())
-
-        try:
-            assert 0
-        except AssertionError as e:
-            print('wtf')
-            print(e)
+            # swaps the absolute path stored by Gooey at write time
+            # for a relative one based on our current test location
+            target_pyfile = path.split(build_spec['target'].replace('"', ''))[-1]
+            file_path = path.join(path.dirname(__file__), target_pyfile)
+            run_cmd = '{} -u {}'.format(quote(sys.executable), quote(file_path))
+            build_spec['language_dir'] = getResourcePath('languages')
+            build_spec['target'] = run_cmd
 
         app = application.build_app(build_spec=build_spec)
         executor = futures.ThreadPoolExecutor(max_workers=1)
@@ -44,21 +50,21 @@ class TestGooeyIntegration(unittest.TestCase):
 
     def test_gooeyNormalRun(self):
         """ Tests the happy path through the default run mode of Gooey """
-        self.performTest('./gooey/tests/gooey_config__normal.json', self.gooeySanityTest)
+        self.performTest(path.join(self.LOCAL_DIR, 'gooey_config__normal.json'), self.gooeySanityTest)
 
     def test_gooeySubparserMode(self):
         """ Tests the happy path through the subparser run mode of Gooey """
-        self.performTest('./gooey/tests/gooey_config__subparser.json', self.gooeySanityTest)
+        self.performTest(path.join(self.LOCAL_DIR, 'gooey_config__subparser.json'), self.gooeySanityTest)
 
     def test__gooeyAutoStart(self):
         """Verifies that issue #201 doesn't regress and auto_start skips the config
         screen and hops right into the client's program"""
-        self.performTest('./gooey/tests/gooey_config__autostart.json', self.verifyAutoStart)
+        self.performTest(path.join(self.LOCAL_DIR, 'gooey_config__autostart.json'), self.verifyAutoStart)
 
     def test__gooeyValidation(self):
         """Verifies that custom validation routines supplied via gooey_options prevents
         the user from advancing past the configuration page when they fail"""
-        self.performTest('./gooey/tests/gooey_config__autostart.json', self.verifyValidators)
+        self.performTest(path.join(self.LOCAL_DIR, 'gooey_config__autostart.json'), self.verifyValidators)
 
 
     def verifyValidators(self, app, buildSpec):

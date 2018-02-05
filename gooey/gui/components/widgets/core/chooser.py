@@ -2,6 +2,7 @@ import wx
 
 from gooey.gui.components.widgets.core.text_input import TextInput
 from gooey.gui.components.widgets.dialogs.calender_dialog import CalendarDlg
+from gooey.gui.lang.i18n import _
 from gooey.util.functional import merge
 
 
@@ -15,7 +16,7 @@ class Chooser(wx.Panel):
 
     def __init__(self, parent, *args, **kwargs):
         super(Chooser, self).__init__(parent)
-        buttonLabel = kwargs.pop('label', 'Browse')
+        buttonLabel = kwargs.pop('label', _('browse'))
         self.widget = TextInput(self, *args, **kwargs)
         self.button = wx.Button(self, label=buttonLabel)
         self.button.Bind(wx.EVT_BUTTON, self.spawnDialog)
@@ -40,7 +41,7 @@ class Chooser(wx.Panel):
 
 
     def getDialog(self):
-        return wx.FileDialog(self, 'Open File')
+        return wx.FileDialog(self, _('open_file'))
 
     def getResult(self, dialog):
         return dialog.GetPath()
@@ -76,20 +77,21 @@ class FileSaver(Chooser):
         return wx.FileDialog(
             self,
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
-            defaultFile="Enter Filename"
+            defaultFile=_("enter_filename"),
+            message=_('choose_file')
         )
 
 
 class DirChooser(Chooser):
     """ Retrieve a path to the supplied directory """
     def getDialog(self):
-        return wx.DirDialog(self)
+        return wx.DirDialog(self, message=_('choose_folder'))
 
 
 class DateChooser(Chooser):
     """ Launches a date picker which returns and ISO Date """
     def __init__(self, *args, **kwargs):
-        defaults = {'label': 'Choose Date'}
+        defaults = {'label': _('choose_date')}
         super(DateChooser, self).__init__(*args, **merge(kwargs, defaults))
 
 
