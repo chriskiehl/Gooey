@@ -121,9 +121,13 @@ class GooeyApplication(wx.Frame):
         """
         with transactUI(self):
             if self.clientRunner.was_success():
-                self.showSuccess()
-                if self.buildSpec.get('show_success_modal', True):
-                    wx.CallAfter(modals.showSuccess)
+                if self.buildSpec.get('return_to_config', False):
+                    self.showSettings()
+                    self.footer.progress_bar.Show(False)
+                else:
+                    self.showSuccess()
+                    if self.buildSpec.get('show_success_modal', True):
+                        wx.CallAfter(modals.showSuccess)
             else:
                 if self.clientRunner.wasForcefullyStopped:
                     self.showForceStopped()

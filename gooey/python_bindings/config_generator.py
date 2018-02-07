@@ -46,6 +46,7 @@ def create_from_parser(parser, source_path, **kwargs):
         'show_success_modal':   kwargs.get('show_success_modal', True),
         'force_stop_is_error':  kwargs.get('force_stop_is_error', True),
         'poll_external_updates':kwargs.get('poll_external_updates', False),
+        'return_to_config':     kwargs.get('return_to_config', False),
 
         # Legacy/Backward compatibility interop
         'use_legacy_titles':    kwargs.get('use_legacy_titles', True),
