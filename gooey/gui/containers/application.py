@@ -123,7 +123,6 @@ class GooeyApplication(wx.Frame):
             if self.clientRunner.was_success():
                 if self.buildSpec.get('return_to_config', False):
                     self.showSettings()
-                    self.footer.progress_bar.Show(False)
                 else:
                     self.showSuccess()
                     if self.buildSpec.get('show_success_modal', True):
@@ -214,6 +213,7 @@ class GooeyApplication(wx.Frame):
         self.header.setTitle(_("settings_title"))
         self.header.setSubtitle(self.buildSpec['program_description'])
         self.footer.showButtons('cancel_button', 'start_button')
+        self.footer.progress_bar.Show(False)
 
 
     def showConsole(self):
