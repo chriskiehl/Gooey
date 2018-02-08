@@ -121,9 +121,12 @@ class GooeyApplication(wx.Frame):
         """
         with transactUI(self):
             if self.clientRunner.was_success():
-                self.showSuccess()
-                if self.buildSpec.get('show_success_modal', True):
-                    wx.CallAfter(modals.showSuccess)
+                if self.buildSpec.get('return_to_config', False):
+                    self.showSettings()
+                else:
+                    self.showSuccess()
+                    if self.buildSpec.get('show_success_modal', True):
+                        wx.CallAfter(modals.showSuccess)
             else:
                 if self.clientRunner.wasForcefullyStopped:
                     self.showForceStopped()
@@ -210,6 +213,7 @@ class GooeyApplication(wx.Frame):
         self.header.setTitle(_("settings_title"))
         self.header.setSubtitle(self.buildSpec['program_description'])
         self.footer.showButtons('cancel_button', 'start_button')
+        self.footer.progress_bar.Show(False)
 
 
     def showConsole(self):
