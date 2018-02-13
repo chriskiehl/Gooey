@@ -13,12 +13,13 @@ from gooey.util.functional import unit, bind
 
 
 class ProcessController(object):
-    def __init__(self, progress_regex, progress_expr, encoding):
+    def __init__(self, progress_regex, progress_expr, encoding, shell=True):
         self._process = None
         self.progress_regex = progress_regex
         self.progress_expr = progress_expr
         self.encoding = encoding
         self.wasForcefullyStopped = False
+        self.shell_execution = shell
 
     def was_success(self):
         self._process.communicate()
@@ -46,16 +47,15 @@ class ProcessController(object):
             self._process = subprocess.Popen(
                 command.encode(sys.getfilesystemencoding()),
                 bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-                stderr=subprocess.STDOUT, shell=True, env=env)
+                stderr=subprocess.STDOUT, shell=self.shell_execution, env=env)
         except:
             self._process = subprocess.Popen(
                 command,
                 bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-                stderr=subprocess.STDOUT, shell=True, env=env)
+                stderr = subprocess.STDOUT, shell = self.shell_execution, env=env)
 
         t = Thread(target=self._forward_stdout, args=(self._process,))
         t.start()
-        
 
     def _forward_stdout(self, process):
         '''
