@@ -48,6 +48,9 @@ def create_from_parser(parser, source_path, **kwargs):
         'poll_external_updates':kwargs.get('poll_external_updates', False),
         'return_to_config':     kwargs.get('return_to_config', False),
 
+        # debug
+        'requires_shell':       kwargs.get('requires_shell', True),
+
         # Legacy/Backward compatibility interop
         'use_legacy_titles':    kwargs.get('use_legacy_titles', True),
         'num_required_cols':    kwargs.get('required_cols', 1),
