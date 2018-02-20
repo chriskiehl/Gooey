@@ -66,7 +66,8 @@ class ProcessController(object):
             line = process.stdout.readline()
             if not line:
                 break
-            pub.send_message(events.CONSOLE_UPDATE, msg=line.decode(self.encoding))
+
+            pub.send_message(events.CONSOLE_UPDATE, msg=line.decode(self.encoding, 'replace'))
             pub.send_message(events.PROGRESS_UPDATE,
                              progress=self._extract_progress(line))
         pub.send_message(events.EXECUTION_COMPLETE)
@@ -77,7 +78,7 @@ class ProcessController(object):
         user-supplied regex and calculation instructions
         '''
         # monad-ish dispatch to avoid the if/else soup
-        find = partial(re.search, string=text.strip().decode(self.encoding))
+        find = partial(re.search, string=text.strip().decode(self.encoding, 'replace'))
         regex = unit(self.progress_regex)
         match = bind(regex, find)
         result = bind(match, self._calculate_progress)
