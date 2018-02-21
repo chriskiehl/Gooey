@@ -68,7 +68,9 @@ class FileChooser(Chooser):
 class MultiFileChooser(Chooser):
     """ Retrieve an multiple files from the system """
     def getDialog(self):
-        return wx.FileDialog(self, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        return wx.FileDialog(self, "Open Files" ,style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE)
+    def getResult(self, dialog):
+        return os.pathsep.join(dialog.GetPaths()) 
 
 
 class FileSaver(Chooser):
