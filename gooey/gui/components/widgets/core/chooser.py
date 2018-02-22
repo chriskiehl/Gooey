@@ -1,4 +1,5 @@
 import wx
+import os
 
 from gooey.gui.components.widgets.core.text_input import TextInput
 from gooey.gui.components.widgets.dialogs.calender_dialog import CalendarDlg
