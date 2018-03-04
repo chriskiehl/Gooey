@@ -71,17 +71,26 @@ class RadioGroup(BaseWidget):
 
 
     def handleButtonClick(self, event):
-        if not self.widgetInfo['required']:
-            # if it's not a required group, allow deselection of the
-            # current option if the user clicks on a selected radio button
-            if event.EventObject.Id == getattr(self.selected, 'Id', None)\
-                    and event.EventObject.GetValue():
-                event.EventObject.SetValue(False)
-        else:
-            self.selected = event.EventObject
+        currentSelection = self.selected
+        nextSelection = event.EventObject
+
+        if not self.isSameRadioButton(currentSelection, nextSelection):
+            self.selected = nextSelection
             self.selected.SetValue(True)
+        else:
+            # user clicked on an already enabled radio button.
+            # if it is not in the required section, allow it to be deselected
+            if not self.widgetInfo['required']:
+                self.selected.SetValue(False)
+
         self.applyStyleRules()
         self.handleImplicitCheck()
+
+
+    def isSameRadioButton(self, radioButton1, radioButton2):
+        return (getattr(radioButton1, 'Id', 'r1-not-found') ==
+                getattr(radioButton2, 'Id', 'r2-not-found'))
+
 
     def applyStyleRules(self):
         """
