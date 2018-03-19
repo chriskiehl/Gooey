@@ -20,9 +20,13 @@ def resizeImage(im, targetHeight):
 
 
 def wrapBitmap(im, parent):
-    bitmapData = wx.Bitmap.FromBufferRGBA(im.size[0], im.size[1], im.convert('RGBA').tobytes())
-    return wx.StaticBitmap(parent, bitmap=bitmapData)
+    try:
+        rgba = im.convert('RGBA').tobytes()
+    except AttributeError:
+        rgba = im.convert('RGBA').tostring()
 
+    bitmapData = wx.Bitmap.FromBufferRGBA(im.size[0], im.size[1], rgba)
+    return wx.StaticBitmap(parent, bitmap=bitmapData)
 
 
 if __name__ == '__main__':
