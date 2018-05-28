@@ -46,5 +46,5 @@ resources/
 gooey/examples/
 gooey/_tmp/
 
-venv/
-venv2/
+venv*/
+
