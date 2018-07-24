@@ -94,18 +94,23 @@ class TextContainer(BaseWidget):
         event.Skip()
 
     def getValue(self):
+        userValidatorCB = None
+        validatesCB = True
+        value = self.getWidgetValue()
+        if 'callback' in self._options['validator']:
+            userValidatorCB = self._options['validator']['callback']
+            validatesCB = userValidatorCB(value)
+
         userValidator = getin(self._options, ['validator', 'test'], 'True')
         message = getin(self._options, ['validator', 'message'], '')
         testFunc = eval('lambda user_input: bool(%s)' % userValidator)
         satisfies = testFunc if self._meta['required'] else ifPresent(testFunc)
-        value = self.getWidgetValue()
-
         return {
             'id': self._id,
             'cmd': self.formatOutput(self._meta, value),
             'rawValue': value,
             'test': runValidator(satisfies, value),
-            'error': None if runValidator(satisfies, value) else message,
+            'error': None if runValidator(satisfies, value) and validatesCB else message,
             'clitype': 'positional'
                         if self._meta['required'] and not self._meta['commands']
                         else 'optional'
