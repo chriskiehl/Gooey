@@ -14,7 +14,7 @@ deps = [
 ]
 
 if sys.version[0] == '3':
-    deps.append('wxpython==4.0.2-py37h76a34b6_1')
+    deps.append('wxpython>=4.0.0b1')
 
 
 setup(
