@@ -1,5 +1,6 @@
 """Script for setuptools."""
 import sys
+import os
 from setuptools import setup, find_packages
 
 
@@ -8,10 +9,9 @@ with open('README.md') as readme:
 
 version = '1.0.0'
 
-deps = [
-    'Pillow>=4.3.0',
-    'psutil>=5.4.2'
-]
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, "requirements.txt"), "r") as f:
+    deps = f.readlines()
 
 if sys.version[0] == '3':
     deps.append('wxpython>=4.0.0b1')
