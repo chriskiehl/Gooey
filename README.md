@@ -32,6 +32,7 @@ Table of Contents
     - [No Config](#no-config)
 - [Input Validation](#input-validation)
 - [Using Dynamic Values](#using-dynamic-values)
+- [Showing Progress](#showing-progress)
 - [Customizing Icons](#customizing-icons)
 - [Packaging](#packaging)
 - [Screenshots](#screenshots)
@@ -523,7 +524,38 @@ Here the input we want to populate is `--load`. So, in response to the `gooey-se
 
 Checkout the full example code in the [Examples Repository](https://github.com/chriskiehl/GooeyExamples/blob/master/examples/dynamic_updates.py). Or checkout a larger example in the silly little tool that spawned this feature: [SavingOverIt](https://github.com/chriskiehl/SavingOverIt). 
 
+-------------------------------------
 
+## Showing Progress
+
+<img src="https://user-images.githubusercontent.com/1408720/45590349-55bbda80-b8eb-11e8-9aed-b4fe377756ac.png" align="right" width="420"/>
+
+Giving visual progress feedback with Gooey is easy! If you're already displaying textual progress updates, you can tell Gooey to hook into that existing output in order to power its Progress Bar. 
+
+For simple cases, output strings which resolve to a numeric representation of the completion percentage (e.g. `Progress 83%`) can be pattern matched and turned into a progress bar status with a simple regular expression (e.g. `@Gooey(progress_regex=r"^progress: (\d+)%$")`). 
+
+For more complicated outputs, you can pass in a custom evaluation expression (`progress_expr`) to transform the things however you need. 
+
+**Program Output:**
+
+```
+progress: 1/100
+progress: 2/100
+progress: 3/100
+...
+```
+
+**Regex and Processing Expression**
+
+```python
+@Gooey(progress_regex=r"^progress: (?P<current>\d+)/(?P<total>\d+)$",
+       progress_expr="current / total * 100")
+```
+
+There are lots of options for telling Gooey about progress as your program is running. Checkout the [Gooey Examples](https://github.com/chriskiehl/GooeyExamples) repository for more detailed usage and examples! 
+
+| progress_regex | A text regex used to pattern match runtime progress information. See: [Showing Progress](#showing-progress) for a detailed how-to |
+| progress_expr | A python expression applied to any matches found via the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
 
 --------------------------------------
 
