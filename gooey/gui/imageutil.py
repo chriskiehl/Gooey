@@ -6,7 +6,7 @@ import six
 from PIL import Image
 import wx
 
-from gooey.gui.three_to_four import imageFromBitmap, bitmapFromImage
+from gooey.gui.three_to_four import bitmapFromBufferRGBA
 
 
 
@@ -25,7 +25,7 @@ def wrapBitmap(im, parent):
     except AttributeError:
         rgba = im.convert('RGBA').tostring()
 
-    bitmapData = wx.Bitmap.FromBufferRGBA(im.size[0], im.size[1], rgba)
+    bitmapData = bitmapFromBufferRGBA(im, rgba)
     return wx.StaticBitmap(parent, bitmap=bitmapData)
 
 

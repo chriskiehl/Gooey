@@ -43,5 +43,9 @@ def bitmapFromImage(image):
         return wx.BitmapFromImage(image)
 
 
-
+def bitmapFromBufferRGBA(im, rgba):
+    if isLatestVersion:
+        return wx.Bitmap.FromBufferRGBA(im.size[0], im.size[1], rgba)
+    else:
+        return wx.BitmapFromBufferRGBA(im.size[0], im.size[1], rgba)
 
