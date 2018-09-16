@@ -47,6 +47,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'force_stop_is_error':  kwargs.get('force_stop_is_error', True),
       'poll_external_updates':kwargs.get('poll_external_updates', False),
       'return_to_config':     kwargs.get('return_to_config', False),
+      'show_restart_button':  kwargs.get('show_restart_button', True),
 
       # Legacy/Backward compatibility interop
       'use_legacy_titles':    kwargs.get('use_legacy_titles', True),
