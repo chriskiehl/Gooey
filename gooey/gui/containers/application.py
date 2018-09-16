@@ -36,6 +36,7 @@ class GooeyApplication(wx.Frame):
         self._state = {}
         self.buildSpec = buildSpec
 
+        self.SetTitle(self.buildSpec['program_name'])
         self.header = FrameHeader(self, buildSpec)
         self.configs = self.buildConfigPanels(self)
         self.navbar = self.buildNavigation()
