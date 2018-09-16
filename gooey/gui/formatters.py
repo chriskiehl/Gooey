@@ -1,5 +1,7 @@
 import os
 
+import itertools
+
 from gooey.gui.util.quoting import quote
 
 
@@ -45,9 +47,8 @@ def counter(metatdata, value):
     '''
     if not str(value).isdigit():
         return None
-    arg = str(metatdata['commands'][0]).replace('-', '')
-    repeated_args = arg * int(value)
-    return '-' + repeated_args
+    command = str(metatdata['commands'][0]).strip()
+    return ' '.join(itertools.repeat(command, int(value)))
 
 
 def dropdown(metadata, value):
