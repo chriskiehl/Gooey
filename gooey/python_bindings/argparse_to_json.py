@@ -310,9 +310,14 @@ def build_radio_group(mutex_group, widget_group, options):
 
 
 def action_to_json(action, widget, options):
+    dropdown_types = {'Listbox', 'Dropdown', 'Counter'}
     if action.required:
-        # check that it's present and not just spaces
-        validator = 'user_input and not user_input.isspace()'
+        # Text fields get a default check that user input is present
+        # and not just spaces, dropdown types get a simplified
+        # is-it-present style check
+        validator = ('user_input and not user_input.isspace()'
+                     if widget not in dropdown_types
+                     else 'user_input')
         error_msg = 'This field is required'
     else:
         # not required; do nothing;
