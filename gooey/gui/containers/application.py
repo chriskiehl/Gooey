@@ -227,7 +227,7 @@ class GooeyApplication(wx.Frame):
         self.navbar.Show(False)
         self.console.Show(True)
         buttons = (['edit_button', 'restart_button', 'close_button']
-                   if self.buildSpec['show_restart_button']
+                   if self.buildSpec.get('show_restart_button', True)
                    else ['edit_button', 'close_button'])
         self.footer.showButtons(*buttons)
         self.footer.progress_bar.Show(False)
