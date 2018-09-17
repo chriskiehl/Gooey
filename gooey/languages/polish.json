@@ -9,7 +9,7 @@
   "close_program": "Zamknąć program?",
   "edit": "Edytuj",
   "enter_filename": "Wprowadź nazwę pliku",
-  "error_required_fields": "Trzeba wypełnić wszystkie pola z grupy Required!",
+  "error_required_fields": "Trzeba wypełnić wszystkie pola z grupy wymaganych!",
   "error_title": "Błąd",
   "execution_finished": "Wykonano",
   "finished_error": "Wystąpił błąd.",
