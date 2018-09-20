@@ -342,7 +342,7 @@ def action_to_json(action, widget, options):
             'required': action.required,
             'nargs': action.nargs or '',
             'commands': action.option_strings,
-            'choices': list(action.choices) if action.choices else [],
+            'choices': list(map(str, action.choices)) if action.choices else [],
             'default': clean_default(action.default),
             'dest': action.dest,
         },
