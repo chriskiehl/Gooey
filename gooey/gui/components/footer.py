@@ -123,7 +123,7 @@ class Footer(wx.Panel):
             parent=self,
             id=event_id,
             size=(90, 24),
-            label=i18n._(label),
+            label=label,
             style=style)
 
     def dispatch_click(self, event):
