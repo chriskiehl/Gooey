@@ -53,9 +53,11 @@ class TestArgparse(unittest.TestCase):
         Issue 321 - must coerce choice types to string to support wx.ComboBox
         """
         parser = ArgumentParser()
-        parser.add_argument('--foo', choices=[1, 2, 3])
+        parser.add_argument('--foo', default=1, choices=[1, 2, 3])
         choice_action = parser._actions[-1]
         result = argparse_to_json.action_to_json(choice_action, 'Dropdown', {})
         self.assertEqual(getin(result, ['data', 'choices']), ['1', '2', '3'])
+        # default value is also converted to a string type
+        self.assertEqual(getin(result, ['data', 'default']), '1')
         
 
