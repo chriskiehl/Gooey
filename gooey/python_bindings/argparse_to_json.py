@@ -331,6 +331,13 @@ def action_to_json(action, widget, options):
         },
     })
 
+    # Issue #321:
+    # Defaults for choice types must be coerced to strings
+    # to be able to match the stringified `choices` used by `wx.ComboBox`
+    default = (str(clean_default(action.default))
+               if widget in dropdown_types
+               else clean_default(action.default))
+
     return {
         'id': action.option_strings[0] if action.option_strings else action.dest,
         'type': widget,
@@ -343,7 +350,7 @@ def action_to_json(action, widget, options):
             'nargs': action.nargs or '',
             'commands': action.option_strings,
             'choices': list(map(str, action.choices)) if action.choices else [],
-            'default': clean_default(action.default),
+            'default': default,
             'dest': action.dest,
         },
         'options': merge(base, options.get(action.dest) or {})
@@ -354,6 +361,7 @@ def choose_cli_type(action):
     return 'positional' \
             if action.required and not action.option_strings \
             else 'optional'
+
 
 def clean_default(default):
     '''
