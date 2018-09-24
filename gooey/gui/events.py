@@ -7,20 +7,19 @@ that tie everything together.
 
 import wx
 
-WINDOW_STOP     = wx.NewId()
-WINDOW_CANCEL   = wx.NewId()
-WINDOW_CLOSE    = wx.NewId()
-WINDOW_START    = wx.NewId()
-WINDOW_RESTART  = wx.NewId()
-WINDOW_EDIT     = wx.NewId()
+WINDOW_STOP     = wx.NewIdRef()
+WINDOW_CANCEL   = wx.NewIdRef()
+WINDOW_CLOSE    = wx.NewIdRef()
+WINDOW_START    = wx.NewIdRef()
+WINDOW_RESTART  = wx.NewIdRef()
+WINDOW_EDIT     = wx.NewIdRef()
 
-WINDOW_CHANGE   = wx.NewId()
-PANEL_CHANGE    = wx.NewId()
-LIST_BOX        = wx.NewId()
+WINDOW_CHANGE   = wx.NewIdRef()
+PANEL_CHANGE    = wx.NewIdRef()
+LIST_BOX        = wx.NewIdRef()
 
-CONSOLE_UPDATE  = wx.NewId()
-EXECUTION_COMPLETE = wx.NewId()
-PROGRESS_UPDATE = wx.NewId()
+CONSOLE_UPDATE  = wx.NewIdRef()
+EXECUTION_COMPLETE = wx.NewIdRef()
+PROGRESS_UPDATE = wx.NewIdRef()
 
-USER_INPUT = wx.NewId()
-
+USER_INPUT = wx.NewIdRef()
