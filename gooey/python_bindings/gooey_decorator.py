@@ -11,7 +11,6 @@ import os
 import sys
 from argparse import ArgumentParser
 
-from gooey.gui import application
 from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
 from . import config_generator
@@ -53,6 +52,8 @@ def Gooey(f=None,
 
   def build(payload):
     def run_gooey(self, args=None, namespace=None):
+      # This import is delayed so it is not in the --ignore-gooey codepath.
+      from gooey.gui import application
       source_path = sys.argv[0]
 
       build_spec = None
