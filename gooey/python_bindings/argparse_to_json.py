@@ -331,12 +331,17 @@ def action_to_json(action, widget, options):
         },
     })
 
-    # Issue #321:
-    # Defaults for choice types must be coerced to strings
-    # to be able to match the stringified `choices` used by `wx.ComboBox`
-    default = (str(clean_default(action.default))
-               if widget in dropdown_types
-               else clean_default(action.default))
+    # Issue #329:
+    # Support 'None' as default value
+    if action.default is None:
+        default = None
+    else:
+        # Issue #321:
+        # Defaults for choice types must be coerced to strings
+        # to be able to match the stringified `choices` used by `wx.ComboBox`
+        default = (str(clean_default(action.default))
+                   if widget in dropdown_types
+                   else clean_default(action.default))
 
     return {
         'id': action.option_strings[0] if action.option_strings else action.dest,
