@@ -13,7 +13,8 @@ class CheckBox(TextContainer):
 
     def arrange(self, *args, **kwargs):
         wx_util.make_bold(self.label)
-        wx_util.dark_grey(self.help_text)
+        wx_util.withColor(self.label, self._options['label_color'])
+        wx_util.withColor(self.help_text, self._options['help_color'])
         wx_util.withColor(self.error, self._options['error_color'])
         self.error.Hide()
 
