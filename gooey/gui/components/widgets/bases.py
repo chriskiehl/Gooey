@@ -60,15 +60,21 @@ class TextContainer(BaseWidget):
 
     def arrange(self, *args, **kwargs):
         wx_util.make_bold(self.label)
-        wx_util.dark_grey(self.help_text)
+        wx_util.withColor(self.label, self._options['label_color'])
+        wx_util.withColor(self.help_text, self._options['help_color'])
         wx_util.withColor(self.error, self._options['error_color'])
 
         self.help_text.SetMinSize((0,-1))
 
         layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(self.label)
+
+        if self._options.get('show_label', True):
+            layout.Add(self.label)
+        else:
+            layout.AddStretchSpacer(1)
+
         layout.AddSpacer(2)
-        if self.help_text:
+        if self.help_text and self._options.get('show_help', True):
             layout.Add(self.help_text, 1, wx.EXPAND)
             layout.AddSpacer(2)
         else:

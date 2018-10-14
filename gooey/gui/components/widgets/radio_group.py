@@ -13,6 +13,7 @@ class RadioGroup(BaseWidget):
         self._parent = parent
         self.info = widgetInfo
         self._id = widgetInfo['id']
+        self._options = widgetInfo['options']
         self.widgetInfo = widgetInfo
         self.error = wx.StaticText(self, label='')
         self.radioButtons = self.createRadioButtons()
@@ -58,9 +59,11 @@ class RadioGroup(BaseWidget):
             boxDetails = wx.StaticBox(self, -1, title)
             boxSizer = wx.StaticBoxSizer(boxDetails, wx.VERTICAL)
         else:
+            title = wx_util.h1(self, title)
+            title.SetForegroundColour(self._options['label_color'])
             boxSizer = wx.BoxSizer(wx.VERTICAL)
             boxSizer.AddSpacer(10)
-            boxSizer.Add(wx_util.h1(self, title), 0)
+            boxSizer.Add(title, 0)
 
         for btn, widget in zip(self.radioButtons, self.widgets):
             sizer = wx.BoxSizer(wx.HORIZONTAL)
