@@ -1,21 +1,7 @@
-import json
-import sys
-import time
 import unittest
 from argparse import ArgumentParser
-from concurrent import futures
-from os import path
-import wx
 
-from gooey.gui import application
-from gooey.gui.lang.i18n import _
-from gooey.gui.util.freeze import getResourcePath
-from gooey.gui.util.quoting import quote
-from gooey.gui.components.widgets import Dropdown
 from python_bindings import argparse_to_json
-import os
-from pprint import pprint
-
 from util.functional import getin
 
 
@@ -59,5 +45,17 @@ class TestArgparse(unittest.TestCase):
         self.assertEqual(getin(result, ['data', 'choices']), ['1', '2', '3'])
         # default value is also converted to a string type
         self.assertEqual(getin(result, ['data', 'default']), '1')
+
+    def test_choice_string_cooersion_no_default(self):
+        """
+        Make sure that choice types without a default don't create
+        the literal string "None" but stick with the value None
+        """
+        parser = ArgumentParser()
+        parser.add_argument('--foo', choices=[1, 2, 3])
+
+        choice_action = parser._actions[-1]
+        result = argparse_to_json.action_to_json(choice_action, 'Dropdown', {})
+        self.assertEqual(getin(result, ['data', 'default']), None)
         
 
