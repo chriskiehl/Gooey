@@ -54,6 +54,8 @@ group_defaults = {
 
 item_default = {
     'error_color': '#ea7878',
+    'label_color': '#ff1111',
+    'help_color': '#363636',
     'validator': {
         'type': 'local',
         'test': 'lambda x: True',
@@ -301,7 +303,7 @@ def build_radio_group(mutex_group, widget_group, options):
     'cli_type': 'optional',
     'group_name': 'Choose Option',
     'required': mutex_group.required,
-    'options': getattr(mutex_group, 'gooey_options', {}),
+    'options': merge(item_default, getattr(mutex_group, 'gooey_options', {})),
     'data': {
       'commands': [action.option_strings for action in mutex_group._group_actions],
       'widgets': list(categorize(mutex_group._group_actions, widget_group, options))
@@ -334,7 +336,7 @@ def action_to_json(action, widget, options):
     # Issue #321:
     # Defaults for choice types must be coerced to strings
     # to be able to match the stringified `choices` used by `wx.ComboBox`
-    default = (str(clean_default(action.default))
+    default = (safe_string(clean_default(action.default))
                if widget in dropdown_types
                else clean_default(action.default))
 
@@ -373,3 +375,14 @@ def clean_default(default):
     `default` parameter in Argparse cause errors in Gooey.
     '''
     return default.__name__ if callable(default) else default
+
+
+def safe_string(value):
+    """
+    Coerce a type to string as long as it isn't None
+    """
+    if value is None or isinstance(value, bool):
+        return value
+    else:
+        return str(value)
+
