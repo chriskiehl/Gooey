@@ -7,6 +7,7 @@ from .command import CommandField
 from .dropdown import Dropdown
 from .listbox import Listbox
 from .checkbox import CheckBox
+from .checkbox import BlockCheckbox
 from .counter import Counter
 from .radio_group import RadioGroup
 from .choosers import *

@@ -9,6 +9,24 @@ Turn (almost) any Python 2 or 3 Console Program into a GUI application with one 
 # Gooey now supports Python 3!!
 
 
+# 1.0.2 Release TODO: 
+
+Finish of the readonly param for all components. Maybe this 'll be passing
+totally arbitrary style around.  
+
+Document all the new layout stuff
+
+* group - show_underline 
+* group - marginTop 
+* gooey_options.label_color
+* gooey_options.help_color
+* gooey_options.error_color
+* gooey_options.show_label
+* gooey_options.show_help 
+* gooey_options.block_checkbox.checkbox_label [string]
+* gooey_options.textarea.readonly
+
+
 Table of Contents
 -----------------  
 
@@ -199,6 +217,7 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 |  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904376/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |
 | PasswordField | <p align="center"><img src="https://user-images.githubusercontent.com/1408720/28953722-eae72cca-788e-11e7-8fa1-9a1ef332a053.png" width="400"></p> |
 | Listbox | ![image](https://user-images.githubusercontent.com/1408720/31590191-fadd06f2-b1c0-11e7-9a49-7cbf0c6d33d1.png) |
+| BlockCheckbox | ![image](https://user-images.githubusercontent.com/1408720/46922288-9296f200-cfbb-11e8-8b0d-ddde08064247.png) <br/> The default InlineCheck box can look less than ideal if a large help text block is present. `BlockCheckbox` moves the text block to the normal position and provides a short-form `block_label` for display next to the control. Use `gooey_options.checkbox_label` to control the label text | 
 
 
  
@@ -605,7 +624,6 @@ Screenshots
 
 
 ----------------------------------------------  
-
 
 
 
