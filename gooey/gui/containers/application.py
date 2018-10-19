@@ -3,27 +3,26 @@ Primary orchestration and control point for Gooey.
 """
 
 import sys
-from itertools import chain
 
 import wx
 
+from gooey.gui import cli
 from gooey.gui import events
-from gooey.gui.components.header import FrameHeader
-from gooey.gui.components.footer import Footer
-from gooey.gui.util import wx_util
+from gooey.gui import seeder
+from gooey.gui.components import modals
 from gooey.gui.components.config import ConfigPage, TabbedConfigPage
+from gooey.gui.components.console import Console
+from gooey.gui.components.footer import Footer
+from gooey.gui.components.header import FrameHeader
+from gooey.gui.components.menubar import MenuBar
 from gooey.gui.components.sidebar import Sidebar
 from gooey.gui.components.tabbar import Tabbar
-from gooey.util.functional import getin, assoc, flatmap, compact
-from gooey.python_bindings import constants
-from gooey.gui.pubsub import pub
-from gooey.gui import cli
-from gooey.gui.components.console import Console
 from gooey.gui.lang.i18n import _
 from gooey.gui.processor import ProcessController
+from gooey.gui.pubsub import pub
+from gooey.gui.util import wx_util
 from gooey.gui.util.wx_util import transactUI
-from gooey.gui.components import modals
-from gooey.gui import seeder
+from gooey.python_bindings import constants
 
 
 class GooeyApplication(wx.Frame):
@@ -36,7 +35,9 @@ class GooeyApplication(wx.Frame):
         self._state = {}
         self.buildSpec = buildSpec
 
-        self.SetTitle(self.buildSpec['program_name'])
+        self.applyConfiguration()
+        self.menuBar = MenuBar(buildSpec)
+        self.SetMenuBar(self.menuBar)
         self.header = FrameHeader(self, buildSpec)
         self.configs = self.buildConfigPanels(self)
         self.navbar = self.buildNavigation()
@@ -69,6 +70,10 @@ class GooeyApplication(wx.Frame):
         if self.buildSpec.get('auto_start', False):
             self.onStart()
 
+
+    def applyConfiguration(self):
+        self.SetTitle(self.buildSpec['program_name'])
+        self.SetBackgroundColour(self.buildSpec.get('body_bg_color'))
 
     def onStart(self, *args, **kwarg):
         """

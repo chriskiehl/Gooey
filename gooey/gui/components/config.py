@@ -121,7 +121,7 @@ class ConfigPage(ScrolledPanel):
                 widget = self.reifyWidget(parent, item)
                 # !Mutate the reifiedWidgets instance variable in place
                 self.reifiedWidgets.append(widget)
-                sizer.Add(widget, 1, wx.ALL, 5)
+                sizer.Add(widget, 1, wx.ALL | wx.EXPAND, 5)
             boxSizer.Add(sizer, 0, wx.ALL | wx.EXPAND, 5)
 
         # apply the same layout rules recursively for subgroups

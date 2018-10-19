@@ -1,4 +1,6 @@
 import wx
+from functools import reduce
+
 from gooey.gui.components.widgets.core.text_input import MultilineTextInput
 from gooey.gui.components.widgets.textfield import TextField
 from gooey.gui.components.widgets.bases import TextContainer
@@ -12,8 +14,15 @@ class Textarea(TextContainer):
         return wx.TextCtrl(
             parent=parent,
             size=(-1, widgetHeight),
-            style=wx.TE_MULTILINE | wx.TE_READONLY
+            style=self.getModifiers()
         )
+
+    def getModifiers(self):
+        readonly = (wx.TE_READONLY
+                    if self._options.get('readonly', False)
+                    # using TE_MUTLI as a safe OR-able no-op value
+                    else wx.TE_MULTILINE)
+        return reduce(lambda acc, val: acc | val, [wx.TE_MULTILINE, readonly])
 
     def getWidgetValue(self):
         return self.widget.GetValue()

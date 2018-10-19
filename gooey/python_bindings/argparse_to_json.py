@@ -1,8 +1,6 @@
 """
 Converts argparse parser actions into json "Build Specs"
 """
-import functools
-import pprint
 import argparse
 import os
 import sys
@@ -19,6 +17,7 @@ from uuid import uuid4
 
 from gooey.util.functional import merge, getin
 
+
 VALID_WIDGETS = (
     'FileChooser',
     'MultiFileChooser',
@@ -30,6 +29,7 @@ VALID_WIDGETS = (
     'Counter',
     'RadioGroup',
     'CheckBox',
+    'BlockCheckbox',
     'MultiDirChooser',
     'Textarea',
     'PasswordField',
@@ -45,16 +45,17 @@ class UnsupportedConfiguration(Exception):
     pass
 
 
-
 group_defaults = {
     'columns': 2,
     'padding': 10,
     'show_border': False
 }
 
+# TODO: merge the default foreground and bg colors from the
+# baseline build_spec
 item_default = {
     'error_color': '#ea7878',
-    'label_color': '#ff1111',
+    'label_color': '#000000',
     'help_color': '#363636',
     'validator': {
         'type': 'local',
@@ -92,6 +93,7 @@ def process(parser, widget_dict, options):
     corrected_action_groups = reapply_mutex_groups(mutex_groups, raw_action_groups)
 
     return categorize2(strip_empty(corrected_action_groups), widget_dict, options)
+
 
 def strip_empty(groups):
     return [group for group in groups if group['items']]
