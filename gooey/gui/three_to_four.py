@@ -49,3 +49,15 @@ def bitmapFromBufferRGBA(im, rgba):
     else:
         return wx.BitmapFromBufferRGBA(im.size[0], im.size[1], rgba)
 
+def AboutDialog():
+    if isLatestVersion:
+        return wx.adv.AboutDialogInfo()
+    else:
+        return wx.AboutDialogInfo()
+
+
+def AboutBox(aboutDialog):
+    return (wx.adv.AboutBox(aboutDialog)
+            if isLatestVersion
+            else wx.AboutBox(aboutDialog))
+
