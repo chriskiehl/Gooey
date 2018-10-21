@@ -48,6 +48,7 @@ Table of Contents
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
+- [Menus](#menus)    
 - [Input Validation](#input-validation)
 - [Using Dynamic Values](#using-dynamic-values)
 - [Showing Progress](#showing-progress)
@@ -302,6 +303,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | terminal_font_weight | Weight of the font (NORMAL|BOLD) | 
 | terminal_font_size | Point size of the font displayed in the terminal | 
 | error_color | HEX value of the text displayed when a validation error occurs |
+| menus | Show custom menu groups and items (see: [Menus](#menus) |
 
 
 
@@ -438,6 +440,158 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 <p align="center">
     <img src="https://cloud.githubusercontent.com/assets/1408720/7904382/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
 </p>
+
+
+--------------------------------------
+
+
+### Menus 
+
+
+![image](https://user-images.githubusercontent.com/1408720/47250909-74782a00-d3df-11e8-88ac-182d06c4435a.png)
+
+>Added 1.0.2
+
+You can add a Menu Bar to the top of Gooey with customized menu groups and items.
+
+Menus are specified on the main `@Gooey` decorator as a list of maps. 
+
+```
+@Gooey(menu=[{}, {}, ...])
+```
+
+Each map is made up of two key/value pairs 
+
+1. `name` - the name for this menu group
+2. `items` - the individual menu items within this group 
+
+You can have as many menu groups as you want. They're passed as a list to the `menu` argument on the `@Gooey` decorator.
+
+```
+@Gooey(menu=[{'name': 'File', 'items: []},
+             {'name': 'Tools', 'items': []},
+             {'name': 'Help', 'items': []}])
+```
+
+Individual menu items in a group are also just maps of key / value pairs. Their exact key set varies based on their `type`, but two keys will always be present: 
+
+* `type` - this controls the behavior that will be attached to the menu item as well as the keys it needs specified
+* `menuTitle` - the name for this MenuItem  
+
+
+Currently, three types of menu options are supported: 
+
+ * AboutDialog 
+ * MessageDialog
+ * Link
+ 
+
+<img src="https://user-images.githubusercontent.com/1408720/47251026-9ffc1400-d3e1-11e8-9095-982a6367561b.png" width="400" height="auto" align="right" />
+
+**About Dialog** is your run-of-the-mill About Dialog. It displays program information such as name, version, and license info in a standard native AboutBox.
+
+Schema 
+
+ * `name` - (_optional_) 
+ * `description` - (_optional_) 
+ * `version` - (_optional_)  
+ * `copyright` - (_optional_) 
+ * `license` - (_optional_)
+ * `website` - (_optional_)
+ * `developer` - (_optional_)
+
+Example: 
+
+```
+{
+    'type': 'AboutDialog',
+    'menuTitle': 'About',
+    'name': 'Gooey Layout Demo',
+    'description': 'An example of Gooey\'s layout flexibility',
+    'version': '1.2.1',
+    'copyright': '2018',
+    'website': 'https://github.com/chriskiehl/Gooey',
+    'developer': 'http://chriskiehl.com/',
+    'license': 'MIT'
+}
+```
+
+<img src="https://user-images.githubusercontent.com/1408720/47250925-bbfeb600-d3df-11e8-88a8-5ba838e9466d.png" width="400" height="auto" align="right" />
+
+**MessageDialog** is a generic informational dialog box. You can display anything from small alerts, to long-form informational text to the user.
+
+Schema: 
+
+ * `message` - (_required_) the text to display in the body of the modal 
+ * `caption` - (_optional_) the caption in the title bar of the modal    
+
+Example: 
+
+```python
+{
+    'type': 'MessageDialog',
+    'menuTitle': 'Information',
+    'message': 'Hey, here is some cool info for ya!',
+    'caption': 'Stuff you should know'
+}
+```
+
+**Link** is for sending the user to an external website. This will spawn their default browser at the URL you specify. 
+
+Schema: 
+
+ * `url` - (_required_) - the fully qualified URL to visit
+
+Example:
+
+```python
+{
+    'type': 'Link',
+    'menuTitle': 'Visit Out Site',
+    'url': 'http://www.example.com'
+}
+```
+
+**A full example:**
+
+Two menu groups ("File" and "Help") with four menu items between them. 
+
+```python
+@Gooey(
+    program_name='Advanced Layout Groups',
+    menu=[{
+        'name': 'File',
+        'items': [{
+                'type': 'AboutDialog',
+                'menuTitle': 'About',
+                'name': 'Gooey Layout Demo',
+                'description': 'An example of Gooey\'s layout flexibility',
+                'version': '1.2.1',
+                'copyright': '2018',
+                'website': 'https://github.com/chriskiehl/Gooey',
+                'developer': 'http://chriskiehl.com/',
+                'license': 'MIT'
+            }, {
+                'type': 'MessageDialog',
+                'menuTitle': 'Information',
+                'caption': 'My Message',
+                'message': 'I am demoing an informational dialog!'
+            }, {
+                'type': 'Link',
+                'menuTitle': 'Visit Our Site',
+                'url': 'https://github.com/chriskiehl/Gooey'
+            }]
+        },{
+        'name': 'Help',
+        'items': [{
+            'type': 'Link',
+            'menuTitle': 'Documentation',
+            'url': 'https://www.readthedocs.com/foo'
+        }]
+    }]
+)
+```
+
 
 ---------------------------------------  
 

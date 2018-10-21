@@ -49,6 +49,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'return_to_config':     kwargs.get('return_to_config', False),
       'show_restart_button':  kwargs.get('show_restart_button', True),
       'requires_shell':       kwargs.get('requires_shell', True),
+      'menu':                 kwargs.get('menu', []),
 
       # Legacy/Backward compatibility interop
       'use_legacy_titles':    kwargs.get('use_legacy_titles', True),
