@@ -15,6 +15,7 @@ from collections import OrderedDict
 from functools import partial
 from uuid import uuid4
 
+from gooey.python_bindings.gooey_parser import GooeyParser
 from gooey.util.functional import merge, getin
 
 
@@ -75,6 +76,9 @@ def convert(parser, **kwargs):
         'widgets': OrderedDict(
             (choose_name(name, sub_parser), {
                 'command': name,
+                'name': choose_name(name, sub_parser),
+                'help': get_subparser_help(sub_parser),
+                'description': '',
                 'contents': process(sub_parser,
                                     getattr(sub_parser, 'widgets', {}),
                                     getattr(sub_parser, 'options', {}))
@@ -113,6 +117,13 @@ def iter_parsers(parser):
         return get_subparser(parser._actions).choices.items()
     except:
         return iter([('::gooey/default', parser)])
+
+
+def get_subparser_help(parser):
+    if isinstance(parser, GooeyParser):
+        return getattr(parser.parser, 'usage', '')
+    else:
+        return getattr(parser, 'usage', '')
 
 
 def extract_groups(action_group):
@@ -178,12 +189,13 @@ def reapply_mutex_groups(mutex_groups, action_groups):
 
 
 def categorize2(groups, widget_dict, options):
+    defaults = {'label_color': '#000000', 'description_color': '#363636'}
     return [{
         'name': group['name'],
         'items': list(categorize(group['items'], widget_dict, options)),
         'groups': categorize2(group['groups'], widget_dict, options),
         'description': group['description'],
-        'options': group['options']
+        'options': merge(defaults ,group['options'])
     } for group in groups]
 
 
