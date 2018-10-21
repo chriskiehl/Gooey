@@ -1,9 +1,9 @@
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
+from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
-from gooey.util.functional import getin, flatmap, merge, compact, indexunique
-from gooey.gui.components.widgets.radio_group import RadioGroup
+from gooey.util.functional import getin, flatmap, compact, indexunique
 
 
 class ConfigPage(ScrolledPanel):
@@ -13,6 +13,7 @@ class ConfigPage(ScrolledPanel):
         self.rawWidgets = rawWidgets
         self.reifiedWidgets = []
         self.layoutComponent()
+        self.Layout()
         self.widgetsMap = indexunique(lambda x: x._id, self.reifiedWidgets)
         ## TODO: need to rethink what uniquely identifies an argument.
         ## Out-of-band IDs, while simple, make talking to the client program difficult
@@ -100,12 +101,16 @@ class ConfigPage(ScrolledPanel):
             boxSizer = wx.BoxSizer(wx.VERTICAL)
             boxSizer.AddSpacer(10)
             if group['name']:
-                boxSizer.Add(wx_util.h1(parent, group['name'] or ''), 0, wx.TOP | wx.BOTTOM | wx.LEFT, 8)
+                groupName = wx_util.h1(parent, group['name'] or '')
+                groupName.SetForegroundColour(getin(group, ['options', 'label_color']))
+                boxSizer.Add(groupName, 0, wx.TOP | wx.BOTTOM | wx.LEFT, 8)
 
         group_description = getin(group, ['description'])
         if group_description:
-            description = wx.StaticText(parent, label=group_description)
-            boxSizer.Add(description, 0,  wx.EXPAND | wx.LEFT, 10)
+            description = AutoWrappedStaticText(parent, label=group_description, target=boxSizer)
+            description.SetForegroundColour(getin(group, ['options', 'description_color']))
+            description.SetMinSize((0, -1))
+            boxSizer.Add(description, 1,  wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         # apply an underline when a grouping border is not specified
         # unless the user specifically requests not to show it

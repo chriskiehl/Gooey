@@ -73,6 +73,7 @@ class TextContainer(BaseWidget):
         if self._options.get('show_label', True):
             layout.Add(self.label, 0, wx.EXPAND)
         else:
+            self.label.Show(False)
             layout.AddStretchSpacer(1)
 
         layout.AddSpacer(2)
@@ -80,6 +81,7 @@ class TextContainer(BaseWidget):
             layout.Add(self.help_text, 1, wx.EXPAND)
             layout.AddSpacer(2)
         else:
+            self.help_text.Show(False)
             layout.AddStretchSpacer(1)
         layout.Add(self.getSublayout(), 0, wx.EXPAND)
         layout.Add(self.error, 1, wx.EXPAND)

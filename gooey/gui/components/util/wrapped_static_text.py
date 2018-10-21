@@ -5,21 +5,31 @@ from wx.lib.wordwrap import wordwrap
 
 class AutoWrappedStaticText(wx.StaticText):
     """
-    Copy/pasta of wx.lib.agw.infobar.AutoWrapStaticText with two modifications:
+    Copy/pasta of wx.lib.agw.infobar.AutoWrapStaticText with 3 modifications:
 
         1. Extends wx.StaticText rather than GenStaticText
         2. Does not set the fore/background colors to sys defaults
+        3. takes an optional `target` parameter for sizing info
 
     The behavior of GenStaticText's background color is pretty buggy cross-
     platform. It doesn't reliably match its parent components background
     colors[0] (for instance when rendered inside of a Notebook) which leads to
     ugly 'boxing' around the text components.
 
+    There is either a bug in WX, or or human error on my end, which causes
+    EVT_SIZE events to continuously spawn from this (and AutoWrapStaticText) but
+    with ever decreasing widths (in response to the SetLabel action in the
+    wrap handler). The end result is a single skinny column of letters.
+
+    The work around is to respond the EVT_SIZE event, but follow the size of the
+    `target` component rather than relying on the size of the event.
+
     [0] more specifically, they'll match 1:1 on paper, but still ultimately
     render differently.
     """
 
     def __init__(self, parent, *args, **kwargs):
+        self.target = kwargs.pop('target', None)
         super(AutoWrappedStaticText, self).__init__(parent, *args, **kwargs)
         self.label = kwargs.get('label')
         self.Bind(wx.EVT_SIZE, self.OnSize)
@@ -33,7 +43,10 @@ class AutoWrappedStaticText(wx.StaticText):
         """
 
         event.Skip()
-        self.Wrap(event.GetSize().width)
+        if self.target:
+            self.Wrap(self.target.GetSize().width)
+        else:
+            self.Wrap(event.GetSize().width)
 
     def Wrap(self, width):
         """
