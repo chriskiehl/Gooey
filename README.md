@@ -266,7 +266,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | progress_expr | A python expression applied to any matches found via the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
 | disable_progress_bar_animation | Disable the progress bar | 
 | navigation | Sets the "navigation" style of Gooey's top level window. <br>Options: <table> <thead> <tr><th>TABBED</th><th>SIDEBAR</th></tr></thead> <tbody> <tr> <td><img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="200" height="auto"></td><td><img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="200" height="auto"></td></tr></tbody></table>|
-| navigation_title | <img src="https://user-images.githubusercontent.com/1408720/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
+| sidebar_title | <img src="https://user-images.githubusercontent.com/1408720/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
 | show_sidebar | Show/Hide the sidebar in when navigation mode == `SIDEBAR` |
 | body_bg_color | HEX value of the main Gooey window |
 | header_bg_color | HEX value of the header background | 
