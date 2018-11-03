@@ -3,7 +3,7 @@ import re
 import subprocess
 import sys
 from functools import partial
-from multiprocessing.dummy import Pool
+from threading import Thread
 
 from gooey.gui import events
 from gooey.gui.pubsub import pub
@@ -52,7 +52,10 @@ class ProcessController(object):
                 command,
                 bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                 stderr=subprocess.STDOUT, shell=True, env=env)
-        Pool(1).apply_async(self._forward_stdout, (self._process,))
+
+        t = Thread(target=self._forward_stdout, args=(self._process,))
+        t.start()
+        
 
     def _forward_stdout(self, process):
         '''
