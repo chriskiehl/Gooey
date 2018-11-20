@@ -8,11 +8,10 @@ from gooey.gui.lang.i18n import _
 class Listbox(TextContainer):
 
     def getWidget(self, parent, *args, **options):
-        default = _('select_option')
         return wx.ListBox(
             parent=parent,
             choices=self._meta['choices'],
-            size=(-1,60),
+            size=(-1, self._options.get("height", 60)),
             style=wx.LB_MULTIPLE
         )
 
