@@ -16,7 +16,9 @@ class Listbox(TextContainer):
         )
 
     def setOptions(self, options):
-        self.widget.SetChoices()
+        self.widget.Clear()
+        for option in options:
+            self.widget.Append(option)
 
     def setValue(self, values):
         for string in values:
