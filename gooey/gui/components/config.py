@@ -7,10 +7,11 @@ from gooey.util.functional import getin, flatmap, compact, indexunique
 
 
 class ConfigPage(ScrolledPanel):
-    def __init__(self, parent, rawWidgets, *args, **kwargs):
+    def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
         super(ConfigPage, self).__init__(parent, *args, **kwargs)
         self.SetupScrolling(scroll_x=False, scrollToTop=False)
         self.rawWidgets = rawWidgets
+        self.buildSpec = buildSpec
         self.reifiedWidgets = []
         self.layoutComponent()
         self.Layout()
