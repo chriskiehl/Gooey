@@ -203,7 +203,7 @@ class GooeyApplication(wx.Frame):
     def buildConfigPanels(self, parent):
         page_class = TabbedConfigPage if self.buildSpec['tabbed_groups'] else ConfigPage
 
-        return [page_class(parent, widgets)
+        return [page_class(parent, widgets, self.buildSpec)
                 for widgets in self.buildSpec['widgets'].values()]
 
 

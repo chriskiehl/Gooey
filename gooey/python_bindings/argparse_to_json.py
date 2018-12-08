@@ -16,7 +16,8 @@ from functools import partial
 from uuid import uuid4
 
 from gooey.python_bindings.gooey_parser import GooeyParser
-from gooey.util.functional import merge, getin, identity
+from gooey.util.functional import merge, getin, identity, assoc
+
 
 VALID_WIDGETS = (
     'FileChooser',
@@ -45,11 +46,6 @@ class UnsupportedConfiguration(Exception):
     pass
 
 
-group_defaults = {
-    'columns': 2,
-    'padding': 10,
-    'show_border': False
-}
 
 # TODO: merge the default foreground and bg colors from the
 # baseline build_spec
@@ -57,6 +53,7 @@ item_default = {
     'error_color': '#ea7878',
     'label_color': '#000000',
     'help_color': '#363636',
+    'full_width': False,
     'validator': {
         'type': 'local',
         'test': 'lambda x: True',
@@ -69,6 +66,24 @@ item_default = {
 
 
 def convert(parser, **kwargs):
+    """
+    Converts a parser into a JSON representation
+
+    This is in desperate need of refactor. It wasn't build with supporting
+    all (or any) of this configuration in mind. The use of global defaults
+    are actively getting in the way of easily adding more configuration options.
+    """
+
+    group_defaults = {
+        'legacy': {
+            'required_cols': kwargs['num_required_cols'],
+            'optional_cols': kwargs['num_optional_cols']
+        },
+        'columns': 2,
+        'padding': 10,
+        'show_border': False
+    }
+
     assert_subparser_constraints(parser)
     x = {
         'layout': 'standard',
@@ -80,7 +95,8 @@ def convert(parser, **kwargs):
                 'description': '',
                 'contents': process(sub_parser,
                                     getattr(sub_parser, 'widgets', {}),
-                                    getattr(sub_parser, 'options', {}))
+                                    getattr(sub_parser, 'options', {}),
+                                    group_defaults)
             }) for name, sub_parser in iter_parsers(parser))
     }
 
@@ -89,9 +105,9 @@ def convert(parser, **kwargs):
     return x
 
 
-def process(parser, widget_dict, options):
+def process(parser, widget_dict, options, group_defaults):
     mutex_groups = parser._mutually_exclusive_groups
-    raw_action_groups = [extract_groups(group) for group in parser._action_groups
+    raw_action_groups = [extract_groups(group, group_defaults) for group in parser._action_groups
                          if group._group_actions]
     corrected_action_groups = reapply_mutex_groups(mutex_groups, raw_action_groups)
 
@@ -125,7 +141,7 @@ def get_subparser_help(parser):
         return getattr(parser, 'usage', '')
 
 
-def extract_groups(action_group):
+def extract_groups(action_group, group_defaults):
     '''
     Recursively extract argument groups and associated actions
     from ParserGroup objects
@@ -135,11 +151,43 @@ def extract_groups(action_group):
         'description': action_group.description,
         'items': [action for action in action_group._group_actions
                   if not is_help_message(action)],
-        'groups': [extract_groups(group)
+        'groups': [extract_groups(group, group_defaults)
                    for group in action_group._action_groups],
-        'options': merge(group_defaults,
-                               getattr(action_group, 'gooey_options', {}))
+        'options': handle_option_merge(
+            group_defaults,
+            getattr(action_group, 'gooey_options', {}),
+            action_group.title)
     }
+
+
+def handle_option_merge(group_defaults, incoming_options, title):
+    """
+    Merges a set of group defaults with incoming options.
+
+    A bunch of ceremony here is to ensure backwards compatibility with the old
+    num_required_cols and num_optional_cols decorator args. They are used as
+    the seed values for the new group defaults which keeps the old behavior
+    _mostly_ in tact.
+
+    Known failure points:
+        * Using custom groups / names. No 'positional arguments' group
+          means no required_cols arg being honored
+        * Non-positional args marked as required. It would take group
+          shuffling along the lines of that required to make
+          mutually exclusive groups show in the correct place. In short, not
+          worth the complexity for a legacy feature that's been succeeded by
+          a much more powerful alternative.
+    """
+    if title == 'positional arguments':
+        # the argparse default 'required' bucket
+        req_cols = getin(group_defaults, ['legacy', 'required_cols'], 2)
+        new_defaults = assoc(group_defaults, 'columns', req_cols)
+        return merge(new_defaults, incoming_options)
+    else:
+        opt_cols = getin(group_defaults, ['legacy', 'optional_cols'], 2)
+        new_defaults = assoc(group_defaults, 'columns', opt_cols)
+        return merge(new_defaults, incoming_options)
+
 
 
 def apply_default_rewrites(spec):
