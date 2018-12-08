@@ -1,4 +1,5 @@
 import wx
+import wx.lib.agw.multidirdialog as MDD
 import os
 
 from gooey.gui.components.widgets.core.text_input import TextInput
@@ -89,6 +90,17 @@ class DirChooser(Chooser):
     """ Retrieve a path to the supplied directory """
     def getDialog(self):
         return wx.DirDialog(self, message=_('choose_folder'))
+    
+class MultiDirChooser(Chooser):
+    """ Retrieve an multiple directories from the system """
+    def getDialog(self):
+        return MDD.MultiDirDialog(self,
+                                  message=_('choose_folders_msg'),
+                                  title=_('choose_folders_title'),
+                                  defaultPath=os.getcwd(),
+                                  agwStyle=MDD.DD_MULTIPLE | MDD.DD_DIR_MUST_EXIST)
+    def getResult(self, dialog):
+        return os.pathsep.join(dialog.GetPaths())
 
 
 class DateChooser(Chooser):
