@@ -16,8 +16,7 @@ from functools import partial
 from uuid import uuid4
 
 from gooey.python_bindings.gooey_parser import GooeyParser
-from gooey.util.functional import merge, getin
-
+from gooey.util.functional import merge, getin, identity
 
 VALID_WIDGETS = (
     'FileChooser',
@@ -347,12 +346,7 @@ def action_to_json(action, widget, options):
         },
     })
 
-    # Issue #321:
-    # Defaults for choice types must be coerced to strings
-    # to be able to match the stringified `choices` used by `wx.ComboBox`
-    default = (safe_string(clean_default(action.default))
-               if widget in dropdown_types
-               else clean_default(action.default))
+    default = coerce_default(action.default, widget)
 
     return {
         'id': action.option_strings[0] if action.option_strings else action.dest,
@@ -373,10 +367,45 @@ def action_to_json(action, widget, options):
     }
 
 
+
+
+
 def choose_cli_type(action):
     return 'positional' \
             if action.required and not action.option_strings \
             else 'optional'
+
+
+def coerce_default(default, widget):
+    """coerce a default value to the best appropriate type for
+    ingestion into wx"""
+    dispatcher = {
+        'Listbox': clean_list_defaults,
+        'Dropdown': safe_string,
+        'Counter': safe_string
+    }
+
+    # Issue #321:
+    # Defaults for choice types must be coerced to strings
+    # to be able to match the stringified `choices` used by `wx.ComboBox`
+    cleaned = clean_default(default)
+
+    # dispatch to the appropriate cleaning function, or return the value
+    # as is if no special handler is present
+    return dispatcher.get(widget, identity)(cleaned)
+
+
+
+def clean_list_defaults(default_values):
+    """
+    Listbox's default's can be passed as a single value
+    or a list of values (due to multiple selections). The list interface
+    is standardized on for ease.
+    """
+    wrapped_values = ([default_values]
+                      if isinstance(default_values, str)
+                      else default_values)
+    return [safe_string(value) for value in wrapped_values]
 
 
 def clean_default(default):

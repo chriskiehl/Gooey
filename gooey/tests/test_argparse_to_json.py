@@ -1,14 +1,12 @@
 import unittest
 from argparse import ArgumentParser
-
+from gooey import GooeyParser
 from python_bindings import argparse_to_json
 from util.functional import getin
 
 
 class TestArgparse(unittest.TestCase):
-    """
-    TODO:
-    """
+
 
     def test_json_iterable_conversion(self):
         """
@@ -58,4 +56,40 @@ class TestArgparse(unittest.TestCase):
         result = argparse_to_json.action_to_json(choice_action, 'Dropdown', {})
         self.assertEqual(getin(result, ['data', 'default']), None)
         
+
+    def test_listbox_defaults_cast_correctly(self):
+        """
+        Issue XXX - defaults supplied in a list were turned into a string
+        wholesale (list and all). The defaults should be stored as a list
+        proper with only the _internal_ values coerced to strings.
+        """
+        parser = GooeyParser()
+        parser.add_argument('--foo', widget="Listbox", nargs="*", choices=[1, 2, 3], default=[1, 2])
+
+        choice_action = parser._actions[-1]
+        result = argparse_to_json.action_to_json(choice_action, 'Listbox', {})
+        self.assertEqual(getin(result, ['data', 'default']), ['1', '2'])
+
+
+    def test_listbox_single_default_cast_correctly(self):
+        """
+        Single arg defaults to listbox should be wrapped in a list and
+        their contents coerced as usual.
+        """
+        parser = GooeyParser()
+        parser.add_argument('--foo', widget="Listbox",
+                            nargs="*", choices=[1, 2, 3], default="sup")
+
+        choice_action = parser._actions[-1]
+        result = argparse_to_json.action_to_json(choice_action, 'Listbox', {})
+        self.assertEqual(getin(result, ['data', 'default']), ['sup'])
+
+    def test_callables_as_default_args_are_cast_to_their_name(self):
+        """ Issue 147 """
+        parser = ArgumentParser()
+        parser.add_argument('--foo', default=max)
+
+        choice_action = parser._actions[-1]
+        result = argparse_to_json.action_to_json(choice_action, 'Textfield', {})
+        self.assertEqual(getin(result, ['data', 'default']), 'max')
 
