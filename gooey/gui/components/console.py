@@ -65,6 +65,12 @@ class Console(wx.Panel):
         """
         self.textbox.AppendText(txt)
 
+    def clear(self):
+        """
+            Clear the the main TextCtrl.
+        """
+        self.textbox.Clear()
+
 
     def getText(self):
         return self.textbox.GetValue()

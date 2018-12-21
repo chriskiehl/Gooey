@@ -50,6 +50,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'show_restart_button':  kwargs.get('show_restart_button', True),
       'requires_shell':       kwargs.get('requires_shell', True),
       'menu':                 kwargs.get('menu', []),
+      'clear_before_run':     kwargs.get('clear_before_run', False),
 
       # Legacy/Backward compatibility interop
       'use_legacy_titles':    kwargs.get('use_legacy_titles', True),
