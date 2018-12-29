@@ -10,7 +10,8 @@ version = '1.0.2'
 
 deps = [
     'Pillow>=4.3.0',
-    'psutil>=5.4.2'
+    'psutil>=5.4.2',
+    'colored>=1.3.93'
 ]
 
 if sys.version[0] == '3':
