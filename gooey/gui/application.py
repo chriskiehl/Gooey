@@ -3,6 +3,7 @@ Main runner entry point for Gooey.
 '''
 
 import wx
+import wx.richtext  # Need to be imported before the wx.App object is created.
 import wx.lib.inspection
 from gooey.gui.lang import i18n
 
