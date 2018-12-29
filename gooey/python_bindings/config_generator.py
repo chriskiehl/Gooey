@@ -89,6 +89,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'terminal_font_family': kwargs.get('terminal_font_family', None),
       'terminal_font_weight': kwargs.get('terminal_font_weight', None),
       'terminal_font_size':   kwargs.get('terminal_font_size', None),
+      'richtext_controls':    kwargs.get('richtext_controls', False),
       'error_color':          kwargs.get('error_color', '#ea7878')
   }
 

@@ -1,6 +1,7 @@
 import wx
 
 from gooey.gui.lang import i18n
+from .widgets.basictextconsole import BasicTextConsole
 
 
 class Console(wx.Panel):
@@ -13,9 +14,11 @@ class Console(wx.Panel):
         self.buildSpec = buildSpec
 
         self.text = wx.StaticText(self, label=i18n._("status"))
-        self.textbox = wx.TextCtrl(
-            self, -1, "", style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH
-        )
+        if buildSpec["richtext_controls"]:
+            from .widgets.richtextconsole import RichTextConsole
+            self.textbox = RichTextConsole(self)
+        else:
+            self.textbox = BasicTextConsole(self)
 
         self.defaultFont = self.textbox.GetFont()
 
