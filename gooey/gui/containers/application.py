@@ -46,7 +46,8 @@ class GooeyApplication(wx.Frame):
         self.clientRunner = ProcessController(
             self.buildSpec.get('progress_regex'),
             self.buildSpec.get('progress_expr'),
-            self.buildSpec.get('encoding')
+            self.buildSpec.get('encoding'),
+            self.buildSpec.get('hide_progress_msg')
         )
 
         pub.subscribe(events.WINDOW_START, self.onStart)
