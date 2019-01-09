@@ -63,6 +63,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'language_dir':         kwargs.get('language_dir'),
       'progress_regex':       kwargs.get('progress_regex'),
       'progress_expr':        kwargs.get('progress_expr'),
+      'hide_progress_msg':    kwargs.get('hide_progress_msg', False),
       'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
       'disable_stop_button':  kwargs.get('disable_stop_button'),
 
@@ -81,6 +82,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'header_image_center':  kwargs.get('header_image_center', False),
       'footer_bg_color':      kwargs.get('footer_bg_color', '#f0f0f0'),
       'sidebar_bg_color':     kwargs.get('sidebar_bg_color', '#f2f2f2'),
+
       # font family, weight, and size are determined at runtime
       'terminal_panel_color': kwargs.get('terminal_panel_color', '#F0F0F0'),
       'terminal_font_color':  kwargs.get('terminal_font_color', '#000000'),
