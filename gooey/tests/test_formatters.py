@@ -1,7 +1,7 @@
 import argparse
 import unittest
 
-from gui import formatters
+from gooey.gui import formatters
 
 
 class TestFormatters(unittest.TestCase):

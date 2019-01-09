@@ -1,8 +1,8 @@
 import unittest
 from argparse import ArgumentParser
 from gooey import GooeyParser
-from python_bindings import argparse_to_json
-from util.functional import getin
+from gooey.python_bindings import argparse_to_json
+from gooey.util.functional import getin
 
 
 class TestArgparse(unittest.TestCase):
