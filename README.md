@@ -300,7 +300,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | terminal_panel_color | HEX value of the terminal's panel | 
 | terminal_font_color | HEX value of the font displayed in Gooey's terminal | 
 | terminal_font_family | Name of the Font Family to use in the terminal | 
-| terminal_font_weight | Weight of the font (NORMAL|BOLD) | 
+| terminal_font_weight | Weight of the font (NORMAL\|BOLD) | 
 | terminal_font_size | Point size of the font displayed in the terminal | 
 | error_color | HEX value of the text displayed when a validation error occurs |
 | menus | Show custom menu groups and items (see: [Menus](#menus) |
