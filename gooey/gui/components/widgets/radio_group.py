@@ -69,7 +69,7 @@ class RadioGroup(BaseWidget):
             sizer = wx.BoxSizer(wx.HORIZONTAL)
             sizer.Add(btn,0, wx.RIGHT, 4)
             sizer.Add(widget, 1, wx.EXPAND)
-            boxSizer.Add(sizer, 1, wx.ALL | wx.EXPAND, 5)
+            boxSizer.Add(sizer, 0, wx.ALL | wx.EXPAND, 5)
         self.SetSizer(boxSizer)
 
 
