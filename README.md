@@ -304,6 +304,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | terminal_font_weight | Weight of the font (NORMAL\|BOLD) | 
 | terminal_font_size | Point size of the font displayed in the terminal | 
 | error_color | HEX value of the text displayed when a validation error occurs |
+| richtext_controls | Switch on/off the console support for terminal control sequences (limited support for font weight and color). Defaults to : False |
 | menus | Show custom menu groups and items (see: [Menus](#menus) |
 
 
