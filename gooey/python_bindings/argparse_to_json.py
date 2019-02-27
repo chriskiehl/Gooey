@@ -26,6 +26,7 @@ VALID_WIDGETS = (
     'FileSaver',
     'DirChooser',
     'DateChooser',
+    'TimeChooser',
     'TextField',
     'Dropdown',
     'Counter',

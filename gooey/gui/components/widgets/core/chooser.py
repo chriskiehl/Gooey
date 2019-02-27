@@ -5,6 +5,7 @@ import re
 
 from gooey.gui.components.widgets.core.text_input import TextInput
 from gooey.gui.components.widgets.dialogs.calender_dialog import CalendarDlg
+from gooey.gui.components.widgets.dialogs.time_dialog import TimeDlg
 from gooey.gui.lang.i18n import _
 from gooey.util.functional import merge
 
@@ -139,6 +140,16 @@ class DateChooser(Chooser):
 
     def getDialog(self):
         return CalendarDlg(self)
+
+class TimeChooser(Chooser):
+    """ Launches a time picker which returns and ISO Time """
+    def __init__(self, *args, **kwargs):
+        defaults = {'label': _('choose_time')}
+        super(TimeChooser, self).__init__(*args, **merge(kwargs, defaults))
+
+
+    def getDialog(self):
+        return TimeDlg(self)
 
 
 class ColourChooser(Chooser):
