@@ -8,8 +8,10 @@ __ALL__ = [
     'DirChooser',
     'MultiDirChooser',
     'DateChooser',
-    'ColourChooser'
+    'ColourChooser',
+    'TimeChooser'
 ]
+
 
 class FileChooser(BaseChooser):
     # todo: allow wildcard from argparse
@@ -43,3 +45,7 @@ class DateChooser(BaseChooser):
 
 class ColourChooser(BaseChooser):
     widget_class = core.ColourChooser
+
+
+class TimeChooser(BaseChooser):
+    widget_class = core.TimeChooser

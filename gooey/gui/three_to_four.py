@@ -26,6 +26,11 @@ class Classes:
     else:
         DatePickerCtrl = wx.DatePickerCtrl
 
+    if isLatestVersion:
+        TimePickerCtrl = wx.adv.TimePickerCtrl
+    else:
+        TimePickerCtrl = wx.TimePickerCtrl
+
 
 
 
