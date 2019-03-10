@@ -228,7 +228,7 @@ def reapply_mutex_groups(mutex_groups, action_groups):
                 # insert the _ArgumentGroup container
                 actions[targetindex] = mutexgroup
                 # remove the duplicated individual actions
-                return [action for action in actions
+                actions = [action for action in actions
                         if action not in mutex_actions]
         return actions
 
