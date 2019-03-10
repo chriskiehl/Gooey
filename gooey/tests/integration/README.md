@@ -1,0 +1,1 @@
+These integration tests must be run one at a time. I can't figure out how to clear the wx context between runs and Unittest doesn't allow process isolation.. 
