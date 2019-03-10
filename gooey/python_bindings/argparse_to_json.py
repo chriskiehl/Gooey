@@ -277,7 +277,7 @@ def categorize(actions, widget_dict, options):
 
 def get_widget(widgets, action, default):
     supplied_widget = widgets.get(action.dest, None)
-    return supplied_widget or type_arg_widget or default
+    return supplied_widget or default
 
 
 def is_required(action):
