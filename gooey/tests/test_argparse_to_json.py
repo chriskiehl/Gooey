@@ -1,5 +1,7 @@
+import sys
 import unittest
 from argparse import ArgumentParser
+
 from gooey import GooeyParser
 from gooey.python_bindings import argparse_to_json
 from gooey.util.functional import getin
@@ -84,12 +86,29 @@ class TestArgparse(unittest.TestCase):
         result = argparse_to_json.action_to_json(choice_action, 'Listbox', {})
         self.assertEqual(getin(result, ['data', 'default']), ['sup'])
 
-    def test_callables_as_default_args_are_cast_to_their_name(self):
-        """ Issue 147 """
-        parser = ArgumentParser()
-        parser.add_argument('--foo', default=max)
+    def test_non_data_defaults_are_dropped_entirely(self):
+        """
+        This is a refinement in understanding of Issue #147
 
-        choice_action = parser._actions[-1]
-        result = argparse_to_json.action_to_json(choice_action, 'Textfield', {})
-        self.assertEqual(getin(result, ['data', 'default']), 'max')
+        Caused by Issue 377 - passing arbitrary objects as defaults
+        causes failures.
+        """
+        # passing plain data to cleaning function results in plain data
+        # being returned
+        data = ['abc',
+                123,
+                ['a', 'b'],
+                [1, 2, 3]]
+
+        for datum in data:
+            result = argparse_to_json.clean_default(datum)
+            self.assertEqual(result, datum)
+
+        # passing in complex objects results in None
+        objects = [sys.stdout, sys.stdin, object(), max, min]
+
+        for obj in objects:
+            result = argparse_to_json.clean_default(obj)
+            self.assertEqual(result, None)
+
 
