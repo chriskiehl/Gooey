@@ -255,6 +255,9 @@ def categorize(actions, widget_dict, options):
 
         elif is_standard(action):
             yield action_to_json(action, _get_widget(action, 'TextField'), options)
+        
+        elif is_file(action):
+            yield action_to_json(action, _get_widget(action, 'FileSaver'), options)
 
         elif is_choice(action):
             yield action_to_json(action, _get_widget(action, 'Dropdown'), options)
@@ -273,7 +276,6 @@ def categorize(actions, widget_dict, options):
 
 def get_widget(widgets, action, default):
     supplied_widget = widgets.get(action.dest, None)
-    type_arg_widget = 'FileChooser' if action.type == argparse.FileType else None
     return supplied_widget or type_arg_widget or default
 
 
@@ -318,6 +320,9 @@ def is_choice(action):
     ''' action with choices supplied '''
     return action.choices
 
+def is_file(action):
+    ''' action with FileType '''
+    return isinstance(action.type, argparse.FileType)
 
 def is_standard(action):
     """ actions which are general "store" instructions.
@@ -329,6 +334,7 @@ def is_standard(action):
         _StoreTrueAction
     )
     return (not action.choices
+            and not isinstance(action.type, argparse.FileType)
             and not isinstance(action, _CountAction)
             and not isinstance(action, _HelpAction)
             and type(action) not in boolean_actions)
