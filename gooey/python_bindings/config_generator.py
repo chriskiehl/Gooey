@@ -44,6 +44,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'encoding':             kwargs.get('encoding', 'utf-8'),
       'show_stop_warning':    kwargs.get('show_stop_warning', True),
       'show_success_modal':   kwargs.get('show_success_modal', True),
+      'show_failure_modal':   kwargs.get('show_failure_modal', True),
       'force_stop_is_error':  kwargs.get('force_stop_is_error', True),
       'poll_external_updates':kwargs.get('poll_external_updates', False),
       'return_to_config':     kwargs.get('return_to_config', False),

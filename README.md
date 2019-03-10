@@ -279,6 +279,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | show_stop_warning | Displays a warning modal before allowing the user to force termination of your program |
 | force_stop_is_error | Toggles whether an early termination by the shows the success or error screen |
 | show_success_modal | Toggles whether or not to show a summary modal after a successful run |
+| show_failure_modal | Toggles whether or not to show a summary modal on failure |
 | show_restart_button | Toggles whether or not to show the restart button at the end of execution |
 | run_validators | Controls whether or not to have Gooey perform validation before calling your program |
 | poll_external_updates | (Experimental!) When True, Gooey will call your code with a `gooey-seed-ui` CLI argument and use the response to fill out dynamic values in the UI (See: [Using Dynamic Values](#using-dynamic-values))|

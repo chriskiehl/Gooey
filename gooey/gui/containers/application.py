@@ -136,7 +136,8 @@ class GooeyApplication(wx.Frame):
                     self.showForceStopped()
                 else:
                     self.showError()
-                    wx.CallAfter(modals.showFailure)
+                    if self.buildSpec.get('show_failure_modal'):
+                        wx.CallAfter(modals.showFailure)
 
 
     def onStopExecution(self):
