@@ -13,7 +13,7 @@ class Dropdown(TextContainer):
             parent=parent,
             id=-1,
             value=default,
-            choices=[default] + self._meta['choices'],
+            choices=[default] + list(self._meta['choices']),
             style=wx.CB_DROPDOWN)
 
     def setOptions(self, options):
