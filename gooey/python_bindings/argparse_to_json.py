@@ -194,7 +194,10 @@ def categorize(actions, widget_dict, options):
             yield action_to_json(action, _get_widget(action, 'TextField'), options)
 
         elif is_choice(action):
-            yield action_to_json(action, _get_widget(action, 'Dropdown'), options)
+            _json = action_to_json(action, _get_widget(action, 'Dropdown'), options)
+            if 'choices' in _json['data']:
+                _json['data']['choices'] = list(_json['data']['choices'])
+            yield _json
 
         elif is_flag(action):
             yield action_to_json(action, _get_widget(action, 'CheckBox'), options)
