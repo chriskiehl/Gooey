@@ -90,7 +90,7 @@ def Gooey(f=None,
     return inner2
 
   def run_without_gooey(func):
-    return lambda: func()
+    return lambda *args, **kwargs: func(*args, **kwargs)
 
   if IGNORE_COMMAND in sys.argv:
     sys.argv.remove(IGNORE_COMMAND)
