@@ -94,7 +94,7 @@ class FileSaver(Chooser):
             self,
             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
             defaultFile=options.get('defaultFile', _("enter_filename")),
-            defaultDir=options.get('defaultDir', ''),
+            defaultDir=options.get('defaultDir', _('')),
             message=options.get('message', _('choose_file')),
             wildcard=options.get('wildcard', wx.FileSelectorDefaultWildcardStr)
         )
@@ -105,15 +105,16 @@ class DirChooser(Chooser):
     def getDialog(self):
         options = self.Parent._options
         return wx.DirDialog(self, message=options.get('message', _('choose_folder')),
-                            defaultPath=options.get('defaultPath', _('')))
+                            defaultPath=options.get('defaultPath', os.getcwd()))
 
 class MultiDirChooser(Chooser):
     """ Retrieve an multiple directories from the system """
     def getDialog(self):
+        options = self.Parent._options
         return MDD.MultiDirDialog(self,
-                                  message=_('choose_folders_msg'),
+                                  message=options.get('message', _('choose_folders')),
                                   title=_('choose_folders_title'),
-                                  defaultPath=os.getcwd(),
+                                  defaultPath=options.get('defaultPath', os.getcwd()),
                                   agwStyle=MDD.DD_MULTIPLE | MDD.DD_DIR_MUST_EXIST)
     def getResult(self, dialog):
         return os.pathsep.join(dialog.GetPaths())
