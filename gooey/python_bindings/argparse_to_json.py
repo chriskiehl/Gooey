@@ -460,7 +460,7 @@ def clean_list_defaults(default_values):
     wrapped_values = ([default_values]
                       if isinstance(default_values, str)
                       else default_values)
-    return [safe_string(value) for value in wrapped_values]
+    return [safe_string(value) for value in wrapped_values or []]
 
 
 def clean_default(default):
