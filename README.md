@@ -554,9 +554,6 @@ progress: 3/100
 
 There are lots of options for telling Gooey about progress as your program is running. Checkout the [Gooey Examples](https://github.com/chriskiehl/GooeyExamples) repository for more detailed usage and examples! 
 
-| progress_regex | A text regex used to pattern match runtime progress information. See: [Showing Progress](#showing-progress) for a detailed how-to |
-| progress_expr | A python expression applied to any matches found via the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
-
 --------------------------------------
 
 
