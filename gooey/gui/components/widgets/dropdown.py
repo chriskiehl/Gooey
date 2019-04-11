@@ -12,8 +12,9 @@ class Dropdown(TextContainer):
         return wx.ComboBox(
             parent=parent,
             id=-1,
-            value=default,
-            choices=[default] + self._meta['choices'],
+            # str conversion allows using stringyfiable values in addition to pure strings
+            value=str(default),
+            choices=[str(default)] + [str(choice) for choice in self._meta['choices']],
             style=wx.CB_DROPDOWN)
 
     def setOptions(self, options):
