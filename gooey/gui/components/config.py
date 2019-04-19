@@ -134,6 +134,8 @@ class ConfigPage(ScrolledPanel):
             sizer = wx.BoxSizer(wx.HORIZONTAL)
             for item in uigroup:
                 widget = self.reifyWidget(parent, item)
+                if not getin(item, ['options', 'visible'], True):
+                    widget.Hide()
                 # !Mutate the reifiedWidgets instance variable in place
                 self.reifiedWidgets.append(widget)
                 sizer.Add(widget, 1, wx.ALL | wx.EXPAND, 5)
