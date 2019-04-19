@@ -236,16 +236,9 @@ Gooey is international ready and easily ported to your host language. Languages 
 
 All program text is stored externally in `json` files. So adding new langauge support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
 
-Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with the following language sets: 
-
-- English
-- Dutch
-- French
-- Portuguese 
+Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
 
 Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/Gooey/compare)
-
-
 
 
 -------------------------------------------    

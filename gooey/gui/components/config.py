@@ -4,7 +4,7 @@ from wx.lib.scrolledpanel import ScrolledPanel
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
 from gooey.util.functional import getin, flatmap, compact, indexunique
-
+from gooey.gui.lang.i18n import _
 
 class ConfigPage(ScrolledPanel):
     def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
@@ -21,6 +21,16 @@ class ConfigPage(ScrolledPanel):
         ## unless they're agreed upon before hand. Commands, as used here, have the problem
         ## of (a) not being nearly granular enough (for instance,  `-v` could represent totally different
         ## things given context/parser position), and (b) cannot identify positional args.
+
+    def getName(self, group):
+        """
+        retrieve the group name from the group object while accounting for
+        legacy fixed-name manual translation requirements.
+        """
+        name = group['name']
+        return (_(name)
+                if name in {'optional_args_msg', 'required_args_msg'}
+                else name)
 
 
     def firstCommandIfPresent(self, widget):
@@ -82,7 +92,6 @@ class ConfigPage(ScrolledPanel):
             self.makeGroup(self, sizer, item, 0, wx.EXPAND | wx.ALL, 10)
         self.SetSizer(sizer)
 
-
     def makeGroup(self, parent, thissizer, group, *args):
         '''
         Messily builds the (potentially) nested and grouped layout
@@ -96,13 +105,13 @@ class ConfigPage(ScrolledPanel):
 
         # determine the type of border , if any, the main sizer will use
         if getin(group, ['options', 'show_border'], False):
-            boxDetails = wx.StaticBox(parent, -1, group['name'] or '')
+            boxDetails = wx.StaticBox(parent, -1, self.getName(group) or '')
             boxSizer = wx.StaticBoxSizer(boxDetails, wx.VERTICAL)
         else:
             boxSizer = wx.BoxSizer(wx.VERTICAL)
             boxSizer.AddSpacer(10)
             if group['name']:
-                groupName = wx_util.h1(parent, group['name'] or '')
+                groupName = wx_util.h1(parent, self.getName(group) or '')
                 groupName.SetForegroundColour(getin(group, ['options', 'label_color']))
                 boxSizer.Add(groupName, 0, wx.TOP | wx.BOTTOM | wx.LEFT, 8)
 
@@ -138,8 +147,8 @@ class ConfigPage(ScrolledPanel):
                 hs.AddSpacer(5)
 
             # self.makeGroup(parent, hs, subgroup, 1, wx.ALL | wx.EXPAND, 5)
-            if e % getin(group, ['options', 'columns'], 2) \
-                    or e == len(group['groups']):
+            itemsPerColumn = getin(group, ['options', 'columns'], 2)
+            if e % itemsPerColumn or (e + 1) == len(group['groups']):
                 boxSizer.Add(hs, *args)
                 hs = wx.BoxSizer(wx.HORIZONTAL)
 

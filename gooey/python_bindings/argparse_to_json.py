@@ -199,9 +199,9 @@ def apply_default_rewrites(spec):
         contents = getin(spec, path)
         for group in contents:
             if group['name'] == 'positional arguments':
-                group['name'] = 'Required Arguments'
+                group['name'] = 'required_args_msg'
             if group['name'] == 'optional arguments':
-                group['name'] = 'Optional Arguments'
+                group['name'] = 'optional_args_msg'
     return spec
 
 
