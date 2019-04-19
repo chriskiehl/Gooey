@@ -1,5 +1,6 @@
 from argparse import ArgumentParser, _SubParsersAction
 from argparse import _MutuallyExclusiveGroup, _ArgumentGroup
+from textwrap import dedent
 
 from gooey.gui.lang.i18n import _
 
@@ -84,16 +85,16 @@ class GooeyParser(object):
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
-        if widget and widget == 'Listbox':
-            if not 'nargs' in kwargs or kwargs['nargs'] not in ['*', '+']:
-                raise ValueError(
-                    'Gooey\'s Listbox widget requires that nargs be specified.\n'
-                    'Nargs must be set to either `*` or `+` (e.g. nargs="*")'
-                )
         self.parser.add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
+        self._validate_constraints(
+            self.parser._actions[-1],
+            widget,
+            options or {},
+            **kwargs
+        )
 
     def add_mutually_exclusive_group(self, *args, **kwargs):
         options = kwargs.pop('gooey_options', {})
@@ -142,6 +143,13 @@ class GooeyParser(object):
 
         # return the created parsers action
         return action
+
+    def _validate_constraints(self, parser_action, widget, options, **kwargs):
+        from gooey.python_bindings import constraints
+        constraints.assert_listbox_constraints(widget, **kwargs)
+        constraints.assert_visibility_requirements(parser_action, options)
+
+
 
     def __getattr__(self, item):
         return getattr(self.parser, item)
