@@ -1,3 +1,5 @@
+import webbrowser
+
 import wx
 
 from gooey.gui.lang import i18n
@@ -34,6 +36,10 @@ class Console(wx.Panel):
          
         self.layoutComponent()
         self.Layout()
+        self.Bind(wx.EVT_TEXT_URL, self.followUrl, self.textbox)
+
+    def followUrl(self, event):
+        webbrowser.open(self.textbox.GetValue()[event.URLStart:event.URLEnd])
 
 
     def getFontStyle(self):
