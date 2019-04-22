@@ -9,7 +9,7 @@ Turn (almost) any Python 2 or 3 Console Program into a GUI application with one 
 # Gooey now supports Python 3!!
 
 
-# 1.0.2 Release TODO: 
+# 1.0.3 Release TODO: 
 
 Finish of the readonly param for all components. Maybe this 'll be passing
 totally arbitrary style around.  
