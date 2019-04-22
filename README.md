@@ -360,7 +360,7 @@ gooey_options={
 
 `show_border` is nice for visually tying together closely related items within a parent group. Setting it to `true` will draw a small border around all of the inputs and nest the title at the top. 
 
-`columns` controls how many many items get places on each row within the 
+`columns` controls how many many items get places on each row inside the border.
 
 
 
@@ -373,6 +373,9 @@ gooey_options={
 
 
 
+
+
+If you have a parser option which you want to be excluded from the GUI, use `'visible' : False` inside `gooey_options`.
 
 Run Modes
 ---------
