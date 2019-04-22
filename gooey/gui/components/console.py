@@ -36,10 +36,12 @@ class Console(wx.Panel):
          
         self.layoutComponent()
         self.Layout()
-        self.Bind(wx.EVT_TEXT_URL, self.followUrl, self.textbox)
+        self.Bind(wx.EVT_TEXT_URL, self.evtUrl, self.textbox)
 
-    def followUrl(self, event):
-        webbrowser.open(self.textbox.GetValue()[event.URLStart:event.URLEnd])
+    def evtUrl(self, event):
+        if event.MouseEvent.LeftUp():
+            webbrowser.open(self.textbox.GetValue()[event.URLStart:event.URLEnd])
+        event.Skip()
 
 
     def getFontStyle(self):
