@@ -195,7 +195,7 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  DirChooser/FileChooser/MultiFileChooser   | <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904377/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
+|  DirChooser, FileChooser, MultiFileChooser, FileSaver, MultiFileSaver   | <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904377/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
 |  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904376/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |
 | PasswordField | <p align="center"><img src="https://user-images.githubusercontent.com/1408720/28953722-eae72cca-788e-11e7-8fa1-9a1ef332a053.png" width="400"></p> |
 | Listbox | ![image](https://user-images.githubusercontent.com/1408720/31590191-fadd06f2-b1c0-11e7-9a49-7cbf0c6d33d1.png) |
