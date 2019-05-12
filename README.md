@@ -3,28 +3,9 @@ Gooey (Beta)
 Turn (almost) any Python 2 or 3 Console Program into a GUI application with one line
 
 <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1408720/7904381/f54f97f6-07c5-11e5-9bcb-c3c102920769.png" />
+    <img src="https://user-images.githubusercontent.com/1408720/57576740-3e9e9f80-741c-11e9-859c-a60586097492.png" />
 </p>
 
-# Gooey now supports Python 3!!
-
-
-# 1.0.2 Release TODO: 
-
-Finish of the readonly param for all components. Maybe this 'll be passing
-totally arbitrary style around.  
-
-Document all the new layout stuff
-
-* group - show_underline 
-* group - marginTop 
-* gooey_options.label_color
-* gooey_options.help_color
-* gooey_options.error_color
-* gooey_options.show_label
-* gooey_options.show_help 
-* gooey_options.block_checkbox.checkbox_label [string]
-* gooey_options.textarea.readonly
 
 
 Table of Contents
@@ -342,34 +323,6 @@ search_group.add_argument(
 ```
 
 Which will display them as part of the group within the UI. 
-
-**Customizing Group Layout**
-
-> Note: Make sure you're using GooeyParser if you want to take advantage of the layout customizations!  
-
-With a group created, we can now start tweaking how it looks! `GooeyParser` extends the API of `add_argument_group` to accept an additional keyword argument: `gooey_options`.  It accepts two keys: `show_border` and `columns`
-
-```
-gooey_options={
-    'show_border': Bool,
-    'columns': 1-100 
-}
-```
-
-<img src="https://user-images.githubusercontent.com/1408720/35488154-e201ab90-0438-11e8-9479-3a27fd1c523e.png" align="right" width="400">
-
-`show_border` is nice for visually tying together closely related items within a parent group. Setting it to `true` will draw a small border around all of the inputs and nest the title at the top. 
-
-`columns` controls how many many items get places on each row within the 
-
-
-
-
-
-
-
-
-
 
 
 
@@ -782,10 +735,8 @@ Screenshots
 Wanna help?
 -----------  
 
-Code, translation, graphics? Pull requests are welcome.
+Code, translation, documentation, or graphics? All pull requests are welcome. Just make sure to checkout [the contributing guidelines](https://github.com/chriskiehl/Gooey/blob/master/CONTRIBUTING.md) first.
 
 
 
 
-
-  [1]: http://i.imgur.com/7fKUvw9.png
