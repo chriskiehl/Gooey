@@ -1,10 +1,10 @@
 # Gooey Options 
 
-Using `GooeyParser` we can extend the API of Argparse to support lots of cool additional functionality. 
+Using `GooeyParser` we can extend the API of `argparse` to support lots of cool additional functionality. 
 
-The main addition to the top-level Argparse API is that we pick up an extra keyword argument called `gooey_options`. This accepts a dictionary of configuration parameters that lets you specify things like custom validators, style overrides, and a bunch of behavioral extensions for the various widget classes.   
+The main addition to the top-level `argparse` API is that we pick up extra keywords: `widget` and `gooey_options`. `widget` is used to specified which UI element to provide for the argument, i.e., a listbox or a file browser. `gooey_options` accepts a dictionary of configuration parameters that lets you specify things like custom validators, style overrides, and a bunch of behavioral extensions for the various widget classes.   
 
-`GooeyParser` is a drop-in replacement for `Argparse`. You can import it from the root Gooey namespace like this: 
+`GooeyParser` is a drop-in replacement for `argparse`. You can import it from the root Gooey namespace like this: 
 
 ```python
 from gooey import GooeyParser
@@ -67,7 +67,7 @@ parser.add_argument('-my-arg', gooey_options={
 | error_bg_color | hex string | The background color of the error text (when visible). |
 | show_label | bool | Toggles whether or not to display the label text |
 | show_help | bool | Toggles whether or not to display the help text |
-| visible | bool | hides the entire widget when false. Note: the widget is still present in the UI and will still send along any default values that have been provided in code. This option is here for when you want to hide certain advanced / dangerous inputs from your users |
+| visible | bool | Hides the entire widget when `False`. Note: the widget is still present in the UI and will still send along any default values that have been provided in code. This option is here for when you want to hide certain advanced / dangerous inputs from your GUI users. |
 | full_width | bool | This is a layout hint for this widget. When `True` the widget will fill the entire available space within a given row. Otherwise, it will be sized based on the column rules provided elsewhere. | 
 
 
@@ -132,9 +132,3 @@ parser.add_argument_group('MyGroup', desription='my cool group', gooey_options={
 
 ![image](https://user-images.githubusercontent.com/1408720/57576112-9c77bb00-740d-11e9-9dac-4e798699a35c.png)
   
-
- 
-
-
-
-
