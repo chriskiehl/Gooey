@@ -34,7 +34,7 @@ kColorList = ["#000000", "#800000", "#008000", "#808000", "#000080", "#800080", 
 
 class RichTextConsole(wx.richtext.RichTextCtrl):
     """
-        An advanced rich test console pannel supporting some Xterm control codes.
+        An advanced rich test console panel supporting some Xterm control codes.
     """
 
     def __init__(self, parent):

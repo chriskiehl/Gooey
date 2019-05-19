@@ -199,9 +199,9 @@ def apply_default_rewrites(spec):
         contents = getin(spec, path)
         for group in contents:
             if group['name'] == 'positional arguments':
-                group['name'] = 'Required Arguments'
+                group['name'] = 'required_args_msg'
             if group['name'] == 'optional arguments':
-                group['name'] = 'Optional Arguments'
+                group['name'] = 'optional_args_msg'
     return spec
 
 
@@ -228,7 +228,7 @@ def reapply_mutex_groups(mutex_groups, action_groups):
                 # insert the _ArgumentGroup container
                 actions[targetindex] = mutexgroup
                 # remove the duplicated individual actions
-                return [action for action in actions
+                actions = [action for action in actions
                         if action not in mutex_actions]
         return actions
 
@@ -460,7 +460,7 @@ def clean_list_defaults(default_values):
     wrapped_values = ([default_values]
                       if isinstance(default_values, str)
                       else default_values)
-    return [safe_string(value) for value in wrapped_values]
+    return [safe_string(value) for value in wrapped_values or []]
 
 
 def clean_default(default):
