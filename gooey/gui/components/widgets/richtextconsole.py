@@ -1,6 +1,7 @@
 import wx
 import wx.richtext
 import colored
+import re
 
 kColorList = ["#000000", "#800000", "#008000", "#808000", "#000080", "#800080", "#008080", "#c0c0c0",
     "#808080", "#ff0000", "#00ff00", "#ffff00", "#0000ff", "#ff00ff", "#00ffff", "#ffffff", "#000000",
@@ -42,6 +43,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         self.esc = colored.style.ESC
         self.end = colored.style.END
         self.noop = lambda *args, **kwargs: None
+        self.url_colour = wx.Colour(0,0,255)
 
         self.actionsMap = dict()
 
@@ -59,6 +61,29 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             # NB : we use a default parameter to force the evaluation of the binding
             self.actionsMap[escSeq] = lambda bindedColor=wxcolor: self.BeginTextColour(bindedColor)
 
+    def AppendText2(self, content):
+        """
+        Capture URLs and make them blue, underlined, and clickable.
+        """
+        while True:
+            M = re.search(r'\b(file|https?)://\S*', content)
+            if not M:
+                break
+                
+            if (M.start()):
+                self.WriteText(content[:M.start()])
+                
+            self.BeginTextColour(self.url_colour)
+            self.BeginUnderline()
+            self.BeginURL(M.group())
+            self.WriteText(M.group()+'\u200b')
+            self.EndURL()
+            self.EndUnderline()
+            self.EndTextColour()
+            
+            content = content[M.end():]
+        self.WriteText(content)
+            
     def AppendText(self, content):
         """
         wx method overriden to capture the terminal control character and translate them into wx styles.
@@ -73,7 +98,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             # Invariant : found an escape sequence starting at escPos
             # NB : we flush all the characters before the escape sequence, if any
             if content[unprocIndex:escPos]:
-                self.WriteText(content[unprocIndex:escPos])
+                self.AppendText2(content[unprocIndex:escPos])
             endEsc = content.find(self.end, escPos)
             if endEsc == -1:
                 unprocIndex = escPos + len(self.esc)
@@ -82,4 +107,4 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             self.actionsMap.get(content[escPos:endEsc+1], self.noop)()
             unprocIndex = endEsc + 1
         # Invariant : unprocessed end of buffer is escape-free, ready to be printed
-        self.WriteText(content[unprocIndex:])
+        self.AppendText2(content[unprocIndex:])
