@@ -40,7 +40,7 @@ class Console(wx.Panel):
 
     def evtUrl(self, event):
         if event.MouseEvent.LeftUp():
-            webbrowser.open(self.textbox.GetValue()[event.URLStart:event.URLEnd])
+            webbrowser.open(self.textbox.GetRange(event.URLStart,event.URLEnd))
         event.Skip()
 
 
