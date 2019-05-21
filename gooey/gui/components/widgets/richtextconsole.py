@@ -64,6 +64,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         wx method overriden to capture the terminal control character and translate them into wx styles.
         Complexity : o(len(content))
         """
+        self.SetInsertionPointEnd()
         unprocIndex = 0
         while True:
             # Invariant : unprocIndex is the starting index of the unprocessed part of the buffer
@@ -83,3 +84,4 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             unprocIndex = endEsc + 1
         # Invariant : unprocessed end of buffer is escape-free, ready to be printed
         self.WriteText(content[unprocIndex:])
+        self.ShowPosition(self.GetInsertionPoint())
