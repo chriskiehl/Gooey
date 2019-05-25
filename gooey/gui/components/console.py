@@ -40,7 +40,11 @@ class Console(wx.Panel):
 
     def evtUrl(self, event):
         if event.MouseEvent.LeftUp():
-            webbrowser.open(self.textbox.GetValue()[event.URLStart:event.URLEnd])
+            # The rich console provides the embedded URL via GetString()
+            # but the basic console does not
+            webbrowser.open(
+                event.GetString() or
+                self.textbox.GetRange(event.URLStart,event.URLEnd))
         event.Skip()
 
 
