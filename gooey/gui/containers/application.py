@@ -64,6 +64,10 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
+        
+        accel_tbl = wx.AcceleratorTable(
+            [(wx.ACCEL_CTRL,  wx.WXK_RETURN, events.WINDOW_START )])
+        self.SetAcceleratorTable(accel_tbl)
 
         if self.buildSpec['poll_external_updates']:
             self.fetchExternalUpdates()
