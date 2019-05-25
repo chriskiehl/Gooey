@@ -1,6 +1,7 @@
 import wx
 import wx.richtext
 import colored
+import re
 
 kColorList = ["#000000", "#800000", "#008000", "#808000", "#000080", "#800080", "#008080", "#c0c0c0",
     "#808080", "#ff0000", "#00ff00", "#ffff00", "#0000ff", "#ff00ff", "#00ffff", "#ffffff", "#000000",
@@ -39,6 +40,8 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
 
     def __init__(self, parent):
         super(wx.richtext.RichTextCtrl, self).__init__(parent, -1, "", style=wx.richtext.RE_MULTILINE | wx.richtext.RE_READONLY)
+        self.regex_urls=re.compile(r'\b((?:file://|https?://|mailto:)[^][\s<>|]*)')
+        self.url_colour = wx.Colour(0,0,255)
         self.esc = colored.style.ESC
         self.end = colored.style.END
         self.noop = lambda *args, **kwargs: None
@@ -58,6 +61,25 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             # NB : we use a default parameter to force the evaluation of the binding
             self.actionsMap[escSeq] = lambda bindedColor=wxcolor: self.BeginTextColour(bindedColor)
 
+    def PreprocessAndWriteText(self, content):
+        """Write text into console, while capturing URLs and making 
+        them blue, underlined, and clickable.
+        """
+        textStream=iter(re.split(self.regex_urls, content))
+        # The odd elements in textStream are plaintext;
+        # the even elements are URLs.
+        for plaintext in textStream:
+            url=next(textStream, None)
+            self.WriteText(plaintext)
+            if url:    
+                self.BeginTextColour(self.url_colour)
+                self.BeginUnderline()
+                self.BeginURL(url)
+                self.WriteText(url)
+                self.EndURL()
+                self.EndUnderline()
+                self.EndTextColour()
+            
     def AppendText(self, content):
         """
         wx method overriden to capture the terminal control character and translate them into wx styles.
@@ -73,7 +95,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             # Invariant : found an escape sequence starting at escPos
             # NB : we flush all the characters before the escape sequence, if any
             if content[unprocIndex:escPos]:
-                self.WriteText(content[unprocIndex:escPos])
+                self.PreprocessAndWriteText(content[unprocIndex:escPos])
             endEsc = content.find(self.end, escPos)
             if endEsc == -1:
                 unprocIndex = escPos + len(self.esc)
@@ -82,5 +104,5 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             self.actionsMap.get(content[escPos:endEsc+1], self.noop)()
             unprocIndex = endEsc + 1
         # Invariant : unprocessed end of buffer is escape-free, ready to be printed
-        self.WriteText(content[unprocIndex:])
+        self.PreprocessAndWriteText(content[unprocIndex:])
         self.ShowPosition(self.GetInsertionPoint())
