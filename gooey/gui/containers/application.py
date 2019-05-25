@@ -64,6 +64,10 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
+        
+        accel_tbl = wx.AcceleratorTable(
+            [(wx.ACCEL_CTRL,  wx.WXK_RETURN, events.WINDOW_START )])
+        self.SetAcceleratorTable(accel_tbl)
 
         if self.buildSpec['poll_external_updates']:
             self.fetchExternalUpdates()
@@ -81,16 +85,17 @@ class GooeyApplication(wx.Frame):
         Verify user input and kick off the client's program if valid
         """
         with transactUI(self):
-            config = self.navbar.getActiveConfig()
-            config.resetErrors()
-            if config.isValid():
-                if self.buildSpec['clear_before_run']:
-                    self.console.clear()
-                self.clientRunner.run(self.buildCliString())
-                self.showConsole()
-            else:
-                config.displayErrors()
-                self.Layout()
+            if not self.clientRunner.running():
+                config = self.navbar.getActiveConfig()
+                config.resetErrors()
+                if config.isValid():
+                    if self.buildSpec['clear_before_run']:
+                        self.console.clear()
+                    self.clientRunner.run(self.buildCliString())
+                    self.showConsole()
+                else:
+                    config.displayErrors()
+                    self.Layout()
 
 
     def onEdit(self):

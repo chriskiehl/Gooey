@@ -20,12 +20,16 @@ class ProcessController(object):
         self.progress_expr = progress_expr
         self.hide_progress_msg = hide_progress_msg
         self.encoding = encoding
+        self.wasSuccess = None
         self.wasForcefullyStopped = False
         self.shell_execution = shell
 
     def was_success(self):
-        self._process.communicate()
-        return self._process.returncode == 0
+        if self._process:
+            self._process.communicate()
+            self.wasSuccess=self._process.returncode == 0
+            self._process = None
+        return self.wasSuccess
 
     def poll(self):
         if not self._process:
@@ -34,13 +38,16 @@ class ProcessController(object):
 
     def stop(self):
         if self.running():
+            self.wasSuccess = False
             self.wasForcefullyStopped = True
             taskkill(self._process.pid)
+            self._process = None
 
     def running(self):
         return self._process and self.poll() is None
 
     def run(self, command):
+        self.wasSuccess = None
         self.wasForcefullyStopped = False
         env = os.environ.copy()
         env["GOOEY"] = "1"
