@@ -60,6 +60,9 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             wxcolor = wx.Colour(int(hex[1:3],16), int(hex[3:5],16), int(hex[5:],16), alpha=wx.ALPHA_OPAQUE)
             # NB : we use a default parameter to force the evaluation of the binding
             self.actionsMap[escSeq] = lambda bindedColor=wxcolor: self.BeginTextColour(bindedColor)
+            
+        self.Bind(wx.EVT_MOUSEWHEEL, self.onMouseWheel)
+
 
     def PreprocessAndWriteText(self, content):
         """Write text into console, while capturing URLs and making 
@@ -106,3 +109,15 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         # Invariant : unprocessed end of buffer is escape-free, ready to be printed
         self.PreprocessAndWriteText(content[unprocIndex:])
         self.ShowPosition(self.GetInsertionPoint())
+
+    def onMouseWheel(self, event):
+        if event.GetModifiers()==2 and event.GetWheelAxis()==wx.MOUSE_WHEEL_VERTICAL:
+            if event.GetWheelRotation() >= event.GetWheelDelta():
+                r=1.1
+            elif event.GetWheelRotation() <= -event.GetWheelDelta():
+                r=1.0/1.1
+            else:
+                return
+            self.SetFontScale(self.GetFontScale() * r, True)
+        else:
+           event.Skip()
