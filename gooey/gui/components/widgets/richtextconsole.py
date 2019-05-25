@@ -38,7 +38,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
     """
 
     def __init__(self, parent):
-        super().__init__(parent, -1, "", style=wx.TE_MULTILINE | wx.TE_READONLY)
+        super(wx.richtext.RichTextCtrl, self).__init__(parent, -1, "", style=wx.TE_MULTILINE | wx.TE_READONLY)
         self.esc = colored.style.ESC
         self.end = colored.style.END
         self.noop = lambda *args, **kwargs: None
