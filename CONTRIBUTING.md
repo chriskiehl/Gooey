@@ -59,6 +59,7 @@ A good PR should hit these essentials.
 Basic Checklist: 
  - [ ] Works on both Python 2.7 & Python 3.x 
  - [ ] Commit message includes the relevant issue number
+ - [ ] Pull request description contains link to relevant issue
  - [ ] Bug fix / feature has associated tests
  - [ ] README.md is updated (if relevant)
  - [ ] PR has summary of the change and links to the detailed issue.  
