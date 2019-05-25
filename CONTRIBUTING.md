@@ -42,6 +42,13 @@ You can find the current release branch by checking out the [branches page](http
 * Make sure it works on both Python 2.7 and Python 3.x (this is often overlooked!) 
 * Backwards compatibility must be honored 
 
+**When to PEP8:**
+
+The vast majority of Gooey's code does _not_ follow PEP8. This is because the vast majority of Gooey's code is build on top of WxPython code, which does not follow PEP8. Everything in Gooey's core honors the general camelCase style used throughout Wx. 
+
+The exception to this rule is for everything in the `python_bindings/` package. This package holds the public API for Gooey, and thus honors PEP8. So the general rule is that if you're making a change to the public bindings: use PEP8. For all other internal Gooey code, honor the house style you find. 
+
+
 
 ## Pull Request Process
 
