@@ -43,14 +43,13 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         self.end = colored.style.END
         self.noop = lambda *args, **kwargs: None
 
-        self.actionsMap = dict()
-
-        # Supported font altering actions
-        self.actionsMap[colored.style.BOLD] = self.BeginBold
-        self.actionsMap[colored.style.RES_BOLD] = self.EndBold
-        self.actionsMap[colored.style.UNDERLINED] = self.BeginUnderline
-        self.actionsMap[colored.style.RES_UNDERLINED] = self.EndUnderline
-        self.actionsMap[colored.style.RESET] = self.EndAllStyles
+        self.actionsMap = {
+            colored.style.BOLD: self.BeginBold,
+            colored.style.RES_BOLD: self.EndBold,
+            colored.style.UNDERLINED: self.BeginUnderline,
+            colored.style.RES_UNDERLINED: self.EndUnderline,
+            colored.style.RESET: self.EndAllStyles,
+        }
 
         # Actions for coloring text
         for index, hex in enumerate(kColorList):
