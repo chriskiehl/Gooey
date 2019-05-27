@@ -65,6 +65,13 @@ class GooeyApplication(wx.Frame):
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
 
+        accel_tbl = wx.AcceleratorTable(
+            [(wx.ACCEL_CTRL,  wx.WXK_RETURN, events.WINDOW_START  ),
+             (wx.ACCEL_CTRL,  ord('C'),      events.WINDOW_STOP   ),
+             (wx.ACCEL_CTRL,  wx.WXK_LEFT,   events.WINDOW_EDIT   ),
+             (wx.ACCEL_CTRL,  wx.WXK_RIGHT,  events.WINDOW_START  )])
+        self.SetAcceleratorTable(accel_tbl)
+
         if self.buildSpec['poll_external_updates']:
             self.fetchExternalUpdates()
 
@@ -81,24 +88,27 @@ class GooeyApplication(wx.Frame):
         Verify user input and kick off the client's program if valid
         """
         with transactUI(self):
-            config = self.navbar.getActiveConfig()
-            config.resetErrors()
-            if config.isValid():
-                if self.buildSpec['clear_before_run']:
-                    self.console.clear()
-                self.clientRunner.run(self.buildCliString())
-                self.showConsole()
-            else:
-                config.displayErrors()
-                self.Layout()
+            if (self.footer.start_button.IsShownOnScreen()
+                or self.footer.restart_button.IsShownOnScreen()):
+                config = self.navbar.getActiveConfig()
+                config.resetErrors()
+                if config.isValid():
+                    if self.buildSpec['clear_before_run']:
+                        self.console.clear()
+                    self.clientRunner.run(self.buildCliString())
+                    self.showConsole()
+                else:
+                    config.displayErrors()
+                    self.Layout()
 
 
     def onEdit(self):
         """Return the user to the settings screen for further editing"""
         with transactUI(self):
-            if self.buildSpec['poll_external_updates']:
-                self.fetchExternalUpdates()
-            self.showSettings()
+            if (self.footer.edit_button.IsShownOnScreen()):
+                if self.buildSpec['poll_external_updates']:
+                    self.fetchExternalUpdates()
+                self.showSettings()
 
 
     def buildCliString(self):
@@ -143,8 +153,9 @@ class GooeyApplication(wx.Frame):
     def onStopExecution(self):
         """Displays a scary message and then force-quits the executing
         client code if the user accepts"""
-        if self.buildSpec['show_stop_warning'] and modals.confirmForceStop():
-            self.clientRunner.stop()
+        if self.footer.stop_button.IsShownOnScreen():
+            if self.buildSpec['show_stop_warning'] and modals.confirmForceStop():
+                self.clientRunner.stop()
 
 
     def fetchExternalUpdates(self):
