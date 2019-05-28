@@ -2,7 +2,7 @@ import webbrowser
 
 import wx
 
-from gooey.gui.lang import i18n
+from gooey.gui.lang.i18n import _
 from .widgets.basictextconsole import BasicTextConsole
 
 
@@ -15,7 +15,7 @@ class Console(wx.Panel):
         wx.Panel.__init__(self, parent, **kwargs)
         self.buildSpec = buildSpec
 
-        self.text = wx.StaticText(self, label=i18n._("status"))
+        self.text = wx.StaticText(self, label=_("status"))
         if buildSpec["richtext_controls"]:
             from .widgets.richtextconsole import RichTextConsole
             self.textbox = RichTextConsole(self)
