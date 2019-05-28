@@ -2,7 +2,7 @@ import sys
 import wx
 
 from gooey.gui import events
-from gooey.gui.lang import i18n
+from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
 
 
@@ -72,12 +72,12 @@ class Footer(wx.Panel):
 
 
     def _init_components(self):
-        self.cancel_button = self.button(i18n._('cancel'), wx.ID_CANCEL, event_id=events.WINDOW_CANCEL)
-        self.stop_button = self.button(i18n._('stop'), wx.ID_OK, event_id=events.WINDOW_STOP)
-        self.start_button = self.button(i18n._('start'), wx.ID_OK, event_id=int(events.WINDOW_START))
-        self.close_button = self.button(i18n._("close"), wx.ID_OK, event_id=int(events.WINDOW_CLOSE))
-        self.restart_button = self.button(i18n._('restart'), wx.ID_OK, event_id=int(events.WINDOW_RESTART))
-        self.edit_button = self.button(i18n._('edit'), wx.ID_OK, event_id=int(events.WINDOW_EDIT))
+        self.cancel_button = self.button(_('cancel'), wx.ID_CANCEL, event_id=events.WINDOW_CANCEL)
+        self.stop_button = self.button(_('stop'), wx.ID_OK, event_id=events.WINDOW_STOP)
+        self.start_button = self.button(_('start'), wx.ID_OK, event_id=int(events.WINDOW_START))
+        self.close_button = self.button(_("close"), wx.ID_OK, event_id=int(events.WINDOW_CLOSE))
+        self.restart_button = self.button(_('restart'), wx.ID_OK, event_id=int(events.WINDOW_RESTART))
+        self.edit_button = self.button(_('edit'), wx.ID_OK, event_id=int(events.WINDOW_EDIT))
 
         self.progress_bar = wx.Gauge(self, range=100)
 
