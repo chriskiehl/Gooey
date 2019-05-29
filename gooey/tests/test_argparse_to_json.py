@@ -9,6 +9,32 @@ from gooey.util.functional import getin
 
 class TestArgparse(unittest.TestCase):
 
+    def test_mutex_groups_conversion(self):
+        """
+        Ensure multiple mutex groups are processed correctly.
+        """
+        parser = ArgumentParser()
+        g1 = parser.add_mutually_exclusive_group(required=True)
+        g1.add_argument('--choose1')
+        g1.add_argument('--choose2')
+
+        g2 = parser.add_mutually_exclusive_group(required=True)
+        g2.add_argument('--choose3')
+        g2.add_argument('--choose4')
+
+        output = argparse_to_json.process(parser, {}, {}, {})
+
+        # assert that we get two groups of two choices back
+        items = output[0]['items']
+        self.assertTrue(len(items) == 2)
+        group1 = items[0]
+        group2 = items[1]
+        self.assertTrue(['--choose1'] in group1['data']['commands'])
+        self.assertTrue(['--choose2'] in group1['data']['commands'])
+        self.assertTrue(['--choose3'] in group2['data']['commands'])
+        self.assertTrue(['--choose4'] in group2['data']['commands'])
+        self.assertTrue(group1['type'] == 'RadioGroup')
+        self.assertTrue(group2['type'] == 'RadioGroup')
 
     def test_json_iterable_conversion(self):
         """

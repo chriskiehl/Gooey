@@ -34,23 +34,22 @@ kColorList = ["#000000", "#800000", "#008000", "#808000", "#000080", "#800080", 
 
 class RichTextConsole(wx.richtext.RichTextCtrl):
     """
-        An advanced rich test console pannel supporting some Xterm control codes.
+        An advanced rich test console panel supporting some Xterm control codes.
     """
 
     def __init__(self, parent):
-        super().__init__(parent, -1, "", style=wx.TE_MULTILINE | wx.TE_READONLY)
+        super(wx.richtext.RichTextCtrl, self).__init__(parent, -1, "", style=wx.richtext.RE_MULTILINE | wx.richtext.RE_READONLY)
         self.esc = colored.style.ESC
         self.end = colored.style.END
         self.noop = lambda *args, **kwargs: None
 
-        self.actionsMap = dict()
-
-        # Supported font altering actions
-        self.actionsMap[colored.style.BOLD] = self.BeginBold
-        self.actionsMap[colored.style.RES_BOLD] = self.EndBold
-        self.actionsMap[colored.style.UNDERLINED] = self.BeginUnderline
-        self.actionsMap[colored.style.RES_UNDERLINED] = self.EndUnderline
-        self.actionsMap[colored.style.RESET] = self.EndAllStyles
+        self.actionsMap = {
+            colored.style.BOLD: self.BeginBold,
+            colored.style.RES_BOLD: self.EndBold,
+            colored.style.UNDERLINED: self.BeginUnderline,
+            colored.style.RES_UNDERLINED: self.EndUnderline,
+            colored.style.RESET: self.EndAllStyles,
+        }
 
         # Actions for coloring text
         for index, hex in enumerate(kColorList):
@@ -64,6 +63,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         wx method overriden to capture the terminal control character and translate them into wx styles.
         Complexity : o(len(content))
         """
+        self.SetInsertionPointEnd()
         unprocIndex = 0
         while True:
             # Invariant : unprocIndex is the starting index of the unprocessed part of the buffer
@@ -83,3 +83,4 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             unprocIndex = endEsc + 1
         # Invariant : unprocessed end of buffer is escape-free, ready to be printed
         self.WriteText(content[unprocIndex:])
+        self.ShowPosition(self.GetInsertionPoint())
