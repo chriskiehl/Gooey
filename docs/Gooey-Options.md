@@ -131,4 +131,62 @@ parser.add_argument_group('MyGroup', desription='my cool group', gooey_options={
 | margin_top | int | specifies the top margin in pixels for this group |
 
 ![image](https://user-images.githubusercontent.com/1408720/57576112-9c77bb00-740d-11e9-9dac-4e798699a35c.png)
+
+
+
+## File and Folder choosers
+
+File and Folder Choosers Groups take a number of `gooey_options` to help control default values. 
+
+```python
+parser.add_argument("FileChooser", widget="FileChooser",
+                            gooey_options={
+                                'wildcard':
+                                    "Comma separated file (*.csv)|*.csv|"
+                                    "All files (*.*)|*.*",
+                                'default_dir': "c:/batch",
+                                'default_file': "def_file.csv",
+                                'message': "pick me"
+                            }
+                            )
+parser.add_argument("DirectoryChooser", widget="DirChooser",
+                            gooey_options={
+                                'wildcard':
+                                    "Comma separated file (*.csv)|*.csv|"
+                                    "All files (*.*)|*.*",
+                                'message': "pick folder",
+                                'default_path': "c:/batch/stuff"
+                            }
+                            )
+parser.add_argument("FileSaver", widget="FileSaver",
+                            gooey_options={
+                                'wildcard':
+                                    "JPG (*.jpg)|*.jpg|"
+                                    "All files (*.*)|*.*",
+                                'message': "pick folder",
+                                'default_dir': "c:/projects",
+                                'default_file': "def_file.csv"
+                            }
+                            )
+parser.add_argument("MultiFileSaver", widget="MultiFileChooser",
+                            gooey_options={
+                                'wildcard':
+                                    "Comma separated file (*.csv)|*.csv|"
+                                    "All files (*.*)|*.*",
+                                'message': "pick folder",
+                                'default_dir': "c:/temp",
+                                'default_file': "def_file.csv"
+                            }
+                            )
+``` 
+  
+| Keyword | Type | Description | 
+|---------|------|-------------|
+| wildcard | string | Sets the wildcard, which can contain multiple file types, for example: "BMP files (.bmp)&#124;.bmp&#124;GIF files (.gif)&#124;.gif" |
+| message | string | 	Sets the message that will be displayed on the dialog. |
+| default_dir | string | The default directory |
+| default_file | string | The default filename | 
+| default_path | string | The default path |
+
+
   
