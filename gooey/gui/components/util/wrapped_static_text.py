@@ -33,6 +33,7 @@ class AutoWrappedStaticText(wx.StaticText):
         super(AutoWrappedStaticText, self).__init__(parent, *args, **kwargs)
         self.label = kwargs.get('label')
         self.Bind(wx.EVT_SIZE, self.OnSize)
+        self.parent = parent
 
 
     def OnSize(self, event):
@@ -46,7 +47,7 @@ class AutoWrappedStaticText(wx.StaticText):
         if self.target:
             self.Wrap(self.target.GetSize().width)
         else:
-            self.Wrap(event.GetSize().width)
+            self.Wrap(self.parent.GetSize()[0])
 
     def Wrap(self, width):
         """
