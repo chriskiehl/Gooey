@@ -6,7 +6,7 @@
   "choose_folder": "Kies een map",
   "choose_one": "Kies één",
   "close": "Afsluiten",
-  "close_program": "Programma afsluiten?",
+  "close_program": "Wilt u het programma afsluiten?",
   "edit": "Bewerken",
   "enter_filename": "Voer bestandsnaam in",
   "error_required_fields": "Voer alle verplichte velden in!",
@@ -30,7 +30,7 @@
   "stop": "Afbreken",
   "stop_task": "Wilt u het programma onderbreken?",
   "success_message": "Het programma is succesvol voltooid!\nDruk op de OK knop om af te sluiten",
-  "sure_you_want_to_exit": "Weet u zeker dat u wilt afsluiten?",
+  "sure_you_want_to_exit": "Weet u het zeker?",
   "sure_you_want_to_stop": "Weet u zeker dat u het programma wilt onderbreken?\nDit kan leiden tot datacorruptie!",
   "uh_oh": "\nOeps! Er is iets misgegaan!\nKopieër de foutmelding hieronder om de ontwikkelaar te laten weten wat er mis is gegaan.\n",
   "validation_failed": "Tenminste één veld voldoet niet aan de eisen"
