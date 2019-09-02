@@ -1,6 +1,9 @@
+import webbrowser
+
 import wx
 
-from gooey.gui.lang import i18n
+from gooey.gui.lang.i18n import _
+from .widgets.basictextconsole import BasicTextConsole
 
 
 class Console(wx.Panel):
@@ -12,10 +15,12 @@ class Console(wx.Panel):
         wx.Panel.__init__(self, parent, **kwargs)
         self.buildSpec = buildSpec
 
-        self.text = wx.StaticText(self, label=i18n._("status"))
-        self.textbox = wx.TextCtrl(
-            self, -1, "", style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH
-        )
+        self.text = wx.StaticText(self, label=_("status"))
+        if buildSpec["richtext_controls"]:
+            from .widgets.richtextconsole import RichTextConsole
+            self.textbox = RichTextConsole(self)
+        else:
+            self.textbox = BasicTextConsole(self)
 
         self.defaultFont = self.textbox.GetFont()
 
@@ -31,6 +36,16 @@ class Console(wx.Panel):
          
         self.layoutComponent()
         self.Layout()
+        self.Bind(wx.EVT_TEXT_URL, self.evtUrl, self.textbox)
+
+    def evtUrl(self, event):
+        if event.MouseEvent.LeftUp():
+            # The rich console provides the embedded URL via GetString()
+            # but the basic console does not
+            webbrowser.open(
+                event.GetString() or
+                self.textbox.GetRange(event.URLStart,event.URLEnd))
+        event.Skip()
 
 
     def getFontStyle(self):
@@ -64,6 +79,12 @@ class Console(wx.Panel):
         multi-threaded explosions (e.g. wx.CallAfter)
         """
         self.textbox.AppendText(txt)
+
+    def clear(self):
+        """
+            Clear the the main TextCtrl.
+        """
+        self.textbox.Clear()
 
 
     def getText(self):

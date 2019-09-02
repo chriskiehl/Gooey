@@ -6,11 +6,8 @@ from gooey.gui import formatters
 class Counter(Dropdown):
 
     def setValue(self, value):
-        self.widget.SetSelection(value)
-
-    def getWidgetValue(self):
-        return self.widget.GetValue()
-
+        index = self._meta['choices'].index(value) + 1
+        self.widget.SetSelection(index)
 
     def formatOutput(self, metadata, value):
         return formatters.counter(metadata, value)

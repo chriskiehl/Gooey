@@ -28,7 +28,7 @@ def load(language_dir, filename, encoding):
                   'listed language directory'.format(filename.title(), language_dir))
 
 def translate(key):
-  return _DICTIONARY.get(key, key)
+  return _DICTIONARY.get(key, '(Translate me!) {}'.format(key))
 
 def _(key):
   return translate(key)

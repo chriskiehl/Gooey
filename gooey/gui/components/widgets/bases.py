@@ -1,11 +1,12 @@
+from functools import reduce
+
 import wx
-# from rx.subjects import Subject
 
 from gooey.gui import formatters, events
-from gooey.gui.pubsub import pub
 from gooey.gui.util import wx_util
 from gooey.util.functional import getin, ifPresent
 from gooey.gui.validators import runValidator
+from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 
 
 class BaseWidget(wx.Panel):
@@ -47,11 +48,12 @@ class TextContainer(BaseWidget):
         self._meta = widgetInfo['data']
         self._options = widgetInfo['options']
         self.label = wx.StaticText(self, label=widgetInfo['data']['display_name'])
-        self.help_text = wx.StaticText(self, label=widgetInfo['data']['help'] or '')
-        self.error = wx.StaticText(self, label='')
+        self.help_text = AutoWrappedStaticText(self, label=widgetInfo['data']['help'] or '')
+        self.error = AutoWrappedStaticText(self, label='')
         self.error.Hide()
         self.widget = self.getWidget(self)
         self.layout = self.arrange(*args, **kwargs)
+        self.setColors()
         self.SetSizer(self.layout)
         self.Bind(wx.EVT_SIZE, self.onSize)
         if self._meta['default']:
@@ -60,23 +62,45 @@ class TextContainer(BaseWidget):
 
     def arrange(self, *args, **kwargs):
         wx_util.make_bold(self.label)
-        wx_util.dark_grey(self.help_text)
+        wx_util.withColor(self.label, self._options['label_color'])
+        wx_util.withColor(self.help_text, self._options['help_color'])
         wx_util.withColor(self.error, self._options['error_color'])
 
         self.help_text.SetMinSize((0,-1))
 
         layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(self.label)
+
+        if self._options.get('show_label', True):
+            layout.Add(self.label, 0, wx.EXPAND)
+        else:
+            self.label.Show(False)
+            layout.AddStretchSpacer(1)
+
         layout.AddSpacer(2)
-        if self.help_text:
+        if self.help_text and self._options.get('show_help', True):
             layout.Add(self.help_text, 1, wx.EXPAND)
             layout.AddSpacer(2)
         else:
+            self.help_text.Show(False)
             layout.AddStretchSpacer(1)
         layout.Add(self.getSublayout(), 0, wx.EXPAND)
-        layout.Add(self.error)
+        layout.Add(self.error, 1, wx.EXPAND)
+
         self.error.Hide()
         return layout
+
+
+    def setColors(self):
+        wx_util.make_bold(self.label)
+        wx_util.withColor(self.label, self._options['label_color'])
+        wx_util.withColor(self.help_text, self._options['help_color'])
+        wx_util.withColor(self.error, self._options['error_color'])
+        if self._options.get('label_bg_color'):
+            self.label.SetBackgroundColour(self._options.get('label_bg_color'))
+        if self._options.get('help_bg_color'):
+            self.help_text.SetBackgroundColour(self._options.get('help_bg_color'))
+        if self._options.get('error_bg_color'):
+            self.error.SetBackgroundColour(self._options.get('error_bg_color'))
 
     def getWidget(self, *args, **options):
         return self.widget_class(*args, **options)
@@ -90,8 +114,12 @@ class TextContainer(BaseWidget):
         return layout
 
     def onSize(self, event):
-        self.error.Wrap(self.GetSize().width)
+        # print(self.GetSize())
+        # self.error.Wrap(self.GetSize().width)
+        # self.help_text.Wrap(500)
+        # self.Layout()
         event.Skip()
+
 
     def getValue(self):
         userValidator = getin(self._options, ['validator', 'test'], 'True')

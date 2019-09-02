@@ -30,7 +30,12 @@ class Dropdown(TextContainer):
         self.widget.SetSelection(index)
 
     def getWidgetValue(self):
-        return self.widget.GetValue()
+        value = self.widget.GetValue()
+        # filter out the extra default option that's
+        # appended during creation
+        if value == _('select_option'):
+            return None
+        return value
 
     def formatOutput(self, metadata, value):
         return formatters.dropdown(metadata, value)

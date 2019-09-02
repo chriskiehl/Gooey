@@ -1,24 +1,36 @@
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
+from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
-from gooey.util.functional import getin, flatmap, merge, compact, indexunique
-from gooey.gui.components.widgets.radio_group import RadioGroup
-
+from gooey.util.functional import getin, flatmap, compact, indexunique
+from gooey.gui.lang.i18n import _
 
 class ConfigPage(ScrolledPanel):
-    def __init__(self, parent, rawWidgets, *args, **kwargs):
+    def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
         super(ConfigPage, self).__init__(parent, *args, **kwargs)
         self.SetupScrolling(scroll_x=False, scrollToTop=False)
         self.rawWidgets = rawWidgets
+        self.buildSpec = buildSpec
         self.reifiedWidgets = []
         self.layoutComponent()
+        self.Layout()
         self.widgetsMap = indexunique(lambda x: x._id, self.reifiedWidgets)
         ## TODO: need to rethink what uniquely identifies an argument.
         ## Out-of-band IDs, while simple, make talking to the client program difficult
         ## unless they're agreed upon before hand. Commands, as used here, have the problem
         ## of (a) not being nearly granular enough (for instance,  `-v` could represent totally different
         ## things given context/parser position), and (b) cannot identify positional args.
+
+    def getName(self, group):
+        """
+        retrieve the group name from the group object while accounting for
+        legacy fixed-name manual translation requirements.
+        """
+        name = group['name']
+        return (_(name)
+                if name in {'optional_args_msg', 'required_args_msg'}
+                else name)
 
 
     def firstCommandIfPresent(self, widget):
@@ -77,9 +89,8 @@ class ConfigPage(ScrolledPanel):
     def layoutComponent(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
         for item in self.rawWidgets['contents']:
-            self.makeGroup(self, sizer, item, 0, wx.EXPAND)
+            self.makeGroup(self, sizer, item, 0, wx.EXPAND | wx.ALL, 10)
         self.SetSizer(sizer)
-
 
     def makeGroup(self, parent, thissizer, group, *args):
         '''
@@ -94,21 +105,27 @@ class ConfigPage(ScrolledPanel):
 
         # determine the type of border , if any, the main sizer will use
         if getin(group, ['options', 'show_border'], False):
-            boxDetails = wx.StaticBox(parent, -1, group['name'] or '')
+            boxDetails = wx.StaticBox(parent, -1, self.getName(group) or '')
             boxSizer = wx.StaticBoxSizer(boxDetails, wx.VERTICAL)
         else:
             boxSizer = wx.BoxSizer(wx.VERTICAL)
             boxSizer.AddSpacer(10)
             if group['name']:
-                boxSizer.Add(wx_util.h1(parent, group['name'] or ''), 0, wx.TOP | wx.BOTTOM | wx.LEFT, 8)
+                groupName = wx_util.h1(parent, self.getName(group) or '')
+                groupName.SetForegroundColour(getin(group, ['options', 'label_color']))
+                boxSizer.Add(groupName, 0, wx.TOP | wx.BOTTOM | wx.LEFT, 8)
 
         group_description = getin(group, ['description'])
         if group_description:
-            description = wx.StaticText(parent, label=group_description)
-            boxSizer.Add(description, 0,  wx.EXPAND | wx.LEFT, 10)
+            description = AutoWrappedStaticText(parent, label=group_description, target=boxSizer)
+            description.SetForegroundColour(getin(group, ['options', 'description_color']))
+            description.SetMinSize((0, -1))
+            boxSizer.Add(description, 1,  wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         # apply an underline when a grouping border is not specified
-        if not getin(group, ['options', 'show_border'], False) and group['name']:
+        # unless the user specifically requests not to show it
+        if not getin(group, ['options', 'show_border'], False) and group['name'] \
+                and getin(group, ['options', 'show_underline'], True):
             boxSizer.Add(wx_util.horizontal_rule(parent), 0, wx.EXPAND | wx.LEFT, 10)
 
         ui_groups = self.chunkWidgets(group)
@@ -117,21 +134,33 @@ class ConfigPage(ScrolledPanel):
             sizer = wx.BoxSizer(wx.HORIZONTAL)
             for item in uigroup:
                 widget = self.reifyWidget(parent, item)
+                if not getin(item, ['options', 'visible'], True):
+                    widget.Hide()
                 # !Mutate the reifiedWidgets instance variable in place
                 self.reifiedWidgets.append(widget)
-                sizer.Add(widget, 1, wx.ALL, 5)
+                sizer.Add(widget, 1, wx.ALL | wx.EXPAND, 5)
             boxSizer.Add(sizer, 0, wx.ALL | wx.EXPAND, 5)
 
         # apply the same layout rules recursively for subgroups
         hs = wx.BoxSizer(wx.HORIZONTAL)
         for e, subgroup in enumerate(group['groups']):
-            self.makeGroup(parent, hs, subgroup, 1, wx.ALL | wx.EXPAND, 5)
-            if e % getin(group, ['options', 'columns'], 2) \
-                    or e == len(group['groups']):
+            self.makeGroup(parent, hs, subgroup, 1, wx.EXPAND)
+            if len(group['groups']) != e:
+                hs.AddSpacer(5)
+
+            # self.makeGroup(parent, hs, subgroup, 1, wx.ALL | wx.EXPAND, 5)
+            itemsPerColumn = getin(group, ['options', 'columns'], 2)
+            if e % itemsPerColumn or (e + 1) == len(group['groups']):
                 boxSizer.Add(hs, *args)
                 hs = wx.BoxSizer(wx.HORIZONTAL)
 
-        thissizer.Add(boxSizer, *args)
+
+        group_top_margin = getin(group, ['options', 'margin_top'], 1)
+
+        marginSizer = wx.BoxSizer(wx.VERTICAL)
+        marginSizer.Add(boxSizer, 1, wx.EXPAND | wx.TOP, group_top_margin)
+
+        thissizer.Add(marginSizer, *args)
 
 
     def chunkWidgets(self, group):

@@ -10,11 +10,12 @@ version = '1.0.2'
 
 deps = [
     'Pillow>=4.3.0',
-    'psutil>=5.4.2'
+    'psutil>=5.4.2',
+    'colored>=1.3.93'
 ]
 
 if sys.version[0] == '3':
-    deps.append('wxpython>=4.0.0b1')
+    deps.append('wxpython>=4.0.2')
 
 
 setup(
@@ -36,8 +37,9 @@ setup(
         'Topic :: Desktop Environment',
         'Topic :: Software Development :: Build Tools',
         'Topic :: Software Development :: Widget Sets',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License'
     ],
     long_description='''
 
@@ -67,5 +69,5 @@ Gooey is attached to your code via a simple decorator on your `main` method.
 
 With the decorator attached, run your program and the GUI will now appear!
 
-Note: PyPi's formatting is ancient, so checkout the full documentation, instructions, and source on `Github <https://github.com/chriskiehl/Gooey>`_'''
+Checkout the full documentation, instructions, and source on `Github <https://github.com/chriskiehl/Gooey>`_'''
 )

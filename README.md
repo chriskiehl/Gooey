@@ -3,10 +3,9 @@ Gooey (Beta)
 Turn (almost) any Python 2 or 3 Console Program into a GUI application with one line
 
 <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1408720/7904381/f54f97f6-07c5-11e5-9bcb-c3c102920769.png" />
+    <img src="https://user-images.githubusercontent.com/1408720/57576740-3e9e9f80-741c-11e9-859c-a60586097492.png" />
 </p>
 
-# Gooey now supports Python 3!!
 
 
 Table of Contents
@@ -30,6 +29,7 @@ Table of Contents
     - [Full/Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
+- [Menus](#menus)    
 - [Input Validation](#input-validation)
 - [Using Dynamic Values](#using-dynamic-values)
 - [Showing Progress](#showing-progress)
@@ -195,10 +195,11 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  DirChooser/FileChooser/MultiFileChooser   | <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904377/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
+|  DirChooser, FileChooser, MultiFileChooser, FileSaver, MultiFileSaver   | <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904377/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
 |  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904376/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |
 | PasswordField | <p align="center"><img src="https://user-images.githubusercontent.com/1408720/28953722-eae72cca-788e-11e7-8fa1-9a1ef332a053.png" width="400"></p> |
 | Listbox | ![image](https://user-images.githubusercontent.com/1408720/31590191-fadd06f2-b1c0-11e7-9a49-7cbf0c6d33d1.png) |
+| BlockCheckbox | ![image](https://user-images.githubusercontent.com/1408720/46922288-9296f200-cfbb-11e8-8b0d-ddde08064247.png) <br/> The default InlineCheck box can look less than ideal if a large help text block is present. `BlockCheckbox` moves the text block to the normal position and provides a short-form `block_label` for display next to the control. Use `gooey_options.checkbox_label` to control the label text | 
 
 
  
@@ -216,16 +217,9 @@ Gooey is international ready and easily ported to your host language. Languages 
 
 All program text is stored externally in `json` files. So adding new langauge support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
 
-Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with the following language sets: 
-
-- English
-- Dutch
-- French
-- Portuguese 
+Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
 
 Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/Gooey/compare)
-
-
 
 
 -------------------------------------------    
@@ -259,12 +253,16 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | show_stop_warning | Displays a warning modal before allowing the user to force termination of your program |
 | force_stop_is_error | Toggles whether an early termination by the shows the success or error screen |
 | show_success_modal | Toggles whether or not to show a summary modal after a successful run |
+| show_failure_modal | Toggles whether or not to show a summary modal on failure |
+| show_restart_button | Toggles whether or not to show the restart button at the end of execution |
 | run_validators | Controls whether or not to have Gooey perform validation before calling your program |
 | poll_external_updates | (Experimental!) When True, Gooey will call your code with a `gooey-seed-ui` CLI argument and use the response to fill out dynamic values in the UI (See: [Using Dynamic Values](#using-dynamic-values))|
 | return_to_config | When True, Gooey will return to the configuration settings window upon successful run |
 | progress_regex | A text regex used to pattern match runtime progress information. See: [Showing Progress](#showing-progress) for a detailed how-to | 
 | progress_expr | A python expression applied to any matches found via the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
-| disable_progress_bar_animation | Disable the progress bar | 
+| hide_progress_msg | Option to hide textual progress updates which match the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
+| disable_progress_bar_animation | Disable the progress bar |
+| requires_shell | Controls whether or not the `shell` argument is used when invoking your program. [More info here](https://stackoverflow.com/questions/3172470/actual-meaning-of-shell-true-in-subprocess#3172488) |
 | navigation | Sets the "navigation" style of Gooey's top level window. <br>Options: <table> <thead> <tr><th>TABBED</th><th>SIDEBAR</th></tr></thead> <tbody> <tr> <td><img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="200" height="auto"></td><td><img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="200" height="auto"></td></tr></tbody></table>|
 | sidebar_title | <img src="https://user-images.githubusercontent.com/1408720/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
 | show_sidebar | Show/Hide the sidebar in when navigation mode == `SIDEBAR` |
@@ -278,9 +276,11 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | terminal_panel_color | HEX value of the terminal's panel | 
 | terminal_font_color | HEX value of the font displayed in Gooey's terminal | 
 | terminal_font_family | Name of the Font Family to use in the terminal | 
-| terminal_font_weight | Weight of the font (NORMAL|BOLD) | 
+| terminal_font_weight | Weight of the font (NORMAL\|BOLD) | 
 | terminal_font_size | Point size of the font displayed in the terminal | 
 | error_color | HEX value of the text displayed when a validation error occurs |
+| richtext_controls | Switch on/off the console support for terminal control sequences (limited support for font weight and color). Defaults to : False |
+| menus | Show custom menu groups and items (see: [Menus](#menus) |
 
 
 
@@ -323,34 +323,6 @@ search_group.add_argument(
 ```
 
 Which will display them as part of the group within the UI. 
-
-**Customizing Group Layout**
-
-> Note: Make sure you're using GooeyParser if you want to take advantage of the layout customizations!  
-
-With a group created, we can now start tweaking how it looks! `GooeyParser` extends the API of `add_argument_group` to accept an additional keyword argument: `gooey_options`.  It accepts two keys: `show_border` and `columns`
-
-```
-gooey_options={
-    'show_border': Bool,
-    'columns': 1-100 
-}
-```
-
-<img src="https://user-images.githubusercontent.com/1408720/35488154-e201ab90-0438-11e8-9479-3a27fd1c523e.png" align="right" width="400">
-
-`show_border` is nice for visually tying together closely related items within a parent group. Setting it to `true` will draw a small border around all of the inputs and nest the title at the top. 
-
-`columns` controls how many many items get places on each row within the 
-
-
-
-
-
-
-
-
-
 
 
 
@@ -417,6 +389,158 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 <p align="center">
     <img src="https://cloud.githubusercontent.com/assets/1408720/7904382/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
 </p>
+
+
+--------------------------------------
+
+
+### Menus 
+
+
+![image](https://user-images.githubusercontent.com/1408720/47250909-74782a00-d3df-11e8-88ac-182d06c4435a.png)
+
+>Added 1.0.2
+
+You can add a Menu Bar to the top of Gooey with customized menu groups and items.
+
+Menus are specified on the main `@Gooey` decorator as a list of maps. 
+
+```
+@Gooey(menu=[{}, {}, ...])
+```
+
+Each map is made up of two key/value pairs 
+
+1. `name` - the name for this menu group
+2. `items` - the individual menu items within this group 
+
+You can have as many menu groups as you want. They're passed as a list to the `menu` argument on the `@Gooey` decorator.
+
+```
+@Gooey(menu=[{'name': 'File', 'items: []},
+             {'name': 'Tools', 'items': []},
+             {'name': 'Help', 'items': []}])
+```
+
+Individual menu items in a group are also just maps of key / value pairs. Their exact key set varies based on their `type`, but two keys will always be present: 
+
+* `type` - this controls the behavior that will be attached to the menu item as well as the keys it needs specified
+* `menuTitle` - the name for this MenuItem  
+
+
+Currently, three types of menu options are supported: 
+
+ * AboutDialog 
+ * MessageDialog
+ * Link
+ 
+
+<img src="https://user-images.githubusercontent.com/1408720/47251026-9ffc1400-d3e1-11e8-9095-982a6367561b.png" width="400" height="auto" align="right" />
+
+**About Dialog** is your run-of-the-mill About Dialog. It displays program information such as name, version, and license info in a standard native AboutBox.
+
+Schema 
+
+ * `name` - (_optional_) 
+ * `description` - (_optional_) 
+ * `version` - (_optional_)  
+ * `copyright` - (_optional_) 
+ * `license` - (_optional_)
+ * `website` - (_optional_)
+ * `developer` - (_optional_)
+
+Example: 
+
+```
+{
+    'type': 'AboutDialog',
+    'menuTitle': 'About',
+    'name': 'Gooey Layout Demo',
+    'description': 'An example of Gooey\'s layout flexibility',
+    'version': '1.2.1',
+    'copyright': '2018',
+    'website': 'https://github.com/chriskiehl/Gooey',
+    'developer': 'http://chriskiehl.com/',
+    'license': 'MIT'
+}
+```
+
+<img src="https://user-images.githubusercontent.com/1408720/47250925-bbfeb600-d3df-11e8-88a8-5ba838e9466d.png" width="400" height="auto" align="right" />
+
+**MessageDialog** is a generic informational dialog box. You can display anything from small alerts, to long-form informational text to the user.
+
+Schema: 
+
+ * `message` - (_required_) the text to display in the body of the modal 
+ * `caption` - (_optional_) the caption in the title bar of the modal    
+
+Example: 
+
+```python
+{
+    'type': 'MessageDialog',
+    'menuTitle': 'Information',
+    'message': 'Hey, here is some cool info for ya!',
+    'caption': 'Stuff you should know'
+}
+```
+
+**Link** is for sending the user to an external website. This will spawn their default browser at the URL you specify. 
+
+Schema: 
+
+ * `url` - (_required_) - the fully qualified URL to visit
+
+Example:
+
+```python
+{
+    'type': 'Link',
+    'menuTitle': 'Visit Out Site',
+    'url': 'http://www.example.com'
+}
+```
+
+**A full example:**
+
+Two menu groups ("File" and "Help") with four menu items between them. 
+
+```python
+@Gooey(
+    program_name='Advanced Layout Groups',
+    menu=[{
+        'name': 'File',
+        'items': [{
+                'type': 'AboutDialog',
+                'menuTitle': 'About',
+                'name': 'Gooey Layout Demo',
+                'description': 'An example of Gooey\'s layout flexibility',
+                'version': '1.2.1',
+                'copyright': '2018',
+                'website': 'https://github.com/chriskiehl/Gooey',
+                'developer': 'http://chriskiehl.com/',
+                'license': 'MIT'
+            }, {
+                'type': 'MessageDialog',
+                'menuTitle': 'Information',
+                'caption': 'My Message',
+                'message': 'I am demoing an informational dialog!'
+            }, {
+                'type': 'Link',
+                'menuTitle': 'Visit Our Site',
+                'url': 'https://github.com/chriskiehl/Gooey'
+            }]
+        },{
+        'name': 'Help',
+        'items': [{
+            'type': 'Link',
+            'menuTitle': 'Documentation',
+            'url': 'https://www.readthedocs.com/foo'
+        }]
+    }]
+)
+```
+
 
 ---------------------------------------  
 
@@ -534,7 +658,16 @@ Giving visual progress feedback with Gooey is easy! If you're already displaying
 
 For simple cases, output strings which resolve to a numeric representation of the completion percentage (e.g. `Progress 83%`) can be pattern matched and turned into a progress bar status with a simple regular expression (e.g. `@Gooey(progress_regex=r"^progress: (\d+)%$")`). 
 
-For more complicated outputs, you can pass in a custom evaluation expression (`progress_expr`) to transform the things however you need. 
+For more complicated outputs, you can pass in a custom evaluation expression (`progress_expr`) to transform regular expression matches as needed. 
+
+Output strings which satisfy the regular expression can be hidden from the console via the `hide_progress_msg` parameter (e.g. `@Gooey(progress_regex=r"^progress: (\d+)%$", hide_progress_msg=True)`.
+
+**Regex and Processing Expression**
+
+```python
+@Gooey(progress_regex=r"^progress: (?P<current>\d+)/(?P<total>\d+)$",
+       progress_expr="current / total * 100")
+```
 
 **Program Output:**
 
@@ -545,17 +678,7 @@ progress: 3/100
 ...
 ```
 
-**Regex and Processing Expression**
-
-```python
-@Gooey(progress_regex=r"^progress: (?P<current>\d+)/(?P<total>\d+)$",
-       progress_expr="current / total * 100")
-```
-
 There are lots of options for telling Gooey about progress as your program is running. Checkout the [Gooey Examples](https://github.com/chriskiehl/GooeyExamples) repository for more detailed usage and examples! 
-
-| progress_regex | A text regex used to pattern match runtime progress information. See: [Showing Progress](#showing-progress) for a detailed how-to |
-| progress_expr | A python expression applied to any matches found via the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
 
 --------------------------------------
 
@@ -609,14 +732,11 @@ Screenshots
 
 
 
-
 Wanna help?
 -----------  
 
-Code, translation, graphics? Pull requests are welcome.
+Code, translation, documentation, or graphics? All pull requests are welcome. Just make sure to checkout [the contributing guidelines](https://github.com/chriskiehl/Gooey/blob/master/CONTRIBUTING.md) first.
 
 
 
 
-
-  [1]: http://i.imgur.com/7fKUvw9.png

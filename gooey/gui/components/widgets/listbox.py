@@ -1,23 +1,24 @@
-from gooey.gui.components.widgets.bases import TextContainer
 import wx
 
 from gooey.gui import formatters
-from gooey.gui.lang.i18n import _
+from gooey.gui.components.widgets.bases import TextContainer
 
 
 class Listbox(TextContainer):
 
     def getWidget(self, parent, *args, **options):
-        default = _('select_option')
+        height = self._options.get('height', 60)
         return wx.ListBox(
             parent=parent,
             choices=self._meta['choices'],
-            size=(-1,60),
+            size=(-1, height),
             style=wx.LB_MULTIPLE
         )
 
     def setOptions(self, options):
-        self.widget.SetChoices()
+        self.widget.Clear()
+        for option in options:
+            self.widget.Append(option)
 
     def setValue(self, values):
         for string in values:

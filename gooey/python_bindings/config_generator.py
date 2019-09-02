@@ -44,9 +44,14 @@ def create_from_parser(parser, source_path, **kwargs):
       'encoding':             kwargs.get('encoding', 'utf-8'),
       'show_stop_warning':    kwargs.get('show_stop_warning', True),
       'show_success_modal':   kwargs.get('show_success_modal', True),
+      'show_failure_modal':   kwargs.get('show_failure_modal', True),
       'force_stop_is_error':  kwargs.get('force_stop_is_error', True),
       'poll_external_updates':kwargs.get('poll_external_updates', False),
       'return_to_config':     kwargs.get('return_to_config', False),
+      'show_restart_button':  kwargs.get('show_restart_button', True),
+      'requires_shell':       kwargs.get('requires_shell', True),
+      'menu':                 kwargs.get('menu', []),
+      'clear_before_run':     kwargs.get('clear_before_run', False),
 
       # Legacy/Backward compatibility interop
       'use_legacy_titles':    kwargs.get('use_legacy_titles', True),
@@ -59,6 +64,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'language_dir':         kwargs.get('language_dir'),
       'progress_regex':       kwargs.get('progress_regex'),
       'progress_expr':        kwargs.get('progress_expr'),
+      'hide_progress_msg':    kwargs.get('hide_progress_msg', False),
       'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
       'disable_stop_button':  kwargs.get('disable_stop_button'),
 
@@ -77,12 +83,14 @@ def create_from_parser(parser, source_path, **kwargs):
       'header_image_center':  kwargs.get('header_image_center', False),
       'footer_bg_color':      kwargs.get('footer_bg_color', '#f0f0f0'),
       'sidebar_bg_color':     kwargs.get('sidebar_bg_color', '#f2f2f2'),
+
       # font family, weight, and size are determined at runtime
       'terminal_panel_color': kwargs.get('terminal_panel_color', '#F0F0F0'),
       'terminal_font_color':  kwargs.get('terminal_font_color', '#000000'),
       'terminal_font_family': kwargs.get('terminal_font_family', None),
       'terminal_font_weight': kwargs.get('terminal_font_weight', None),
       'terminal_font_size':   kwargs.get('terminal_font_size', None),
+      'richtext_controls':    kwargs.get('richtext_controls', False),
       'error_color':          kwargs.get('error_color', '#ea7878')
   }
 
