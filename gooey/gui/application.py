@@ -3,6 +3,11 @@ Main runner entry point for Gooey.
 '''
 
 import wx
+# wx.html and wx.xml imports required here to make packaging with
+# pyinstaller on OSX possible without manually specifying `hidden_imports`
+# in the build.spec
+import wx.html
+import wx.xml
 import wx.richtext  # Need to be imported before the wx.App object is created.
 import wx.lib.inspection
 from gooey.gui.lang import i18n
