@@ -1,3 +1,9 @@
+'''
+Utils for retrieving resources when when in a frozen state.
+
+MEIPASS explanation:
+https://pythonhosted.org/PyInstaller/#run-time-operation
+'''
 import os
 import sys
 
@@ -26,3 +32,17 @@ def getResourcePath(*args):
         resource_dir = os.path.normpath(
             os.path.join(os.path.dirname(__file__), '..', '..'))
     return os.path.join(resource_dir, *args)
+
+
+def localResourcePath(path):
+    """
+    A packaging aware util for getting the path to the local working directory.
+    When non-packaged, this is os.getcwd(), when packaged, it will be the local
+    (dynamic) directory where PyInstaller decompresses content.
+    """
+    if is_frozen():
+        basedir = getattr(sys, '_MEIPASS', None)
+        return os.path.join(basedir or sys.executable, path)
+    else:
+        return os.path.join(os.getcwd(), path)
+    
