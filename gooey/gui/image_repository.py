@@ -12,7 +12,7 @@ from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
 
 filenames = {
-    'programIcon': 'program_icon.ico',
+    'programIcon': 'program_icon.png',
     'successIcon': 'success_icon.png',
     'runningIcon': 'running_icon.png',
     'loadingIcon': 'loading_icon.gif',

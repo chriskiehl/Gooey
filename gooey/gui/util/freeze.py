@@ -45,4 +45,3 @@ def localResourcePath(path):
         return os.path.join(basedir or sys.executable, path)
     else:
         return os.path.join(os.getcwd(), path)
-    

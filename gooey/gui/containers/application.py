@@ -5,6 +5,7 @@ Primary orchestration and control point for Gooey.
 import sys
 
 import wx
+from wx.adv import TaskBarIcon
 
 from gooey.gui import cli
 from gooey.gui import events
@@ -187,7 +188,14 @@ class GooeyApplication(wx.Frame):
         self.SetSizer(sizer)
         self.console.Hide()
         self.Layout()
-        self.SetIcon(wx.Icon(self.buildSpec['images']['programIcon'], wx.BITMAP_TYPE_ICO))
+        # Program Icon (Windows)
+        icon = wx.Icon(self.buildSpec['images']['programIcon'], wx.BITMAP_TYPE_PNG)
+        self.SetIcon(icon)
+        # OSX needs to have its taskbar icon explicitly set
+        # bizarrely, wx requires the TaskBarIcon to be attached to the Frame
+        # as instance data (self.). Otherwise, it will not render correctly.
+        self.taskbarIcon = TaskBarIcon(iconType=wx.adv.TBI_DOCK)
+        self.taskbarIcon.SetIcon(icon)
 
 
 
