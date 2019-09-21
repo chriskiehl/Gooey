@@ -104,6 +104,17 @@ From this spec, you'll need to make two tweaks.
 
 **Windows Notes**
 
+**Troubleshooting**
+
+**I'm seeing the wrong icon on my executable** 
+
+First things first: Is Windows gas lighting you? 
+
+Windows caches icons semi-aggressively. This can lead to it showing an icon in the file explorer that doesn't actually reflect the one bundled with your program. 
+
+![image](https://user-images.githubusercontent.com/1408720/57576740-3e9e9f80-741c-11e9-859c-a60586097492.png)
+
+
 
 **OSX Notes:**
 
