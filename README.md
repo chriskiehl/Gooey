@@ -3,7 +3,7 @@ Gooey (Beta)
 Turn (almost) any Python 2 or 3 Console Program into a GUI application with one line
 
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/1408720/57576740-3e9e9f80-741c-11e9-859c-a60586097492.png" />
+    <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/57576740-3e9e9f80-741c-11e9-859c-a60586097492.png" />
 </p>
 
 
@@ -152,14 +152,14 @@ Gooey does its best to choose sensible defaults based on the options it finds. C
 
 | Parser Action    | Widget    | Example |
 |:----------------------|-----------|------|
-| store  |  TextCtrl |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904380/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>|
-| store_const   |     CheckBox |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
-|   store_true|        CheckBox | <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
-|  store_False  |      CheckBox|  <img src="https://cloud.githubusercontent.com/assets/1408720/7904367/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>   |
-|       append |       TextCtrl |  <img src="https://cloud.githubusercontent.com/assets/1408720/7904380/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>  | 
-|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://cloud.githubusercontent.com/assets/1408720/7904371/f53ccbe4-07c5-11e5-80e5-510e2aa22922.png"/> | 
-| Mutually Exclusive Group | RadioGroup | <img src="https://cloud.githubusercontent.com/assets/1408720/7904383/f553feb8-07c5-11e5-9d5b-eaa4772075a9.png"/>
-|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://cloud.githubusercontent.com/assets/1408720/7904379/f54e4da6-07c5-11e5-9e66-d8e6d7f18ac6.png"/> |
+| store  |  TextCtrl |  <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>|
+| store_const   |     CheckBox |  <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
+|   store_true|        CheckBox | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
+|  store_False  |      CheckBox|  <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>   |
+|       append |       TextCtrl |  <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>  | 
+|        count|              DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f53ccbe4-07c5-11e5-80e5-510e2aa22922.png"/> | 
+| Mutually Exclusive Group | RadioGroup | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f553feb8-07c5-11e5-9d5b-eaa4772075a9.png"/>
+|choice &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|        DropDown | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f54e4da6-07c5-11e5-9e66-d8e6d7f18ac6.png"/> |
 
 ### GooeyParser
 
@@ -176,7 +176,7 @@ If the above defaults aren't cutting it, you can control the exact widget type b
 
 Given then above, Gooey would select a normal `TextField` as the widget type like this: 
 <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1408720/7904368/f5393e20-07c5-11e5-88e9-c153fc3ecfaa.PNG">
+    <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f5393e20-07c5-11e5-88e9-c153fc3ecfaa.PNG">
 </p>
 
 However, by dropping in `GooeyParser` and supplying a `widget` name, you can display a much more user friendly `FileChooser`
@@ -189,17 +189,17 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
         parser = GooeyParser(description="My Cool Gooey App!")
         parser.add_argument('filename', help="name of the file to process", widget='FileChooser') 
         
-<p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904370/f53ae23e-07c5-11e5-8757-c8aa6f3013b5.PNG"></p>
+<p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f53ae23e-07c5-11e5-8757-c8aa6f3013b5.PNG"></p>
 
 **Custom Widgets:**
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  DirChooser, FileChooser, MultiFileChooser, FileSaver, MultiFileSaver   | <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904377/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
-|  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://cloud.githubusercontent.com/assets/1408720/7904376/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |
-| PasswordField | <p align="center"><img src="https://user-images.githubusercontent.com/1408720/28953722-eae72cca-788e-11e7-8fa1-9a1ef332a053.png" width="400"></p> |
-| Listbox | ![image](https://user-images.githubusercontent.com/1408720/31590191-fadd06f2-b1c0-11e7-9a49-7cbf0c6d33d1.png) |
-| BlockCheckbox | ![image](https://user-images.githubusercontent.com/1408720/46922288-9296f200-cfbb-11e8-8b0d-ddde08064247.png) <br/> The default InlineCheck box can look less than ideal if a large help text block is present. `BlockCheckbox` moves the text block to the normal position and provides a short-form `block_label` for display next to the control. Use `gooey_options.checkbox_label` to control the label text | 
+|  DirChooser, FileChooser, MultiFileChooser, FileSaver, MultiFileSaver   | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
+|  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |
+| PasswordField | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/28953722-eae72cca-788e-11e7-8fa1-9a1ef332a053.png" width="400"></p> |
+| Listbox | ![image](https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/31590191-fadd06f2-b1c0-11e7-9a49-7cbf0c6d33d1.png) |
+| BlockCheckbox | ![image](https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/46922288-9296f200-cfbb-11e8-8b0d-ddde08064247.png) <br/> The default InlineCheck box can look less than ideal if a large help text block is present. `BlockCheckbox` moves the text block to the normal position and provides a short-form `block_label` for display next to the control. Use `gooey_options.checkbox_label` to control the label text | 
 
 
  
@@ -207,7 +207,7 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 Internationalization
 -------------------- 
 
-<img src="https://cloud.githubusercontent.com/assets/1408720/7904365/f52e9f1a-07c5-11e5-8f31-36a8fc14ac02.jpg" align="right" />
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f52e9f1a-07c5-11e5-8f31-36a8fc14ac02.jpg" align="right" />
 
 Gooey is international ready and easily ported to your host language. Languages are controlled via an argument to the `Gooey` decorator. 
 
@@ -263,8 +263,8 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | hide_progress_msg | Option to hide textual progress updates which match the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
 | disable_progress_bar_animation | Disable the progress bar |
 | requires_shell | Controls whether or not the `shell` argument is used when invoking your program. [More info here](https://stackoverflow.com/questions/3172470/actual-meaning-of-shell-true-in-subprocess#3172488) |
-| navigation | Sets the "navigation" style of Gooey's top level window. <br>Options: <table> <thead> <tr><th>TABBED</th><th>SIDEBAR</th></tr></thead> <tbody> <tr> <td><img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="200" height="auto"></td><td><img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="200" height="auto"></td></tr></tbody></table>|
-| sidebar_title | <img src="https://user-images.githubusercontent.com/1408720/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
+| navigation | Sets the "navigation" style of Gooey's top level window. <br>Options: <table> <thead> <tr><th>TABBED</th><th>SIDEBAR</th></tr></thead> <tbody> <tr> <td><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="200" height="auto"></td><td><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="200" height="auto"></td></tr></tbody></table>|
+| sidebar_title | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
 | show_sidebar | Show/Hide the sidebar in when navigation mode == `SIDEBAR` |
 | body_bg_color | HEX value of the main Gooey window |
 | header_bg_color | HEX value of the header background | 
@@ -294,7 +294,7 @@ At the highest level, you have several overall layout options controllable via v
 
 | `show_sidebar=True` | `show_sidebar=False` | `navigation='TABBED'` |  `tabbed_groups=True` |
 |---------------------|----------------------|----------------------|------------------------|
-|<img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="400"> |<img src="https://user-images.githubusercontent.com/1408720/35487799-762aa308-0434-11e8-8eb3-1e9fab2d13ae.png" width="400"> |<img src="https://user-images.githubusercontent.com/1408720/34464835-5ba9b0e4-ee47-11e7-9561-55e3647c2165.png" width="400"> |<img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="400"> |
+|<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="400"> |<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/35487799-762aa308-0434-11e8-8eb3-1e9fab2d13ae.png" width="400"> |<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464835-5ba9b0e4-ee47-11e7-9561-55e3647c2165.png" width="400"> |<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="400"> |
 
 
 **Grouping Inputs**
@@ -303,7 +303,7 @@ By default, if you're using Argparse with Gooey, your inputs will be split into 
 
 With `argparse` this is done via `add_argument_group()`
 
-<img src="https://user-images.githubusercontent.com/1408720/35487956-a4c9915e-0436-11e8-8a11-fd21528aedf0.png" align="right" width="410">
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/35487956-a4c9915e-0436-11e8-8a11-fd21528aedf0.png" align="right" width="410">
 
 ```
 parser = ArgumentParser()
@@ -345,7 +345,7 @@ The default view is the "full" or "advanced" configuration screen. It has two di
 On the other side is the Column Layout. This one is best suited for CLIs that have multiple paths or are made up of multiple little tools each with their own arguments and options (think: git). It displays the primary paths along the left column, and their corresponding arguments in the right. This is a great way to package a lot of varied functionality into a single app. 
 
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/1408720/7927433/f06a36cc-08ad-11e5-843e-9322df96d4d6.png">
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f06a36cc-08ad-11e5-843e-9322df96d4d6.png">
 </p>
 
 Both views present each action in the `Argument Parser` as a unique GUI component. It makes it ideal for presenting the program to users which are unfamiliar with command line options and/or Console Programs in general. Help messages are displayed along side each component to make it as clear as possible which each widget does.
@@ -376,7 +376,7 @@ The basic view is best for times when the user is familiar with Console Applicat
         # rest of code  
 
 <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1408720/7904369/f53a4306-07c5-11e5-8e63-b510d6db9953.png">
+    <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f53a4306-07c5-11e5-8e63-b510d6db9953.png">
 </p>
 
 
@@ -387,7 +387,7 @@ The basic view is best for times when the user is familiar with Console Applicat
 No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. 
 
 <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1408720/7904382/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
+    <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
 </p>
 
 
@@ -397,7 +397,7 @@ No Config pretty much does what you'd expect: it doesn't show a configuration sc
 ### Menus 
 
 
-![image](https://user-images.githubusercontent.com/1408720/47250909-74782a00-d3df-11e8-88ac-182d06c4435a.png)
+![image](https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/47250909-74782a00-d3df-11e8-88ac-182d06c4435a.png)
 
 >Added 1.0.2
 
@@ -435,7 +435,7 @@ Currently, three types of menu options are supported:
  * Link
  
 
-<img src="https://user-images.githubusercontent.com/1408720/47251026-9ffc1400-d3e1-11e8-9095-982a6367561b.png" width="400" height="auto" align="right" />
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/47251026-9ffc1400-d3e1-11e8-9095-982a6367561b.png" width="400" height="auto" align="right" />
 
 **About Dialog** is your run-of-the-mill About Dialog. It displays program information such as name, version, and license info in a standard native AboutBox.
 
@@ -465,7 +465,7 @@ Example:
 }
 ```
 
-<img src="https://user-images.githubusercontent.com/1408720/47250925-bbfeb600-d3df-11e8-88a8-5ba838e9466d.png" width="400" height="auto" align="right" />
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/47250925-bbfeb600-d3df-11e8-88a8-5ba838e9466d.png" width="400" height="auto" align="right" />
 
 **MessageDialog** is a generic informational dialog box. You can display anything from small alerts, to long-form informational text to the user.
 
@@ -548,7 +548,7 @@ Two menu groups ("File" and "Help") with four menu items between them.
 ### Input Validation
 
 
-<img src="https://user-images.githubusercontent.com/1408720/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png" width="400" height="auto" align="right" />
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png" width="400" height="auto" align="right" />
 
 
 >:warning: 
@@ -604,7 +604,7 @@ def main():
     print("Cool! Your secret number is: ", args.secret)
 ```
 
-<img src="https://user-images.githubusercontent.com/1408720/34465024-f011ac3e-ee4f-11e7-80ae-330adb4c47d6.png" width="400" height="auto" align="left" />
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34465024-f011ac3e-ee4f-11e7-80ae-330adb4c47d6.png" width="400" height="auto" align="left" />
 
 With the validator in place, Gooey can present the error messages next to the relevant input field if any validators fail.  
 
@@ -622,7 +622,7 @@ Gooey's Choice style fields (Dropdown, Listbox) can be fed a dynamic set of valu
 
 **How does it work?**
 
-<img src="https://user-images.githubusercontent.com/1408720/35487459-bd7fe938-0430-11e8-9f6d-fa8f703b9da5.gif" align="right" width="420"/>
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/35487459-bd7fe938-0430-11e8-9f6d-fa8f703b9da5.gif" align="right" width="420"/>
 
 At runtime, whenever the user hits the Configuration screen, Gooey will call your program with a single CLI argument: `gooey-seed-ui`. This is a request to your program for updated values for the UI. In response to this, on `stdout`, your program should return a JSON string mapping cli-inputs to a list of options.
 
@@ -652,7 +652,7 @@ Checkout the full example code in the [Examples Repository](https://github.com/c
 
 ## Showing Progress
 
-<img src="https://user-images.githubusercontent.com/1408720/45590349-55bbda80-b8eb-11e8-9aed-b4fe377756ac.png" align="right" width="420"/>
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/45590349-55bbda80-b8eb-11e8-9aed-b4fe377756ac.png" align="right" width="420"/>
 
 Giving visual progress feedback with Gooey is easy! If you're already displaying textual progress updates, you can tell Gooey to hook into that existing output in order to power its Progress Bar. 
 
@@ -715,11 +715,11 @@ Screenshots
 
 | Flat Layout | Column Layout |Success Screen | Error Screen | Warning Dialog |
 |-------------|---------------|---------------|--------------|----------------|
-| <img src="https://cloud.githubusercontent.com/assets/1408720/7950190/4414e54e-0965-11e5-964b-f717a7adaac6.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950189/4411b824-0965-11e5-905a-3a2b5df0efb3.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950192/44165442-0965-11e5-8edf-b8305353285f.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950188/4410dcce-0965-11e5-8243-c1d832c05887.jpg"> | <img src="https://cloud.githubusercontent.com/assets/1408720/7950191/4415432c-0965-11e5-9190-17f55460faf3.jpg"> | 
+| <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/4414e54e-0965-11e5-964b-f717a7adaac6.jpg"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/4411b824-0965-11e5-905a-3a2b5df0efb3.jpg"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/44165442-0965-11e5-8edf-b8305353285f.jpg"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/4410dcce-0965-11e5-8243-c1d832c05887.jpg"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/4415432c-0965-11e5-9190-17f55460faf3.jpg"> | 
 
 | Custom Groups | Tabbed Groups | Tabbed Navigation | Sidebar Navigation | Input Validation |
 |-------------|---------------|---------------|--------------|----------------|
-| <img src="https://user-images.githubusercontent.com/1408720/34464824-c044d57a-ee46-11e7-9c35-6e701a7c579a.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464835-5ba9b0e4-ee47-11e7-9561-55e3647c2165.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png"> | <img src="https://user-images.githubusercontent.com/1408720/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png"> | 
+| <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464824-c044d57a-ee46-11e7-9c35-6e701a7c579a.png"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464835-5ba9b0e4-ee47-11e7-9561-55e3647c2165.png"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png"> | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png"> | 
 
 
 
