@@ -24,7 +24,10 @@ MyProject/
    - README.md
 ```
 
-Windows users can grab a pre-built spec file [here](TODO). For OSX users, you'll want [this one](todo). 
+**Download Spec Files**
+
+* Windows users can grab a pre-built spec file [here](TODO). 
+* For OSX users, you'll want [this one](todo). 
 
 The exact contents of the spec files will vary based on your OS, but at a high level, they'll share the same core pieces: `Analysis`, `EXE`, and, if you're on OSX, `BUNDLE` 
 
@@ -87,7 +90,7 @@ pyinstaller -F --windowed build.spec
 And that's it. Inside of the `dist/` directory, you'll find a beautiful stand-alone executable that you can distribute to your users. 
 
 
-### Troubleshooting
+## Troubleshooting
 
 **My bundled Application won't work!** 
 
