@@ -97,7 +97,7 @@ And that's it. Inside of the `dist/` directory, you'll find a beautiful stand-al
 
 ## Troubleshooting
 
-**My bundled Application won't work!** 
+**PROBLEM: My bundled Application won't work!** 
 
 First things first: _See if you can package your application **without** Gooey!_
 
@@ -107,7 +107,7 @@ Rebuild your bundle with `debug=True` set in the `.spec` file. This will give lo
 
 Rebuild your bundle without the `-F` flag (e.g. just `pyinstaller build.spec`). This will build a directory with all of your dependencies. This can make it easier to poke around and see what PyInstaller's view of your project actually is.  
 
-**I'm seeing the wrong icon on my executable** 
+**PROBLEM: I'm seeing the wrong icon on my executable** 
 
 First things first: Is Windows gas lighting you? 
 
@@ -118,7 +118,7 @@ Windows caches icons semi-aggressively. This can lead to it showing an icon in t
 Right-click on the executable and select "properties." This will show you the icon that's actually associated with file. As long as everything looks good there, you're golden. Windows will catch up... _eventually_.  
 
 
-**Exception: This program needs access to the screen. Please run with a Framework build of python, and only when you are logged in on the main display of your Mac.**
+**PROBLEM: Exception: This program needs access to the screen. Please run with a Framework build of python, and only when you are logged in on the main display of your Mac.**
 
 This happens on OSX when you neglect the `--windowed` flag during your build step. 
 
