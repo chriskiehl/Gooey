@@ -192,11 +192,12 @@ class GooeyApplication(wx.Frame):
         # Program Icon (Windows)
         icon = wx.Icon(self.buildSpec['images']['programIcon'], wx.BITMAP_TYPE_PNG)
         self.SetIcon(icon)
-        # OSX needs to have its taskbar icon explicitly set
-        # bizarrely, wx requires the TaskBarIcon to be attached to the Frame
-        # as instance data (self.). Otherwise, it will not render correctly.
-        self.taskbarIcon = TaskBarIcon(iconType=wx.adv.TBI_DOCK)
-        self.taskbarIcon.SetIcon(icon)
+        if sys.platform != 'win32':
+            # OSX needs to have its taskbar icon explicitly set
+            # bizarrely, wx requires the TaskBarIcon to be attached to the Frame
+            # as instance data (self.). Otherwise, it will not render correctly.
+            self.taskbarIcon = TaskBarIcon(iconType=wx.adv.TBI_DOCK)
+            self.taskbarIcon.SetIcon(icon)
 
 
 
