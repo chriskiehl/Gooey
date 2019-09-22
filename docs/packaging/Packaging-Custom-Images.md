@@ -14,7 +14,7 @@ While this works for regular executions, a little additional work is required to
     
 To make your custom images available after packaging, you have to do two things. 
 
-**Step 1:** wrap the path to your image directory in the `local_resource_path()` function provided by Gooey. This will handle the logic of resolving the base directory in which PyInstaller unpacks your resources. 
+**Step 1:** wrap the path to your image directory in the `local_resource_path()` function provided by Gooey. When PyInstaller runs your application, it decompresses all the contents to a random temp directory. This function will handle the logic of resolving that directory and fetching your resources from it. 
 
 ```python
 from gooey import Gooey, local_resource_path
@@ -31,8 +31,6 @@ def main():
 
 import os
 ...
-gooey_images = Tree(os.path.join(gooey_root, 'images'), prefix = 'gooey/images')
-
 # LOOK AT ME! I AM A TREE OBJECT 
 image_overrides = Tree('path/to/images', prefix='path/to/images')
 
@@ -44,8 +42,6 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           options,
-          gooey_languages,
-          gooey_images,
           image_overrides,  # <-- NEW 
           name='APPNAME',
           debug=False,
@@ -58,7 +54,7 @@ exe = EXE(pyz,
 And then build via PyInstaller as usual. 
 
 ```
-pyinstaller build.spec
+pyinstaller -F --windowed build.spec
 ``` 
 
 PyInstaller will now include your images in its bundle.   
