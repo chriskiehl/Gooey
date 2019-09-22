@@ -31,8 +31,8 @@ MyProject/
 
 **Download Spec Files**
 
-* Windows users can grab a pre-built spec file [here](TODO). 
-* For OSX users, you'll want [this one](todo). 
+* Windows users can grab a pre-built spec file [here](https://raw.githubusercontent.com/chriskiehl/Gooey/doc-improvements/docs/packaging/build-win.spec). 
+* For OSX users, you'll want [this one](https://raw.githubusercontent.com/chriskiehl/Gooey/doc-improvements/docs/packaging/build-osx.spec). 
 
 The exact contents of the spec files will vary based on your OS, but at a high level, they'll share the same core pieces: `Analysis`, `EXE`, and, if you're on OSX, `BUNDLE` 
 
