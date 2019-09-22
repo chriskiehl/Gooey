@@ -1,6 +1,6 @@
 # Using Custom Images while Packaging  
 
-> Note: if you're new to packaging Gooey, checkout the main Packaging guides first!  
+> Note: if you're new to packaging Gooey, checkout the main [Packaging Guide](https://github.com/chriskiehl/Gooey/blob/doc-improvements/docs/packaging/Packaging-Gooey.md) first!  
 
 Gooey comes with a set of six default icons. These can be overridden with your own custom images/icons by telling Gooey to search additional directories when initializing. This is done via the `image_dir` argument to the `Gooey` decorator. 
 
