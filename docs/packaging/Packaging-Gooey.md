@@ -1,5 +1,10 @@
 # Packaging Gooey as a Stand Alone Application
 
+<p align="center">
+    <img src="https://github.com/chriskiehl/GooeyImages/raw/images/docs/packaging/packaged-application.png" />
+</p>
+
+
 >:warning: Packaging Gooey is an ongoing science. Gooey currently runs on all the major platforms, can be installed in a bajillion different ways, and has several active versions in wide usage. In short, edge cases abound. If you run into any problems, hit up [this issue](https://github.com/chriskiehl/Gooey/issues/259).
 
 You can package all of your programs files into a single easy to distribute executable using PyInstaller.  
