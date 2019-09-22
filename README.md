@@ -239,6 +239,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | auto_start | Skips the configuration all together and runs the program immediately |
 | language | Tells Gooey which language set to load from the `gooey/languages` directory.|
 | target | Tells Gooey how to re-invoke itself. By default Gooey will find python, but this allows you to specify the program (and arguments if supplied).|
+| suppress_gooey_flag | Should be set when using a custom `target`. Prevent Gooey from injecting additional CLI params |
 |program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 

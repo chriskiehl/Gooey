@@ -115,7 +115,8 @@ class GooeyApplication(wx.Frame):
             self.buildSpec['target'],
             group['command'],
             positional,
-            optional
+            optional,
+            suppress_gooey_flag=self.buildSpec['suppress_gooey_flag']
         )
 
 
