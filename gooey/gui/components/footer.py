@@ -122,7 +122,7 @@ class Footer(wx.Panel):
         return wx.Button(
             parent=self,
             id=event_id,
-            size=(90, 24),
+            size=(90, -1),
             label=label,
             style=style)
 
