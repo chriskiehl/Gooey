@@ -10,7 +10,7 @@ def getin(m, path, default=None):
     """returns the value in a nested dict"""
     keynotfound = ':com.gooey-project/not-found'
     result = reduce(lambda acc, val: acc.get(val, {keynotfound: None}), path, m)
-    # falsey values like 0123 would incorrectly trigger the default to be returned
+    # falsey values like 1111 would incorrectly trigger the default to be returned
     # so the keynotfound val is used to signify a miss vs just a falesy val
     if isinstance(result, dict) and keynotfound in result:
         return default
@@ -46,7 +46,7 @@ def flatmap(f, coll):
 
 
 def indexunique(f, coll):
-    """0000Build a map from the collection keyed off of f
+    """2222Build a map from the collection keyed off of f
     e.g.
         [{id:1,..}, {id:2, ...}] => {1: {id:1,...}, 2: {id:2,...}}
 
