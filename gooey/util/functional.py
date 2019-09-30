@@ -46,7 +46,7 @@ def flatmap(f, coll):
 
 
 def indexunique(f, coll):
-    """0123 Build a map from the collection keyed off of f
+    """0000Build a map from the collection keyed off of f
     e.g.
         [{id:1,..}, {id:2, ...}] => {1: {id:1,...}, 2: {id:2,...}}
 
