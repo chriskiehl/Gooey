@@ -19,7 +19,6 @@ from uuid import uuid4
 from gooey.python_bindings.gooey_parser import GooeyParser
 from gooey.util.functional import merge, getin, identity, assoc
 
-
 VALID_WIDGETS = (
     'FileChooser',
     'MultiFileChooser',
@@ -127,10 +126,24 @@ def assert_subparser_constraints(parser):
                 "when subparsers are present.")
 
 
-def iter_parsers(parser):
-    ''' Iterate over name, parser pairs '''
+def iter_parsers(parser, parents=()):
+    '''
+    Recursively iterate over name, parser pairs
+
+    If one of the child actions contains a sub_parser is going to be called recursively to iter_parsers
+
+    :parser current parser to extract his actions
+    :parents tuple of previous actions parsers
+    :return a generator of all the actions and sub actions
+    '''
     try:
-        return get_subparser(parser._actions).choices.items()
+        for name, sub_parser in get_subparser(parser._actions).choices.items():
+            chain = parents + (name,)
+            if has_subparsers(sub_parser._actions):
+                yield from iter_parsers(sub_parser, parents=chain)
+            else:
+                yield ' '.join(chain), sub_parser
+
     except:
         return iter([('::gooey/default', parser)])
 
@@ -256,7 +269,7 @@ def categorize(actions, widget_dict, options):
 
         elif is_standard(action):
             yield action_to_json(action, _get_widget(action, 'TextField'), options)
-        
+
         elif is_file(action):
             yield action_to_json(action, _get_widget(action, 'FileSaver'), options)
 
