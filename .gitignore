@@ -48,3 +48,5 @@ gooey/_tmp/
 
 venv*/
 
+.vs/slnx.sqlite
+.gitignore
