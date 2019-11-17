@@ -19,6 +19,7 @@
   "open_file": "Ouvrir fichier",
   "optional_args_msg": "Arguments optionnels",
   "required_args_msg": "Arguments obligatoires",
+  "print": "Imprimer",
   "restart": "Redémarrer",
   "running_msg": "Veuillez attendre la fin de l'exécution. \nCela peut prendre quelques instants.",
   "running_title": "Exécution en cours.",

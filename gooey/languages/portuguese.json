@@ -18,6 +18,7 @@
   "finished_title": "Finalizado",
   "open_file": "Abrir arquivo",
   "optional_args_msg": "Argumentos Opcionais",
+  "print": "Imprimir",
   "required_args_msg": "Argumentos Obrigatórios",
   "restart": "Reiniciar",
   "running_msg": "Aguarde enquanto a aplicação executa suas tarefas. \nIsto pode demorar alguns instantes",

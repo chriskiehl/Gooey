@@ -25,6 +25,7 @@ class Footer(wx.Panel):
         self.stop_button = None
         self.restart_button = None
         self.edit_button = None
+        self.print_button = None
         self.buttons = []
 
         self.layouts = {}
@@ -75,15 +76,16 @@ class Footer(wx.Panel):
         self.cancel_button = self.button(_('cancel'), wx.ID_CANCEL, event_id=events.WINDOW_CANCEL)
         self.stop_button = self.button(_('stop'), wx.ID_OK, event_id=events.WINDOW_STOP)
         self.start_button = self.button(_('start'), wx.ID_OK, event_id=int(events.WINDOW_START))
-        self.close_button = self.button(_("close"), wx.ID_OK, event_id=int(events.WINDOW_CLOSE))
+        self.close_button = self.button(_('close'), wx.ID_OK, event_id=int(events.WINDOW_CLOSE))
         self.restart_button = self.button(_('restart'), wx.ID_OK, event_id=int(events.WINDOW_RESTART))
         self.edit_button = self.button(_('edit'), wx.ID_OK, event_id=int(events.WINDOW_EDIT))
-
+        self.print_button = self.button(_('print'), wx.ID_OK, event_id=int(events.WINDOW_PRINT))
         self.progress_bar = wx.Gauge(self, range=100)
 
         self.buttons = [self.cancel_button, self.start_button,
                         self.stop_button, self.close_button,
-                        self.restart_button, self.edit_button]
+                        self.restart_button, self.edit_button,
+                        self.print_button]
 
         if self.buildSpec['disable_stop_button']:
             self.stop_button.Enable(False)
@@ -108,12 +110,14 @@ class Footer(wx.Panel):
         v_sizer.AddStretchSpacer(1)
         v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
 
+        h_sizer.Add(self.print_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
         h_sizer.Add(self.edit_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
         h_sizer.Add(self.restart_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
         h_sizer.Add(self.close_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
         self.edit_button.Hide()
         self.restart_button.Hide()
         self.close_button.Hide()
+        self.print_button.Hide()
 
         v_sizer.AddStretchSpacer(1)
         self.SetSizer(v_sizer)

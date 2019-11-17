@@ -36,6 +36,8 @@ class GooeyApplication(wx.Frame):
         self._state = {}
         self.buildSpec = buildSpec
 
+        self.printer = wx.richtext.RichTextPrinting()
+
         self.applyConfiguration()
         self.menu = MenuBar(buildSpec)
         self.SetMenuBar(self.menu)
@@ -60,6 +62,7 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.WINDOW_CLOSE, self.onClose)
         pub.subscribe(events.WINDOW_CANCEL, self.onCancel)
         pub.subscribe(events.WINDOW_EDIT, self.onEdit)
+        pub.subscribe(events.WINDOW_PRINT, self.onPrint)
         pub.subscribe(events.CONSOLE_UPDATE, self.console.logOutput)
         pub.subscribe(events.EXECUTION_COMPLETE, self.onComplete)
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
@@ -101,6 +104,12 @@ class GooeyApplication(wx.Frame):
                 self.fetchExternalUpdates()
             self.showSettings()
 
+    def onPrint(self):
+        """Send the current console contents to the printer, should open system print dialog"""
+        buf = wx.richtext.RichTextBuffer()
+        buf.BeginFont(self.console.textbox.GetFont())
+        buf.AddParagraph(self.console.getText())
+        self.printer.PrintBuffer(buf)
 
     def buildCliString(self):
         """
@@ -246,9 +255,9 @@ class GooeyApplication(wx.Frame):
     def showComplete(self):
         self.navbar.Show(False)
         self.console.Show(True)
-        buttons = (['edit_button', 'restart_button', 'close_button']
+        buttons = (['print_button','edit_button', 'restart_button', 'close_button']
                    if self.buildSpec.get('show_restart_button', True)
-                   else ['edit_button', 'close_button'])
+                   else ['print_button','edit_button', 'close_button'])
         self.footer.showButtons(*buttons)
         self.footer.progress_bar.Show(False)
 

@@ -13,6 +13,7 @@ WINDOW_CLOSE    = wx.NewId()
 WINDOW_START    = wx.NewId()
 WINDOW_RESTART  = wx.NewId()
 WINDOW_EDIT     = wx.NewId()
+WINDOW_PRINT    = wx.NewId()
 
 WINDOW_CHANGE   = wx.NewId()
 PANEL_CHANGE    = wx.NewId()
