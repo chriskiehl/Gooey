@@ -82,7 +82,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             
     def AppendText(self, content):
         """
-        wx method overriden to capture the terminal control character and translate them into wx styles.
+        wx method overridden to capture the terminal control character and translate them into wx styles.
         Complexity : o(len(content))
         """
         self.SetInsertionPointEnd()
