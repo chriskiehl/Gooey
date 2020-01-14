@@ -15,7 +15,6 @@ filenames = {
     'programIcon': 'program_icon.png',
     'successIcon': 'success_icon.png',
     'runningIcon': 'running_icon.png',
-    'loadingIcon': 'loading_icon.gif',
     'configIcon': 'config_icon.png',
     'errorIcon': 'error_icon.png'
 }
