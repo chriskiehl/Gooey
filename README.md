@@ -700,7 +700,7 @@ Gooey comes with a set of six default icons. These can be overridden with your o
         
 Images are discovered by Gooey based on their _filenames_. So, for example, in order to supply a custom configuration icon, simply place an image with the filename `config_icon.png` in your images directory. These are the filenames which can be overridden:
 
-* program_icon.ico
+* program_icon.png
 * success_icon.png
 * running_icon.png
 * loading_icon.gif
