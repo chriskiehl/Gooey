@@ -120,7 +120,7 @@ class MultiDirChooser(Chooser):
 
 
 class DateChooser(Chooser):
-    """ Launches a date picker which returns and ISO Date """
+    """ Launches a date picker which returns an ISO Date """
     def __init__(self, *args, **kwargs):
         defaults = {'label': _('choose_date')}
         super(DateChooser, self).__init__(*args, **merge(kwargs, defaults))
@@ -130,6 +130,29 @@ class DateChooser(Chooser):
         return CalendarDlg(self)
 
 
+class ColourChooser(Chooser):
+    """ Launches a color picker which returns a hex color code"""
+    def __init__(self, *args, **kwargs):
+        defaults = {'label': _('choose_colour'),
+                    'style': wx.TE_RICH}
+        super(ColourChooser, self).__init__(*args, **merge(kwargs, defaults))
 
+    def setValue(self, value):
+        colour = wx.Colour(value)
+        self.widget.widget.SetForegroundColour(colour)
+        self.widget.widget.SetBackgroundColour(colour)
+        self.widget.setValue(value)
+
+    def getResult(self, dialog):
+        colour = dialog.GetColourData().GetColour()
+
+        # Set text box back/foreground to selected colour
+        self.widget.widget.SetForegroundColour(colour)
+        self.widget.widget.SetBackgroundColour(colour)
+
+        return colour.GetAsString(wx.C2S_HTML_SYNTAX)
+
+    def getDialog(self):
+        return wx.ColourDialog(self)
 
 
