@@ -67,6 +67,7 @@ def main():
     parser_one.add_argument("--filesaver", default="fs-value", widget='FileSaver')
     parser_one.add_argument("--dirchooser", default="dc-value", widget='DirChooser')
     parser_one.add_argument("--datechooser", default="2015-01-01", widget='DateChooser')
+    parser_one.add_argument("--colourchooser", default="#000000", widget='ColourChooser')
 
     parser_two = subs.add_parser('parser2', prog="parser 2")
     parser_two.add_argument('--textfield', default=2, widget="TextField")
@@ -120,6 +121,7 @@ def main():
     parser_two.add_argument("--filesaver", default="fs-value", widget='FileSaver')
     parser_two.add_argument("--dirchooser", default="dc-value", widget='DirChooser')
     parser_two.add_argument("--datechooser", default="2015-01-01",widget='DateChooser')
+    parser_two.add_argument("--colourchooser", default="#000000", widget='ColourChooser')
 
     dest_vars = [
         'textfield',
@@ -134,7 +136,8 @@ def main():
         'filechooser',
         'filesaver',
         'dirchooser',
-        'datechooser'
+        'datechooser',
+        'colourchooser'
     ]
 
     parser.parse_args()
@@ -145,7 +148,6 @@ def main():
     for i in dest_vars:
         assert getattr(args, i) is not None
     print("Success")
-
 
 
 if __name__ == '__main__':

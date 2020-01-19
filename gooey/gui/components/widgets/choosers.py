@@ -7,7 +7,8 @@ __ALL__ = [
     'FileSaver',
     'DirChooser',
     'MultiDirChooser',
-    'DateChooser'
+    'DateChooser',
+    'ColourChooser'
 ]
 
 class FileChooser(BaseChooser):
@@ -29,6 +30,7 @@ class DirChooser(BaseChooser):
     # todo: allow wildcard
     widget_class = core.DirChooser
 
+
 class MultiDirChooser(BaseChooser):
     # todo: allow wildcard
     widget_class = core.MultiDirChooser
@@ -38,3 +40,6 @@ class DateChooser(BaseChooser):
     # todo: allow wildcard
     widget_class = core.DateChooser
 
+
+class ColourChooser(BaseChooser):
+    widget_class = core.ColourChooser
