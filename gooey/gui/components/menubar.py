@@ -85,13 +85,13 @@ class MenuBar(wx.MenuBar):
     def spawnPrintDialog(self, item, *args, **kwargs):
         fonts = {
             "DEFAULT" : wx.FONTFAMILY_DEFAULT,
-            "DECORATIVE" : wx.FONTFAMILY_DEFAULT,
-            "ROMAN" : wx.FONTFAMILY_DEFAULT,
-            "SCRIPT" : wx.FONTFAMILY_DEFAULT,
-            "SWISS" : wx.FONTFAMILY_DEFAULT,
-            "MODERN" : wx.FONTFAMILY_DEFAULT,
-            "TELETYPE" : wx.FONTFAMILY_DEFAULT,
-            "MAX" : wx.FONTFAMILY_DEFAULT
+            "DECORATIVE" : wx.FONTFAMILY_DECORATIVE,
+            "ROMAN" : wx.FONTFAMILY_ROMAN,
+            "SCRIPT" : wx.FONTFAMILY_SCRIPT,
+            "SWISS" : wx.FONTFAMILY_SWISS,
+            "MODERN" : wx.FONTFAMILY_MODERN,
+            "TELETYPE" : wx.FONTFAMILY_TELETYPE,
+            "MAX" : wx.FONTFAMILY_MAX
         }
         printer = wx.richtext.RichTextPrinting()
         buf = wx.richtext.RichTextBuffer()
