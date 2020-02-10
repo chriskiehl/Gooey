@@ -429,11 +429,12 @@ Individual menu items in a group are also just maps of key / value pairs. Their 
 * `menuTitle` - the name for this MenuItem  
 
 
-Currently, three types of menu options are supported: 
+Currently, four types of menu options are supported: 
 
  * AboutDialog 
  * MessageDialog
  * Link
+ * PrintDialog
  
 
 <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/47251026-9ffc1400-d3e1-11e8-9095-982a6367561b.png" width="400" height="auto" align="right" />
@@ -499,6 +500,24 @@ Example:
     'type': 'Link',
     'menuTitle': 'Visit Out Site',
     'url': 'http://www.example.com'
+}
+```
+
+**PrintDialog** allows you to print the output of the program. It will open the system print dialog.
+
+Schema:
+
+* `font` - (_optional_) - A font-family. One of: 'DEFAULT', 'DECORATIVE', 'ROMAN', 'SCRIPT', 'SWISS', 'MODERN', 'TELETYPE' or 'MAX'. Defaults to 'TELETYPE'.
+* `size` - (_optional_) - Size of font in points. Defaults to 10.
+
+Example:
+
+```python
+{
+    'type': 'PrintDialog',
+    'menuTitle': 'Print',
+    'font': 'ROMAN',
+    'size': 15
 }
 ```
 
