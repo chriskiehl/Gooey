@@ -18,6 +18,7 @@
   "finished_title": "Finito",
   "open_file": "Apri file",
   "optional_args_msg": "Parametri opzionali",
+  "print": "Stampare",
   "required_args_msg": "Parametri richiesti",
   "restart": "Restart",
   "running_msg": "Attendi finchè l'applicazione non avrà finito. \nQuest'operazione potrebbe durare qualche minuto",

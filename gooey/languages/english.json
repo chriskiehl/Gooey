@@ -23,6 +23,7 @@
   "open_file": "Open File",
   "open_files": "Open Files",
   "optional_args_msg": "Optional Arguments",
+  "print": "Print",
   "required_args_msg": "Required Arguments",
   "restart": "Restart",
   "running_msg": "Please wait while the application performs its tasks. \nThis may take a few moments",

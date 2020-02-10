@@ -18,6 +18,7 @@
   "finished_title": "运行结束",
   "open_file": "打开文件",
   "optional_args_msg": "可选参数",
+  "print": "打印",
   "required_args_msg": "必填参数",
   "restart": "重启",
   "running_msg": "请稍等，程序正在运行。 \n这可能将需要一定时间。",

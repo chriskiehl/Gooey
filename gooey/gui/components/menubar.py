@@ -12,8 +12,9 @@ class MenuBar(wx.MenuBar):
     concrete wx.Menu instances.
     """
 
-    def __init__(self, buildSpec, *args, **kwargs):
+    def __init__(self,application, buildSpec, *args, **kwargs):
         super(MenuBar,self).__init__(*args, **kwargs)
+        self.application = application
         self.buildSpec = buildSpec
         self.makeMenuItems(buildSpec.get('menu', []))
 
@@ -38,7 +39,8 @@ class MenuBar(wx.MenuBar):
         handlers = {
             'Link': self.openBrowser,
             'AboutDialog': self.spawnAboutDialog,
-            'MessageDialog': self.spawnMessageDialog
+            'MessageDialog': self.spawnMessageDialog,
+            'PrintDialog': self.spawnPrintDialog
         }
         f = handlers[item['type']]
         return partial(f, item)
@@ -79,3 +81,22 @@ class MenuBar(wx.MenuBar):
                 getattr(about, method)(item[field])
 
         three_to_four.AboutBox(about)
+
+    def spawnPrintDialog(self, item, *args, **kwargs):
+        fonts = {
+            "DEFAULT" : wx.FONTFAMILY_DEFAULT,
+            "DECORATIVE" : wx.FONTFAMILY_DEFAULT,
+            "ROMAN" : wx.FONTFAMILY_DEFAULT,
+            "SCRIPT" : wx.FONTFAMILY_DEFAULT,
+            "SWISS" : wx.FONTFAMILY_DEFAULT,
+            "MODERN" : wx.FONTFAMILY_DEFAULT,
+            "TELETYPE" : wx.FONTFAMILY_DEFAULT,
+            "MAX" : wx.FONTFAMILY_DEFAULT
+        }
+        printer = wx.richtext.RichTextPrinting()
+        buf = wx.richtext.RichTextBuffer()
+        buf.BeginFont(wx.Font(item.get("size",10),
+            fonts[item.get("font","TELETYPE")],
+            wx.FONTSTYLE_NORMAL,wx.FONTWEIGHT_NORMAL))
+        buf.AddParagraph(self.application.console.getText())
+        printer.PrintBuffer(buf)
