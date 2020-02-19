@@ -221,7 +221,7 @@ Gooey is international ready and easily ported to your host language. Languages 
     def main(): 
         ... 
 
-All program text is stored externally in `json` files. So adding new langauge support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
+All program text is stored externally in `json` files. So adding new language support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
 
 Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
 
