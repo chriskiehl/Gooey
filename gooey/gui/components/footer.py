@@ -90,6 +90,7 @@ class Footer(wx.Panel):
 
 
     def _do_layout(self):
+        self.SetBackgroundColour(self.buildSpec['footer_bg_color'])
         self.stop_button.Hide()
         self.restart_button.Hide()
 
