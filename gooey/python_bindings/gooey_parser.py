@@ -23,10 +23,11 @@ class GooeyArgumentGroup(_ArgumentGroup):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
-        super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
+        action = super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
+        return action
 
     def add_argument_group(self, *args, **kwargs):
         options = kwargs.pop('gooey_options', {})
@@ -85,7 +86,7 @@ class GooeyParser(object):
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
-        self.parser.add_argument(*args, **kwargs)
+        action = self.parser.add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
@@ -95,6 +96,7 @@ class GooeyParser(object):
             options or {},
             **kwargs
         )
+        return action
 
     def add_mutually_exclusive_group(self, *args, **kwargs):
         options = kwargs.pop('gooey_options', {})
