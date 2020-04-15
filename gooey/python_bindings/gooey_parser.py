@@ -2,8 +2,6 @@ from argparse import ArgumentParser, _SubParsersAction
 from argparse import _MutuallyExclusiveGroup, _ArgumentGroup
 from textwrap import dedent
 
-from gooey.gui.lang.i18n import _
-
 
 class GooeySubParser(_SubParsersAction):
     def __init__(self, *args, **kwargs):
@@ -134,8 +132,8 @@ class GooeyParser(object):
         kwargs.setdefault('parser_class', type(self))
 
         if 'title' in kwargs or 'description' in kwargs:
-            title = _(kwargs.pop('title', 'subcommands'))
-            description = _(kwargs.pop('description', None))
+            title = kwargs.pop('title', 'subcommands')
+            description = kwargs.pop('description', None)
             self._subparsers = self.add_argument_group(title, description)
         else:
             self._subparsers = self._positionals
