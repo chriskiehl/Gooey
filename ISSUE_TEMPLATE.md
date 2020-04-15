@@ -1,6 +1,6 @@
 Hello There, Future Issue Creator! 
 
-If you've found a bug, make sure to include the following:
+Found a bug? Just a friendly heads up, _debugging it requires information from you!_ Make sure the template below is filled out in its entirety. 
 
  - [ ] OS
  - [ ] Python Version 
