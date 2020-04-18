@@ -5,6 +5,7 @@ from gooey.gui.components.widgets.bases import TextContainer, BaseChooser
 
 __ALL__ = [
     'FileChooser',
+    'MultiFileChooser',
     'FileSaver',
     'DirChooser',
     'MultiDirChooser',
@@ -20,6 +21,9 @@ class FileChooser(BaseChooser):
 class MultiFileChooser(BaseChooser):
     # todo: allow wildcard from argparse
     widget_class = core.MultiFileChooser
+
+    def formatOutput(self, metatdata, value):
+        return formatters.multiFileChooser(metatdata, value)
 
 
 class FileSaver(BaseChooser):
