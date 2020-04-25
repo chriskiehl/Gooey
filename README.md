@@ -201,7 +201,7 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 
 | Widget         |           Example            | 
 |----------------|------------------------------| 
-|  DirChooser, FileChooser, MultiFileChooser, FileSaver, MultiFileSaver   | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
+|  DirChooser, MultiDirChooser, FileChooser, MultiFileChooser, FileSaver   | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f5483b28-07c5-11e5-9d01-1935635fc22d.gif" width="400"></p> | 
 |  DateChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f544756a-07c5-11e5-86d6-862ac146ad35.gif" width="400"></p> |
 | PasswordField | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/28953722-eae72cca-788e-11e7-8fa1-9a1ef332a053.png" width="400"></p> |
 | Listbox | ![image](https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/31590191-fadd06f2-b1c0-11e7-9a49-7cbf0c6d33d1.png) |
