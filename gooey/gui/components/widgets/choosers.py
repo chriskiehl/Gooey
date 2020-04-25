@@ -1,3 +1,4 @@
+from gooey.gui import formatters
 from gooey.gui.components.widgets import core
 from gooey.gui.components.widgets.bases import TextContainer, BaseChooser
 
@@ -34,6 +35,9 @@ class DirChooser(BaseChooser):
 class MultiDirChooser(BaseChooser):
     # todo: allow wildcard
     widget_class = core.MultiDirChooser
+
+    def formatOutput(self, metadata, value):
+        return formatters.multiFileChooser(metadata, value)
 
 
 class DateChooser(BaseChooser):
