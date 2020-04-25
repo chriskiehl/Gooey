@@ -2,14 +2,15 @@ import argparse
 import os
 import unittest
 
-from unittest.mock import patch
 from gooey.gui.components.widgets.core import chooser
+
+class MockWxMDD:
+    def GetPaths(self):
+        pass
 
 class TestChooserResults(unittest.TestCase):
 
-    @patch('gooey.gui.components.widgets.core.chooser.MDD')
-    def test_multiDirChooserGetResult(self, mockWxMDD):
-
+    def test_multiDirChooserGetResult(self):
         expected_outputs = [
             (None, "", [""]),
 
@@ -23,7 +24,12 @@ class TestChooserResults(unittest.TestCase):
         ]
 
         for osname, expected, pathsoutput in expected_outputs:
-            if osname and osname == os.name:
-                mockWxMDD.GetPaths.return_value = pathsoutput
-                result = chooser.MultiDirChooser.getResult(None, mockWxMDD)
+            if not osname or osname == os.name:
+                chooser.MDD.MultiDirDialog = MockWxMDD
+                chooser.MDD.MultiDirDialog.GetPaths = lambda self : pathsoutput
+                result = chooser.MultiDirChooser.getResult(None, MockWxMDD())
+                print(result)
                 self.assertEqual(result, expected)
+
+if __name__ == '__main__':
+    unittest.main()
