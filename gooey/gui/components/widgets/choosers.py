@@ -39,6 +39,9 @@ class MultiDirChooser(BaseChooser):
     # todo: allow wildcard
     widget_class = core.MultiDirChooser
 
+    def formatOutput(self, metatdata, value):
+        return formatters.multiFileChooser(metatdata, value)
+
 
 class DateChooser(BaseChooser):
     # todo: allow wildcard
