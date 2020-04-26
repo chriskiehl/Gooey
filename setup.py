@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 with open('README.md') as readme:
     long_description = readme.read()
 
-version = '1.0.3.1'
+version = '1.0.3.2'
 
 deps = [
     'Pillow>=4.3.0',
@@ -15,7 +15,7 @@ deps = [
 ]
 
 if sys.version[0] == '3':
-    deps.append('wxpython==4.0.7')
+    deps.append('wxpython==4.0.7.post2')
 
 
 setup(
