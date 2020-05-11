@@ -53,6 +53,10 @@ Table of Contents
 The easiest way to install Gooey is via `pip`
 
     pip install Gooey 
+	
+or `conda`
+
+    conda install Gooey -c conda-forge
 
 Alternatively, you can install Gooey by cloning the project to your local directory
 
