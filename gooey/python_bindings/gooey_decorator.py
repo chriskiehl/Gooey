@@ -14,6 +14,7 @@ from argparse import ArgumentParser
 from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
 from . import config_generator
+from . import cmd_args
 
 IGNORE_COMMAND = '--ignore-gooey'
 
@@ -43,6 +44,7 @@ def Gooey(f=None,
           header_height=80,
           navigation='SIDEBAR', # TODO: add this to the docs
           tabbed_groups=False,
+          use_cmd_args=False,
           **kwargs):
   '''
   Decorator for client code's main function.
@@ -68,6 +70,9 @@ def Gooey(f=None,
           sys.exit(1)
 
       if not build_spec:
+        if use_cmd_args:
+          cmd_args.parse_cmd_args(self, args)
+
         build_spec = config_generator.create_from_parser(
           self,
           source_path,

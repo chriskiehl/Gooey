@@ -88,7 +88,7 @@ Different styling and functionality can be configured by passing arguments into 
            program_description,       # Defaults to ArgParse Description
            default_size=(610, 530),   # starting size of the GUI
            required_cols=1,           # number of columns in the "Required" section
-           optional_cols=2,           # number of columbs in the "Optional" section
+           optional_cols=2,           # number of columns in the "Optional" section
            dump_build_config=False,   # Dump the JSON Gooey uses to configure itself
            load_build_config=None,    # Loads a JSON Gooey-generated configuration
            monospace_display=False)   # Uses a mono-spaced font in the output screen
@@ -215,7 +215,7 @@ Gooey is international ready and easily ported to your host language. Languages 
     def main(): 
         ... 
 
-All program text is stored externally in `json` files. So adding new langauge support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
+All program text is stored externally in `json` files. So adding new language support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
 
 Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
 
@@ -234,7 +234,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | Parameter | Summary | 
 |-----------|---------|
 | encoding | Text encoding to use when displaying characters (default: 'utf-8') | 
-| use_legacy_titles | Rewrites the default argparse group name from "Positional" to "Required". This is primarily for retaining backward compatibilty with previous versions of Gooey (which had poor support/awareness of groups and did its own naive bucketing of arguments). |
+| use_legacy_titles | Rewrites the default argparse group name from "Positional" to "Required". This is primarily for retaining backward compatibility with previous versions of Gooey (which had poor support/awareness of groups and did its own naive bucketing of arguments). |
 | advanced | Toggles whether to show the 'full' configuration screen, or a simplified version |
 | auto_start | Skips the configuration all together and runs the program immediately |
 | language | Tells Gooey which language set to load from the `gooey/languages` directory.|
@@ -258,6 +258,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | show_restart_button | Toggles whether or not to show the restart button at the end of execution |
 | run_validators | Controls whether or not to have Gooey perform validation before calling your program |
 | poll_external_updates | (Experimental!) When True, Gooey will call your code with a `gooey-seed-ui` CLI argument and use the response to fill out dynamic values in the UI (See: [Using Dynamic Values](#using-dynamic-values))|
+| use_cmd_args | Substitute any command line arguments provided at run time for the default values specified in the Gooey configuration |
 | return_to_config | When True, Gooey will return to the configuration settings window upon successful run |
 | progress_regex | A text regex used to pattern match runtime progress information. See: [Showing Progress](#showing-progress) for a detailed how-to | 
 | progress_expr | A python expression applied to any matches found via the `progress_regex`. See: [Showing Progress](#showing-progress) for a detailed how-to |
@@ -280,7 +281,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | terminal_font_weight | Weight of the font (NORMAL\|BOLD) | 
 | terminal_font_size | Point size of the font displayed in the terminal | 
 | error_color | HEX value of the text displayed when a validation error occurs |
-| richtext_controls | Switch on/off the console support for terminal control sequences (limited support for font weight and color). Defaults to : False |
+| richtext_controls | Switch on/off the console support for terminal control sequences (limited support for font weight and color). Defaults to : False. See [docs](https://github.com/chriskiehl/Gooey/tree/master/docs) for additional details |
 | menus | Show custom menu groups and items (see: [Menus](#menus) |
 
 
@@ -353,7 +354,7 @@ Both views present each action in the `Argument Parser` as a unique GUI componen
 
 **Setting the layout style:**
 
-Currently, the layouts can't be explicitely specified via a parameter (on the TODO!). The layouts are built depending on whether or not there are `subparsers` used in your code base. So, if you want to trigger the `Column Layout`, you'll need to add a `subparser` to your `argparse` code. 
+Currently, the layouts can't be explicitly specified via a parameter (on the TODO!). The layouts are built depending on whether or not there are `subparsers` used in your code base. So, if you want to trigger the `Column Layout`, you'll need to add a `subparser` to your `argparse` code. 
 
 It can be toggled via the `advanced` parameter in the `Gooey` decorator. 
 
@@ -553,7 +554,7 @@ Two menu groups ("File" and "Help") with four menu items between them.
 
 
 >:warning: 
->Note! This functionality is experimental. Its API may be changed or removed alltogether. Feedback/thoughts on this feature is welcome and encouraged! 
+>Note! This functionality is experimental. Its API may be changed or removed altogether. Feedback/thoughts on this feature is welcome and encouraged! 
 
 Gooey can optionally do some basic pre-flight validation on user input. Internally, it uses these validator functions to check for the presence of required arguments. However, by using [GooeyParser](#gooeyparser), you can extend these functions with your own validation rules. This allows Gooey to show much, much more user friendly feedback before it hands control off to your program. 
 
@@ -617,9 +618,9 @@ With the validator in place, Gooey can present the error messages next to the re
 ## Using Dynamic Values
 
 >:warning: 
->Note! This functionality is experimental. Its API may be changed or removed alltogether. Feedback on this feature is welcome and encouraged! 
+>Note! This functionality is experimental. Its API may be changed or removed altogether. Feedback on this feature is welcome and encouraged! 
 
-Gooey's Choice style fields (Dropdown, Listbox) can be fed a dynamic set of values at runtime by enabling the `poll_external_updates` option. This will cause Gooey to request updated values from your program everytime the user visits the Configuration page. This can be used to, for instance, show the result of a previous execution on the config screen without requiring that the user restart the program. 
+Gooey's Choice style fields (Dropdown, Listbox) can be fed a dynamic set of values at runtime by enabling the `poll_external_updates` option. This will cause Gooey to request updated values from your program every time the user visits the Configuration page. This can be used to, for instance, show the result of a previous execution on the config screen without requiring that the user restart the program. 
 
 **How does it work?**
 
@@ -686,7 +687,7 @@ There are lots of options for telling Gooey about progress as your program is ru
 
 ## Customizing Icons
 
-Gooey comes with a set of six default icons. These can be overridden with your own custom images/icons by telling Gooey to search additional directories when initializing. This is done via the `image_dir` argument to the `Goeey` decorator. 
+Gooey comes with a set of six default icons. These can be overridden with your own custom images/icons by telling Gooey to search additional directories when initializing. This is done via the `image_dir` argument to the `Gooey` decorator. 
 
     @Gooey(program_name='Custom icon demo', image_dir='/path/to/my/image/directory')
     def main():

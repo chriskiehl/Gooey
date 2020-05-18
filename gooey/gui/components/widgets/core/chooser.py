@@ -1,6 +1,7 @@
 import wx
 import wx.lib.agw.multidirdialog as MDD
 import os
+import re
 
 from gooey.gui.components.widgets.core.text_input import TextInput
 from gooey.gui.components.widgets.dialogs.calender_dialog import CalendarDlg
@@ -83,7 +84,7 @@ class MultiFileChooser(Chooser):
                              wildcard=options.get('wildcard', wx.FileSelectorDefaultWildcardStr))
 
     def getResult(self, dialog):
-        return os.pathsep.join(dialog.GetPaths()) 
+        return os.pathsep.join(dialog.GetPaths())
 
 
 class FileSaver(Chooser):
@@ -108,7 +109,7 @@ class DirChooser(Chooser):
                             defaultPath=options.get('default_path', os.getcwd()))
 
 class MultiDirChooser(Chooser):
-    """ Retrieve an multiple directories from the system """
+    """ Retrieve multiple directories from the system """
     def getDialog(self):
         options = self.Parent._options
         return MDD.MultiDirDialog(self,
@@ -117,7 +118,17 @@ class MultiDirChooser(Chooser):
                                   defaultPath=options.get('default_path', os.getcwd()),
                                   agwStyle=MDD.DD_MULTIPLE | MDD.DD_DIR_MUST_EXIST)
     def getResult(self, dialog):
-        return os.pathsep.join(dialog.GetPaths())
+        paths = dialog.GetPaths()
+        # Remove volume labels from Windows paths
+        if 'nt' == os.name:
+            for i, path in enumerate(paths):
+                if path:
+                    parts = path.split(os.sep)
+                    vol = parts[0]
+                    drives = re.match(r'.*\((?P<drive>\w:)\)', vol)
+                    paths[i] = os.sep.join([drives.group('drive')] + parts[1:])
+
+        return os.pathsep.join(paths)
 
 
 class DateChooser(Chooser):
@@ -165,5 +176,3 @@ class ColourChooser(Chooser):
 
     def getDialog(self):
         return wx.ColourDialog(self)
-
-
