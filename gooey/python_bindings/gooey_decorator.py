@@ -10,6 +10,7 @@ import json
 import os
 import sys
 from argparse import ArgumentParser
+import wx
 
 from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
@@ -92,8 +93,15 @@ def Gooey(f=None,
   def run_without_gooey(func):
     return lambda *args, **kwargs: func(*args, **kwargs)
 
-  if IGNORE_COMMAND in sys.argv:
-    sys.argv.remove(IGNORE_COMMAND)
+  try:
+    wx.App()
+    displayFound = True
+  except SystemExit:
+    displayFound = False
+
+  if not displayFound or IGNORE_COMMAND in sys.argv:
+    if IGNORE_COMMAND in sys.argv:
+      sys.argv.remove(IGNORE_COMMAND)
     if callable(f):
       return run_without_gooey(f)
     return run_without_gooey
