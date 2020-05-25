@@ -270,7 +270,7 @@ def categorize(actions, widget_dict, options):
         elif is_counter(action):
             _json = action_to_json(action, _get_widget(action, 'Counter'), options)
             # pre-fill the 'counter' dropdown
-            _json['data']['choices'] = list(map(str, range(1, 11)))
+            _json['data']['choices'] = list(map(str, range(0, 11)))
             yield _json
         else:
             raise UnknownWidgetType(action)
