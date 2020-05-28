@@ -48,12 +48,12 @@ class ProcessController(object):
         try:
             self._process = subprocess.Popen(
                 command.encode(sys.getfilesystemencoding()),
-                bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                 stderr=subprocess.STDOUT, shell=self.shell_execution, env=env)
         except:
             self._process = subprocess.Popen(
                 command,
-                bufsize=1, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                 stderr = subprocess.STDOUT, shell = self.shell_execution, env=env)
 
         t = Thread(target=self._forward_stdout, args=(self._process,))
