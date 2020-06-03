@@ -20,7 +20,12 @@ class CheckBox(TextContainer):
         self.help_text.SetMinSize((0,-1))
 
         layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(self.label)
+        if self._options.get('show_label', True):
+            layout.Add(self.label, 0, wx.EXPAND)
+        else:
+            self.label.Show(False)
+            layout.AddStretchSpacer(1)
+
         layout.AddSpacer(2)
         if self.help_text:
             hsizer = wx.BoxSizer(wx.HORIZONTAL)
