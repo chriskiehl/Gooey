@@ -10,7 +10,12 @@ import json
 import os
 import sys
 from argparse import ArgumentParser
-import wx
+
+try:
+  import wx
+  wxFound = True
+except ModuleNotFoundError:
+  wxFound = False
 
 from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
@@ -98,7 +103,8 @@ def Gooey(f=None,
   def run_without_gooey(func):
     return lambda *args, **kwargs: func(*args, **kwargs)
 
-  if not wx.PyApp.IsDisplayAvailable() or IGNORE_COMMAND in sys.argv:
+  if not wxFound or not wx.PyApp.IsDisplayAvailable() or \
+     IGNORE_COMMAND in sys.argv:
     if IGNORE_COMMAND in sys.argv:
       sys.argv.remove(IGNORE_COMMAND)
     if callable(f):
