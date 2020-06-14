@@ -95,7 +95,14 @@ class FrameHeader(wx.Panel):
     def build_heading_sizer(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.AddStretchSpacer(1)
-        sizer.Add(self._header, 0)
-        sizer.Add(self._subheader, 0)
+        if self.buildSpec['header_show_title']:
+            sizer.Add(self._header, 0)
+        else:
+            self._header.Hide()
+
+        if self.buildSpec['header_show_subtitle']:
+            sizer.Add(self._subheader, 0)
+        else:
+            self._subheader.Hide()
         sizer.AddStretchSpacer(1)
         return sizer
