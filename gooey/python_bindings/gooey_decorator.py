@@ -18,6 +18,38 @@ from . import cmd_args
 
 IGNORE_COMMAND = '--ignore-gooey'
 
+# TODO: use these defaults in the decorator and migrate to a flat **kwargs
+#       They're pulled out here for wiring up instances in the tests.
+#       Some fiddling is needed before I can make the changes to make the swap to
+#       `defaults` + **kwargs overrides.
+defaults = {
+    'advanced': True,
+    'language': 'english',
+    'auto_start': False,  # TODO: add this to the docs. Used to be `show_config=True`
+    'target': None,
+    'program_name': None,
+    'program_description': None,
+    'default_size': (610, 530),
+    'use_legacy_titles': True,
+    'required_cols': 2,
+    'optional_cols': 2,
+    'dump_build_config': False,
+    'load_build_config': None,
+    'monospace_display': False,  # TODO: add this to the docs
+    'image_dir': '::gooey/default',
+    'language_dir': getResourcePath('languages'),
+    'progress_regex': None,  # TODO: add this to the docs
+    'progress_expr': None,  # TODO: add this to the docs
+    'hide_progress_msg': False,  # TODO: add this to the docs
+    'disable_progress_bar_animation': False,
+    'disable_stop_button': False,
+    'group_by_type': True,
+    'header_height': 80,
+    'navigation': 'SIDEBAR', # TODO: add this to the docs
+    'tabbed_groups': False,
+    'use_cmd_args': False,
+}
+
 # TODO: kwargs all the things
 def Gooey(f=None,
           advanced=True,

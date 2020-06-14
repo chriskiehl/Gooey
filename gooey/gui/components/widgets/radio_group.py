@@ -20,7 +20,7 @@ class RadioGroup(BaseWidget):
         self.selected = None
         self.widgets = self.createWidgets()
         self.arrange()
-        self.applyStyleRules()
+
 
         for button in self.radioButtons:
             button.Bind(wx.EVT_LEFT_DOWN, self.handleButtonClick)
@@ -30,6 +30,8 @@ class RadioGroup(BaseWidget):
             self.selected = self.radioButtons[initialSelection]
             self.selected.SetValue(True)
         self.handleImplicitCheck()
+
+        self.applyStyleRules()
 
 
     def getValue(self):
@@ -85,6 +87,7 @@ class RadioGroup(BaseWidget):
             # if it is not in the required section, allow it to be deselected
             if not self.widgetInfo['required']:
                 self.selected.SetValue(False)
+                self.selected = None
 
         self.applyStyleRules()
         self.handleImplicitCheck()
@@ -104,9 +107,9 @@ class RadioGroup(BaseWidget):
             if isinstance(widget, CheckBox):
                 widget.hideInput()
             if not button.GetValue(): # not checked
-                widget.widget.Disable()
+                widget.Disable()
             else:
-                widget.widget.Enable()
+                widget.Enable()
 
     def handleImplicitCheck(self):
         """
@@ -141,5 +144,10 @@ class RadioGroup(BaseWidget):
         Instantiate the Gooey Widgets that are used within the RadioGroup
         """
         from gooey.gui.components import widgets
-        return [getattr(widgets, item['type'])(self, item)
-                for item in getin(self.widgetInfo, ['data', 'widgets'], [])]
+        widgets = [getattr(widgets, item['type'])(self, item)
+                   for item in getin(self.widgetInfo, ['data', 'widgets'], [])]
+        # widgets should be disabled unless
+        # explicitly selected
+        for widget in widgets:
+            widget.Disable()
+        return widgets
