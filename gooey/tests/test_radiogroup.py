@@ -94,7 +94,7 @@ class TestRadioGroupBehavior(unittest.TestCase):
                     for scenario in testcase['scenario']:
                         targetButton = scenario['clickButton']
 
-                        event = wx.CommandEvent(wx.wxEVT_LEFT_DOWN, wx.NewId())
+                        event = wx.CommandEvent(wx.wxEVT_LEFT_DOWN, wx.Window.NewControlId())
                         event.SetEventObject(radioGroup.radioButtons[targetButton])
 
                         radioGroup.radioButtons[targetButton].ProcessEvent(event)
