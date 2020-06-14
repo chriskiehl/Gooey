@@ -42,5 +42,8 @@
   "sure_you_want_to_exit": "Are you sure you want to exit?",
   "sure_you_want_to_stop": "Are you sure you want to stop the task? \nInterruption can corrupt your data!",
   "uh_oh": "\nUh oh! Looks like there was a problem. \nCopy the text from the status window to let your developer know what went wrong.\n",
-  "validation_failed": "One or more fields failed validation."
+  "validation_failed": "One or more fields failed validation.",
+  "dialog_button_yes": "Yes",
+  "dialog_button_no": "No",
+  "dialog_button_ok": "OK"
 }
