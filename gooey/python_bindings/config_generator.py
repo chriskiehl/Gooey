@@ -103,7 +103,7 @@ def create_from_parser(parser, source_path, **kwargs):
                     'over Gooey\'s text formatting')
 
 
-  build_spec['program_description'] = parser.description or build_spec['program_description']
+  build_spec['program_description'] = build_spec['program_description'] or parser.description or ''
 
   layout_data = (argparse_to_json.convert(parser, **build_spec)
                    if build_spec['show_advanced']
