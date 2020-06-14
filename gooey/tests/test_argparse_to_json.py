@@ -1,6 +1,8 @@
 import sys
 import unittest
-from argparse import ArgumentParser
+from argparse import ArgumentParser, FileType
+
+import pathlib
 
 from gooey import GooeyParser
 from gooey.python_bindings import argparse_to_json
@@ -138,3 +140,23 @@ class TestArgparse(unittest.TestCase):
             self.assertEqual(result, None)
 
 
+    def test_file_and_path_types_are_helpfully_mapped(self):
+        """
+        Arguments with type=Filetype or type={various Path classes}
+        should be helpfully turned into FileChoosers.
+        """
+        types = {FileType('r')} | argparse_to_json.pathlib_constructors
+        for filetype in types:
+            with self.subTest(filetype):
+                parser = ArgumentParser()
+                parser.add_argument('foo', type=filetype)
+                action = parser._actions[-1]
+                self.assertTrue(argparse_to_json.is_file(action))
+
+        randomTypes = {str, object, int}
+        for filetype in randomTypes:
+            with self.subTest(filetype):
+                parser = ArgumentParser()
+                parser.add_argument('foo', type=filetype)
+                action = parser._actions[-1]
+                self.assertFalse(argparse_to_json.is_file(action))

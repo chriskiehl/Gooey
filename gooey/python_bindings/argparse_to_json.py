@@ -14,10 +14,19 @@ from argparse import (
     _SubParsersAction)
 from collections import OrderedDict
 from functools import partial
+from pathlib import Path
+import pathlib
 from uuid import uuid4
 
 from gooey.python_bindings.gooey_parser import GooeyParser
 from gooey.util.functional import merge, getin, identity, assoc
+
+pathlib_constructors = {
+    pathlib.Path,
+    pathlib.PurePath,
+    pathlib.PurePosixPath,
+    pathlib.PureWindowsPath
+}
 
 
 VALID_WIDGETS = (
@@ -255,12 +264,12 @@ def categorize(actions, widget_dict, options):
         if is_mutex(action):
             yield build_radio_group(action, widget_dict, options)
 
-        elif is_standard(action):
-            yield action_to_json(action, _get_widget(action, 'TextField'), options)
-        
         elif is_file(action):
             yield action_to_json(action, _get_widget(action, 'FileSaver'), options)
 
+        elif is_standard(action):
+            yield action_to_json(action, _get_widget(action, 'TextField'), options)
+        
         elif is_choice(action):
             yield action_to_json(action, _get_widget(action, 'Dropdown'), options)
 
@@ -322,10 +331,6 @@ def is_choice(action):
     ''' action with choices supplied '''
     return action.choices
 
-def is_file(action):
-    ''' action with FileType '''
-    return isinstance(action.type, argparse.FileType)
-
 def is_standard(action):
     """ actions which are general "store" instructions.
     e.g. anything which has an argument style like:
@@ -340,6 +345,11 @@ def is_standard(action):
             and not isinstance(action, _CountAction)
             and not isinstance(action, _HelpAction)
             and type(action) not in boolean_actions)
+
+def is_file(action):
+    ''' action with FileType '''
+    return isinstance(action.type, argparse.FileType) \
+           or action.type in pathlib_constructors
 
 
 def is_flag(action):
