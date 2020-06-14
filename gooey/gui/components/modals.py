@@ -14,6 +14,8 @@ DialogConstants = namedtuple('DialogConstants', 'YES NO')(5103, 5104)
 
 def showDialog(title, content, style):
     dlg = wx.MessageDialog(None, content, title, style)
+    dlg.SetYesNoLabels(_('dialog_button_yes'), _('dialog_button_no'))
+    dlg.SetOKLabel(_('dialog_button_ok'))
     result = dlg.ShowModal()
     dlg.Destroy()
     return result
