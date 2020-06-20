@@ -20,4 +20,5 @@ def instrumentGooey(parser, **kwargs):
         yield (app, gooey)
     finally:
         wx.CallAfter(app.ExitMainLoop)
+        gooey.Destroy()
         app.Destroy()
