@@ -1,3 +1,4 @@
+import argparse
 import sys
 import unittest
 from argparse import ArgumentParser
@@ -138,3 +139,17 @@ class TestArgparse(unittest.TestCase):
             self.assertEqual(result, None)
 
 
+    def test_suppress_is_removed_as_default_value(self):
+        """
+        Issue #469
+        Argparse uses the literal string ==SUPPRESS== as an internal flag.
+        When encountered in Gooey, these should be dropped and mapped to `None`.
+        """
+        parser = ArgumentParser(prog='test_program')
+        parser.add_argument("--foo", default=argparse.SUPPRESS)
+        parser.add_argument('--version', action='version', version='1.0')
+
+        result = argparse_to_json.convert(parser, num_required_cols=2, num_optional_cols=2)
+        groups = getin(result, ['widgets', 'test_program', 'contents'])
+        for item in groups[0]['items']:
+            self.assertEqual(getin(item, ['data', 'default']), None)

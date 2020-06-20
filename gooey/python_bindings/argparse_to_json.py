@@ -403,6 +403,8 @@ def action_to_json(action, widget, options):
     })
 
     default = coerce_default(action.default, widget)
+    if default == argparse.SUPPRESS:
+        default = None
 
     return {
         'id': action.option_strings[0] if action.option_strings else action.dest,
