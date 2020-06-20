@@ -249,6 +249,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 |program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 
+| fullscreen | start Gooey in fullscreen mode |
 | required_cols | Controls how many columns are in the Required Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
 | optional_cols | Controls how many columns are in the Optional Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
 | dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 

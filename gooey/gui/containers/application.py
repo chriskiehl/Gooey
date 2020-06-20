@@ -189,6 +189,8 @@ class GooeyApplication(wx.Frame):
         self.SetSizer(sizer)
         self.console.Hide()
         self.Layout()
+        if self.buildSpec.get('fullscreen', True):
+            self.ShowFullScreen(True)
         # Program Icon (Windows)
         icon = wx.Icon(self.buildSpec['images']['programIcon'], wx.BITMAP_TYPE_PNG)
         self.SetIcon(icon)
