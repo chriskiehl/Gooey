@@ -153,3 +153,89 @@ class TestArgparse(unittest.TestCase):
         groups = getin(result, ['widgets', 'test_program', 'contents'])
         for item in groups[0]['items']:
             self.assertEqual(getin(item, ['data', 'default']), None)
+
+
+    def test_textinput_with_list_default_mapped_to_cli_friendly_value(self):
+        """
+        Issue: #500
+
+        Using nargs and a `default` value with a list causes the literal list string
+        to be put into the UI.
+        """
+        testcases = [
+            {'nargs': '+', 'default': ['a b', 'c'], 'gooey_default': '"a b" "c"', 'w': 'TextField'},
+            {'nargs': '*', 'default': ['a b', 'c'], 'gooey_default': '"a b" "c"', 'w': 'TextField'},
+            {'nargs': '...', 'default': ['a b', 'c'], 'gooey_default': '"a b" "c"', 'w': 'TextField'},
+            {'nargs': 2, 'default': ['a b', 'c'], 'gooey_default': '"a b" "c"', 'w': 'TextField'},
+            # TODO: this demos the current nargs behavior for string defaults, but
+            # TODO: it is wrong! These should be wrapped in quotes so spaces aren't
+            # TODO: interpreted as unique arguments.
+            {'nargs': '+', 'default': 'a b', 'gooey_default': 'a b', 'w': 'TextField'},
+            {'nargs': '*', 'default': 'a b', 'gooey_default': 'a b', 'w': 'TextField'},
+            {'nargs': '...', 'default': 'a b', 'gooey_default': 'a b', 'w': 'TextField'},
+            {'nargs': 1, 'default': 'a b', 'gooey_default': 'a b', 'w': 'TextField'},
+
+            # Listbox has special nargs handling which keeps the list in tact.
+            {'nargs': '+', 'default': ['a b', 'c'], 'gooey_default': ['a b', 'c'], 'w': 'Listbox'},
+            {'nargs': '*', 'default': ['a b', 'c'], 'gooey_default': ['a b', 'c'], 'w': 'Listbox'},
+            {'nargs': '...', 'default': ['a b', 'c'], 'gooey_default': ['a b', 'c'],'w': 'Listbox'},
+            {'nargs': 2, 'default': ['a b', 'c'], 'gooey_default': ['a b', 'c'], 'w': 'Listbox'},
+            {'nargs': '+', 'default': 'a b', 'gooey_default': ['a b'], 'w': 'Listbox'},
+            {'nargs': '*', 'default': 'a b', 'gooey_default': ['a b'], 'w': 'Listbox'},
+            {'nargs': '...', 'default': 'a b', 'gooey_default': ['a b'], 'w': 'Listbox'},
+            {'nargs': 1, 'default': 'a b', 'gooey_default': ['a b'], 'w': 'Listbox'},
+        ]
+        for case in testcases:
+            with self.subTest(case):
+                parser = ArgumentParser(prog='test_program')
+                parser.add_argument('--foo', nargs=case['nargs'], default=case['default'])
+                action = parser._actions[-1]
+                result = argparse_to_json.handle_default(action, case['w'])
+                self.assertEqual(result, case['gooey_default'])
+
+    def test_nargs(self):
+        """
+        so there are just a few simple rules here:
+        if nargs in [*, N, +, remainder]:
+            default MUST be a list OR we must map it to one
+
+        action:_StoreAction
+            - nargs '?'
+                - default:validate list is invalid
+                - default:coerce stringify
+            - nargs #{*, N, +, REMAINDER}
+                - default:validate None
+                - default:coerce
+                    if string: stringify
+                    if list: convert from list to cli style input string
+        action:_StoreConstAction
+            - nargs: invalid
+            - defaults:stringify
+
+        action:{_StoreFalseAction, _StoreTrueAction}
+            - nargs: invalid
+            - defaults:validate: require bool
+            - defaults:coerce: no stringify; leave bool
+
+        action:_CountAction
+            - nargs: invalid
+            - default:validate: must be numeric index within range OR None
+            - default:coerce: integer or None
+
+        action:_AppendAction
+            TODO: NOT CURRENTLY SUPPORTED BY GOOEY
+            nargs behavior is weird and needs to be understood.
+            - nargs
+
+        action:CustomUserAction:
+            - nargs: no way to know expected behavior. Ignore
+            - default: jsonify type if possible.
+        """
+
+        parser = ArgumentParser()
+        parser.add_argument(
+            '--bar',
+            nargs='+',
+            choices=["one", "two"],
+            default="one",
+        )
