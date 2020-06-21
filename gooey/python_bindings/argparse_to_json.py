@@ -11,6 +11,7 @@ from argparse import (
     _StoreConstAction,
     _StoreFalseAction,
     _StoreTrueAction,
+    _StoreAction,
     _SubParsersAction)
 from collections import OrderedDict
 from functools import partial
@@ -39,6 +40,8 @@ VALID_WIDGETS = (
     'Listbox'
 )
 
+
+# TODO: validate Listbox. When required, nargs must be +
 
 class UnknownWidgetType(Exception):
     pass
@@ -71,9 +74,25 @@ def convert(parser, **kwargs):
     """
     Converts a parser into a JSON representation
 
+    TODO:
     This is in desperate need of refactor. It wasn't build with supporting
     all (or any) of this configuration in mind. The use of global defaults
     are actively getting in the way of easily adding more configuration options.
+
+    Pain points:
+        - global data sprinkled throughout the calls
+        - local data threaded through calls
+        - totally unclear what the data structures even hold
+        - everything is just mushed together and gross. unwinding argparse also
+          builds validators, handles coercion, and so on...
+    Refactor plan:
+        - Investigate restructuring the core data representation. As is, it is ad-hoc
+          and largely tied to argparse's goofy internal structure. May be worth moving to
+          something "standard." Though, not sure what the options are.
+        - standardize how these things read from the environment. No global in some local in others.
+        - Investigate splitting the whole thing into phases (ala Ring). Current thinking is that
+          a lot of this stuff could be modelled more like pluggable upgrades to the base structure.
+        - I want to add a helpful validation stage to catch user errors like invalid gooey_options
     """
 
     group_defaults = {
@@ -402,7 +421,7 @@ def action_to_json(action, widget, options):
         },
     })
 
-    default = coerce_default(action.default, widget)
+    default = handle_default(action, widget)
     if default == argparse.SUPPRESS:
         default = None
 
@@ -453,11 +472,62 @@ def coerce_default(default, widget):
     return dispatcher.get(widget, identity)(cleaned)
 
 
+def handle_default(action, widget):
+    handlers = [
+        [textinput_with_nargs_and_list_default, coerse_nargs_list],
+        [is_widget('Listbox'), clean_list_defaults],
+        [is_widget('Dropdown'), safe_string],
+        [is_widget('Counter'), safe_string]
+    ]
+    for matches, apply_coercion in handlers:
+        if matches(action, widget):
+            return apply_coercion(action.default)
+    return clean_default(action.default)
+
+
+def coerse_nargs_list(default):
+    """
+    nargs=* and defaults which are collection types
+    must be transformed into a CLI equivalent form. So, for
+    instance, ['one two', 'three'] => "one two" "three"
+
+    This only applies when the target widget is a text input. List
+    based widgets such as ListBox should keep their defaults in list form
+
+    Without this transformation, `add_arg('--foo', default=['a b'], nargs='*')` would show up in
+    the UI as the literal string `['a b']` brackets and all.
+    """
+    return ' '.join('"{}"'.format(x) for x in default)
+
+def is_widget(name):
+    def equals(action, widget):
+        return widget == name
+    return equals
+
+
+def textinput_with_nargs_and_list_default(action, widget):
+    """
+    Vanilla TextInputs which have nargs options which produce lists (i.e.
+    nargs +, *, N, or REMAINDER) need to have their default values transformed
+    into CLI style space-separated entries when they're supplied as a list of values
+    on the Python side.
+    """
+    return (
+        widget in {'TextField', 'Textarea', 'PasswordField'}
+        and (isinstance(action.default, list) or isinstance(action.default, tuple))
+        and is_list_based_nargs(action))
+
+
+def is_list_based_nargs(action):
+    """ """
+    return isinstance(action.nargs, int) or action.nargs in {'*', '+', '...'}
+
+
 
 def clean_list_defaults(default_values):
     """
     Listbox's default's can be passed as a single value
-    or a list of values (due to multiple selections). The list interface
+    or a collection of values (due to multiple selections). The list interface
     is standardized on for ease.
     """
     wrapped_values = ([default_values]
@@ -468,7 +538,7 @@ def clean_list_defaults(default_values):
 
 def clean_default(default):
     """
-    Attemps to safely coalesce the default value down to
+    Attempts to safely coalesce the default value down to
     a valid JSON type.
     """
     try:
@@ -492,3 +562,51 @@ def safe_string(value):
     else:
         return str(value)
 
+
+def this_is_a_comment(action, widget):
+    """
+    TODO:
+     - better handling of nargs.
+     - allowing a class of "Narg'able" widget variants that allow dynamically adding options.
+    Below are some rough notes on the current widgets and their nargs behavior (or lack of)
+    """
+
+    asdf = [
+        # choosers are all currently treated as
+        # singular inputs regardless of nargs status.
+        'FileChooser',
+        'MultiFileChooser',
+        'FileSaver',
+        'DirChooser',
+        'DateChooser',
+        'TimeChooser',
+
+        # radiogroup requires no special logic. Delegates to internal widgets
+        'RadioGroup',
+        # nargs invalid
+        'CheckBox',
+        # nargs invalid
+        'BlockCheckbox',
+
+        # currently combines everything into a single, system _sep separated string
+        # potential nargs behavior
+        #   input: - each item gets a readonly textbox?
+        #          - each item is its own editable widget?
+        #          - problem with this idea is selected a ton of files would break the UI.
+        #            maybe a better option would be to expose what's been added as a small
+        #            list view? That way its a fixed size even if they choose 100s of files.
+        #
+        'MultiDirChooser',
+        # special case. convert default to list of strings
+        'Listbox',
+
+        # special cases. coerce default to string
+        'Dropdown',
+        'Counter',
+
+        # nargs behavior:
+        #   - convert to space separated list of strings
+        'TextField',
+        'Textarea',
+        'PasswordField',
+    ]
