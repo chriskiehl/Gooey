@@ -7,6 +7,12 @@ Turn (almost) any Python 2 or 3 Console Program into a GUI application with one 
 </p>
 
 
+### Support this project
+
+<a href="https://patreon.com/chriskiehl" target="_blank">
+    <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/support-request.jpg" />
+</a>
+
 
 Table of Contents
 -----------------  
