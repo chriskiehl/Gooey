@@ -1,21 +1,23 @@
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
-from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
 from gooey.util.functional import getin, flatmap, compact, indexunique
 from gooey.gui.lang.i18n import _
+from gooey.gui.components.widgets.radio_group import RadioGroup
+from gooey.gui.components.collapsible_group import CollapsibleGroup
+from gooey.gui.components.options_group import OptionsGroup
 
 class ConfigPage(ScrolledPanel):
     def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
         super(ConfigPage, self).__init__(parent, *args, **kwargs)
-        self.SetupScrolling(scroll_x=False, scrollToTop=False)
         self.rawWidgets = rawWidgets
         self.buildSpec = buildSpec
         self.reifiedWidgets = []
         self.layoutComponent()
         self.Layout()
         self.widgetsMap = indexunique(lambda x: x._id, self.reifiedWidgets)
+        self.SetupScrolling(scroll_x=False, scrollToTop=False)
         ## TODO: need to rethink what uniquely identifies an argument.
         ## Out-of-band IDs, while simple, make talking to the client program difficult
         ## unless they're agreed upon before hand. Commands, as used here, have the problem
@@ -32,6 +34,17 @@ class ConfigPage(ScrolledPanel):
                 if name in {'optional_args_msg', 'required_args_msg'}
                 else name)
 
+
+    def Layout(self):
+        """
+        Overload of Layout method to allow proper cooperation between ConfigPage and its CollapsibleGroup childs.
+        Note : the ScrolledPanel documentation itself says that SetupScrolling should be called after all childs are added.
+        Issues with CollapsibleGroup without the overidde :
+            - the Scrollbars do not show when expanding the CollapsiblePane unless the windows is manually resized.
+            - the resizing of widgets works only when expanding but not when reducing the window.
+        """
+        self.SetupScrolling(scroll_x=False, scrollToTop=False)
+        super(ConfigPage, self).Layout()
 
     def firstCommandIfPresent(self, widget):
         commands = widget._meta['commands']
@@ -102,65 +115,49 @@ class ConfigPage(ScrolledPanel):
 
         TODO: sort out the WX quirks and clean this up.
         '''
+        collapsible = getin(group, ['options', 'collapsible'])
+        group_class = CollapsibleGroup if collapsible else OptionsGroup
 
-        # determine the type of border , if any, the main sizer will use
-        if getin(group, ['options', 'show_border'], False):
-            boxDetails = wx.StaticBox(parent, -1, self.getName(group) or '')
-            boxSizer = wx.StaticBoxSizer(boxDetails, wx.VERTICAL)
-        else:
-            boxSizer = wx.BoxSizer(wx.VERTICAL)
-            boxSizer.AddSpacer(10)
-            if group['name']:
-                groupName = wx_util.h1(parent, self.getName(group) or '')
-                groupName.SetForegroundColour(getin(group, ['options', 'label_color']))
-                boxSizer.Add(groupName, 0, wx.TOP | wx.BOTTOM | wx.LEFT, 8)
-
-        group_description = getin(group, ['description'])
-        if group_description:
-            description = AutoWrappedStaticText(parent, label=group_description, target=boxSizer)
-            description.SetForegroundColour(getin(group, ['options', 'description_color']))
-            description.SetMinSize((0, -1))
-            boxSizer.Add(description, 1,  wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
-
-        # apply an underline when a grouping border is not specified
-        # unless the user specifically requests not to show it
-        if not getin(group, ['options', 'show_border'], False) and group['name'] \
-                and getin(group, ['options', 'show_underline'], True):
-            boxSizer.Add(wx_util.horizontal_rule(parent), 0, wx.EXPAND | wx.LEFT, 10)
+        groupWidget = group_class(
+            parent,
+            groupName=self.getName(group) or '',
+            groupDescription = getin(group, ['description']),
+            showBorders=getin(group, ['options', 'show_border'], False),
+            showUnderline=getin(group, ['options', 'show_underline'], True),
+            labelColor=getin(group, ['options', 'label_color']),
+            descriptionColor=getin(group, ['options', 'description_color']),
+            groupTopMargin=getin(group, ['options', 'margin_top'], 1))
 
         ui_groups = self.chunkWidgets(group)
 
         for uigroup in ui_groups:
             sizer = wx.BoxSizer(wx.HORIZONTAL)
             for item in uigroup:
-                widget = self.reifyWidget(parent, item)
+                widget = self.reifyWidget(groupWidget.getParentForChilds(), item)
                 if not getin(item, ['options', 'visible'], True):
                     widget.Hide()
                 # !Mutate the reifiedWidgets instance variable in place
                 self.reifiedWidgets.append(widget)
                 sizer.Add(widget, 1, wx.ALL | wx.EXPAND, 5)
-            boxSizer.Add(sizer, 0, wx.ALL | wx.EXPAND, 5)
+            groupWidget.getSizerForChilds().Add(sizer, 0, wx.ALL | wx.EXPAND, 5)
 
         # apply the same layout rules recursively for subgroups
         hs = wx.BoxSizer(wx.HORIZONTAL)
         for e, subgroup in enumerate(group['groups']):
-            self.makeGroup(parent, hs, subgroup, 1, wx.EXPAND)
+            self.makeGroup(groupWidget.getParentForChilds(), hs, subgroup, 1, wx.EXPAND)
             if len(group['groups']) != e:
                 hs.AddSpacer(5)
 
-            # self.makeGroup(parent, hs, subgroup, 1, wx.ALL | wx.EXPAND, 5)
             itemsPerColumn = getin(group, ['options', 'columns'], 2)
             if e % itemsPerColumn or (e + 1) == len(group['groups']):
-                boxSizer.Add(hs, *args)
+                groupWidget.getSizerForChilds().Add(hs, *args)
                 hs = wx.BoxSizer(wx.HORIZONTAL)
 
 
-        group_top_margin = getin(group, ['options', 'margin_top'], 1)
-
-        marginSizer = wx.BoxSizer(wx.VERTICAL)
-        marginSizer.Add(boxSizer, 1, wx.EXPAND | wx.TOP, group_top_margin)
-
-        thissizer.Add(marginSizer, *args)
+        if collapsible:
+            thissizer.Add(groupWidget, *args)
+        else:
+            thissizer.Add(groupWidget.getSizerForParent(), *args)
 
 
     def chunkWidgets(self, group):

@@ -102,7 +102,8 @@ def convert(parser, **kwargs):
         },
         'columns': 2,
         'padding': 10,
-        'show_border': False
+        'show_border': False,
+        'collapsible': False
     }
 
     assert_subparser_constraints(parser)
