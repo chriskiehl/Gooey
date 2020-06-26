@@ -2,6 +2,7 @@ import os
 import re
 import subprocess
 import sys
+from time import perf_counter
 from functools import partial
 from threading import Thread
 
@@ -59,20 +60,34 @@ class ProcessController(object):
         t = Thread(target=self._forward_stdout, args=(self._process,))
         t.start()
 
+    def _calculate_time_remaining(self,remaining_iterations,start_time):
+        # https://stackoverflow.com/questions/50188907/forecast-the-remaining-time-of-a-loop
+        _stop_time = perf_counter()
+        print(_stop_time, start_time,remaining_iterations,round((_stop_time - start_time) * remaining_iterations))
+        # print(round((_stop_time - start_time) * remaining_iterations))
+        return (_stop_time - start_time) * remaining_iterations
+
     def _forward_stdout(self, process):
         '''
         Reads the stdout of `process` and forwards lines and progress
         to any interested subscribers
         '''
+        _prev_progress = 0
         while True:
             line = process.stdout.readline()
+            _start_time = perf_counter()
             if not line:
                 break
             _progress = self._extract_progress(line)
+            _total_iterations = self._extract_total_iterations(line)
+            if _progress != _prev_progress:
+                _time_remaining = self._calculate_time_remaining((_total_iterations * ((100-_progress)/100)),_start_time)
+                pub.send_message(events.TIME_REMAINING_UPDATE,time_remaining=_time_remaining)
             pub.send_message(events.PROGRESS_UPDATE, progress=_progress)
             if _progress is None or self.hide_progress_msg is False:
                 pub.send_message(events.CONSOLE_UPDATE,
                                  msg=line.decode(self.encoding))
+            _prev_progress = _progress
         pub.send_message(events.EXECUTION_COMPLETE)
 
     def _extract_progress(self, text):
@@ -95,6 +110,21 @@ class ProcessController(object):
             return safe_float(match.group(1))
         else:
             return self._eval_progress(match)
+
+    def _extract_total_iterations(self, text):
+        '''
+        Finds progress information in the text using the
+        user-supplied regex and calculation instructions
+        '''
+        # monad-ish dispatch to avoid the if/else soup
+        find = partial(re.search, string=text.strip().decode(self.encoding))
+        regex = unit(self.progress_regex)
+        match = bind(regex, find)
+        result = bind(match, self._get_number_of_iterations)
+        return result
+
+    def _get_number_of_iterations(self,match):
+        return safe_float(match.group(2))
 
     def _eval_progress(self, match):
         '''

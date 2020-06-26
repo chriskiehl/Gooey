@@ -63,6 +63,7 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.CONSOLE_UPDATE, self.console.logOutput)
         pub.subscribe(events.EXECUTION_COMPLETE, self.onComplete)
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
+        pub.subscribe(events.TIME_REMAINING_UPDATE, self.footer.updateTimeRemaining)
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
 

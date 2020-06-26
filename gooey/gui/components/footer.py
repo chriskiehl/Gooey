@@ -35,6 +35,14 @@ class Footer(wx.Panel):
         for button in self.buttons:
             self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
 
+    def updateTimeRemaining(self,*args,**kwargs):
+        value = kwargs.get('time_remaining')
+        # print(value)
+        if value is None:
+            return
+        else:
+            self.time_remaining_text.SetLabel(f"Remaining Time: {value:.2f}s")
+
     def updateProgressBar(self, *args, **kwargs):
         '''
          value, disable_animation=False
@@ -81,6 +89,8 @@ class Footer(wx.Panel):
 
         self.progress_bar = wx.Gauge(self, range=100)
 
+        self.time_remaining_text = wx.StaticText(self)
+
         self.buttons = [self.cancel_button, self.start_button,
                         self.stop_button, self.close_button,
                         self.restart_button, self.edit_button]
@@ -100,6 +110,8 @@ class Footer(wx.Panel):
         h_sizer.Add(self.progress_bar, 1,
                     wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 20)
         self.progress_bar.Hide()
+        
+        h_sizer.Add(self.time_remaining_text,0,wx.LEFT, 20)
 
         h_sizer.AddStretchSpacer(1)
         h_sizer.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)

@@ -21,6 +21,7 @@ LIST_BOX        = wx.NewId()
 CONSOLE_UPDATE  = wx.NewId()
 EXECUTION_COMPLETE = wx.NewId()
 PROGRESS_UPDATE = wx.NewId()
+TIME_REMAINING_UPDATE = wx.NewId()
 
 USER_INPUT = wx.NewId()
 
