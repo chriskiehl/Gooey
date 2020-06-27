@@ -60,34 +60,55 @@ class ProcessController(object):
         t = Thread(target=self._forward_stdout, args=(self._process,))
         t.start()
 
-    def _calculate_time_remaining(self,remaining_iterations,start_time):
+    def format_interval(self,time_value):
+        """
+        Formats a number of seconds as a clock time, [H:]MM:SS
+        Parameters
+        ----------
+        t  : int
+            Number of seconds.
+        Returns
+        -------
+        out  : str
+            [H:]MM:SS
+        """
+        # https://github.com/tqdm/tqdm/blob/0cd9448b2bc08125e74538a2aea6af42ee1a7b6f/tqdm/std.py#L228
+        mins, s = divmod(int(time_value), 60)
+        h, m = divmod(mins, 60)
+        if h:
+            return '{0:d}:{1:02d}:{2:02d}'.format(h, m, s)
+        else:
+            return '{0:02d}:{1:02d}'.format(m, s)
+
+
+    def _calculate_time_remaining(self,finished_iterations,total_iterations,start_time):
         # https://stackoverflow.com/questions/50188907/forecast-the-remaining-time-of-a-loop
         _stop_time = perf_counter()
-        print(_stop_time, start_time,remaining_iterations,round((_stop_time - start_time) * remaining_iterations))
-        # print(round((_stop_time - start_time) * remaining_iterations))
-        return (_stop_time - start_time) * remaining_iterations
+        _elapsed = _stop_time - start_time
+        _rate = finished_iterations / _elapsed
+        return _elapsed,((total_iterations - finished_iterations) / _rate)
 
     def _forward_stdout(self, process):
         '''
         Reads the stdout of `process` and forwards lines and progress
         to any interested subscribers
         '''
-        _prev_progress = 0
+        _start_time = perf_counter()
         while True:
             line = process.stdout.readline()
-            _start_time = perf_counter()
             if not line:
                 break
             _progress = self._extract_progress(line)
-            _total_iterations = self._extract_total_iterations(line)
-            if _progress != _prev_progress:
-                _time_remaining = self._calculate_time_remaining((_total_iterations * ((100-_progress)/100)),_start_time)
-                pub.send_message(events.TIME_REMAINING_UPDATE,time_remaining=_time_remaining)
+            if _progress > 0:
+                _total_iterations = self._extract_total_iterations(line)
+                _elapsed_time, _time_remaining = self._calculate_time_remaining((_total_iterations * (_progress/100)),_total_iterations,_start_time)
+                _elapsed_str = self.format_interval(_elapsed_time)
+                _remaining_str = self.format_interval(_time_remaining)
+                pub.send_message(events.TIME_REMAINING_UPDATE,elapsed_time=_elapsed_str,time_remaining=_remaining_str)
             pub.send_message(events.PROGRESS_UPDATE, progress=_progress)
             if _progress is None or self.hide_progress_msg is False:
                 pub.send_message(events.CONSOLE_UPDATE,
                                  msg=line.decode(self.encoding))
-            _prev_progress = _progress
         pub.send_message(events.EXECUTION_COMPLETE)
 
     def _extract_progress(self, text):

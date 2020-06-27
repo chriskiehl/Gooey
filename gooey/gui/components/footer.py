@@ -36,12 +36,12 @@ class Footer(wx.Panel):
             self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
 
     def updateTimeRemaining(self,*args,**kwargs):
-        value = kwargs.get('time_remaining')
-        # print(value)
-        if value is None:
+        time_remaining_value = kwargs.get('time_remaining')
+        elapsed_time_value = kwargs.get('elapsed_time')
+        if time_remaining_value is None or elapsed_time_value is None:
             return
         else:
-            self.time_remaining_text.SetLabel(f"Remaining Time: {value:.2f}s")
+            self.time_remaining_text.SetLabel(f"{elapsed_time_value}<{time_remaining_value}")
 
     def updateProgressBar(self, *args, **kwargs):
         '''
