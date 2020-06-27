@@ -2,7 +2,6 @@ import os
 import re
 import subprocess
 import sys
-from time import perf_counter
 from functools import partial
 from threading import Thread
 
@@ -91,6 +90,7 @@ class ProcessController(object):
 
     def _get_current_time(self):
         try:
+            from time import perf_counter
             return perf_counter()
         except:
             import timeit
