@@ -99,7 +99,7 @@ class ProcessController(object):
             if not line:
                 break
             _progress = self._extract_progress(line)
-            if _progress > 0:
+            if _progress > 0 and self.progress_expr:
                 _total_iterations = self._extract_total_iterations(line)
                 _elapsed_time, _time_remaining = self._calculate_time_remaining((_total_iterations * (_progress/100)),_total_iterations,_start_time)
                 _elapsed_str = self.format_interval(_elapsed_time)
