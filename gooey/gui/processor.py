@@ -81,27 +81,34 @@ class ProcessController(object):
             return '{0:02d}:{1:02d}'.format(m, s)
 
 
-    def _calculate_time_remaining(self,finished_iterations,total_iterations,start_time):
-        # https://stackoverflow.com/questions/50188907/forecast-the-remaining-time-of-a-loop
-        _stop_time = perf_counter()
+    def _calculate_time_remaining(self,progress,start_time):
+        # https://github.com/tqdm/tqdm/blob/0cd9448b2bc08125e74538a2aea6af42ee1a7b6f/tqdm/std.py#L392
+        # https://github.com/tqdm/tqdm/blob/0cd9448b2bc08125e74538a2aea6af42ee1a7b6f/tqdm/std.py#L417
+        _stop_time = self._get_current_time()
         _elapsed = _stop_time - start_time
-        _rate = finished_iterations / _elapsed
-        return _elapsed,((total_iterations - finished_iterations) / _rate)
+        _rate = progress / _elapsed
+        return _elapsed,((100 - progress) / _rate)
+
+    def _get_current_time(self):
+        try:
+            return perf_counter()
+        except:
+            import timeit
+            return timeit.default_timer()
 
     def _forward_stdout(self, process):
         '''
         Reads the stdout of `process` and forwards lines and progress
         to any interested subscribers
         '''
-        _start_time = perf_counter()
+        _start_time = self._get_current_time()
         while True:
             line = process.stdout.readline()
             if not line:
                 break
             _progress = self._extract_progress(line)
-            if _progress > 0 and self.progress_expr:
-                _total_iterations = self._extract_total_iterations(line)
-                _elapsed_time, _time_remaining = self._calculate_time_remaining((_total_iterations * (_progress/100)),_total_iterations,_start_time)
+            if _progress > 0:
+                _elapsed_time, _time_remaining = self._calculate_time_remaining(_progress,_start_time)
                 _elapsed_str = self.format_interval(_elapsed_time)
                 _remaining_str = self.format_interval(_time_remaining)
                 pub.send_message(events.TIME_REMAINING_UPDATE,elapsed_time=_elapsed_str,time_remaining=_remaining_str)
@@ -131,21 +138,6 @@ class ProcessController(object):
             return safe_float(match.group(1))
         else:
             return self._eval_progress(match)
-
-    def _extract_total_iterations(self, text):
-        '''
-        Finds progress information in the text using the
-        user-supplied regex and calculation instructions
-        '''
-        # monad-ish dispatch to avoid the if/else soup
-        find = partial(re.search, string=text.strip().decode(self.encoding))
-        regex = unit(self.progress_regex)
-        match = bind(regex, find)
-        result = bind(match, self._get_number_of_iterations)
-        return result
-
-    def _get_number_of_iterations(self,match):
-        return safe_float(match.group(2))
 
     def _eval_progress(self, match):
         '''
