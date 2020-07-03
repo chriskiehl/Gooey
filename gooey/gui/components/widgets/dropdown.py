@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from gooey.gui.components.widgets.bases import TextContainer
 import wx
 
@@ -18,12 +20,9 @@ class Dropdown(TextContainer):
             style=wx.CB_DROPDOWN)
 
     def setOptions(self, options):
-        prevSelection = self.widget.GetSelection()
-        self.widget.Clear()
-        for option in [_('select_option')] + options:
-            self.widget.Append(option)
-        self.widget.SetSelection(0)
-
+        with self.retainSelection():
+            self.widget.Clear()
+            self.widget.SetItems([_('select_option')] + options)
 
     def setValue(self, value):
         ## +1 to offset the default placeholder value
@@ -40,3 +39,20 @@ class Dropdown(TextContainer):
 
     def formatOutput(self, metadata, value):
         return formatters.dropdown(metadata, value)
+
+    @contextmanager
+    def retainSelection(self):
+        """"
+        Retains the selected dropdown option (when possible)
+        across mutations due to dynamic updates.
+        """
+        prevSelection = self.widget.GetSelection()
+        prevValue = self.widget.GetValue()
+        try:
+            yield
+        finally:
+            current_at_index = self.widget.GetString(prevSelection)
+            if prevValue == current_at_index:
+                self.widget.SetSelection(prevSelection)
+            else:
+                self.widget.SetSelection(0)
