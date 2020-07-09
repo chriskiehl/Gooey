@@ -98,7 +98,7 @@ def Gooey(f=None,
           open_path = os.path.join(exec_dir,load_build_config)
           build_spec = json.load(open(open_path, "r"))
         except Exception as e:
-          print( 'Exception loading Build Config from {0}: {1}'.format(load_build_config, e))
+          print('Exception loading Build Config from {0}: {1}'.format(load_build_config, e))
           sys.exit(1)
 
       if not build_spec:
