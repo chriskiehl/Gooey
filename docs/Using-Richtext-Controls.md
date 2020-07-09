@@ -4,7 +4,7 @@
     <img src="https://github.com/chriskiehl/GooeyImages/raw/images/docs/richtext-controls/richtext-screen.png">
 </p>
 
-Gooey has a support for basic terminal control sequences. These let you control weight and color of the output font. For a full runnable example, checkout the code [from the examlpes repository](https://github.com/chriskiehl/GooeyExamples/blob/master/examples/richtext_demo.py)
+Gooey has a support for basic terminal control sequences. These let you control weight and color of the output font. For a full runnable example, checkout the code [from the examples repository](https://github.com/chriskiehl/GooeyExamples/blob/master/examples/richtext_demo.py)
 
 You can enable this mode by passing the `richtext_controls` option to the Gooey decorator. 
 
