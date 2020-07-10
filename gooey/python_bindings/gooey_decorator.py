@@ -48,6 +48,10 @@ defaults = {
     'navigation': 'SIDEBAR', # TODO: add this to the docs
     'tabbed_groups': False,
     'use_cmd_args': False,
+    'timing_options': {
+      'show_time_remaining': False,
+      'hide_time_remaining_on_complete': True
+    }
 }
 
 # TODO: kwargs all the things

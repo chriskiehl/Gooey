@@ -13,8 +13,7 @@ from gooey.util.functional import unit, bind
 
 
 class ProcessController(object):
-    def __init__(self, progress_regex, progress_expr, hide_progress_msg,
-                 encoding, shell=True):
+    def __init__(self, progress_regex, progress_expr, hide_progress_msg,encoding, shell=True):
         self._process = None
         self.progress_regex = progress_regex
         self.progress_expr = progress_expr
@@ -69,6 +68,7 @@ class ProcessController(object):
             if not line:
                 break
             _progress = self._extract_progress(line)
+
             pub.send_message(events.PROGRESS_UPDATE, progress=_progress)
             if _progress is None or self.hide_progress_msg is False:
                 pub.send_message(events.CONSOLE_UPDATE,
