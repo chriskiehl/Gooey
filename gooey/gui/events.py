@@ -21,6 +21,7 @@ LIST_BOX        = wx.Window.NewControlId()
 CONSOLE_UPDATE  = wx.Window.NewControlId()
 EXECUTION_COMPLETE = wx.Window.NewControlId()
 PROGRESS_UPDATE = wx.Window.NewControlId()
+TIME_UPDATE    = wx.Window.NewControlId()
 
 USER_INPUT = wx.Window.NewControlId()
 
