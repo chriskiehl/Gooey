@@ -145,7 +145,7 @@ class GooeyApplication(wx.Frame):
     def onStopExecution(self):
         """Displays a scary message and then force-quits the executing
         client code if the user accepts"""
-        if self.buildSpec['show_stop_warning'] and modals.confirmForceStop():
+        if not self.buildSpec['show_stop_warning'] or modals.confirmForceStop():
             self.clientRunner.stop()
 
 
