@@ -51,8 +51,9 @@ class Dropdown(TextContainer):
         try:
             yield
         finally:
-            current_at_index = self.widget.GetString(prevSelection)
-            if prevValue == current_at_index:
+            if prevSelection == -1:
+                self.widget.SetSelection(-1)
+            elif self.widget.GetString(prevSelection):
                 self.widget.SetSelection(prevSelection)
             else:
                 self.widget.SetSelection(0)
