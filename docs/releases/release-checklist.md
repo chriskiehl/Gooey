@@ -1,9 +1,10 @@
 # Release Checklist 
 
 
- - [ ] Release commit is tagged 
+  - [ ] Release commit is tagged 
  - [ ] Release is created on Github 
  - [ ] All tests pass on 2.7 and 3.x 
+ - [ ] All warnings are resolved (run tests with `PYTHONWARNINGS=default`)
  - [ ] All Gooey Examples run and work as expected 
  - [ ] All new features have corresponding examples 
  - [ ] All new features have README updates 
