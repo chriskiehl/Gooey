@@ -1,3 +1,5 @@
+Hello there! 
+
 Make sure you've followed the [Contributing](https://github.com/chriskiehl/Gooey/blob/master/CONTRIBUTING.md) guidelines before finalizing your pull request. 
 
 TL;DR: 
