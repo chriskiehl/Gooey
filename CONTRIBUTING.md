@@ -3,12 +3,13 @@
 
 All contributions are welcome! This guide will get you up to speed with the contribution process for Gooey. 
 
-
 Some Caveats Up Front: 
 
 * Opening a PR does not guarantee it will be merged 
 * Feedback may take time
 * Merges may take time 
+
+**--> The current release branch is [1.0.5](https://github.com/chriskiehl/Gooey/tree/1.0.5-release) <--**. All PRs should be opened against this branch. 
 
 
 ### Getting Started: 
@@ -28,6 +29,8 @@ Release branches take the form of `{semvar}-release`. For example:
 * `2.0.0-release` 
 
 You can find the current release branch by checking out the [branches page](https://github.com/chriskiehl/Gooey/branches). 
+
+
 
 **Making Changes:**
 
