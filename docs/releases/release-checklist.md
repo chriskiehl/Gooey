@@ -1,7 +1,9 @@
 # Release Checklist 
 
 
-  - [ ] Release commit is tagged 
+ - [ ] Release commit is tagged 
+ - [ ] The next release-branch is created 
+ - [ ] CONTRIBUTING.md has been updated to point at the next release branch
  - [ ] Release is created on Github 
  - [ ] All tests pass on 2.7 and 3.x 
  - [ ] All warnings are resolved (run tests with `PYTHONWARNINGS=default`)
