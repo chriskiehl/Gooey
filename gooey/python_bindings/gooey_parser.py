@@ -68,6 +68,11 @@ class GooeyParser(object):
         self.__dict__['parser'] = ArgumentParser(**kwargs)
         self.widgets = {}
         self.options = {}
+        if 'parents' in kwargs:
+            for parent in kwargs['parents']:
+                if isinstance(parent, self.__class__):
+                    self.widgets.update(parent.widgets)
+                    self.options.update(parent.options)
 
     @property
     def _mutually_exclusive_groups(self):
