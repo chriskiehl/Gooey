@@ -93,8 +93,14 @@ class GooeyParser(object):
 
         action = self.parser.add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
-        self.widgets[self.parser._actions[-1].dest] = widget
-        self.options[self.parser._actions[-1].dest] = options
+
+        action_dest = self.parser._actions[-1].dest
+        if action_dest not in self.widgets or self.widgets[action_dest] is None:
+            self.widgets[action_dest] = widget
+
+        if action_dest not in self.options or self.options[action_dest] is None:
+            self.options[self.parser._actions[-1].dest] = options
+
         self._validate_constraints(
             self.parser._actions[-1],
             widget,
