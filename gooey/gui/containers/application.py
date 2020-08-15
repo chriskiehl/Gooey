@@ -170,7 +170,13 @@ class GooeyApplication(wx.Frame):
 
 
     def onClose(self, *args, **kwargs):
-        """Cleanup the top level WxFrame and shutdown the process"""
+        """Stop any actively running client program, cleanup the top
+        level WxFrame and shutdown the current process"""
+        # issue #592 - we need to run the same onStopExecution machinery
+        # when the exit button is clicked to ensure everything is cleaned
+        # up correctly.
+        if self.clientRunner.running():
+            self.onStopExecution()
         self.Destroy()
         sys.exit()
 

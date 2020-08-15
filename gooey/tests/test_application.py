@@ -1,3 +1,4 @@
+import sys
 import unittest
 from argparse import ArgumentParser
 from collections import namedtuple
@@ -54,6 +55,26 @@ class TestGooeyApplication(unittest.TestCase):
                     mockClientRunner.stop.assert_called()
                 else:
                     mockClientRunner.stop.assert_not_called()
+
+    @patch("gui.containers.application.modals.confirmForceStop")
+    def testOnCloseShutsDownActiveClients(self, mockModal):
+        """
+        Issue 592: Closing the UI should clean up any actively running programs
+        """
+        parser = self.basicParser()
+        with instrumentGooey(parser) as (app, gapp):
+            with patch('gui.containers.application.sys.exit') as exitmock:
+                gapp.clientRunner = MagicMock()
+                gapp.Destroy = MagicMock()
+                # mocking that the user clicks "yes shut down" in the warning modal
+                mockModal.return_value = True
+                gapp.onClose()
+                
+                mockModal.assert_called()
+                gapp.Destroy.assert_called()
+                exitmock.assert_called()
+
+
 
 
 
