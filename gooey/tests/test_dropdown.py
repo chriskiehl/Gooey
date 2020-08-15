@@ -28,6 +28,14 @@ class TestGooeyDropdown(unittest.TestCase):
             [['1', '2'], '1', '1', ['1', '2','3'], '1'],
             # dynamic updates removed our selected value; defaults back to placeholder
             [['1', '2'], '2', '2', ['1', '3'], 'Select Option'],
+            # TODO: this test case is currently passing wrong data for the dynamic
+            # TODO: update due to a bug where Gooey doesn't apply the same ingestion
+            # TODO: rules for data received dynamically as it does for parsers.
+            # TODO: In short, Gooey should be able to handle a list of bools [True, False]
+            # TODO: from dynamics just like it does in parser land. It doesn't currently
+            # TODO: do this, so I'm manually casting it to strings for now.
+            [[True, False], True, 'True', ['True', 'False'], 'True']
+
         ]
 
         for choices, default, initalSelection, dynamicUpdate, expectedFinalSelection in testcases:

@@ -9,10 +9,10 @@ class TestProcessor(unittest.TestCase):
     def test_extract_progress(self):
         # should pull out a number based on the supplied
         # regex and expression
-        processor = ProcessController("^progress: (\d+)%$", None, False, 'utf-8')
+        processor = ProcessController(r"^progress: (\d+)%$", None, False, 'utf-8')
         self.assertEqual(processor._extract_progress(b'progress: 50%'), 50)
 
-        processor = ProcessController("total: (\d+)%$", None, False, 'utf-8')
+        processor = ProcessController(r"total: (\d+)%$", None, False, 'utf-8')
         self.assertEqual(processor._extract_progress(b'my cool total: 100%'), 100)
 
 

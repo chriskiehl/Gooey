@@ -476,7 +476,7 @@ def handle_default(action, widget):
     handlers = [
         [textinput_with_nargs_and_list_default, coerse_nargs_list],
         [is_widget('Listbox'), clean_list_defaults],
-        [is_widget('Dropdown'), safe_string],
+        [is_widget('Dropdown'), coerce_str],
         [is_widget('Counter'), safe_string]
     ]
     for matches, apply_coercion in handlers:
@@ -555,12 +555,21 @@ def clean_default(default):
 
 def safe_string(value):
     """
-    Coerce a type to string as long as it isn't None
+    Coerce a type to string as long as it isn't None or Boolean
+    TODO: why do I have this special boolean case..?
     """
     if value is None or isinstance(value, bool):
         return value
     else:
         return str(value)
+
+
+def coerce_str(value):
+    """
+    Coerce the incoming type to string as long as it isn't None
+    """
+    return str(value) if value is not None else value
+
 
 
 def this_is_a_comment(action, widget):
