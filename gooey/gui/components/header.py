@@ -73,12 +73,12 @@ class FrameHeader(wx.Panel):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         headings_sizer = self.build_heading_sizer()
         sizer.Add(headings_sizer, 1,
-                  wx.ALIGN_LEFT | wx.ALIGN_CENTER_HORIZONTAL | wx.EXPAND | wx.LEFT,
+                  wx.ALIGN_LEFT | wx.EXPAND | wx.LEFT,
                   PAD_SIZE)
-        sizer.Add(self.settings_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
-        sizer.Add(self.running_img, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
-        sizer.Add(self.check_mark, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
-        sizer.Add(self.error_symbol, 0, wx.ALIGN_RIGHT | wx.EXPAND | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.settings_img, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.running_img, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.check_mark, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.error_symbol, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
         self.running_img.Hide()
         self.check_mark.Hide()
         self.error_symbol.Hide()

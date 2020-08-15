@@ -23,9 +23,9 @@ class TestParentInheritance(unittest.TestCase):
             elif action.dest == "b_file":
                 found += 1
 
-        self.assertEquals(2, found, "Did not find 2 expected arguments, found " + str(found))
-        self.assertEquals(parser.widgets["a_file"], "FileChooser")
-        self.assertEquals(parser.widgets["b_file"], "DirChooser")
+        self.assertEqual(2, found, "Did not find 2 expected arguments, found " + str(found))
+        self.assertEqual(parser.widgets["a_file"], "FileChooser")
+        self.assertEqual(parser.widgets["b_file"], "DirChooser")
 
     def test_parent_arguments_are_not_overridden(self):
         """
@@ -50,7 +50,7 @@ class TestParentInheritance(unittest.TestCase):
         action2 = parser.add_argument("a_file", widget="DirChooser", default="b")
 
         self._verify_duplicate_parameters(action1, action2, parser)
-        self.assertEquals(parser.widgets["a_file"], "FileChooser")
+        self.assertEqual(parser.widgets["a_file"], "FileChooser")
 
     def test_duplicates_on_same_parser_are_ignored(self):
         """
@@ -71,7 +71,7 @@ class TestParentInheritance(unittest.TestCase):
         action2 = parser.add_argument("a_file", default="b", widget="DirChooser")
 
         self._verify_duplicate_parameters(action1, action2, parser)
-        self.assertEquals(parser.widgets["a_file"], "FileChooser")
+        self.assertEqual(parser.widgets["a_file"], "FileChooser")
 
     def _verify_duplicate_parameters(self, action1, action2, parser):
         """
@@ -81,6 +81,6 @@ class TestParentInheritance(unittest.TestCase):
         for action in parser._actions:
             if action.dest == "a_file":
                 found += 1
-        self.assertEquals(2, found, "Expected a both actions handling a_file but got " + str(found))
-        self.assertEquals(parser.get_default("a_file"), "a")
+        self.assertEqual(2, found, "Expected a both actions handling a_file but got " + str(found))
+        self.assertEqual(parser.get_default("a_file"), "a")
         self.assertNotEqual(action1, action2)

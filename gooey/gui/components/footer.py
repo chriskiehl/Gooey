@@ -102,16 +102,16 @@ class Footer(wx.Panel):
         self.progress_bar.Hide()
 
         h_sizer.AddStretchSpacer(1)
-        h_sizer.Add(self.cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
-        h_sizer.Add(self.start_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
-        h_sizer.Add(self.stop_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
+        h_sizer.Add(self.cancel_button, 0,wx.RIGHT, 20)
+        h_sizer.Add(self.start_button, 0, wx.RIGHT, 20)
+        h_sizer.Add(self.stop_button, 0, wx.RIGHT, 20)
 
         v_sizer.AddStretchSpacer(1)
-        v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.EXPAND)
+        v_sizer.Add(h_sizer, 0, wx.EXPAND)
 
-        h_sizer.Add(self.edit_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
-        h_sizer.Add(self.restart_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
-        h_sizer.Add(self.close_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 20)
+        h_sizer.Add(self.edit_button, 0, wx.RIGHT, 10)
+        h_sizer.Add(self.restart_button, 0, wx.RIGHT, 10)
+        h_sizer.Add(self.close_button, 0, wx.RIGHT, 20)
         self.edit_button.Hide()
         self.restart_button.Hide()
         self.close_button.Hide()
