@@ -30,7 +30,7 @@ class ProcessController(object):
     def poll(self):
         if not self._process:
             raise Exception('Not started!')
-        self._process.poll()
+        return self._process.poll()
 
     def stop(self):
         if self.running():
