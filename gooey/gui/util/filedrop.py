@@ -8,3 +8,4 @@ class FileDrop(wx.FileDropTarget):
   def OnDropFiles(self, x, y, filenames):
     for name in filenames:
       self.window.WriteText(name)
+    return True
