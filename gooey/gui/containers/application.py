@@ -145,9 +145,11 @@ class GooeyApplication(wx.Frame):
     def onStopExecution(self):
         """Displays a scary message and then force-quits the executing
         client code if the user accepts"""
+        exit_flag = False
         if not self.buildSpec['show_stop_warning'] or modals.confirmForceStop():
+            exit_flag = True
             self.clientRunner.stop()
-
+        return exit_flag
 
     def fetchExternalUpdates(self):
         """
@@ -176,10 +178,13 @@ class GooeyApplication(wx.Frame):
         # when the exit button is clicked to ensure everything is cleaned
         # up correctly.
         if self.clientRunner.running():
-            self.onStopExecution()
-        self.Destroy()
-        sys.exit()
-
+            if self.onStopExecution():
+                self.Destroy()
+                sys.exit()
+        else:
+            self.Destroy()
+            sys.exit()
+            
 
     def layoutComponent(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
