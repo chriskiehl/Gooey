@@ -546,7 +546,7 @@ def clean_default(default):
         return default
     except TypeError as e:
         # see: Issue #377
-        # if is ins't json serializable (i.e. primitive data) there's nothing
+        # if is isn't json serializable (i.e. primitive data) there's nothing
         # useful for Gooey to do with it (since Gooey deals in primitive data
         # types). So the correct behavior is dropping them. This affects ONLY
         # gooey, not the client code.

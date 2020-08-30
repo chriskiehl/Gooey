@@ -38,7 +38,7 @@ def commandField(metadata, value):
         return value or None
 
 
-def counter(metatdata, value):
+def counter(metadata, value):
     '''
     Returns
       str(option_string * DropDown Value)
@@ -47,7 +47,7 @@ def counter(metatdata, value):
     '''
     if not str(value).isdigit():
         return None
-    command = str(metatdata['commands'][0]).strip()
+    command = str(metadata['commands'][0]).strip()
     return ' '.join(itertools.repeat(command, int(value)))
 
 

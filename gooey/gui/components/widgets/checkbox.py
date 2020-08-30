@@ -46,8 +46,8 @@ class CheckBox(TextContainer):
         return self.widget.GetValue()
 
 
-    def formatOutput(self, metatdata, value):
-        return formatters.checkbox(metatdata, value)
+    def formatOutput(self, metadata, value):
+        return formatters.checkbox(metadata, value)
 
 
     def hideInput(self):

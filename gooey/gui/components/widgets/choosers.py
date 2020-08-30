@@ -24,8 +24,8 @@ class MultiFileChooser(BaseChooser):
     # todo: allow wildcard from argparse
     widget_class = core.MultiFileChooser
 
-    def formatOutput(self, metatdata, value):
-        return formatters.multiFileChooser(metatdata, value)
+    def formatOutput(self, metadata, value):
+        return formatters.multiFileChooser(metadata, value)
 
 
 class FileSaver(BaseChooser):

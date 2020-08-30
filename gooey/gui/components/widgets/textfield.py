@@ -15,6 +15,6 @@ class TextField(TextContainer):
     def setValue(self, value):
         self.widget.setValue(str(value))
 
-    def formatOutput(self, metatdata, value):
-        return formatters.general(metatdata, value)
+    def formatOutput(self, metadata, value):
+        return formatters.general(metadata, value)
 

@@ -113,7 +113,7 @@ parser.add_mutually_exclusive_group(gooey_options={
 Argument Groups take a number of `gooey_options` to help control layout. 
 
 ```python
-parser.add_argument_group('MyGroup', desription='my cool group', gooey_options={
+parser.add_argument_group('MyGroup', description='my cool group', gooey_options={
     'show_border': bool,
     'show_underline': bool,
     'label_color': '#FF9900',

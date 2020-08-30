@@ -32,7 +32,7 @@ class Textarea(TextContainer):
         self.widget.AppendText(str(value))
         self.widget.SetInsertionPoint(0)
 
-    def formatOutput(self, metatdata, value):
-        return formatters.general(metatdata, value)
+    def formatOutput(self, metadata, value):
+        return formatters.general(metadata, value)
 
 

@@ -33,7 +33,7 @@ class BaseWidget(wx.Panel):
     def dispatchChange(self, value, **kwargs):
         raise NotImplementedError
 
-    def formatOutput(self, metatdata, value):
+    def formatOutput(self, metadata, value):
         raise NotImplementedError
 
 
@@ -155,7 +155,7 @@ class TextContainer(BaseWidget):
     def setOptions(self, values):
         return None
 
-    def receiveChange(self, metatdata, value):
+    def receiveChange(self, metadata, value):
         raise NotImplementedError
 
     def dispatchChange(self, value, **kwargs):
@@ -176,5 +176,5 @@ class BaseChooser(TextContainer):
     def getWidgetValue(self):
         return self.widget.getValue()
 
-    def formatOutput(self, metatdata, value):
-        return formatters.general(metatdata, value)
+    def formatOutput(self, metadata, value):
+        return formatters.general(metadata, value)
