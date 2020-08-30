@@ -63,7 +63,7 @@ class TestGooeyApplication(unittest.TestCase):
         """
         parser = self.basicParser()
         with instrumentGooey(parser) as (app, gapp):
-            with patch('gui.containers.application.sys.exit') as exitmock:
+            with patch('gooey.gui.containers.application.sys.exit') as exitmock:
                 gapp.clientRunner = MagicMock()
                 gapp.Destroy = MagicMock()
                 # mocking that the user clicks "yes shut down" in the warning modal
