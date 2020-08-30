@@ -2,7 +2,7 @@ import unittest
 from argparse import ArgumentParser
 from itertools import *
 
-from tests.harness import instrumentGooey
+from gooey.tests.harness import instrumentGooey
 
 
 class TestGooeyHeader(unittest.TestCase):

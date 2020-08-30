@@ -3,7 +3,7 @@ import unittest
 import wx
 
 from gooey import GooeyParser
-from tests.harness import instrumentGooey
+from gooey.tests.harness import instrumentGooey
 
 
 class TestRadioGroupBehavior(unittest.TestCase):

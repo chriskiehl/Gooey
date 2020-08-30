@@ -2,7 +2,7 @@ import unittest
 from argparse import ArgumentParser
 from unittest.mock import patch
 
-from tests.harness import instrumentGooey
+from gooey.tests.harness import instrumentGooey
 
 
 class TestGooeyDropdown(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestGooeyDropdown(unittest.TestCase):
         return parser
 
 
-    @patch("gui.containers.application.seeder.fetchDynamicProperties")
+    @patch("gooey.gui.containers.application.seeder.fetchDynamicProperties")
     def test_dropdown_behavior(self, mock):
         """
         Testing that:
