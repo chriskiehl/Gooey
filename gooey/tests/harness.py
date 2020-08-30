@@ -2,10 +2,10 @@ from contextlib import contextmanager
 
 import wx
 
-from gui import application
-from python_bindings.config_generator import create_from_parser
-from python_bindings.gooey_decorator import defaults
-from util.functional import merge
+from gooey.gui import application
+from gooey.python_bindings.config_generator import create_from_parser
+from gooey.python_bindings.gooey_decorator import defaults
+from gooey.util.functional import merge
 
 
 @contextmanager

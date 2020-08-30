@@ -12,7 +12,7 @@ def checkbox(metadata, value):
 def radioGroup(metadata, value):
     # TODO
     try:
-        return self.commands[self._value.index(True)][0]
+        return metadata['commands'][value.index(True)][0]
     except ValueError:
         return None
 

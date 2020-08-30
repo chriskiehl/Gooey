@@ -1,7 +1,7 @@
 import unittest
 from argparse import ArgumentParser
 
-from python_bindings.config_generator import create_from_parser
+from gooey.python_bindings.config_generator import create_from_parser
 
 
 class TextConfigGenerator(unittest.TestCase):

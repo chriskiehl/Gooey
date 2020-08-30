@@ -1,0 +1,31 @@
+name: lint_python
+on:
+  pull_request:
+  push:
+  #  branches: [master]
+jobs:
+  lint_python:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]  # [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.8]  # [2.7, 3.5, 3.6, 3.7, 3.8, 3.9.0-rc.1, pypy3]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install --upgrade pip wheel
+      - run: pip install black codespell flake8 isort pytest
+      - run: black --check . || true
+      - run: codespell --ignore-words-list="datas" --quiet-level=2 --skip="*.json,*.spec" || true
+      - run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+      - run: isort --profile black . || true
+      - run: pip install -r requirements.txt
+      - run: python -c "import wx ; print(wx.__version__)"
+      - if: startsWith(matrix.os, 'macos')
+        run: pytest --ignore=gooey/tests/test_application.py --ignore=gooey/tests/test_cmd_args.py --ignore=gooey/tests/test_formatters.py  --ignore=gooey/tests/test_header.py --ignore=gooey/tests/test_radiogroup.py .
+      - if: startsWith(matrix.os, 'windows')
+        run: pytest --ignore=gooey/tests/test_application.py --ignore=gooey/tests/test_cmd_args.py --ignore=gooey/tests/test_header.py --ignore=gooey/tests/test_radiogroup.py .
+      - run: pytest . || true
