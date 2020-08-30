@@ -20,7 +20,7 @@ class TestGooeyApplication(unittest.TestCase):
                     self.assertEqual(gapp.IsFullScreen(), shouldShow)
 
 
-    @patch("gui.containers.application.modals.confirmForceStop")
+    @patch("gooey.gui.containers.application.modals.confirmForceStop")
     def testGooeyRequestsConfirmationWhenShowStopWarningModalTrue(self, mockModal):
         """
         When show_stop_warning=False, Gooey should immediately kill the
@@ -56,7 +56,7 @@ class TestGooeyApplication(unittest.TestCase):
                 else:
                     mockClientRunner.stop.assert_not_called()
 
-    @patch("gui.containers.application.modals.confirmForceStop")
+    @patch("gooey.gui.containers.application.modals.confirmForceStop")
     def testOnCloseShutsDownActiveClients(self, mockModal):
         """
         Issue 592: Closing the UI should clean up any actively running programs
