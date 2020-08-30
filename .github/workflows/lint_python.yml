@@ -28,4 +28,4 @@ jobs:
         run: pytest --ignore=gooey/tests/test_application.py --ignore=gooey/tests/test_cmd_args.py --ignore=gooey/tests/test_dropdown.py --ignore=gooey/tests/test_formatters.py  --ignore=gooey/tests/test_header.py --ignore=gooey/tests/test_radiogroup.py .
       - if: startsWith(matrix.os, 'windows')
         run: pytest --ignore=gooey/tests/test_application.py --ignore=gooey/tests/test_cmd_args.py --ignore=gooey/tests/test_header.py --ignore=gooey/tests/test_radiogroup.py .
-      - run: pytest --ignore=gooey/tests/test_header.py --ignore=gooey/tests/test_radiogroup.py . || true
+      - run: pytest --ignore=gooey/tests/test_application.py --ignore=gooey/tests/test_header.py --ignore=gooey/tests/test_radiogroup.py . || true
