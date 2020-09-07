@@ -91,7 +91,7 @@ class Console(wx.Panel):
         return self.textbox.GetValue()
 
     def layoutComponent(self):
-        self.SetBackgroundColour(self.buildSpec.get('terminal_bg_color', '#F0F0F0'))
+        self.SetBackgroundColour(self.buildSpec.get('terminal_panel_color', '#F0F0F0'))
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.AddSpacer(10)
         sizer.Add(self.text, 0, wx.LEFT, 20)

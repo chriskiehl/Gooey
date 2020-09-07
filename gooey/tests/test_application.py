@@ -5,6 +5,7 @@ from collections import namedtuple
 from unittest.mock import patch
 from unittest.mock import MagicMock
 
+from python_bindings import constants
 from tests.harness import instrumentGooey
 
 
@@ -75,7 +76,23 @@ class TestGooeyApplication(unittest.TestCase):
                 exitmock.assert_called()
 
 
+    def testTerminalColorChanges(self):
+        ## Issue #625 terminal panel color wasn't being set due to a typo
+        parser = self.basicParser()
+        expectedColors = [(255, 0, 0, 255), (255, 255, 255, 255), (100, 100, 100,100)]
+        for expectedColor in expectedColors:
+            with instrumentGooey(parser, terminal_panel_color=expectedColor) as (app, gapp):
+                foundColor = gapp.console.GetBackgroundColour()
+                self.assertEqual(tuple(foundColor), expectedColor)
 
+
+    def testFontWeightsGetSet(self):
+        ## Issue #625 font weight wasn't being correctly passed to the terminal
+        for weight in [constants.FONTWEIGHT_LIGHT, constants.FONTWEIGHT_BOLD]:
+            parser = self.basicParser()
+            with instrumentGooey(parser, terminal_font_weight=weight) as (app, gapp):
+                terminal = gapp.console.textbox
+                self.assertEqual(terminal.GetFont().GetWeight(), weight)
 
 
     def basicParser(self):
