@@ -1,6 +1,7 @@
 import unittest
 from argparse import ArgumentParser
 
+from python_bindings import constants
 from python_bindings.config_generator import create_from_parser
 
 
@@ -25,6 +26,29 @@ class TextConfigGenerator(unittest.TestCase):
         blank_parser = ArgumentParser()
         buildspec = create_from_parser(blank_parser, "")
         self.assertEqual(buildspec['program_description'], '')
+
+    def test_valid_font_weights(self):
+        """
+        Asserting that only valid font-weights are allowable.
+        """
+        all_valid_weights = range(100, 1001, 100)
+        for weight in all_valid_weights:
+            parser = ArgumentParser(description="test parser")
+            buildspec = create_from_parser(parser, "", terminal_font_weight=weight)
+            self.assertEqual(buildspec['terminal_font_weight'], weight)
+
+    def test_font_weight_defaults_to_normal(self):
+        parser = ArgumentParser(description="test parser")
+        # no font_weight explicitly provided
+        buildspec = create_from_parser(parser, "")
+        self.assertEqual(buildspec['terminal_font_weight'], constants.FONTWEIGHT_NORMAL)
+
+
+    def test_invalid_font_weights_throw_error(self):
+        parser = ArgumentParser(description="test parser")
+        with self.assertRaises(ValueError):
+            invalid_weight = 9123
+            buildspec = create_from_parser(parser, "", terminal_font_weight=invalid_weight)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import os
 import sys
 import warnings
-
+import textwrap
 from gooey.python_bindings import argparse_to_json
 from gooey.gui.util.quoting import quote
 from gooey.python_bindings import constants
@@ -92,7 +92,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'terminal_panel_color': kwargs.get('terminal_panel_color', '#F0F0F0'),
       'terminal_font_color':  kwargs.get('terminal_font_color', '#000000'),
       'terminal_font_family': kwargs.get('terminal_font_family', None),
-      'terminal_font_weight': kwargs.get('terminal_font_weight', None),
+      'terminal_font_weight': get_font_weight(kwargs),
       'terminal_font_size':   kwargs.get('terminal_font_size', None),
       'richtext_controls':    kwargs.get('richtext_controls', False),
       'error_color':          kwargs.get('error_color', '#ea7878')
@@ -117,3 +117,37 @@ def create_from_parser(parser, source_path, **kwargs):
     build_spec['show_sidebar'] = True
 
   return build_spec
+
+
+
+def get_font_weight(kwargs):
+    error_msg = textwrap.dedent('''
+    Unknown font weight {}. 
+    
+    The available weights can be found in the `constants` module. 
+    They're prefixed with "FONTWEIGHT" (e.g. `FONTWEIGHT_BOLD`)
+    
+    example code:    
+    
+    ```
+    from gooey import constants
+    @Gooey(terminal_font_weight=constants.FONTWEIGHT_NORMAL)
+    ```   
+    ''')
+    weights = {
+        constants.FONTWEIGHT_THIN,
+        constants.FONTWEIGHT_EXTRALIGHT,
+        constants.FONTWEIGHT_LIGHT,
+        constants.FONTWEIGHT_NORMAL,
+        constants.FONTWEIGHT_MEDIUM,
+        constants.FONTWEIGHT_SEMIBOLD,
+        constants.FONTWEIGHT_BOLD,
+        constants.FONTWEIGHT_EXTRABOLD,
+        constants.FONTWEIGHT_HEAVY,
+        constants.FONTWEIGHT_EXTRAHEAVY
+    }
+    weight = kwargs.get('terminal_font_weight', constants.FONTWEIGHT_NORMAL)
+    if weight not in weights:
+        raise ValueError(error_msg.format(weight))
+    return weight
+
