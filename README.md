@@ -88,7 +88,7 @@ Different styling and functionality can be configured by passing arguments into 
     # options
     @Gooey(advanced=Boolean,          # toggle whether to show advanced config or not 
            language=language_string,  # Translations configurable via json
-           show_config=True,          # skip config screens all together
+           auto_start=True,           # skip config screens all together
            target=executable_cmd,     # Explicitly set the subprocess executable arguments
            program_name='name',       # Defaults to script name
            program_description,       # Defaults to ArgParse Description
