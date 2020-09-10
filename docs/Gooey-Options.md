@@ -26,6 +26,7 @@ and with that, you're ready to rock.
 * Custom Widget Options
     * Textarea
     * BlockCheckbox  
+    * Listbox
     * RadioGroups
 * Argument Group Options  
 
@@ -96,6 +97,14 @@ parser.add_argument('-my-arg', widget='BlockCheckbox', gooey_options={
 })
 ```
  
+### Listbox
+
+```python
+parser.add_argument('-my-arg', widget='Listbox', gooey_options={
+    # height of the listbox in pixels
+    'height': int
+})
+```
 
 ### Radio Group  
 
