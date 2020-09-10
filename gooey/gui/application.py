@@ -24,6 +24,8 @@ def run(build_spec):
 
 def build_app(build_spec):
   app = wx.App(False)
+  # use actual program name instead of script file name in macOS menu
+  app.SetAppDisplayName(build_spec['program_name'])
 
   i18n.load(build_spec['language_dir'], build_spec['language'], build_spec['encoding'])
   imagesPaths = image_repository.loadImages(build_spec['image_dir'])
