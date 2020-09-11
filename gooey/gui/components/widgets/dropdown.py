@@ -10,23 +10,32 @@ from gooey.gui.lang.i18n import _
 class Dropdown(TextContainer):
 
     def getWidget(self, parent, *args, **options):
-        default = _('select_option')
+        # str conversion allows using stringyfiable values in addition to pure strings
+        choices = [str(choice) for choice in self._meta['choices']]
+        if (self._meta['default'] is None
+        or str(self._meta['default']) not in choices):
+            self.has_default = False
+            default = _('select_option')
+            choices = [str(default)] + choices
+        else:
+            self.has_default = True
+            default = str(self._meta['default'])
         return wx.ComboBox(
             parent=parent,
             id=-1,
-            # str conversion allows using stringyfiable values in addition to pure strings
-            value=str(default),
-            choices=[str(default)] + [str(choice) for choice in self._meta['choices']],
+            value=default,
+            choices=choices,
             style=wx.CB_DROPDOWN)
 
     def setOptions(self, options):
         with self.retainSelection():
             self.widget.Clear()
-            self.widget.SetItems([_('select_option')] + options)
+            select_option = [_('select_option')] if not self.has_default else []
+            self.widget.SetItems(select_option + options)
 
     def setValue(self, value):
-        ## +1 to offset the default placeholder value
-        index = self._meta['choices'].index(value) + 1
+        ## +1 to offset the default placeholder value if present
+        index = self._meta['choices'].index(value) + 1 if not self.has_default else 0
         self.widget.SetSelection(index)
 
     def getWidgetValue(self):
