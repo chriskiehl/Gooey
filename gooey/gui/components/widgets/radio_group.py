@@ -103,13 +103,23 @@ class RadioGroup(BaseWidget):
         Conditionally disabled/enables form fields based on the current
         section in the radio group
         """
-        for button, widget in zip(self.radioButtons, self.widgets):
+        # for reasons I have been completely unable to figure out
+        # or understand, IFF you've interacted with one of the radio Buttons's
+        # child components, then the act of disabling that component will
+        # reset the state of the radioButtons thus causing it to forget
+        # what should be selected. So, that is why we're collected the initial
+        # state of all the buttons and resetting each button's state as we go.
+        # it's wonky as hell
+        states = [x.GetValue() for x in self.radioButtons]
+        for button, selected, widget in zip(self.radioButtons, states, self.widgets):
             if isinstance(widget, CheckBox):
                 widget.hideInput()
-            if not button.GetValue(): # not checked
+            if not selected: # not checked
                 widget.Disable()
             else:
                 widget.Enable()
+            button.SetValue(selected)
+
 
     def handleImplicitCheck(self):
         """
