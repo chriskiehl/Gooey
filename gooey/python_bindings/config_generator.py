@@ -37,7 +37,7 @@ def create_from_parser(parser, source_path, **kwargs):
       # when running with a custom target, there is no need to inject
       # --ignore-gooey into the CLI args
       'suppress_gooey_flag':  kwargs.get('suppress_gooey_flag') or False,
-      'program_name':         kwargs.get('program_name') or os.path.basename(sys.argv[0]).replace('.py', ''),
+      'program_name':         kwargs.get('program_name') or os.path.basename(sys.argv[0]).strip('.py').strip('.pyw'),
       'program_description':  kwargs.get('program_description') or '',
       'sidebar_title':        kwargs.get('sidebar_title', 'Actions'),
       'default_size':         kwargs.get('default_size', (610, 530)),
