@@ -2,7 +2,7 @@ import wx
 
 from gooey.gui.util.filedrop import FileDrop
 from gooey.util.functional import merge
-from gui.components.mouse import notifyMouseEvent
+from gooey.gui.components.mouse import notifyMouseEvent
 
 
 class TextInput(wx.Panel):

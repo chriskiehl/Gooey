@@ -7,7 +7,7 @@ from gooey.gui.util import wx_util
 from gooey.util.functional import getin, ifPresent
 from gooey.gui.validators import runValidator
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
-from gui.components.mouse import notifyMouseEvent
+from gooey.gui.components.mouse import notifyMouseEvent
 
 
 class BaseWidget(wx.Panel):

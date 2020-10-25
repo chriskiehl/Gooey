@@ -10,7 +10,7 @@ from gooey.gui import imageutil, image_repository
 from gooey.gui.util import wx_util
 from gooey.gui.three_to_four import bitmapFromImage
 from gooey.util.functional import getin
-from gui.components.mouse import notifyMouseEvent
+from gooey.gui.components.mouse import notifyMouseEvent
 
 PAD_SIZE = 10
 

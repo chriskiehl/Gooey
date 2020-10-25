@@ -4,7 +4,7 @@ import wx
 from gooey.gui import events
 from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
-from gui.components.mouse import notifyMouseEvent
+from gooey.gui.components.mouse import notifyMouseEvent
 
 
 class Footer(wx.Panel):

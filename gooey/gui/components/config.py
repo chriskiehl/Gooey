@@ -5,7 +5,7 @@ from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
 from gooey.util.functional import getin, flatmap, compact, indexunique
 from gooey.gui.lang.i18n import _
-from gui.components.mouse import notifyMouseEvent
+from gooey.gui.components.mouse import notifyMouseEvent
 
 
 class ConfigPage(ScrolledPanel):
