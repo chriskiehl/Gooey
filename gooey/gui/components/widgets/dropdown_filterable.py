@@ -6,7 +6,7 @@ import gooey.gui.events as events
 from gooey.gui.components.widgets.dropdown import Dropdown
 from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
-from gui.components.mouse import notifyMouseEvent
+from gooey.gui.components.mouse import notifyMouseEvent
 
 __ALL__ = ('FilterableDropdown',)
 
