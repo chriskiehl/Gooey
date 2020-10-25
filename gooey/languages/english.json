@@ -21,6 +21,7 @@
   "finished_forced_quit": "Terminated by user",
   "finished_msg": "All done! You may now safely close the program.",
   "finished_title": "Finished",
+  "dropdown.no_matches": "No matches found",
   "ok": "Ok",
   "open_file": "Open File",
   "open_files": "Open Files",

@@ -4,6 +4,7 @@ import wx
 from gooey.gui import events
 from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
+from gui.components.mouse import notifyMouseEvent
 
 
 class Footer(wx.Panel):
@@ -34,6 +35,9 @@ class Footer(wx.Panel):
 
         for button in self.buttons:
             self.Bind(wx.EVT_BUTTON, self.dispatch_click, button)
+            self.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent, button)
+        self.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+
 
     def updateProgressBar(self, *args, **kwargs):
         '''

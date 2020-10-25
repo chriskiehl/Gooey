@@ -72,7 +72,6 @@ class GooeyApplication(wx.Frame):
         if self.buildSpec.get('auto_start', False):
             self.onStart()
 
-
     def applyConfiguration(self):
         self.SetTitle(self.buildSpec['program_name'])
         self.SetBackgroundColour(self.buildSpec.get('body_bg_color'))

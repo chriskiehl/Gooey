@@ -24,3 +24,5 @@ PROGRESS_UPDATE = wx.Window.NewControlId()
 
 USER_INPUT = wx.Window.NewControlId()
 
+LEFT_DOWN = wx.Window.NewControlId()
+

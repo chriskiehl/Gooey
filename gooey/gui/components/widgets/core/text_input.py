@@ -2,6 +2,7 @@ import wx
 
 from gooey.gui.util.filedrop import FileDrop
 from gooey.util.functional import merge
+from gui.components.mouse import notifyMouseEvent
 
 
 class TextInput(wx.Panel):
@@ -15,6 +16,7 @@ class TextInput(wx.Panel):
         self.widget.AppendText('')
         self.layout()
 
+        self.widget.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
 
     def layout(self):
         sizer = wx.BoxSizer(wx.VERTICAL)

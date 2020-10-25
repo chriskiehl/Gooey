@@ -10,6 +10,7 @@ from gooey.gui import imageutil, image_repository
 from gooey.gui.util import wx_util
 from gooey.gui.three_to_four import bitmapFromImage
 from gooey.util.functional import getin
+from gui.components.mouse import notifyMouseEvent
 
 PAD_SIZE = 10
 
@@ -31,6 +32,8 @@ class FrameHeader(wx.Panel):
         self.images = []
 
         self.layoutComponent()
+        self.bindMouseEvents()
+
 
 
     def setTitle(self, title):
@@ -45,9 +48,7 @@ class FrameHeader(wx.Panel):
         getattr(self, image).Show(True)
         self.Layout()
 
-
     def layoutComponent(self):
-
         self.SetBackgroundColour(self.buildSpec['header_bg_color'])
         self.SetSize((30, self.buildSpec['header_height']))
         self.SetMinSize((120, self.buildSpec['header_height']))
@@ -106,3 +107,14 @@ class FrameHeader(wx.Panel):
             self._subheader.Hide()
         sizer.AddStretchSpacer(1)
         return sizer
+
+    def bindMouseEvents(self):
+        """
+        Manually binding all LEFT_DOWN events.
+        See: gooey.gui.mouse for background.
+        """
+        self.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+        self._header.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+        self._subheader.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+        for image in self.images:
+            image.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)

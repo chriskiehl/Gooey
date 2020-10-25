@@ -5,6 +5,8 @@ from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
 from gooey.util.functional import getin, flatmap, compact, indexunique
 from gooey.gui.lang.i18n import _
+from gui.components.mouse import notifyMouseEvent
+
 
 class ConfigPage(ScrolledPanel):
     def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
@@ -16,6 +18,7 @@ class ConfigPage(ScrolledPanel):
         self.layoutComponent()
         self.Layout()
         self.widgetsMap = indexunique(lambda x: x._id, self.reifiedWidgets)
+        self.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
         ## TODO: need to rethink what uniquely identifies an argument.
         ## Out-of-band IDs, while simple, make talking to the client program difficult
         ## unless they're agreed upon before hand. Commands, as used here, have the problem
@@ -113,6 +116,7 @@ class ConfigPage(ScrolledPanel):
             if group['name']:
                 groupName = wx_util.h1(parent, self.getName(group) or '')
                 groupName.SetForegroundColour(getin(group, ['options', 'label_color']))
+                groupName.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
                 boxSizer.Add(groupName, 0, wx.TOP | wx.BOTTOM | wx.LEFT, 8)
 
         group_description = getin(group, ['description'])
@@ -120,6 +124,7 @@ class ConfigPage(ScrolledPanel):
             description = AutoWrappedStaticText(parent, label=group_description, target=boxSizer)
             description.SetForegroundColour(getin(group, ['options', 'description_color']))
             description.SetMinSize((0, -1))
+            description.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
             boxSizer.Add(description, 1,  wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 
         # apply an underline when a grouping border is not specified
