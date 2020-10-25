@@ -20,8 +20,6 @@ from uuid import uuid4
 from gooey.python_bindings.gooey_parser import GooeyParser
 from gooey.util.functional import merge, getin, identity, assoc
 
-from jsonschema import validate
-
 
 VALID_WIDGETS = (
     'FileChooser',
