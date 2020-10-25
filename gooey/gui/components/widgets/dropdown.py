@@ -8,7 +8,11 @@ from gooey.gui.lang.i18n import _
 
 
 class Dropdown(TextContainer):
-
+    _gooey_options = {
+        'placeholder': str,
+        'readonly': bool,
+        'enable_autocomplete': bool
+    }
     def getWidget(self, parent, *args, **options):
         default = _('select_option')
         return wx.ComboBox(

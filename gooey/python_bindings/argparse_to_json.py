@@ -20,6 +20,8 @@ from uuid import uuid4
 from gooey.python_bindings.gooey_parser import GooeyParser
 from gooey.util.functional import merge, getin, identity, assoc
 
+from jsonschema import validate
+
 
 VALID_WIDGETS = (
     'FileChooser',
@@ -37,7 +39,8 @@ VALID_WIDGETS = (
     'MultiDirChooser',
     'Textarea',
     'PasswordField',
-    'Listbox'
+    'Listbox',
+    'FilterableDropdown'
 )
 
 
@@ -85,6 +88,8 @@ def convert(parser, **kwargs):
         - totally unclear what the data structures even hold
         - everything is just mushed together and gross. unwinding argparse also
           builds validators, handles coercion, and so on...
+        - converts to an entirely bespoke json mini-language that mirrors
+          the internal structure of argparse.
     Refactor plan:
         - Investigate restructuring the core data representation. As is, it is ad-hoc
           and largely tied to argparse's goofy internal structure. May be worth moving to

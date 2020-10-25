@@ -7,6 +7,7 @@ from gooey.gui.util import wx_util
 from gooey.util.functional import getin, ifPresent
 from gooey.gui.validators import runValidator
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
+from gui.components.mouse import notifyMouseEvent
 
 
 class BaseWidget(wx.Panel):
@@ -38,6 +39,20 @@ class BaseWidget(wx.Panel):
 
 
 class TextContainer(BaseWidget):
+    # TODO: fix this busted-ass inheritance hierarchy.
+    # Cracking at the seems for more advanced widgets
+    # problems:
+    #   - all the usual textbook problems of inheritance
+    #   - assumes there will only ever be ONE widget created
+    #   - assumes those widgets are all created in `getWidget`
+    #   - all the above make for extremely awkward lifecycle management
+    #      - no clear point at which binding is correct.
+    #   - I think the core problem here is that I couple the interface
+    #     for shared presentation layout with the specification of
+    #     a behavioral interface
+    #     - This should be broken apart.
+    #     - presentation can be ad-hoc or composed
+    #     - behavioral just needs a typeclass of get/set/format for Gooey's purposes
     widget_class = None
 
     def __init__(self, parent, widgetInfo, *args, **kwargs):
@@ -55,11 +70,26 @@ class TextContainer(BaseWidget):
         self.layout = self.arrange(*args, **kwargs)
         self.setColors()
         self.SetSizer(self.layout)
+        self.bindMouseEvents()
         self.Bind(wx.EVT_SIZE, self.onSize)
         # Checking for None instead of truthiness means False-evaluaded defaults can be used.
         if self._meta['default'] is not None:
             self.setValue(self._meta['default'])
+        self.onComponentInitialized()
 
+    def onComponentInitialized(self):
+        pass
+
+    def bindMouseEvents(self):
+        """
+        Send any LEFT DOWN mouse events to interested
+        listeners via pubsub. see: gooey.gui.mouse for background.
+        """
+        self.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+        self.label.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+        self.help_text.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+        self.error.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+        self.widget.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
 
     def arrange(self, *args, **kwargs):
         wx_util.make_bold(self.label)
