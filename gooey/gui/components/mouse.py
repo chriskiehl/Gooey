@@ -23,4 +23,6 @@ def notifyMouseEvent(event):
     """
     Notify interested listeners of the LEFT_DOWN mouse event
     """
+    # TODO: is there ever a situation where this wouldn't be skipped..?
+    event.Skip()
     pub.send_message_sync(events.LEFT_DOWN, wxEvent=event)
