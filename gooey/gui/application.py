@@ -30,7 +30,7 @@ def build_app(build_spec):
   i18n.load(build_spec['language_dir'], build_spec['language'], build_spec['encoding'])
   imagesPaths = image_repository.loadImages(build_spec['image_dir'])
   gapp = GooeyApplication(merge(build_spec, imagesPaths))
-  # wx.lib.inspection.InspectionTool().Show()
+  wx.lib.inspection.InspectionTool().Show()
   gapp.Show()
   return (app, gapp)
 

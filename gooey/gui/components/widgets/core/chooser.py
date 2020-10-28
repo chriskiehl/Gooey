@@ -8,24 +8,44 @@ from gooey.gui.components.widgets.dialogs.calender_dialog import CalendarDlg
 from gooey.gui.components.widgets.dialogs.time_dialog import TimeDlg
 from gooey.gui.lang.i18n import _
 from gooey.util.functional import merge
+from gui.util.filedrop import FileDrop
 
 
 class Chooser(wx.Panel):
     """
+    TODO: Tests!
+    TODO: Document GooeyOptions!
     Base 'Chooser' type.
 
     Launches a Dialog box that allows the user to pick files, directories,
     dates, etc.. and places the result into a TextInput in the UI
-    """
 
+    TODO: oh, young me. DRY != Good Abstraction
+    TODO: this is another weird inheritance hierarchy that's hard
+          to follow. Why do subclasses rather into, not their parent
+          class, but their _physical_ UI parent to grab the Gooey Options?
+          All this could be simplified to make the data flow
+          more apparent.
+    """
+    _gooey_options = {
+        'pathsep': str
+    }
     def __init__(self, parent, *args, **kwargs):
         super(Chooser, self).__init__(parent)
+        self.options = parent._options
         buttonLabel = kwargs.pop('label', _('browse'))
         self.widget = TextInput(self, *args, **kwargs)
         self.button = wx.Button(self, label=buttonLabel)
         self.button.Bind(wx.EVT_BUTTON, self.spawnDialog)
+        self.dropTarget = FileDrop(self.widget, self.dropHandler)
+        self.SetDropTarget(self.dropTarget)
+        self.widget.SetDropTarget(self.dropTarget)
         self.layout()
 
+    def dropHandler(self, x, y, filenames):
+        sep = self.options.get('pathsep', os.pathsep)
+        self.widget.setValue(sep.join(filenames))
+        return True
 
     def layout(self):
         layout = wx.BoxSizer(wx.HORIZONTAL)
@@ -36,13 +56,11 @@ class Chooser(wx.Panel):
         v.Add(layout, 1, wx.EXPAND, wx.TOP, 1)
         self.SetSizer(v)
 
-
     def spawnDialog(self, event):
         fd = self.getDialog()
         if fd.ShowModal() == wx.ID_CANCEL:
             return
         self.processResult(self.getResult(fd))
-
 
     def getDialog(self):
         return wx.FileDialog(self, _('open_file'))
@@ -50,10 +68,8 @@ class Chooser(wx.Panel):
     def getResult(self, dialog):
         return dialog.GetPath()
 
-
     def processResult(self, result):
         self.setValue(result)
-
 
     def setValue(self, value):
         self.widget.setValue(value)
@@ -137,16 +153,15 @@ class DateChooser(Chooser):
         defaults = {'label': _('choose_date')}
         super(DateChooser, self).__init__(*args, **merge(kwargs, defaults))
 
-
     def getDialog(self):
         return CalendarDlg(self)
+
 
 class TimeChooser(Chooser):
     """ Launches a time picker which returns and ISO Time """
     def __init__(self, *args, **kwargs):
         defaults = {'label': _('choose_time')}
         super(TimeChooser, self).__init__(*args, **merge(kwargs, defaults))
-
 
     def getDialog(self):
         return TimeDlg(self)
