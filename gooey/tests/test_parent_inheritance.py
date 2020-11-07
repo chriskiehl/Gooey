@@ -2,7 +2,7 @@ import argparse
 import unittest
 
 from gooey import GooeyParser
-
+from gooey.tests import *
 
 class TestParentInheritance(unittest.TestCase):
 

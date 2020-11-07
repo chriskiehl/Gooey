@@ -1,6 +1,8 @@
 import re
 import unittest
 
+from gooey.tests import *
+
 from gooey.gui.util.time import get_current_time,get_elapsed_time,estimate_time_remaining,format_interval
 
 

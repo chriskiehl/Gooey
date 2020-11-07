@@ -95,8 +95,6 @@ class GooeyApplication(wx.Frame):
                 config.displayErrors()
                 self.Layout()
         
-
-
     def onEdit(self):
         """Return the user to the settings screen for further editing"""
         with transactUI(self):
@@ -144,13 +142,45 @@ class GooeyApplication(wx.Frame):
                     if self.buildSpec.get('show_failure_modal'):
                         wx.CallAfter(modals.showFailure)
 
+    def onCancel(self):
+        """Close the program after confirming
+
+        We treat the behavior of the "cancel" button slightly
+        differently than the general window close X button only
+        because this is 'part of' the form.
+        """
+        if modals.confirmExit():
+            self.onClose()
+
 
     def onStopExecution(self):
         """Displays a scary message and then force-quits the executing
         client code if the user accepts"""
-        if not self.buildSpec['show_stop_warning'] or modals.confirmForceStop():
+        if self.shouldStopExecution():
             self.clientRunner.stop()
 
+
+    def onClose(self, *args, **kwargs):
+        """Stop any actively running client program, cleanup the top
+        level WxFrame and shutdown the current process"""
+        # issue #592 - we need to run the same onStopExecution machinery
+        # when the exit button is clicked to ensure everything is cleaned
+        # up correctly.
+        if self.clientRunner.running():
+            if self.shouldStopExecution():
+                self.clientRunner.stop()
+                self.destroyGooey()
+        else:
+            self.destroyGooey()
+
+
+    def shouldStopExecution(self):
+        return not self.buildSpec['show_stop_warning'] or modals.confirmForceStop()
+
+
+    def destroyGooey(self):
+        self.Destroy()
+        sys.exit()
 
     def fetchExternalUpdates(self):
         """
@@ -164,25 +194,6 @@ class GooeyApplication(wx.Frame):
         )
         for config in self.configs:
             config.seedUI(seeds)
-
-
-    def onCancel(self):
-        """Close the program after confirming"""
-        if modals.confirmExit():
-            self.onClose()
-
-
-    def onClose(self, *args, **kwargs):
-        """Stop any actively running client program, cleanup the top
-        level WxFrame and shutdown the current process"""
-        # issue #592 - we need to run the same onStopExecution machinery
-        # when the exit button is clicked to ensure everything is cleaned
-        # up correctly.
-        if self.clientRunner.running():
-            self.onStopExecution()
-        self.Destroy()
-        sys.exit()
-
 
     def layoutComponent(self):
         sizer = wx.BoxSizer(wx.VERTICAL)

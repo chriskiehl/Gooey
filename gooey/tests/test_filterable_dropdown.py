@@ -2,8 +2,8 @@ import unittest
 from argparse import ArgumentParser
 from collections import namedtuple
 from unittest.mock import patch
-
 import wx
+from gooey.tests import *
 
 from gooey.tests.harness import instrumentGooey
 from gooey import GooeyParser

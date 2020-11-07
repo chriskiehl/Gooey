@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from itertools import *
 
 from tests.harness import instrumentGooey
-
+from gooey.tests import *
 
 class TestGooeyHeader(unittest.TestCase):
 
