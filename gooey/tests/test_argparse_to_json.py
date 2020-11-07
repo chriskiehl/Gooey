@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from gooey import GooeyParser
 from gooey.python_bindings import argparse_to_json
 from gooey.util.functional import getin
-
+from gooey.tests import *
 
 class TestArgparse(unittest.TestCase):
 

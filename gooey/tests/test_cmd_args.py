@@ -3,6 +3,8 @@ import unittest
 from gooey import GooeyParser
 from gooey.python_bindings import cmd_args
 from argparse import ArgumentParser
+from gooey.tests import *
+
 
 class TextCommandLine(unittest.TestCase):
 

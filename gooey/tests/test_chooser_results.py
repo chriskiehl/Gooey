@@ -3,6 +3,8 @@ import os
 import unittest
 
 from gooey.gui.components.widgets.core import chooser
+from gooey.tests import *
+
 
 class MockWxMDD:
     def GetPaths(self):

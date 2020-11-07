@@ -8,10 +8,9 @@ from unittest.mock import MagicMock
 from python_bindings import constants
 from tests.harness import instrumentGooey
 
+from gooey.tests import *
 
 class TestGooeyApplication(unittest.TestCase):
-
-
 
     def testFullscreen(self):
         parser = self.basicParser()
@@ -64,16 +63,14 @@ class TestGooeyApplication(unittest.TestCase):
         """
         parser = self.basicParser()
         with instrumentGooey(parser) as (app, gapp):
-            with patch('gui.containers.application.sys.exit') as exitmock:
-                gapp.clientRunner = MagicMock()
-                gapp.Destroy = MagicMock()
-                # mocking that the user clicks "yes shut down" in the warning modal
-                mockModal.return_value = True
-                gapp.onClose()
-                
-                mockModal.assert_called()
-                gapp.Destroy.assert_called()
-                exitmock.assert_called()
+            gapp.clientRunner = MagicMock()
+            gapp.destroyGooey = MagicMock()
+            # mocking that the user clicks "yes shut down" in the warning modal
+            mockModal.return_value = True
+            gapp.onClose()
+
+            mockModal.assert_called()
+            gapp.destroyGooey.assert_called()
 
 
     def testTerminalColorChanges(self):

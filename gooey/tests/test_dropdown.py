@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from unittest.mock import patch
 
 from tests.harness import instrumentGooey
-
+from gooey.tests import *
 
 class TestGooeyDropdown(unittest.TestCase):
 

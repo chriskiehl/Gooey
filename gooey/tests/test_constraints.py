@@ -1,7 +1,7 @@
 import unittest
 
 from gooey import GooeyParser
-
+from gooey.tests import *
 
 class TestConstraints(unittest.TestCase):
 

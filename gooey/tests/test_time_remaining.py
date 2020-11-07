@@ -5,6 +5,9 @@ from itertools import *
 
 from tests.harness import instrumentGooey
 
+
+from gooey.tests import *
+
 class TestFooterTimeRemaining(unittest.TestCase):
 
     def make_parser(self):
@@ -18,7 +21,6 @@ class TestFooterTimeRemaining(unittest.TestCase):
 
                     gooeyApp.showConsole()
                     footer = gooeyApp.footer
-                    
 
                     self.assertEqual(
                         footer.time_remaining_text.Shown,
