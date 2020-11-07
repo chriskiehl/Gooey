@@ -8,7 +8,7 @@ from gooey.gui.components.widgets.dialogs.calender_dialog import CalendarDlg
 from gooey.gui.components.widgets.dialogs.time_dialog import TimeDlg
 from gooey.gui.lang.i18n import _
 from gooey.util.functional import merge
-from gui.util.filedrop import FileDrop
+from gooey.gui.util.filedrop import FileDrop
 
 
 class Chooser(wx.Panel):
