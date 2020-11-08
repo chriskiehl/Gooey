@@ -38,7 +38,6 @@ class Chooser(wx.Panel):
         self.button = wx.Button(self, label=buttonLabel)
         self.button.Bind(wx.EVT_BUTTON, self.spawnDialog)
         self.dropTarget = FileDrop(self.widget, self.dropHandler)
-        self.SetDropTarget(self.dropTarget)
         self.widget.SetDropTarget(self.dropTarget)
         self.layout()
 
