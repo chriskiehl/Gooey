@@ -50,7 +50,7 @@ class TestGooeyDropdown(unittest.TestCase):
                 # the values in the UI now reflect those returned from the update
                 # note: we're appending the ['select option'] bit here as it gets automatically added
                 # in the UI.
-                expectedValues = ['Select Option'] + dynamicUpdate
+                expectedValues = ['Select Option'] if default in dynamicUpdate else [] + dynamicUpdate
                 self.assertEqual(dropdown.widget.GetItems(), expectedValues)
                 # and our selection is what we expect
                 self.assertEqual(dropdown.widget.GetValue(), expectedFinalSelection)
