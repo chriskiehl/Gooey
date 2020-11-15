@@ -30,37 +30,6 @@ class TestGooeyFilterableDropdown(unittest.TestCase):
                 dropdown.listbox.IsShown()
             )
 
-    def test_relevant_suggestions_shown(self):
-        choices = ['alpha1', 'alpha2', 'beta', 'gamma']
-        cases = [['a', choices[:2]],
-                 ['A', choices[:2]],
-                 ['AlPh', choices[:2]],
-                 ['Alpha1', choices[:1]],
-                 ['b', choices[2:3]],
-                 ['g', choices[-1:]]]
-
-        parser = self.make_parser(choices=choices)
-        with instrumentGooey(parser) as (app, gooeyApp):
-            for input, expected in cases:
-                with self.subTest(f'given input {input}, expect: {expected}'):
-                    dropdown = gooeyApp.configs[0].reifiedWidgets[0]
-
-                    event = wx.CommandEvent(wx.wxEVT_TEXT, wx.Window.NewControlId())
-                    event.SetString(input)
-                    dropdown.widget.GetTextCtrl().ProcessEvent(event)
-                    # model and UI agree
-                    self.assertTrue(
-                        dropdown.model.suggestionsVisible,
-                        dropdown.listbox.IsShown()
-                    )
-                    # model and UI agree
-                    self.assertEqual(
-                        dropdown.model.suggestions,
-                        dropdown.listbox.GetItems(),
-                    )
-                    self.assertEqual(dropdown.model.suggestions,expected)
-
-
     def test_arrow_key_selection_cycling(self):
         """
         Testing that the up/down arrow keys spawn the dropdown

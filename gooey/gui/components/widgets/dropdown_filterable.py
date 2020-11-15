@@ -1,12 +1,14 @@
 from contextlib import contextmanager
 
 import wx
+import wx.html
 
 import gooey.gui.events as events
+from gooey.gui.components.filtering.prefix_filter import PrefixSearch
+from gooey.gui.components.mouse import notifyMouseEvent
 from gooey.gui.components.widgets.dropdown import Dropdown
 from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
-from gooey.gui.components.mouse import notifyMouseEvent
 
 __ALL__ = ('FilterableDropdown',)
 
@@ -14,7 +16,6 @@ __ALL__ = ('FilterableDropdown',)
 class FilterableDropdown(Dropdown):
     """
     TODO: tests for gooey_options
-    TODO: better search strategy than linear
     TODO: documentation
     A dropdown with auto-complete / filtering behaviors.
 
@@ -63,15 +64,22 @@ class FilterableDropdown(Dropdown):
         """
         if self.widget.GetValue() != self.model.displayValue:
             self.widget.ChangeValue(model.displayValue)
-        if self.listbox.GetItems() != self.model.suggestions:
-            self.listbox.SetItems(model.suggestions)
+
+        self.listbox.Clear()
+        self.listbox.SetItemCount(len(self.model.suggestions))
+        if len(self.model.suggestions) == 1:
+            # I have no clue why this is required, but without
+            # manually flicking the virtualized listbox off/on
+            # it won't paint the update when there's only a single
+            # item being displayed
+            self.listbox.Show(False)
+            self.listbox.Show(self.model.suggestionsVisible)
         if model.selectedSuggestion > -1:
             self.listbox.SetSelection(model.selectedSuggestion)
             self.widget.SetInsertionPoint(-1)
             self.widget.SetSelection(999, -1)
         else:
             self.listbox.SetSelection(-1)
-        self.listbox.SetMaxSize(self.model.maxSize)
         self.estimateBestSize()
         self.listbox.Show(self.model.suggestionsVisible)
         self.Layout()
@@ -92,7 +100,8 @@ class FilterableDropdown(Dropdown):
         self.comboCtrl.OnButtonClick = self.onButton
         self.foo = ListCtrlComboPopup()
         self.comboCtrl.SetPopupControl(self.foo)
-        self.listbox = wx.ListBox(self, choices=self._meta['choices'], style=wx.LB_SINGLE)
+        self.listbox = VirtualizedListBox(self)
+        self.listbox.OnGetItem = self.OnGetItem
         # model is created here because the design of these widget
         # classes is broken.
         self.model = FilterableDropdownModel(self._meta['choices'], self._options, listeners=[self.interpretState])
@@ -100,6 +109,9 @@ class FilterableDropdown(Dropdown):
         # and keeps the tabbing at the top-level widget level
         self.listbox.AcceptsFocusFromKeyboard = lambda *args, **kwargs: False
         return self.comboCtrl
+
+    def OnGetItem(self, n):
+        return self.model.suggestions[n]
 
     def getSublayout(self, *args, **kwargs):
         verticalSizer = wx.BoxSizer(wx.VERTICAL)
@@ -127,7 +139,7 @@ class FilterableDropdown(Dropdown):
             self.model.showSuggestions()
 
     def onClickSuggestion(self, event):
-        self.model.acceptSuggestion(event.String)
+        self.model.acceptSuggestion(self.model.suggestions[event.Selection])
         event.Skip()
 
     def onMouseClick(self, wxEvent):
@@ -162,7 +174,7 @@ class FilterableDropdown(Dropdown):
                 self.model.generateSuggestions(self.model.displayValue)
                 self.model.showSuggestions()
             else:
-                if self.listbox.GetItems()[0] != self.model.noMatch:
+                if self.listbox.OnGetItem(0) != self.model.noMatch:
                     self.ignore = True
                     if event.GetKeyCode() == wx.WXK_DOWN:
                         self.model.incSelectedSuggestion()
@@ -182,11 +194,23 @@ class FilterableDropdown(Dropdown):
         of items within it. This is a rough estimate based on the
         current font size.
         """
-        padding = 7
+        padding = 11
         rowHeight = self.listbox.GetFont().GetPixelSize()[1] + padding
         maxHeight = self.model.maxSize[1]
-        self.listbox.SetMaxSize((-1, min(maxHeight, len(self.listbox.GetItems()) * rowHeight)))
+        self.listbox.SetMaxSize((-1, min(maxHeight, len(self.model.suggestions) * rowHeight)))
+        self.listbox.SetMinSize((-1, min(maxHeight, len(self.model.suggestions) * rowHeight)))
         self.listbox.SetSize((-1, -1))
+
+
+
+class VirtualizedListBox(wx.html.HtmlListBox):
+    def __init__(self, *args, **kwargs):
+        super(VirtualizedListBox, self).__init__(*args, **kwargs)
+        self.SetItemCount(1)
+
+    def OnGetItem(self, n):
+        return ''
+
 
 
 
@@ -209,10 +233,11 @@ class FilterableDropdownModel(object):
         self.suggestionsVisible = False
         self.noMatch = options.get('no_matches', _('dropdown.no_matches'))
         self.choices = choices
-        self.suggestions = []
+        self.suggestions = choices
         self.selectedSuggestion = -1
         self.suggestionsVisible = False
         self.maxSize = (-1, options.get('max_size', 80))
+        self.strat = PrefixSearch(choices, options.get('search_strategy', {}))
 
     def __str__(self):
         return str(vars(self))
@@ -229,6 +254,7 @@ class FilterableDropdownModel(object):
         """Update the available choices in response
         to a dynamic update"""
         self.choices = choices
+        self.strat.updateChoices(choices)
 
     def handleTextInput(self, value):
         if self.dropEvent:
@@ -237,6 +263,7 @@ class FilterableDropdownModel(object):
             with self.notify():
                 self.actualValue = value
                 self.displayValue = value
+                self.selectedSuggestion = -1
                 self.generateSuggestions(value)
                 self.suggestionsVisible = True
 
@@ -264,8 +291,7 @@ class FilterableDropdownModel(object):
             self.selectedSuggestion = -1
 
     def generateSuggestions(self, prompt):
-        prompt = prompt.lower()
-        suggestions = [choice for choice in self.choices if choice.lower().startswith(prompt)]
+        suggestions = self.strat.findMatches(prompt)
         final_suggestions = suggestions if suggestions else [self.noMatch]
         self.suggestions = final_suggestions
 

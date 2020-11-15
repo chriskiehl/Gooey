@@ -23,6 +23,10 @@ def assoc(m, key, val):
     cpy[key] = val
     return cpy
 
+def dissoc(m, key, val):
+    cpy = deepcopy(m)
+    del cpy[key]
+    return cpy
 
 def associn(m, path, value):
     """ Copy-on-write associates a value in a nested dict """
