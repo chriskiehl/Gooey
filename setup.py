@@ -6,12 +6,13 @@ from setuptools import setup, find_packages
 with open('README.md') as readme:
     long_description = readme.read()
 
-version = '1.0.5'
+version = '1.0.6'
 
 deps = [
     'Pillow>=4.3.0',
     'psutil>=5.4.2',
-    'colored>=1.3.93'
+    'colored>=1.3.93',
+    'pygtrie>=2.3.3'
 ]
 
 if sys.version[0] == '3':
