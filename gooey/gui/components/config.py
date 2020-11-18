@@ -211,7 +211,7 @@ class TabbedConfigPage(ConfigPage):
             self.makeGroup(panel, sizer, group, 0, wx.EXPAND)
             panel.SetSizer(sizer)
             panel.Layout()
-            self.notebook.AddPage(panel, group['name'])
+            self.notebook.AddPage(panel, self.getName(group))
             self.notebook.Layout()
 
 
