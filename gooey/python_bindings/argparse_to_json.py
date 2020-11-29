@@ -19,7 +19,8 @@ from uuid import uuid4
 
 from gooey.python_bindings.gooey_parser import GooeyParser
 from gooey.util.functional import merge, getin, identity, assoc
-
+from gooey.gui.components.options.validators import validators
+from gooey.gui.components.options.validators import collect_errors
 
 VALID_WIDGETS = (
     'FileChooser',
@@ -38,7 +39,10 @@ VALID_WIDGETS = (
     'Textarea',
     'PasswordField',
     'Listbox',
-    'FilterableDropdown'
+    'FilterableDropdown',
+    'IntegerField',
+    'DecimalField',
+    'Slider'
 )
 
 
@@ -419,6 +423,7 @@ def action_to_json(action, widget, options):
 
     base = merge(item_default, {
         'validator': {
+            'type': 'ExpressionValidator',
             'test': validator,
             'message': error_msg
         },
@@ -427,6 +432,9 @@ def action_to_json(action, widget, options):
     default = handle_default(action, widget)
     if default == argparse.SUPPRESS:
         default = None
+
+    final_options = merge(base, options.get(action.dest) or {})
+    validate_gooey_options(action, widget, final_options)
 
     return {
         'id': action.option_strings[0] if action.option_strings else action.dest,
@@ -443,11 +451,33 @@ def action_to_json(action, widget, options):
             'default': default,
             'dest': action.dest,
         },
-        'options': merge(base, options.get(action.dest) or {})
+        'options': final_options
     }
 
 
+def validate_gooey_options(action, widget, options):
+    """Very basic field validation / sanity checking for
+    the time being.
 
+    Future plans are to assert against the options and actions together
+    to facilitate checking that certain options like `initial_selection` in
+    RadioGroups map to a value which actually exists (rather than exploding
+    at runtime with an unhelpful error)
+
+    Additional problems with the current approach is that no feedback is given
+    as to WHERE the issue took place (in terms of stacktrace). Which means we should
+    probably explode in GooeyParser proper rather than trying to collect all the errors here.
+    It's not super ideal in that the user will need to run multiple times to
+    see all the issues, but, ultimately probably less annoying that trying to
+    debug which `gooey_option` key had an issue in a large program.
+
+    That said "better is the enemy of done." This is good enough for now. It'll be
+    a TODO: better validation 
+    """
+    errors = collect_errors(validators, options)
+    if errors:
+        from pprint import pformat
+        raise ValueError(str(action.dest) + str(pformat(errors)))
 
 
 def choose_cli_type(action):

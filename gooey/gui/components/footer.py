@@ -18,7 +18,10 @@ class Footer(wx.Panel):
         self.buildSpec = buildSpec
 
         self.SetMinSize((30, 53))
-        self.SetDoubleBuffered(True)
+        # TODO: The was set to True for the timer addition
+        #       however, it leads to 'tearing' issues when resizing
+        #       the GUI in windows. Disabling until I can dig into it.
+        self.SetDoubleBuffered(False)
         # components
         self.cancel_button = None
         self.start_button = None

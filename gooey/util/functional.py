@@ -72,7 +72,10 @@ def zipmap(keys, vals):
 
 def compact(coll):
     """Returns a new list with all falsy values removed"""
-    return list(filter(None, coll))
+    if isinstance(coll, dict):
+        return {k:v for k,v in coll.items() if v is not None}
+    else:
+        return list(filter(None, coll))
 
 
 def ifPresent(f):

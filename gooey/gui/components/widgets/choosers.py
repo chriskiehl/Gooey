@@ -16,12 +16,10 @@ __ALL__ = [
 
 
 class FileChooser(BaseChooser):
-    # todo: allow wildcard from argparse
     widget_class = core.FileChooser
 
 
 class MultiFileChooser(BaseChooser):
-    # todo: allow wildcard from argparse
     widget_class = core.MultiFileChooser
 
     def formatOutput(self, metatdata, value):
@@ -29,17 +27,14 @@ class MultiFileChooser(BaseChooser):
 
 
 class FileSaver(BaseChooser):
-    # todo: allow wildcard
     widget_class = core.FileSaver
 
 
 class DirChooser(BaseChooser):
-    # todo: allow wildcard
     widget_class = core.DirChooser
 
 
 class MultiDirChooser(BaseChooser):
-    # todo: allow wildcard
     widget_class = core.MultiDirChooser
 
     def formatOutput(self, metadata, value):
@@ -47,7 +42,6 @@ class MultiDirChooser(BaseChooser):
 
 
 class DateChooser(BaseChooser):
-    # todo: allow wildcard
     widget_class = core.DateChooser
 
 

@@ -18,7 +18,9 @@ class PrefixTokenizers:
     def REGEX(cls, expression):
         return expression
 
-
+class OperatorType:
+    AND = 'AND'
+    OR = 'OR'
 
 class SearchOptions:
     def __init__(self,
