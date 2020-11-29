@@ -209,6 +209,9 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 | BlockCheckbox | ![image](https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/46922288-9296f200-cfbb-11e8-8b0d-ddde08064247.png) <br/> The default InlineCheck box can look less than ideal if a large help text block is present. `BlockCheckbox` moves the text block to the normal position and provides a short-form `block_label` for display next to the control. Use `gooey_options.checkbox_label` to control the label text | 
 |  ColourChooser   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <p align="center"><img src="https://user-images.githubusercontent.com/21027844/72672451-0752aa80-3a0f-11ea-86ed-8303bd3e54b5.gif" width="400"></p> |
 | FilterableDropdown | <p align="center"><img src="https://raw.githubusercontent.com/chriskiehl/GooeyImages/images/readme-images/filterable-dropdown.gif" width="400"></p> |
+| IntegerField | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/integer-field.PNG" width="400"></p> |
+| DecimalField | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/decimal-field.PNG" width="400"></p> |
+| Slider | <p align="center"><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/slider.PNG" width="400"></p> |
 
 
 
