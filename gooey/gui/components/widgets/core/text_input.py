@@ -32,6 +32,9 @@ class TextInput(wx.Panel):
     def getValue(self):
         return self.widget.GetValue()
 
+    def SetHint(self, value):
+        self.widget.SetHint(value)
+
     def SetDropTarget(self, target):
         self.widget.SetDropTarget(target)
 

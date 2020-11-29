@@ -22,7 +22,7 @@ class Chooser(wx.Panel):
 
     TODO: oh, young me. DRY != Good Abstraction
     TODO: this is another weird inheritance hierarchy that's hard
-          to follow. Why do subclasses rather into, not their parent
+          to follow. Why do subclasses reach into, not their parent
           class, but their _physical_ UI parent to grab the Gooey Options?
           All this could be simplified to make the data flow
           more apparent.
@@ -72,6 +72,9 @@ class Chooser(wx.Panel):
 
     def setValue(self, value):
         self.widget.setValue(value)
+
+    def SetHint(self, value):
+        self.widget.SetHint(value)
 
     def getValue(self):
         return self.widget.getValue()

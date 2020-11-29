@@ -2,28 +2,32 @@ import re
 
 import pygtrie as trie
 from functools import reduce
+from typing import NewType
 
 __ALL__ = ('PrefixTokenizers', 'PrefixSearch')
 
+Tokenizer = NewType('Tokenizer', str)
 
 
 class PrefixTokenizers:
     # This string here is just an arbitrary long string so that
     # re.split finds no matches and returns the entire phrase
-    ENTIRE_PHRASE = '::gooey/tokenization/entire-phrase'
+    ENTIRE_PHRASE: Tokenizer = '::gooey/tokenization/entire-phrase'
     # \s == any whitespace character
-    WORDS = r'\s'
+    WORDS: Tokenizer = r'\s'
 
     @classmethod
-    def REGEX(cls, expression):
+    def REGEX(cls, expression) ->Tokenizer:
         return expression
 
-
+class OperatorType:
+    AND = 'AND'
+    OR = 'OR'
 
 class SearchOptions:
     def __init__(self,
-                 choice_tokenizer=PrefixTokenizers.ENTIRE_PHRASE,
-                 input_tokenizer=PrefixTokenizers.ENTIRE_PHRASE,
+                 choice_tokenizer: Tokenizer=PrefixTokenizers.ENTIRE_PHRASE,
+                 input_tokenizer: Tokenizer=PrefixTokenizers.ENTIRE_PHRASE,
                  ignore_case=True,
                  operator='AND',
                  index_suffix= False,

@@ -1,3 +1,4 @@
+import re
 from functools import reduce
 
 import wx
@@ -26,6 +27,9 @@ class BaseWidget(wx.Panel):
         raise NotImplementedError
 
     def setValue(self, value):
+        raise NotImplementedError
+
+    def setPlaceholder(self, value):
         raise NotImplementedError
 
     def receiveChange(self, *args, **kwargs):
@@ -75,6 +79,10 @@ class TextContainer(BaseWidget):
         # Checking for None instead of truthiness means False-evaluaded defaults can be used.
         if self._meta['default'] is not None:
             self.setValue(self._meta['default'])
+
+        if self._options.get('placeholder'):
+            self.setPlaceholder(self._options.get('placeholder'))
+
         self.onComponentInitialized()
 
     def onComponentInitialized(self):
@@ -153,9 +161,13 @@ class TextContainer(BaseWidget):
 
 
     def getValue(self):
+        regexFunc = lambda x: bool(re.match(userValidator, x))
+
         userValidator = getin(self._options, ['validator', 'test'], 'True')
         message = getin(self._options, ['validator', 'message'], '')
-        testFunc = eval('lambda user_input: bool(%s)' % userValidator)
+        testFunc = regexFunc \
+                   if getin(self._options, ['validator', 'type'], None) == 'RegexValidator'\
+                   else eval('lambda user_input: bool(%s)' % userValidator)
         satisfies = testFunc if self._meta['required'] else ifPresent(testFunc)
         value = self.getWidgetValue()
 
@@ -172,6 +184,10 @@ class TextContainer(BaseWidget):
 
     def setValue(self, value):
         self.widget.SetValue(value)
+
+    def setPlaceholder(self, value):
+        if getattr(self.widget, 'SetHint', None):
+            self.widget.SetHint(value)
 
     def setErrorString(self, message):
         self.error.SetLabel(message)
@@ -202,6 +218,9 @@ class BaseChooser(TextContainer):
 
     def setValue(self, value):
         self.widget.setValue(value)
+
+    def setPlaceholder(self, value):
+        self.widget.SetHint(value)
 
     def getWidgetValue(self):
         return self.widget.getValue()

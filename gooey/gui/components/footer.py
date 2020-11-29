@@ -18,7 +18,7 @@ class Footer(wx.Panel):
         self.buildSpec = buildSpec
 
         self.SetMinSize((30, 53))
-        self.SetDoubleBuffered(True)
+        self.SetDoubleBuffered(False)
         # components
         self.cancel_button = None
         self.start_button = None
