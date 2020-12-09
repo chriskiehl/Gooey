@@ -329,6 +329,6 @@ def ArgumentGroup(show_border=False,
 
 def _clean(options):
     cleaned = {k: v for k, v in options.items()
-               if v is not None and k is not "layout_options"}
+               if v is not None and k != "layout_options"}
     return {**options.get('layout_options', {}), **cleaned}
 
