@@ -11,6 +11,16 @@ def _include_layout_docs(f):
     return f
 
 
+def _include_global_option_docs(f):
+    """
+    Combines docstrings for options available to
+    all widget types.
+    """
+    _doc = """:param initial_value:  Sets the initial value in the UI. 
+    """
+    f.__doc__ = (f.__doc__ or '') + _doc
+    return f
+
 def _include_chooser_msg_wildcard_docs(f):
     """
     Combines the basic Chooser options (wildard, message) docsstring
@@ -74,18 +84,22 @@ def LayoutOptions(label_color=None,
     return _clean(locals())
 
 
+
 @_include_layout_docs
-def TextField(validator=None, **layout_options):
+@_include_global_option_docs
+def TextField(initial_value=None, validator=None, **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
-def PasswordField(validator=None, **layout_options):
+@_include_global_option_docs
+def PasswordField(initial_value=None, validator=None, **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
-def IntegerField(validator=None, min=0, max=100, increment=1, **layout_options):
+@_include_global_option_docs
+def IntegerField(initial_value=None, validator=None, min=0, max=100, increment=1, **layout_options):
     """
     :param min: The minimum value allowed
     :param max: The maximum value allowed
@@ -94,7 +108,8 @@ def IntegerField(validator=None, min=0, max=100, increment=1, **layout_options):
     return _clean(locals())
 
 @_include_layout_docs
-def Slider(validator=None, min=0, max=100, increment=1, **layout_options):
+@_include_global_option_docs
+def Slider(initial_value=None, validator=None, min=0, max=100, increment=1, **layout_options):
     """
     :param min: The minimum value allowed
     :param max: The maximum value allowed
@@ -104,7 +119,9 @@ def Slider(validator=None, min=0, max=100, increment=1, **layout_options):
 
 
 @_include_layout_docs
+@_include_global_option_docs
 def DecimalField(validator=None,
+                 initial_value=None,
                  min=0.0,
                  max=1.0,
                  increment=0.01,
@@ -120,7 +137,8 @@ def DecimalField(validator=None,
 
 
 @_include_layout_docs
-def TextArea(height=None, readonly=False, validator=None, **layout_options):
+@_include_global_option_docs
+def TextArea(initial_value=None, height=None, readonly=False, validator=None, **layout_options):
     """
     :param height:   The height of the TextArea.
     :param readonly: Controls whether or not user's may modify the contents
@@ -129,12 +147,14 @@ def TextArea(height=None, readonly=False, validator=None, **layout_options):
 
 
 @_include_layout_docs
+@_include_global_option_docs
 def RichTextConsole(**layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
-def ListBox(height=None, **layout_options):
+@_include_global_option_docs
+def ListBox(initial_value=None, height=None, **layout_options):
     """
     :param height: The height of the ListBox
     """
@@ -150,30 +170,36 @@ def MutexGroup(initial_selection=None, title=None, **layout_options):
 
 
 @_include_layout_docs
-def Dropdown(**layout_options):
+@_include_global_option_docs
+def Dropdown(initial_value=None, **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
-def Counter(**layout_options):
+@_include_global_option_docs
+def Counter(initial_value=None, **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
-def CheckBox(**layout_options):
+@_include_global_option_docs
+def CheckBox(initial_value=None, **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
-def BlockCheckBox(checkbox_label=None, **layout_options):
+@_include_global_option_docs
+def BlockCheckBox(initial_value=None, checkbox_label=None, **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
+@_include_global_option_docs
 def FilterableDropdown(placeholder=None,
                        empty_message=None,
                        max_size=80,
                        search_strategy=None,
+                       initial_value=None,
                        **layout_options):
     """
     :param placeholder:     Text to display when the user has provided no input
@@ -205,21 +231,25 @@ def PrefixSearchStrategy(
 
 
 @_include_layout_docs
+@_include_global_option_docs
 @_include_choose_dir_file_docs
 @_include_chooser_msg_wildcard_docs
 def FileChooser(wildcard=None,
                 default_dir=None,
                 default_file=None,
                 message=None,
+                initial_value=None,
                 **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
+@_include_global_option_docs
 @_include_chooser_msg_wildcard_docs
 def DirectoryChooser(wildcard=None,
                     default_path=None,
                     message=None,
+                    initial_value=None,
                     **layout_options):
     """
     :param default_path: The default path selected when the dialog spawns
@@ -228,23 +258,27 @@ def DirectoryChooser(wildcard=None,
 
 
 @_include_layout_docs
+@_include_global_option_docs
 @_include_choose_dir_file_docs
 @_include_chooser_msg_wildcard_docs
 def FileSaver(wildcard=None,
               default_dir=None,
               default_file=None,
               message=None,
+              initial_value=None,
               **layout_options):
     return _clean(locals())
 
 
 @_include_layout_docs
+@_include_global_option_docs
 @_include_choose_dir_file_docs
 @_include_chooser_msg_wildcard_docs
 def MultiFileSaver(wildcard=None,
               default_dir=None,
               default_file=None,
               message=None,
+              initial_value=None,
               **layout_options):
     return _clean(locals())
 

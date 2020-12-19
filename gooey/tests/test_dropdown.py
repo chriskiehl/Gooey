@@ -2,13 +2,14 @@ import unittest
 from argparse import ArgumentParser
 from unittest.mock import patch
 
+from gooey import GooeyParser
 from tests.harness import instrumentGooey
 from gooey.tests import *
 
 class TestGooeyDropdown(unittest.TestCase):
 
-    def make_parser(self, **kwargs):
-        parser = ArgumentParser(description='description')
+    def makeParser(self, **kwargs):
+        parser = GooeyParser(description='description')
         parser.add_argument('--dropdown', **kwargs)
         return parser
 
@@ -35,11 +36,10 @@ class TestGooeyDropdown(unittest.TestCase):
             # TODO: from dynamics just like it does in parser land. It doesn't currently
             # TODO: do this, so I'm manually casting it to strings for now.
             [[True, False], True, 'True', ['True', 'False'], 'True']
-
         ]
 
         for choices, default, initalSelection, dynamicUpdate, expectedFinalSelection in testcases:
-            parser = self.make_parser(choices=choices, default=default)
+            parser = self.makeParser(choices=choices, default=default)
             with instrumentGooey(parser) as (app, gooeyApp):
                 dropdown = gooeyApp.configs[0].reifiedWidgets[0]
                 # ensure that default values (when supplied) are selected in the UI
@@ -54,6 +54,38 @@ class TestGooeyDropdown(unittest.TestCase):
                 self.assertEqual(dropdown.widget.GetItems(), expectedValues)
                 # and our selection is what we expect
                 self.assertEqual(dropdown.widget.GetValue(), expectedFinalSelection)
+
+
+    def testInitialValue(self):
+        cases = [
+            # `initial` should supersede `default`
+            {'inputs': {'default': 'b',
+                        'choices': ['a', 'b', 'c'],
+                        'gooey_options': {'initial_value': 'a'}},
+             'expect': 'a'},
+
+            {'inputs': {'choices': ['a', 'b', 'c'],
+                        'gooey_options': {'initial_value': 'a'}},
+             'expect': 'a'},
+
+            {'inputs': {'choices': ['a', 'b', 'c'],
+                        'default': 'b',
+                        'gooey_options': {}},
+             'expect': 'b'},
+
+            {'inputs': {'choices': ['a', 'b', 'c'],
+                        'default': 'b'},
+             'expect': 'b'},
+
+            {'inputs': {'choices': ['a', 'b', 'c']},
+             'expect': None}
+        ]
+        for case in cases:
+            with self.subTest(case):
+                parser = self.makeParser(**case['inputs'])
+                with instrumentGooey(parser) as (app, gooeyApp):
+                    widget = gooeyApp.configs[0].reifiedWidgets[0]
+                    self.assertEqual(widget.getValue()['rawValue'], case['expect'])
 
 
 if __name__ == '__main__':

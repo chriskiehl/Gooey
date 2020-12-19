@@ -429,9 +429,14 @@ def action_to_json(action, widget, options):
         },
     })
 
-    default = handle_default(action, widget)
+    if (options.get(action.dest) or {}).get('initial_value') != None:
+        value = options[action.dest]['initial_value']
+        options[action.dest]['initial_value'] = handle_initial_values(action, widget, value)
+    default = handle_initial_values(action, widget, action.default)
     if default == argparse.SUPPRESS:
         default = None
+
+
 
     final_options = merge(base, options.get(action.dest) or {})
     validate_gooey_options(action, widget, final_options)
@@ -494,7 +499,6 @@ def coerce_default(default, widget):
         'Dropdown': safe_string,
         'Counter': safe_string
     }
-
     # Issue #321:
     # Defaults for choice types must be coerced to strings
     # to be able to match the stringified `choices` used by `wx.ComboBox`
@@ -505,7 +509,7 @@ def coerce_default(default, widget):
     return dispatcher.get(widget, identity)(cleaned)
 
 
-def handle_default(action, widget):
+def handle_initial_values(action, widget, value):
     handlers = [
         [textinput_with_nargs_and_list_default, coerse_nargs_list],
         [is_widget('Listbox'), clean_list_defaults],
@@ -514,8 +518,8 @@ def handle_default(action, widget):
     ]
     for matches, apply_coercion in handlers:
         if matches(action, widget):
-            return apply_coercion(action.default)
-    return clean_default(action.default)
+            return apply_coercion(value)
+    return clean_default(value)
 
 
 def coerse_nargs_list(default):

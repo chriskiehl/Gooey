@@ -22,7 +22,8 @@ and with that, you're ready to rock.
 
 ## Overview
 
-* Global Style Options 
+* Global Style/Layout Options 
+* Global Config Options 
 * Custom Widget Options
     * Textarea
     * BlockCheckbox  
@@ -31,7 +32,7 @@ and with that, you're ready to rock.
 * Argument Group Options  
 
 
-## Global Widget Styles    
+## Global Style / Layout Options     
 
 All widgets in Gooey (with the exception of RadioGroups) are made up of three basic components. 
 
@@ -72,6 +73,17 @@ parser.add_argument('-my-arg', gooey_options={
 | full_width | bool | This is a layout hint for this widget. When `True` the widget will fill the entire available space within a given row. Otherwise, it will be sized based on the column rules provided elsewhere. | 
 
 
+## Global Config Options 
+
+> new in 1.0.8
+
+All widgets in Gooey accept an `initial_value` option to seed the UI. 
+
+```python
+parser.add_argument('-my-arg', widget='Textarea', gooey_options={
+    'initial_value': 'Hello world!'  
+})
+```
 
 ## Individual Widget Options
 

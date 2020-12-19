@@ -27,11 +27,33 @@ class TestNumbericInputs(unittest.TestCase):
             # the default and all works as expected.
             # this is a TODO for validation
             [{'default': 81234, 'widget': 'IntegerField', 'gooey_options': {'max': 99999}}, 81234],
+            # Initial Value cases
+            [{'widget': 'IntegerField', 'gooey_options': {'initial_value': 0}}, 0],
+            [{'widget': 'IntegerField', 'gooey_options': {'initial_value': 10}}, 10],
+            [{'widget': 'IntegerField', 'gooey_options': {'initial_value': 76}}, 76],
+            # note that WX caps the value
+            # unless explicitly widened via gooey_options
+            [{'widget': 'IntegerField', 'gooey_options': {'initial_value': 81234}}, 100],
+            # here we set the max to something higher than
+            # the default and all works as expected.
+            # this is a TODO for validation
+            [{'widget': 'IntegerField', 'gooey_options': {'initial_value': 81234, 'max': 99999}}, 81234],
 
             [{'widget': 'DecimalField'}, 0],
             [{'default': 0, 'widget': 'DecimalField'}, 0],
             [{'default': 81234, 'widget': 'DecimalField'}, 100],
             [{'default': 81234, 'widget': 'DecimalField', 'gooey_options': {'max': 99999}}, 81234],
+            # Initial Value cases
+            [{'widget': 'DecimalField', 'gooey_options': {'initial_value': 0}}, 0],
+            [{'widget': 'DecimalField', 'gooey_options': {'initial_value': 10}}, 10],
+            [{'widget': 'DecimalField', 'gooey_options': {'initial_value': 76}}, 76],
+            # note that WX caps the value
+            # unless explicitly widened via gooey_options
+            [{'widget': 'DecimalField', 'gooey_options': {'initial_value': 81234}}, 100],
+            # here we set the max to something higher than
+            # the default and all works as expected.
+            # this is a TODO for validation
+            [{'widget': 'DecimalField', 'gooey_options': {'initial_value': 81234, 'max': 99999}}, 81234],
         ]
         for inputs, expected in cases:
             with self.subTest(inputs):
