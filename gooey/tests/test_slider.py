@@ -26,6 +26,19 @@ class TestGooeySlider(unittest.TestCase):
             # the default and all works as expected.
             # this is a TODO for validation
             [{'default': 81234, 'gooey_options': {'max': 99999}}, 81234],
+
+            # Initial Value cases
+            [{}, 0],
+            [{'gooey_options': {'initial_value': 0}}, 0],
+            [{'gooey_options': {'initial_value': 10}}, 10],
+            [{'gooey_options': {'initial_value': 76}}, 76],
+            # note that WX caps the value
+            # unless explicitly widened via gooey_options
+            [{'gooey_options': {'initial_value': 81234}}, 100],
+            # here we set the max to something higher than
+            # the default and all works as expected.
+            # this is a TODO for validation
+            [{'gooey_options': {'initial_value': 81234, 'max': 99999}}, 81234],
         ]
         for inputs, expected in cases:
             with self.subTest(inputs):

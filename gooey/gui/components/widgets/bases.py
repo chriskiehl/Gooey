@@ -76,8 +76,12 @@ class TextContainer(BaseWidget):
         self.SetSizer(self.layout)
         self.bindMouseEvents()
         self.Bind(wx.EVT_SIZE, self.onSize)
+
+        # 1.0.7 initial_value should supersede default when both are present
+        if self._options.get('initial_value') is not None:
+            self.setValue(self._options['initial_value'])
         # Checking for None instead of truthiness means False-evaluaded defaults can be used.
-        if self._meta['default'] is not None:
+        elif self._meta['default'] is not None:
             self.setValue(self._meta['default'])
 
         if self._options.get('placeholder'):

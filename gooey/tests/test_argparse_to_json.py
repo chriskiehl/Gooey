@@ -190,7 +190,7 @@ class TestArgparse(unittest.TestCase):
                 parser = ArgumentParser(prog='test_program')
                 parser.add_argument('--foo', nargs=case['nargs'], default=case['default'])
                 action = parser._actions[-1]
-                result = argparse_to_json.handle_default(action, case['w'])
+                result = argparse_to_json.handle_initial_values(action, case['w'], action.default)
                 self.assertEqual(result, case['gooey_default'])
 
     def test_nargs(self):
