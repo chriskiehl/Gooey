@@ -12,7 +12,8 @@ from argparse import (
     _StoreFalseAction,
     _StoreTrueAction,
     _StoreAction,
-    _SubParsersAction)
+    _SubParsersAction,
+    _VersionAction)
 from collections import OrderedDict
 from functools import partial
 from uuid import uuid4
@@ -277,8 +278,10 @@ def categorize2(groups, widget_dict, options):
 def categorize(actions, widget_dict, options):
     _get_widget = partial(get_widget, widget_dict)
     for action in actions:
+        if is_version(action):
+            yield action_to_json(action, _get_widget(action, 'CheckBox'), options)
 
-        if is_mutex(action):
+        elif is_mutex(action):
             yield build_radio_group(action, widget_dict, options)
 
         elif is_standard(action):
@@ -351,6 +354,9 @@ def is_choice(action):
 def is_file(action):
     ''' action with FileType '''
     return isinstance(action.type, argparse.FileType)
+
+def is_version(action):
+    return isinstance(action, _VersionAction)
 
 def is_standard(action):
     """ actions which are general "store" instructions.
