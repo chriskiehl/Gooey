@@ -163,6 +163,7 @@ Gooey does its best to choose sensible defaults based on the options it finds. C
 | store_const | CheckBox |<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
 | store_true | CheckBox | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>|
 | store_False | CheckBox|  <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>   |
+| version | CheckBox|  <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f538c850-07c5-11e5-8cbe-864badfa54a9.png"/>   |
 | append | TextCtrl |  <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f54e9f5e-07c5-11e5-86e5-82f011c538cf.png"/>  | 
 | count | DropDown &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f53ccbe4-07c5-11e5-80e5-510e2aa22922.png"/> | 
 | Mutually Exclusive Group | RadioGroup | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f553feb8-07c5-11e5-9d5b-eaa4772075a9.png"/>
