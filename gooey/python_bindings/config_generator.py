@@ -4,6 +4,7 @@ import warnings
 import textwrap
 from gooey.python_bindings import argparse_to_json
 from gooey.gui.util.quoting import quote
+from gooey.gui.util.layout import get_layout_direction
 from gooey.python_bindings import constants
 from gooey.python_bindings import gooey_decorator
 from gooey.gui.util.functional import merge_dictionaries
@@ -80,6 +81,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'show_sidebar':         kwargs.get('show_sidebar', False),
       'tabbed_groups':        kwargs.get('tabbed_groups', False),
       'group_by_type':        kwargs.get('group_by_type', True),
+      'layout_direction':     kwargs.get('layout_direction', 0),
 
       # styles
       'body_bg_color':        kwargs.get('body_bg_color', '#f0f0f0'),
@@ -108,6 +110,9 @@ def create_from_parser(parser, source_path, **kwargs):
 
 
   build_spec['program_description'] = build_spec['program_description'] or parser.description or ''
+
+  if not build_spec['layout_direction']:
+    build_spec['layout_direction'] = get_layout_direction(build_spec['language'])
 
   layout_data = (argparse_to_json.convert(parser, **build_spec)
                    if build_spec['show_advanced']
