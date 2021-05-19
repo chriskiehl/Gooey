@@ -258,11 +258,11 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 
 | fullscreen | start Gooey in fullscreen mode |
-| required_cols | Controls how many columns are in the Required Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
-| optional_cols | Controls how many columns are in the Optional Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
+| required_cols | Controls how many columns are in the Required Arguments section <br> :warning: **Deprecation notice:** See [Layout Customization](https://github.com/chriskiehl/Gooey#layout-customization) for modern layout controls|
+| optional_cols | Controls how many columns are in the Optional Arguments section <br> :warning: **Deprecation notice:** See [Layout Customization](https://github.com/chriskiehl/Gooey#layout-customization) for modern layout controls|
 | dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
 | load_build_config | Loads a `json` copy of its build configuration from disk | 
-| monospace_display | Uses a mono-spaced font in the output screen <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern font configuration| 
+| monospace_display | Uses a mono-spaced font in the output screen <br> :warning: **Deprecation notice:** See [Layout Customization](https://github.com/chriskiehl/Gooey#layout-customization) for modern font configuration| 
 | image_dir | Path to the directory in which Gooey should look for custom images/icons |
 | language_dir | Path to the directory in which Gooey should look for custom languages files |
 | disable_stop_button | Disable the `Stop` button when running |
