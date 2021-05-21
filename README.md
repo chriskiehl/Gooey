@@ -438,7 +438,7 @@ Each map is made up of two key/value pairs
 You can have as many menu groups as you want. They're passed as a list to the `menu` argument on the `@Gooey` decorator.
 
 ```
-@Gooey(menu=[{'name': 'File', 'items: []},
+@Gooey(menu=[{'name': 'File', 'items': []},
              {'name': 'Tools', 'items': []},
              {'name': 'Help', 'items': []}])
 ```
