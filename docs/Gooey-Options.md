@@ -159,7 +159,10 @@ parser.add_argument('-my-arg', widget='Listbox', gooey_options={
 parser.add_mutually_exclusive_group(gooey_options={
     # Pre-select a specific option within a mutually exclusive group. 
     # default behavior is to have all options unselected by default.  
-    'initial_selection': int
+    'initial_selection': int,
+    # customizes the text which appears over the Radio Group 
+    # default: "Choose one" 
+    'title': str
 })
 ```
 
