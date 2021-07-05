@@ -114,7 +114,7 @@ parser.add_argument('-my-arg', widget='IntegerField', gooey_options={
 ### DecimalField
 
 ```python
-parser.add_argument('-my-arg', widget='IntegerField', gooey_options={
+parser.add_argument('-my-arg', widget='DecimalField', gooey_options={
     min: float, 
     max: float, 
     increment: float,
