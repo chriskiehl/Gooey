@@ -7,7 +7,7 @@ def _include_layout_docs(f):
     Combines the layout_options docsstring with the
     wrapped function's doc string.
     """
-    f.__doc__ = (f.__doc__ or '') + LayoutOptions.__doc__
+    f.__doc__ = (f.__doc__ or '') + (LayoutOptions.__doc__ or '')
     return f
 
 
