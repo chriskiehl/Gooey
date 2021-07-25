@@ -407,6 +407,14 @@ The basic view is best for times when the user is familiar with Console Applicat
 
 No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. 
 
+To use this mode, set `auto_start=True` in the Gooey decorator. 
+
+```python
+@Gooey(auto_start=True) 
+def main (): 
+    ... 
+```
+
 <p align="center">
     <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
 </p>
