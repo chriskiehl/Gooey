@@ -1,0 +1,63 @@
+name: lint_python
+on: [pull_request, push]
+jobs:
+  lint_python:
+    strategy:
+      matrix:
+        os: [macos-latest]  # , ubuntu-latest, windows-latest]
+        test:
+          - test_application.py  # abend
+          - test_argparse_to_json.py  # abend
+          - test_checkbox.py  # error
+          - test_chooser_results.py  # error
+          - test_cmd_args.py  # error
+          - test_common.py
+          - test_config_generator.py
+          - test_constraints.py
+          - test_counter.py
+          - test_dropdown.py
+          - test_filterable_dropdown.py
+          - test_filtering.py
+          - test_formatters.py
+          - test_header.py
+          - test_listbox.py
+          - test_numeric_inputs.py
+          - test_options.py
+          - test_parent_inheritance.py
+          - test_password.py
+          - test_processor.py
+          - test_radiogroup.py
+          - test_slider.py
+          - test_textarea.py
+          - test_textfield.py
+          - test_time_remaining.py
+          - test_util.py 
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip install --upgrade pip wheel pytest
+      #- run: pip install bandit black codespell flake8 isort mypy pytest pyupgrade safety
+      #- run: bandit --recursive --skip B101,B307,B404,B602,B603,B605,B607 .
+      #- run: black --check . || true
+      #- run: codespell --ignore-words-list="datas,metatdata,strat" --skip="*.json"
+      #- run: flake8 . --count --builtins=_ --max-complexity=18 --max-line-length=233
+      #                --select=E5,E9,F63,F7,F82 --show-source --statistics
+      #- run: flake8 . --count --exit-zero --max-line-length=88 --show-source --statistics
+      #- run: isort --profile black . || true
+      - run: pip install wxPython  # https://wxpython.org/pages/downloads/
+        if: ${{ !startsWith(matrix.os,'ubuntu') }}
+      - run: pip install -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-20.04 wxPython
+        if: startsWith(matrix.os,'ubuntu')
+      - run: pip install --editable .
+      #- run: mkdir -p .mypy_cache
+      #- run: mypy --ignore-missing-imports --install-types --non-interactive . || true
+      - run: pytest gooey/tests/${{ matrix.test }}
+      #- run: pytest gooey || true
+      #- run: cd gooey  && pytest . || true
+      #- uses: GabrielBB/xvfb-action@v1
+      #  with:
+      #    run: pytest gooey/tests/${{ matrix.test }}
+      #- run: shopt -s globstar && pyupgrade --py36-plus **/*.py || true
+      #- run: safety check

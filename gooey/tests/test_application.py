@@ -5,8 +5,8 @@ from collections import namedtuple
 from unittest.mock import patch
 from unittest.mock import MagicMock
 
-from python_bindings import constants
-from tests.harness import instrumentGooey
+from gooey.python_bindings import constants
+from gooey.tests.harness import instrumentGooey
 
 from gooey.tests import *
 
