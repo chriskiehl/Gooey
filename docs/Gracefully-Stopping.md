@@ -8,9 +8,9 @@
 
 **Contents:**
 
-* [How to tell Gooey which shutdown signal to use](how-to-tell-gooey-which-signal-to-use)
-* [How to catch KeyboardInterrupts](How-to-catch-KeyboardInterrupts)
-* [How to catch general interrupt signals](How-to-catch-general-interrupt-signals)
+* [How to tell Gooey which shutdown signal to use](#how-to-tell-gooey-which-signal-to-use)
+* [How to catch KeyboardInterrupts](#How-to-catch-KeyboardInterrupts)
+* [How to catch general interrupt signals](#How-to-catch-general-interrupt-signals)
 
 By default, Gooey will kill the child process without any chance for cleanup. This guide will explain how to adjust that behavior so that you can detect when Gooey is attempting to close your process and use that signal to shutdown gracefully.   
 
