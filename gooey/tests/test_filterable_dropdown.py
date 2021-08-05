@@ -95,9 +95,9 @@ class TestGooeyFilterableDropdown(unittest.TestCase):
 
 def mockKeyEvent(keycode):
     """
-    Manually bypassing the setters as they don'y allow
+    Manually bypassing the setters as they don't allow
     the non wx.wxXXX event variants by default.
-    The internal WX post/prcess machinery doesn't handle key
+    The internal WX post/process machinery doesn't handle key
     codes well for some reason, thus has to be mocked and
     manually passed to the relevant handler.
     """

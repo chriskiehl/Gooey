@@ -161,7 +161,7 @@ class TestArgparse(unittest.TestCase):
             # we only remap if the action is version
             # i.e. we don't care about the argument name itself
             [['--version'], {'action': 'store'}, 'TextField'],
-            # should get mapped to CheckBox becuase of the action
+            # should get mapped to CheckBox because of the action
             [['--version'], {'action': 'version'}, 'CheckBox'],
             # ditto, even through the 'name' isn't 'version'
             [['--foobar'], {'action': 'version'}, 'CheckBox'],

@@ -47,10 +47,7 @@ class BaseDialog(wx.Dialog):
     """
       Return the value chosen in the picker.
       The method is called GetPath() instead of getPath() to emulate the WX Pickers API.
-      This allows the Chooser class to work same way with native WX dialogs or childs of BaseDialog.
+      This allows the Chooser class to work same way with native WX dialogs or children of BaseDialog.
     """
 
     return self.pickerGetter(self.picker)
-
-
-
