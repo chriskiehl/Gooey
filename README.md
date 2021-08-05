@@ -231,7 +231,7 @@ Gooey is international ready and easily ported to your host language. Languages 
 
 All program text is stored externally in `json` files. So adding new language support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
 
-Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
+Thanks to some awesome [contributors](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
 
 Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/Gooey/compare)
 
@@ -749,7 +749,7 @@ Images are discovered by Gooey based on their _filenames_. So, for example, in o
 
 ## Packaging
 
-Thanks to some [awesome contributers](https://github.com/chriskiehl/Gooey/issues/58), packaging Gooey as an executable is super easy. 
+Thanks to some [awesome contributors](https://github.com/chriskiehl/Gooey/issues/58), packaging Gooey as an executable is super easy. 
 
 The tl;dr [pyinstaller](https://github.com/pyinstaller/pyinstaller) version is to drop this [build.spec](https://github.com/chriskiehl/Gooey/files/29568/build.spec.txt) into the root directory of your application. Edit its contents so that the `application` and `name` are relevant to your project, then execute `pyinstaller build.spec` to bundle your app into a ready-to-go executable. 
 

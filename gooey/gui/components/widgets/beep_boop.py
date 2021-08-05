@@ -62,7 +62,7 @@ app.MainLoop()
 #         self.button = wx.Button(self.panel, label="Test")
 #
 #         self.button1 = wx.Button(self.panel, label="ABOVE")
-#         self.button2 = wx.Button(self.panel, label="BELLOW")
+#         self.button2 = wx.Button(self.panel, label="BELOW")
 #
 #         self.horizontal = wx.BoxSizer()
 #         self.horizontal.Add(self.label, flag=wx.CENTER)

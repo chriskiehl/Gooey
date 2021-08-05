@@ -34,7 +34,7 @@ class FilterableDropdown(Dropdown):
 
     FAQ:
     Q: Why does it slide down rather than hover over elements like the native ComboBox?
-    A: The only mecahnism for layering in WX is the wx.PopupTransientWindow. There's a long
+    A: The only mechanism for layering in WX is the wx.PopupTransientWindow. There's a long
        standing issue in wxPython which prevents ListBox/Ctrl from capturing events when
        inside of a PopupTransientWindow (see: https://tinyurl.com/y28ngh7v)
 
