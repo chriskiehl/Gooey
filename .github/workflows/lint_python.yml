@@ -1,0 +1,28 @@
+name: lint_python
+on: [pull_request, push]
+jobs:
+  lint_python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip install --upgrade pip wheel
+      - run: pip install bandit black codespell flake8 isort mypy pytest pyupgrade safety
+      - run: bandit --recursive --skip B101,B307,B404,B602,B603,B605,B607 .
+      - run: black --check . || true
+      - run: codespell --ignore-words-list="datas,metatdata,strat" --skip="*.json"
+      - run: flake8 . --count --builtins=_,self --max-complexity=18 --max-line-length=233
+                      --select=E5,E9,F63,F7,F82 --show-source --statistics
+      - run: flake8 . --count --exit-zero --max-line-length=88 --show-source --statistics
+      - run: isort --profile black . || true
+      - run: sudo apt-get install freeglut3-dev libgl1-mesa-dev libglu1-mesa-dev libgstreamer-plugins-base1.0-dev
+                                  libgtk-3-dev libjpeg-dev libnotify-dev libpng-dev libsdl2-dev libsm-dev libtiff-dev
+                                  libwebkit2gtk-4.0-dev libxtst-dev
+      - run: pip install --editable .
+      - run: mkdir -p .mypy_cache
+      - run: mypy --ignore-missing-imports --install-types --non-interactive . || true
+      - uses: GabrielBB/xvfb-action@v1
+        with:
+          run: pytest .
+      - run: shopt -s globstar && pyupgrade --py36-plus **/*.py || true
+      - run: safety check
