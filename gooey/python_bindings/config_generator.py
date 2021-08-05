@@ -1,5 +1,6 @@
 import os
 import sys
+import signal
 import warnings
 import textwrap
 from gooey.python_bindings import argparse_to_json
@@ -74,6 +75,7 @@ def create_from_parser(parser, source_path, **kwargs):
       'timing_options':       merge_dictionaries(gooey_decorator.defaults.get('timing_options'),kwargs.get('timing_options')),
       'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
       'disable_stop_button':  kwargs.get('disable_stop_button'),
+      'shutdown_signal':      kwargs.get('shutdown_signal', signal.SIGTERM),
 
       # Layouts
       'navigation':           kwargs.get('navigation', constants.SIDEBAR),
