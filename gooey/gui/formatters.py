@@ -9,14 +9,6 @@ def checkbox(metadata, value):
     return metadata['commands'][0] if value else None
 
 
-def radioGroup(metadata, value):
-    # TODO
-    try:
-        return self.commands[self._value.index(True)][0]
-    except ValueError:
-        return None
-
-
 def multiFileChooser(metadata, value):
     paths = ' '.join(quote(x) for x in value.split(os.pathsep) if x)
     if metadata['commands'] and paths:
