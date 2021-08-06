@@ -1,16 +1,17 @@
-name: lint_python
+name: test_python
 on: [pull_request, push]
 jobs:
-  lint_python:
+  test_python:
+    runs-on: macos-latest
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest]  # , ubuntu-latest, windows-latest]
         test:
-          - test_application.py  # abend
-          - test_argparse_to_json.py  # abend
-          - test_checkbox.py  # error
-          - test_chooser_results.py  # error
-          - test_cmd_args.py  # error
+          - test_application.py
+          - test_argparse_to_json.py
+          - test_checkbox.py
+          - test_chooser_results.py
+          - test_cmd_args.py
           - test_common.py
           - test_config_generator.py
           - test_constraints.py
@@ -32,32 +33,14 @@ jobs:
           - test_textfield.py
           - test_time_remaining.py
           - test_util.py 
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - run: pip install --upgrade pip wheel pytest
-      #- run: pip install bandit black codespell flake8 isort mypy pytest pyupgrade safety
-      #- run: bandit --recursive --skip B101,B307,B404,B602,B603,B605,B607 .
-      #- run: black --check . || true
-      #- run: codespell --ignore-words-list="datas,metatdata,strat" --skip="*.json"
-      #- run: flake8 . --count --builtins=_ --max-complexity=18 --max-line-length=233
-      #                --select=E5,E9,F63,F7,F82 --show-source --statistics
-      #- run: flake8 . --count --exit-zero --max-line-length=88 --show-source --statistics
-      #- run: isort --profile black . || true
-      - run: pip install wxPython  # https://wxpython.org/pages/downloads/
-        if: ${{ !startsWith(matrix.os,'ubuntu') }}
-      - run: pip install -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-20.04 wxPython
-        if: startsWith(matrix.os,'ubuntu')
+      - run: pip install --upgrade pip wheel
+      - run: pip install pytest wxPython
       - run: pip install --editable .
-      #- run: mkdir -p .mypy_cache
-      #- run: mypy --ignore-missing-imports --install-types --non-interactive . || true
       - run: pytest gooey/tests/${{ matrix.test }}
-      #- run: pytest gooey || true
-      #- run: cd gooey  && pytest . || true
+      #- run: pytest . || true
       #- uses: GabrielBB/xvfb-action@v1
       #  with:
       #    run: pytest gooey/tests/${{ matrix.test }}
-      #- run: shopt -s globstar && pyupgrade --py36-plus **/*.py || true
-      #- run: safety check
