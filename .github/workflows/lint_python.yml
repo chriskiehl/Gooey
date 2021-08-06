@@ -19,5 +19,5 @@ jobs:
       - run: pip install --editable .
       - run: mkdir -p .mypy_cache
       - run: mypy --ignore-missing-imports --install-types --non-interactive . || true
-      - run: pyupgrade-directories --py36-plus . || true
+      - run: pyup-dirs --py36-plus . || true
       - run: safety check
