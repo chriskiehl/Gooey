@@ -19,5 +19,5 @@ jobs:
       - run: pip install --editable .
       - run: mkdir -p .mypy_cache
       - run: mypy --ignore-missing-imports --install-types --non-interactive . || true
-      - run: shopt -s globstar && pyupgrade --py36-plus **/*.py || true
+      - run: pyupgrade --py36-plus **/*.py || true
       - run: safety check
