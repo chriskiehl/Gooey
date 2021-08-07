@@ -8,13 +8,19 @@ TODO: this
 
 import json
 import os
+import signal
 import sys
 from argparse import ArgumentParser
 
+from gooey.python_bindings import signal_support
 from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
 from . import config_generator
 from . import cmd_args
+
+
+
+
 
 IGNORE_COMMAND = '--ignore-gooey'
 
@@ -88,6 +94,9 @@ def Gooey(f=None,
   '''
 
   params = merge(locals(), locals()['kwargs'])
+
+  if signal_support.requires_special_handler(sys.platform, params.get('shutdown_signal')):
+    signal_support.install_handler()
 
   def build(payload):
     def run_gooey(self, args=None, namespace=None):

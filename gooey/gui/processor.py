@@ -1,14 +1,12 @@
-import signal
-from contextlib import contextmanager
-import signal
-import psutil
-import wx
 import os
 import re
+import signal
 import subprocess
 import sys
 from functools import partial
 from threading import Thread
+
+import psutil
 
 from gooey.gui import events
 from gooey.gui.pubsub import pub
@@ -41,27 +39,10 @@ class ProcessController(object):
         """
         Sends a signal of the user's choosing (default SIGTERM) to
         the child process.
-
-        Note on the bizarre Thread spawning. For some reason, it seems to be
-        required in order to get the signal we're sending to actually get
-        pushed to the child process. Why that is, I have **absolutely no idea**.
-        I've no idea why it needs to be jiggled or why it works. It was just stumbled
-        upon experimentally after noticing that the child process would only
-        respond to the signal after clicking the stop button again.
-        This is all just to say... it's magic and needs to be there.
-        Possible due to:
-        stackoverflow.com/questions/32023719/how-to-simulate-a-terminal-ctrl-c-event-from-a-unittest
         """
-        with ignore_signal():
-            if self.running():
-                self.wasForcefullyStopped = True
-                self.send_shutdown_signal()
-
-                # for some reason, this is required, even though
-                # it literally does nothing(???). See Docstring for
-                # additional details.
-                Thread(target=lambda: None).start()
-
+        if self.running():
+            self.wasForcefullyStopped = True
+            self.send_shutdown_signal()
 
     def send_shutdown_signal(self):
         parent = psutil.Process(self._process.pid)
@@ -75,6 +56,12 @@ class ProcessController(object):
         return self._process and self.poll() is None
 
     def run(self, command):
+        """
+        Kicks off the user's code in a subprocess.
+
+        Implementation Note: CREATE_NEW_SUBPROCESS is required to have signals behave sanely
+        on windows. See the signal_support module for full background.
+        """
         self.wasForcefullyStopped = False
         env = os.environ.copy()
         env["GOOEY"] = "1"
@@ -84,12 +71,15 @@ class ProcessController(object):
             self._process = subprocess.Popen(
                 command.encode(sys.getfilesystemencoding()),
                 stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-                stderr=subprocess.STDOUT, shell=self.shell_execution, env=env)
+                stderr=subprocess.STDOUT, shell=self.shell_execution, env=env,
+                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
         except:
             self._process = subprocess.Popen(
                 command,
                 stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-                stderr = subprocess.STDOUT, shell = self.shell_execution, env=env)
+                stderr = subprocess.STDOUT, shell = self.shell_execution, env=env,
+                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+            )
 
         t = Thread(target=self._forward_stdout, args=(self._process,))
         t.start()
@@ -144,31 +134,3 @@ class ProcessController(object):
         except:
             return None
 
-@contextmanager
-def ignore_signal():
-    """
-    Ignores incoming ctrl_break signals for the duration
-    of this context. Default behavior is returned upon completion.
-
-    When we create a subprocess on Windows, the new process gets
-    rolled into the current process' Process Group. Signals get sent
-    to all members of a process group[0], which means that the Gooey
-    process would end up receiving the BREAK signal that it itself is
-    sending to its child process. So while gooey is sending signals
-    we ignore any incoming so that we don't inadvertently shut ourselves
-    down.
-
-    [0] There actually seems to be some kind of bubbling of signals going
-    on that I don't fully understand. IF the child process attaches a BREAK
-    signal handler, than the parent process does NOT see the signal. It's only
-    when the child process doesn't respond that Gooey sees it as well.
-    """
-    signal.signal(signal.SIGBREAK, signal.SIG_IGN)
-    try:
-        yield
-    except KeyboardInterrupt:
-        # similar to the BREAK signal, the KeyboardInterrupt can
-        # fire here as well. Silently ignoring is the Right Thing.
-        pass
-    finally:
-        signal.signal(signal.SIGBREAK, signal.SIG_DFL)
