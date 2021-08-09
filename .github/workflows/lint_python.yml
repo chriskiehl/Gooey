@@ -39,7 +39,7 @@ jobs:
       - run: pip install --upgrade pip wheel
       - run: pip install pytest wxPython
       - run: pip install --editable .
-      - run: pythonw3 -m pytest gooey/tests/${{ matrix.test }}
+      - run: python3 -m pytest gooey/tests/${{ matrix.test }}
       #- run: pytest . || true
       #- uses: GabrielBB/xvfb-action@v1
       #  with:
