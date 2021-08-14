@@ -92,6 +92,28 @@ class TestGooeyApplication(unittest.TestCase):
                 self.assertEqual(terminal.GetFont().GetWeight(), weight)
 
 
+    def testProgressBarHiddenWhenDisabled(self):
+        options = [
+            {'disable_progress_bar_animation': True},
+            {'disable_progress_bar_animation': False},
+            {}
+        ]
+        for kwargs in options:
+            parser = self.basicParser()
+            with instrumentGooey(parser, **kwargs) as (app, gapp):
+                mockClientRunner = MagicMock()
+                gapp.clientRunner = mockClientRunner
+
+                # transition's Gooey to the running state using the now mocked processor.
+                # so that we can make assertions about the visibility of footer buttons
+                gapp.onStart()
+
+                # the progress bar flag is awkwardly inverted (is_disabled, rather than
+                # is_enabled). Thus inverting the expectation here. When disabled is true,
+                # shown should be False,
+                expect_shown = not kwargs.get('disable_progress_bar_animation', False)
+                self.assertEqual(gapp.footer.progress_bar.IsShown(), expect_shown)
+
     def basicParser(self):
         parser = ArgumentParser()
         parser.add_argument('--foo')

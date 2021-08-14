@@ -262,7 +262,8 @@ class GooeyApplication(wx.Frame):
         self.header.setTitle(_("running_title"))
         self.header.setSubtitle(_('running_msg'))
         self.footer.showButtons('stop_button')
-        self.footer.progress_bar.Show(True)
+        if not self.buildSpec.get('disable_progress_bar_animation', False):
+            self.footer.progress_bar.Show(True)
         self.footer.time_remaining_text.Show(False)
         if self.buildSpec.get('timing_options')['show_time_remaining']:
             self.timer.start()
