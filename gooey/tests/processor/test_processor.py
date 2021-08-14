@@ -4,7 +4,7 @@ import unittest
 
 import time
 
-from gooey.gui.processor import ProcessController, ignore_signal
+from gooey.gui.processor import ProcessController
 
 
 class TestProcessor(unittest.TestCase):
