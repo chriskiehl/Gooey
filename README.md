@@ -463,6 +463,7 @@ Currently, three types of menu options are supported:
  * AboutDialog 
  * MessageDialog
  * Link
+ * HtmlDialog
  
 
 <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/47251026-9ffc1400-d3e1-11e8-9095-982a6367561b.png" width="400" height="auto" align="right" />
@@ -529,6 +530,36 @@ Example:
     'menuTitle': 'Visit Out Site',
     'url': 'http://www.example.com'
 }
+```
+
+
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/docs/menus/html-dialog.PNG" width="400" height="auto" align="right" />
+
+**HtmlDialog** gives you full control over what's displayed in the message dialog (bonus: people can copy/paste text from this one!). 
+
+
+
+Schema: 
+
+ * `caption` - (_optional_) the caption in the title bar of the modal   
+ * `html` - (_required_) the html you want displayed in the dialog. Note: only a small subset of HTML is supported. []See the WX docs for more info](https://wxpython.org/Phoenix/docs/html/html_overview.html). 
+
+Example: 
+
+```python
+{
+    'type': 'HtmlDialog',
+    'menuTitle': 'Fancy Dialog!',
+    'caption': 'Demo of the HtmlDialog',
+    'html': '''
+    <body bgcolor="white">
+        <img src=/path/to/your/image.png" /> 
+        <h1>Hello world!</h1> 
+        <p><font color="red">Lorem ipsum dolor sit amet, consectetur</font></p>
+    </body>
+    '''
+}
+
 ```
 
 **A full example:**
