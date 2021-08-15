@@ -23,6 +23,7 @@ Table of Contents
 - [Quick Start](#quick-start)
     - [Installation Instructions](#installation-instructions)
     - [Usage](#usage)
+     - [Tutorial](#tutorial)
     - [Examples](#examples)
 - [What It Is](#what-is-it)
 - [Why Is It](#why)
@@ -116,6 +117,8 @@ Gooey will do its best to choose sensible widget defaults to display in the GUI.
       parser.add_argument('Filename', widget="FileChooser")
       parser.add_argument('Date', widget="DateChooser")
       ...
+### Tutorial
+If you're still stuck, check out [this awesome tutorial](https://www.youtube.com/watch?v=76OZ8Mzqr9I) on YouTube by [@George-Ogden](https://github.com/george-ogden)
 
 ### Examples
 
