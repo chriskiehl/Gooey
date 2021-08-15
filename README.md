@@ -542,7 +542,7 @@ Example:
 Schema: 
 
  * `caption` - (_optional_) the caption in the title bar of the modal   
- * `html` - (_required_) the html you want displayed in the dialog. Note: only a small subset of HTML is supported. []See the WX docs for more info](https://wxpython.org/Phoenix/docs/html/html_overview.html). 
+ * `html` - (_required_) the html you want displayed in the dialog. Note: only a small subset of HTML is supported. [See the WX docs for more info](https://wxpython.org/Phoenix/docs/html/html_overview.html). 
 
 Example: 
 
