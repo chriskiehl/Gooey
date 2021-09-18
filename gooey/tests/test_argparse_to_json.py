@@ -1,12 +1,15 @@
 import argparse
 import sys
 import unittest
-from argparse import ArgumentParser
+from argparse import ArgumentParser, FileType
 
 from gooey import GooeyParser
 from gooey.python_bindings import argparse_to_json
 from gooey.util.functional import getin
 from gooey.tests import *
+from gui.components.options.options import FileChooser
+from gui.components.widgets import FileSaver
+
 
 class TestArgparse(unittest.TestCase):
 
@@ -259,3 +262,31 @@ class TestArgparse(unittest.TestCase):
             choices=["one", "two"],
             default="one",
         )
+
+
+    def test_filetype_chooses_good_widget(self):
+        """
+        #743 chose the picker type based on the FileType mode
+        when available.
+        """
+        cases = [
+            (FileType(), 'FileChooser'),
+            (FileType('r'), 'FileChooser'),
+            (FileType('rb'), 'FileChooser'),
+            (FileType('rt'), 'FileChooser'),
+            (FileType('w'), 'FileSaver'),
+            (FileType('wt'), 'FileSaver'),
+            (FileType('wb'), 'FileSaver'),
+            (FileType('a'), 'FileSaver'),
+            (FileType('x'), 'FileSaver'),
+            (FileType('+'), 'FileSaver'),
+        ]
+
+        for filetype, expected_widget in cases:
+            with self.subTest(f'expect {filetype} to produce {expected_widget})'):
+                parser = ArgumentParser()
+                parser.add_argument('foo', type=filetype)
+                action = [parser._actions[-1]]
+                result = next(argparse_to_json.categorize(action, {}, {}))
+                self.assertEqual(result['type'], expected_widget)
+

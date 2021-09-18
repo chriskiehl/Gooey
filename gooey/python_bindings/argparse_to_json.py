@@ -287,8 +287,11 @@ def categorize(actions, widget_dict, options):
         elif is_standard(action):
             yield action_to_json(action, _get_widget(action, 'TextField'), options)
         
-        elif is_file(action):
+        elif is_writemode_file(action):
             yield action_to_json(action, _get_widget(action, 'FileSaver'), options)
+
+        elif is_readmode_file(action):
+            yield action_to_json(action, _get_widget(action, 'FileChooser'), options)
 
         elif is_choice(action):
             yield action_to_json(action, _get_widget(action, 'Dropdown'), options)
@@ -354,6 +357,16 @@ def is_choice(action):
 def is_file(action):
     ''' action with FileType '''
     return isinstance(action.type, argparse.FileType)
+
+def is_readmode_file(action):
+    return is_file(action) and 'r' in action.type._mode
+
+def is_writemode_file(action):
+    # FileType uses the same modes as the builtin `open`
+    # as such, all modes that aren't explicitly `r` (which is
+    # also the default) are writable or read/writable, thus
+    # making a FileChooser a good choice.
+    return is_file(action) and 'r' not in action.type._mode
 
 def is_version(action):
     return isinstance(action, _VersionAction)
