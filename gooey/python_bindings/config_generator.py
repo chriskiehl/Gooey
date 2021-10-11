@@ -28,6 +28,41 @@ default_layout = {
 def create_from_parser(parser, source_path, **kwargs):
 
   run_cmd = kwargs.get('target')
+  if os.path.exists('{}.exe'.format(source_path)):
+    # This is installed as a windows executable
+
+    script_path = '{}-script.py'.format(source_path)
+    if not os.path.exists(script_path):
+      # If easy_install script does not exist, create it
+      executable_name = os.path.split(source_path)[-1]
+      easy_install_script = [
+        '#!{}'.format(sys.executable),
+        'import re',
+        'import sys',
+        '__requires__ = "{}"'.format(executable_name),
+        'try:',
+        '    from importlib.metadata import distribution',
+        'except ImportError:',
+        '    try:',
+        '        from importlib_metadata import distribution',
+        '    except ImportError:',
+        '        from pkg_resources import load_entry_point',
+        'def importlib_load_entry_point(spec, group, name):',
+        '    dist_name, _, _ = spec.partition("==")',
+        '    matches = (',
+        '        entry_point',
+        '        for entry_point in distribution(dist_name).entry_points',
+        '        if entry_point.group == group and entry_point.name == name',
+        '    )',
+        '    return next(matches).load()',
+        'globals().setdefault("load_entry_point", importlib_load_entry_point)',
+        'if __name__ == "__main__":',
+        '    sys.argv[0] = re.sub(r"(-script\.pyw?|\.exe)?$", "", sys.argv[0])',
+        '    sys.exit(load_entry_point("{}", "console_scripts", "{}")())'.format(executable_name, executable_name)
+      ]
+      with open(script_path, 'w') as fp:
+        fp.writelines('\n'.join(easy_install_script))
+    source_path = script_path
   if run_cmd is None:
     if hasattr(sys, 'frozen'):
       run_cmd = quote(source_path)
@@ -127,17 +162,17 @@ def create_from_parser(parser, source_path, **kwargs):
 
 def get_font_weight(kwargs):
     error_msg = textwrap.dedent('''
-    Unknown font weight {}. 
-    
-    The available weights can be found in the `constants` module. 
+    Unknown font weight {}.
+
+    The available weights can be found in the `constants` module.
     They're prefixed with "FONTWEIGHT" (e.g. `FONTWEIGHT_BOLD`)
-    
-    example code:    
-    
+
+    example code:
+
     ```
     from gooey import constants
     @Gooey(terminal_font_weight=constants.FONTWEIGHT_NORMAL)
-    ```   
+    ```
     ''')
     weights = {
         constants.FONTWEIGHT_THIN,
