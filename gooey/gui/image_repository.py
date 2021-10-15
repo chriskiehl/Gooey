@@ -7,6 +7,7 @@ Image credit: kidcomic.net
 '''
 import os
 from functools import partial
+import warnings
 
 from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
@@ -19,15 +20,19 @@ filenames = {
     'errorIcon': 'error_icon.png'
 }
 
+valid_ext = ('.png', '.jpg', '.gif')
+
 
 def loadImages(targetDir):
-    defaultImages = resolvePaths(getResourcePath('images'), filenames)
-    return {'images': merge(defaultImages, collectOverrides(targetDir, filenames))}
+    return {'images': merge(
+        resolvePaths(getResourcePath('images'), filenames, valid_ext),
+        resolvePaths(getImageDirectory(targetDir), filenames, valid_ext))
+    }
 
 
 def getImageDirectory(targetDir):
     return getResourcePath('images') \
-           if targetDir == 'default' \
+           if targetDir == '::gooey/default' \
            else targetDir
 
 
@@ -45,8 +50,24 @@ def collectOverrides(targetDir, filenames):
             if os.path.exists(pathto(filename))}
 
 
-def resolvePaths(dirname, filenames):
-    return {key:  os.path.join(dirname, filename)
-            for key, filename in filenames.items()}
+def resolvePaths(dirname, filenames, valid_ext):
 
+    # Find candidate file paths (allow different ext casing)
+    valid_ext = {e.lower() for e in valid_ext}
+
+    filePaths = {}
+    for f in sorted(os.listdir(dirname)):
+        name, ext = os.path.splitext(f)
+        if ext.lower() not in valid_ext:
+            continue
+
+        if name in filePaths:
+            warnings.warn('Multiple {} images found, using last found '
+                          'extension ({})'.format(name, ext))
+        filePaths[name] = os.path.join(dirname, f)
+
+    # Build image dict
+    return {key: filePaths[os.path.splitext(name)[0]]
+            for key, name in filenames.items() if
+            os.path.splitext(name)[0] in filePaths}
 

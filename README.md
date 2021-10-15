@@ -777,6 +777,8 @@ Images are discovered by Gooey based on their _filenames_. So, for example, in o
 * config_icon.png
 * error_icon.png
 
+All but the `program_icon` support animation if a `.gif` file format is provided. So, for example, in order to use an animated running icon, simply place an image with the filename `running_icon.gif` in your images directory. 
+
 
 ## Packaging
 
