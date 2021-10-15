@@ -92,6 +92,19 @@ def Gooey(f=None,
   Decorator for client code's main function.
   Serializes argparse data to JSON for use with the Gooey front end
   '''
+  # Note: current working directory may change
+  #
+  # Determine these directories before the current directory may change due to
+  # widgets like Filechooser or DirChooser.
+  # So now you can enter this command line:
+  #
+  # $ python cli.py
+  #
+  # instead of:
+  #
+  # $ python /absolute/path/to/cli.py
+  exec_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+  config_path = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'gooey_config.json')
 
   params = merge(locals(), locals()['kwargs'])
 
@@ -107,7 +120,8 @@ def Gooey(f=None,
       build_spec = None
       if load_build_config:
         try:
-          exec_dir = os.path.dirname(sys.argv[0])
+          # See note above.
+          # exec_dir = os.path.dirname(sys.argv[0])
           open_path = os.path.join(exec_dir,load_build_config)
           build_spec = json.load(open(open_path, "r"))
         except Exception as e:
@@ -125,7 +139,8 @@ def Gooey(f=None,
           **params)
 
       if dump_build_config:
-        config_path = os.path.join(os.path.dirname(sys.argv[0]), 'gooey_config.json')
+        # See note above.
+        # config_path = os.path.join(os.path.dirname(sys.argv[0]), 'gooey_config.json')
         print('Writing Build Config to: {}'.format(config_path))
         with open(config_path, 'w') as f:
           f.write(json.dumps(build_spec, indent=2))
