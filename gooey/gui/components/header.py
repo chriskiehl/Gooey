@@ -4,12 +4,11 @@ Created on Dec 23, 2013
 @author: Chris
 '''
 
+import os
 import wx
 
-from gooey.gui import imageutil, image_repository
+from gooey.gui import imageutil
 from gooey.gui.util import wx_util
-from gooey.gui.three_to_four import bitmapFromImage
-from gooey.util.functional import getin
 from gooey.gui.components.mouse import notifyMouseEvent
 
 PAD_SIZE = 10
@@ -33,8 +32,6 @@ class FrameHeader(wx.Panel):
 
         self.layoutComponent()
         self.bindMouseEvents()
-
-
 
     def setTitle(self, title):
         self._header.SetLabel(title)
@@ -76,22 +73,41 @@ class FrameHeader(wx.Panel):
         sizer.Add(headings_sizer, 1,
                   wx.ALIGN_LEFT | wx.EXPAND | wx.LEFT,
                   PAD_SIZE)
-        sizer.Add(self.settings_img, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
-        sizer.Add(self.running_img, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
-        sizer.Add(self.check_mark, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
-        sizer.Add(self.error_symbol, 0, wx.EXPAND | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.settings_img, 0, wx.CENTER | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.running_img, 0, wx.CENTER | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.check_mark, 0, wx.CENTER | wx.RIGHT, PAD_SIZE)
+        sizer.Add(self.error_symbol, 0, wx.CENTER | wx.RIGHT, PAD_SIZE)
         self.running_img.Hide()
         self.check_mark.Hide()
         self.error_symbol.Hide()
         vsizer.Add(sizer, 1, wx.EXPAND)
         self.SetSizer(vsizer)
 
-
     def _load_image(self, imgPath, targetHeight):
+
+        # Determine if image is animated
+        name, e = os.path.splitext(imgPath)
+        if e.lower() == '.gif':
+            # Write resized gif to temp file
+            tempImage = name + '.___'
+            imageutil.resizeGif(imgPath, tempImage, targetHeight)
+
+            # Create AnimationCtrl
+            gif = wx.adv.Animation(tempImage)
+            ctrl = wx.adv.AnimationCtrl(self, -1, gif)
+
+            # Delete temp file
+            os.remove(tempImage)
+
+            # Begin playback
+            ctrl.Play()
+            return ctrl
+
+        # If not a gif, use standard thumbnail resizing
+        # Load static image
         rawImage = imageutil.loadImage(imgPath)
         sizedImage = imageutil.resizeImage(rawImage, targetHeight)
         return imageutil.wrapBitmap(sizedImage, self)
-
 
     def build_heading_sizer(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
