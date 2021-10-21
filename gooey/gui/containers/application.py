@@ -37,6 +37,7 @@ class GooeyApplication(wx.Frame):
         self._state = {}
         self.buildSpec = buildSpec
 
+        self.SetLayoutDirection(buildSpec['layout_direction'])
         self.applyConfiguration()
         self.menu = MenuBar(buildSpec)
         self.SetMenuBar(self.menu)
