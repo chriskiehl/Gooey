@@ -448,14 +448,12 @@ def action_to_json(action, widget, options):
         },
     })
 
-    if (options.get(action.dest) or {}).get('initial_value') != None:
+    if (options.get(action.dest) or {}).get('initial_value') is not None:
         value = options[action.dest]['initial_value']
         options[action.dest]['initial_value'] = handle_initial_values(action, widget, value)
     default = handle_initial_values(action, widget, action.default)
     if default == argparse.SUPPRESS:
         default = None
-
-
 
     final_options = merge(base, options.get(action.dest) or {})
     validate_gooey_options(action, widget, final_options)
@@ -529,19 +527,18 @@ def coerce_default(default, widget):
 
 
 def handle_initial_values(action, widget, value):
-    handlers = [
-        [textinput_with_nargs_and_list_default, coerse_nargs_list],
-        [is_widget('Listbox'), clean_list_defaults],
-        [is_widget('Dropdown'), coerce_str],
-        [is_widget('Counter'), safe_string]
-    ]
-    for matches, apply_coercion in handlers:
-        if matches(action, widget):
-            return apply_coercion(value)
-    return clean_default(value)
+    if textinput_with_nargs_and_list_default(action, widget, value):
+        return coerce_nargs_list(value)
+
+    dispatcher = {
+        'Listbox': clean_list_defaults,
+        'Dropdown': coerce_str,
+        'Counter': safe_string
+    }
+    return dispatcher.get(widget, clean_default)(value)
 
 
-def coerse_nargs_list(default):
+def coerce_nargs_list(default):
     """
     nargs=* and defaults which are collection types
     must be transformed into a CLI equivalent form. So, for
@@ -555,13 +552,8 @@ def coerse_nargs_list(default):
     """
     return ' '.join('"{}"'.format(x) for x in default)
 
-def is_widget(name):
-    def equals(action, widget):
-        return widget == name
-    return equals
 
-
-def textinput_with_nargs_and_list_default(action, widget):
+def textinput_with_nargs_and_list_default(action, widget, value):
     """
     Vanilla TextInputs which have nargs options which produce lists (i.e.
     nargs +, *, N, or REMAINDER) need to have their default values transformed
@@ -570,14 +562,13 @@ def textinput_with_nargs_and_list_default(action, widget):
     """
     return (
         widget in {'TextField', 'Textarea', 'PasswordField'}
-        and (isinstance(action.default, list) or isinstance(action.default, tuple))
+        and (isinstance(value, list) or isinstance(value, tuple))
         and is_list_based_nargs(action))
 
 
 def is_list_based_nargs(action):
     """ """
     return isinstance(action.nargs, int) or action.nargs in {'*', '+', '...'}
-
 
 
 def clean_list_defaults(default_values):
@@ -625,7 +616,6 @@ def coerce_str(value):
     Coerce the incoming type to string as long as it isn't None
     """
     return str(value) if value is not None else value
-
 
 
 def this_is_a_comment(action, widget):
