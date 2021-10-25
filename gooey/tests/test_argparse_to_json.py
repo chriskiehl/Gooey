@@ -184,6 +184,8 @@ class TestArgparse(unittest.TestCase):
 
         Using nargs and a `default` value with a list causes the literal list string
         to be put into the UI.
+
+        Also tests initial_value - see issue #756.
         """
         testcases = [
             {'nargs': '+', 'default': ['a b', 'c'], 'gooey_default': '"a b" "c"', 'w': 'TextField'},
@@ -214,6 +216,13 @@ class TestArgparse(unittest.TestCase):
                 parser.add_argument('--foo', nargs=case['nargs'], default=case['default'])
                 action = parser._actions[-1]
                 result = argparse_to_json.handle_initial_values(action, case['w'], action.default)
+                self.assertEqual(result, case['gooey_default'])
+
+                gooey_parser = GooeyParser(prog='test_program')
+                options = {'initial_value': case['default']}
+                gooey_parser.add_argument('--foo', nargs=case['nargs'], gooey_options=options)
+                action = gooey_parser._actions[-1]
+                result = argparse_to_json.handle_initial_values(action, case['w'], case['default'])
                 self.assertEqual(result, case['gooey_default'])
 
     def test_nargs(self):
