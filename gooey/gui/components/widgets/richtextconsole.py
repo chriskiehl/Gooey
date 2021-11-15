@@ -1,6 +1,6 @@
-import wx
-import wx.richtext
-import colored
+import wx  # type: ignore
+import wx.richtext  # type: ignore
+import colored  # type: ignore
 import re
 
 kColorList = ["#000000", "#800000", "#008000", "#808000", "#000080", "#800080", "#008080", "#c0c0c0",

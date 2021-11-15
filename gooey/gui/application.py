@@ -2,14 +2,14 @@
 Main runner entry point for Gooey.
 '''
 
-import wx
+import wx  # type: ignore
 # wx.html and wx.xml imports required here to make packaging with
 # pyinstaller on OSX possible without manually specifying `hidden_imports`
 # in the build.spec
-import wx.html
-import wx.xml
-import wx.richtext  # Need to be imported before the wx.App object is created.
-import wx.lib.inspection
+import wx.html  # type: ignore
+import wx.xml  # type: ignore
+import wx.richtext  # type: ignore
+import wx.lib.inspection  # type: ignore
 from gooey.gui.lang import i18n
 
 from gooey.gui import image_repository
@@ -38,6 +38,6 @@ def _build_app(build_spec, app):
     i18n.load(build_spec['language_dir'], build_spec['language'], build_spec['encoding'])
     imagesPaths = image_repository.loadImages(build_spec['image_dir'])
     gapp = GooeyApplication(merge(build_spec, imagesPaths))
-    # wx.lib.inspection.InspectionTool().Show()
+    wx.lib.inspection.InspectionTool().Show()
     gapp.Show()
     return (app, gapp)

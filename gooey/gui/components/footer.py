@@ -1,5 +1,5 @@
 import sys
-import wx
+import wx  # type: ignore
 
 from gooey.gui import events
 from gooey.gui.lang.i18n import _

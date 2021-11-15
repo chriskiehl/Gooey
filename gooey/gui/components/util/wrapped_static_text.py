@@ -1,5 +1,5 @@
-import wx
-from wx.lib.wordwrap import wordwrap
+import wx  # type: ignore
+from wx.lib.wordwrap import wordwrap  # type: ignore
 
 
 

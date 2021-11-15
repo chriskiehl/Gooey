@@ -5,7 +5,7 @@ from gooey.gui.components.widgets.textfield import TextField
 __ALL__ = ('PasswordField',)
 
 class PasswordField(TextField):
-    widget_class = PasswordInput
+    widget_class = PasswordInput  # type: ignore
 
     def __init__(self, *args, **kwargs):
         super(PasswordField, self).__init__(*args, **kwargs)

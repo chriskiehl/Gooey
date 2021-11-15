@@ -6,7 +6,7 @@ import sys
 from functools import partial
 from threading import Thread
 
-import psutil
+import psutil  # type: ignore
 
 from gooey.gui import events
 from gooey.gui.pubsub import pub

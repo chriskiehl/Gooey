@@ -3,13 +3,13 @@ All of the dialogs used throughout Gooey
 """
 from collections import namedtuple
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui.lang.i18n import _
 
 
 # These don't seem to be specified anywhere in WX for some reason
-DialogConstants = namedtuple('DialogConstants', 'YES NO')(5103, 5104)
+DialogConstants = namedtuple('DialogConstants', 'YES NO')(5103, 5104)  # type: ignore
 
 
 def showDialog(title, content, style):

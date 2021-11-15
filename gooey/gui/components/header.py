@@ -4,7 +4,7 @@ Created on Dec 23, 2013
 @author: Chris
 '''
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui import imageutil, image_repository
 from gooey.gui.util import wx_util

@@ -5,6 +5,25 @@ import itertools
 from gooey.gui.util.quoting import quote
 
 
+def formatArgument(metadata, value):
+    if metadata['type'] in ['CheckBox', 'BlockCheckbox']:
+        return checkbox(metadata, value)
+    elif metadata['type'] == 'MultiFileChooser':
+        return multiFileChooser(metadata, value)
+    elif metadata['type'] == 'Textarea':
+        return textArea(metadata, value)
+    elif metadata['type'] == 'CommandField':
+        return textArea(metadata, value)
+    elif metadata['type'] == 'Counter':
+        return counter(metadata, value)
+    elif metadata['type'] == 'Dropdown':
+        return dropdown(metadata, value)
+    elif metadata['type'] == 'Listbox':
+        return listbox(metadata, value)
+    else:
+        return general(metadata, value)
+
+
 def checkbox(metadata, value):
     return metadata['commands'][0] if value else None
 

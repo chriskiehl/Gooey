@@ -2,7 +2,7 @@
 Collection of Utility methods for creating often used, pre-styled wx Widgets
 """
 
-import wx
+import wx  # type: ignore
 from contextlib import contextmanager
 
 from gooey.gui.three_to_four import Constants

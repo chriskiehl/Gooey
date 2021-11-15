@@ -5,7 +5,7 @@ Everything in the application is communicated via pubsub. These are the events
 that tie everything together.
 """
 
-import wx
+import wx  # type: ignore
 
 WINDOW_STOP     = wx.Window.NewControlId()
 WINDOW_CANCEL   = wx.Window.NewControlId()

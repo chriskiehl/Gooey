@@ -1,6 +1,6 @@
 import re
 
-import pygtrie as trie
+import pygtrie as trie  # type: ignore
 from functools import reduce
 
 __ALL__ = ('PrefixTokenizers', 'PrefixSearch')

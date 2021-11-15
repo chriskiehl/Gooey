@@ -1,7 +1,7 @@
 import webbrowser
 from functools import partial
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui import three_to_four
 from gooey.gui.components.dialogs import HtmlDialog

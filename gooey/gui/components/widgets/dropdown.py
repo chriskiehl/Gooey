@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
 from gooey.gui.components.widgets.bases import TextContainer
-import wx
+import wx  # type: ignore
 
 from gooey.gui import formatters
 from gooey.gui.lang.i18n import _

@@ -1,6 +1,9 @@
-from argparse import ArgumentParser, _SubParsersAction
+from argparse import ArgumentParser, _SubParsersAction, ArgumentError
 from argparse import _MutuallyExclusiveGroup, _ArgumentGroup
+from functools import wraps
 from textwrap import dedent
+
+from gooey.python_bindings.types import Failure, Success, Try
 
 
 class GooeySubParser(_SubParsersAction):
@@ -21,7 +24,10 @@ class GooeyArgumentGroup(_ArgumentGroup):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
-        action = super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
+
+        lifted_kwargs = {**kwargs, 'type': kwargs.get('type', identity)}
+
+        action = super(GooeyArgumentGroup, self).add_argument(*args, **lifted_kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
@@ -54,11 +60,52 @@ class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
-        super(GooeyMutuallyExclusiveGroup, self).add_argument(*args, **kwargs)
+        lifted_kwargs = ({**kwargs, 'type': lift(kwargs.get('type', identity))}
+            if 'type' in kwargs
+            else kwargs)
+
+        super(GooeyMutuallyExclusiveGroup, self).add_argument(*args, **lifted_kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
 
+
+class MyArgumentParser(ArgumentParser):
+    def __init__(self, **kwargs):
+        self._errors = []
+        super(MyArgumentParser, self).__init__(**kwargs)
+
+    def error(self, message):
+        self._errors.append(message)
+
+
+def lift_relevant(**kwargs):
+    """
+    Lifts the user's (likely) partial function into
+    total one of type `String -> Either Error a`
+    """
+    try:
+        # Not all Parser Actions accept a type function. Rather
+        # than track what allows what explicitly, we just try to
+        # pass the `type` var to constructor. If is doesn't
+        # explode, then we're good and we use the lifted type. Otherwise
+        # we use the original kwargs
+        p = ArgumentParser()
+        lifted_kwargs = {**kwargs, 'type': lift(kwargs.get('type', identity))}
+        p.add_argument('-a', **lifted_kwargs)
+        return lifted_kwargs
+    except TypeError as e:
+        return kwargs
+
+
+def cls_wrapper(cls, **options):
+    def inner(*args, **kwargs):
+        class ActionWrapper(cls):
+            def __call__(self, p, namespace, values, option_string, **qkwargs):
+                # print('hello from', options, namespace, values, option_string, qkwargs)
+                super(ActionWrapper, self).__call__(p, namespace, values, option_string, **qkwargs)
+        return ActionWrapper(*args, **kwargs)
+    return inner
 
 
 class GooeyParser(object):
@@ -89,7 +136,12 @@ class GooeyParser(object):
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
-        action = self.parser.add_argument(*args, **kwargs)
+        lifted_kwargs = lift_relevant(**kwargs)
+
+        action_cls = self.parser._pop_action_class(kwargs)
+        enhanced_action = cls_wrapper(action_cls, **(options if options else {}))
+
+        action = self.parser.add_argument(*args, **{**lifted_kwargs, 'action': enhanced_action})
         self.parser._actions[-1].metavar = metavar
 
         action_dest = self.parser._actions[-1].dest
@@ -167,3 +219,25 @@ class GooeyParser(object):
 
     def __setattr__(self, key, value):
         return setattr(self.parser, key, value)
+
+
+
+def lift(f):
+    @wraps(f)
+    def inner(x) -> Try:
+        try:
+            return Success(f(x))
+        except ArgumentError as e:
+            return Failure(e)
+        except (TypeError, ValueError) as e:
+            # name = getattr(action.type, '__name__', repr(action.type))
+            # args = {'type': name, 'value': arg_string}
+            # msg = _('invalid %(type)s value: %(value)r')
+            return Failure(e)
+        except Exception as e:
+            return Failure(e)
+    return inner
+
+
+def identity(x):
+    return x

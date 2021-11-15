@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 import wx.lib.inspection
 from gooey.gui.components.widgets.textfield import TextField

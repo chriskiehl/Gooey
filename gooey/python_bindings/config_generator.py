@@ -72,7 +72,9 @@ def create_from_parser(parser, source_path, **kwargs):
       'progress_regex':       kwargs.get('progress_regex'),
       'progress_expr':        kwargs.get('progress_expr'),
       'hide_progress_msg':    kwargs.get('hide_progress_msg', False),
-      'timing_options':       merge_dictionaries(gooey_decorator.defaults.get('timing_options'),kwargs.get('timing_options')),
+      # TODO. this is broken cause I removed the defaults blob
+      # but this is all going away so it doesn't matter
+      'timing_options':       kwargs.get('timing_options'),
       'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
       'disable_stop_button':  kwargs.get('disable_stop_button'),
       'shutdown_signal':      kwargs.get('shutdown_signal', signal.SIGTERM),

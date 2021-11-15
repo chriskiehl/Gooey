@@ -1,7 +1,7 @@
-import rewx.components as c
-import wx
-import wx.html2
-from rewx import wsx, render
+import rewx.components as c  # type: ignore
+import wx  # type: ignore
+import wx.html2  # type: ignore
+from rewx import wsx, render  # type: ignore
 
 
 def _html_window(html):

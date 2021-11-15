@@ -1,6 +1,6 @@
 from gooey.gui.lang.i18n import _
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui.three_to_four import Constants
 

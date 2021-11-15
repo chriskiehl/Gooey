@@ -4,8 +4,8 @@ Primary orchestration and control point for Gooey.
 
 import sys
 
-import wx
-from wx.adv import TaskBarIcon
+import wx  # type: ignore
+from wx.adv import TaskBarIcon  # type: ignore
 import signal
 from gooey.gui import cli
 from gooey.gui import events
@@ -84,6 +84,18 @@ class GooeyApplication(wx.Frame):
         """
         Verify user input and kick off the client's program if valid
         """
+        config = self.navbar.getActiveConfig()
+        group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
+        positional = config.getPositionalValues()
+        optional = config.getOptionalValues()
+        x = cli.formValidationCmd(
+            self.buildSpec['target'],
+            group['command'],
+            positional,
+            optional
+        )
+
+        result = seeder.communicate(x, self.buildSpec['encoding'])
         with transactUI(self):
             config = self.navbar.getActiveConfig()
             config.resetErrors()
@@ -101,6 +113,8 @@ class GooeyApplication(wx.Frame):
         with transactUI(self):
             if self.buildSpec['poll_external_updates']:
                 self.fetchExternalUpdates()
+            for config in self.configs:
+                config.resetErrors()
             self.showSettings()
 
 
@@ -113,13 +127,14 @@ class GooeyApplication(wx.Frame):
         group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
         positional = config.getPositionalArgs()
         optional = config.getOptionalArgs()
-        return cli.buildCliString(
+        x = cli.buildCliString(
             self.buildSpec['target'],
             group['command'],
             positional,
             optional,
             suppress_gooey_flag=self.buildSpec['suppress_gooey_flag']
         )
+        return x
 
 
     def onComplete(self, *args, **kwargs):
@@ -183,13 +198,49 @@ class GooeyApplication(wx.Frame):
         self.Destroy()
         sys.exit()
 
+    # def validate_field(self, fieldId):
+    #     client_updates = communicate('--validate-field -f foo & args', 'utf-8')
+    #     # validate correct shape (Map String String)
+    #     # validate same arg we submitted the request for
+    #     if client_updates:
+    #         self.update_ui(client_updates)
+    #         return None
+    #     else:
+    #         # run the program
+    #         return None
+
+    # def validate_form(self):
+    #     client_updates = seeder.communicate('--validate-form & args', 'utf-8')
+    #     # validate correct shape (Map String String)
+    #     # validate all known args
+    #     if client_updates:
+    #         self.update_ui(client_updates)
+    #         return None
+    #     else:
+    #         # run the program
+    #         return None
+
     def fetchExternalUpdates(self):
         """
         !Experimental!
         Calls out to the client code requesting seed values to use in the UI
         !Experimental!
         """
+        config = self.navbar.getActiveConfig()
+        group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
+        positional = config.getPositionalArgs()
+        optional = config.getOptionalArgs()
+        x = cli.buildCliString(
+            self.buildSpec['target'],
+            group['command'],
+            positional,
+            optional,
+            suppress_gooey_flag=False
+        )
+
+
         seeds = seeder.fetchDynamicProperties(
+            x,
             self.buildSpec['target'],
             self.buildSpec['encoding']
         )

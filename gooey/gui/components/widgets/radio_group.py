@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 from gooey.gui.components.widgets.bases import BaseWidget
 from gooey.gui.lang.i18n import _
 from gooey.gui.util import wx_util
@@ -7,6 +7,9 @@ from gooey.util.functional import getin, findfirst, merge
 
 
 class RadioGroup(BaseWidget):
+    """
+    TODO: Dynamics:
+    """
 
     def __init__(self, parent, widgetInfo, *args, **kwargs):
         super(RadioGroup, self).__init__(parent, *args, **kwargs)

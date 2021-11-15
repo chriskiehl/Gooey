@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 from gooey.gui.util.filedrop import FileDrop
 from gooey.util.functional import merge

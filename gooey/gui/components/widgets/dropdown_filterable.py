@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
-import wx
-import wx.html
+import wx  # type: ignore
+import wx.html  # type: ignore
 
 import gooey.gui.events as events
 from gooey.gui.components.filtering.prefix_filter import PrefixSearch

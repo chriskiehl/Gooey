@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 class BasicTextConsole(wx.TextCtrl):
     def __init__(self, parent):

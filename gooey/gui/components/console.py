@@ -1,6 +1,6 @@
 import webbrowser
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui.lang.i18n import _
 from .widgets.basictextconsole import BasicTextConsole

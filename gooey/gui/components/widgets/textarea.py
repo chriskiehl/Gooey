@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 from functools import reduce
 
 from gooey.gui.components.widgets.core.text_input import MultilineTextInput

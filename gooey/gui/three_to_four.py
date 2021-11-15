@@ -2,9 +2,9 @@
 Util for supporting WxPython 3 & 4
 '''
 
-import wx
+import wx  # type: ignore
 try:
-    import wx.adv
+    import wx.adv  # type: ignore
 except ImportError:
     pass
 

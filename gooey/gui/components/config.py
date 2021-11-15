@@ -1,5 +1,5 @@
-import wx
-from wx.lib.scrolledpanel import ScrolledPanel
+import wx  # type: ignore
+from wx.lib.scrolledpanel import ScrolledPanel  # type: ignore
 
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
@@ -46,6 +46,16 @@ class ConfigPage(ScrolledPanel):
 
     def getOptionalArgs(self):
         return [widget.getValue()['cmd'] for widget in self.reifiedWidgets
+                if widget.info['cli_type'] != 'positional']
+
+
+    def getPositionalValues(self):
+        return [widget.getValue() for widget in self.reifiedWidgets
+                if widget.info['cli_type'] == 'positional']
+
+
+    def getOptionalValues(self):
+        return [widget.getValue() for widget in self.reifiedWidgets
                 if widget.info['cli_type'] != 'positional']
 
 
