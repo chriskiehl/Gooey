@@ -10,9 +10,10 @@ from typing import List, Callable, Optional, Any
 from gooey.python_bindings import signal_support
 from gooey.gui.util.freeze import getResourcePath
 from gooey.util.functional import merge
-from python_bindings import constants
-from python_bindings.gooey_decorator import gooey_params, IGNORE_COMMAND
-from python_bindings.types import GooeyParams
+from gooey.python_bindings import constants
+from gooey.python_bindings.argparse_to_json import is_subparser
+from gooey.python_bindings.gooey_decorator import gooey_params, IGNORE_COMMAND
+from gooey.python_bindings.types import GooeyParams, Failure
 from . import config_generator
 from . import cmd_args
 
@@ -25,7 +26,7 @@ def Gooey1(f=None, **gkwargs):
 
     @wraps(f)
     def inner(*args, **kwargs):
-        parser_handler = choose_hander(params, sys.argv)
+        parser_handler = choose_hander(params, gkwargs.get('cli', sys.argv))
         # monkey patch parser
         ArgumentParser.original_parse_args = ArgumentParser.parse_args
         ArgumentParser.parse_args = parser_handler
@@ -56,9 +57,11 @@ def bypass_gooey(params):
         # the --ignore-gooey flag. But this caused lots of issues
         # See: https://github.com/chriskiehl/Gooey/issues/686
         # So, we instead modify the parser to transparently
-        # consume the extra token
+        # consume the extra token.
         self.add_argument('--ignore-gooey', action='store_true')
         args = self.original_parse_args(args, namespace)
+        # removed from the arg object so the user doesn't have
+        # to deal with it or be confused by it
         del args.ignore_gooey
         return args
     return parse_args
@@ -73,10 +76,19 @@ def validate_field(params):
 def valdiate_form(params):
     def parse_args(self: ArgumentParser, args=None, namespace=None):
         self.add_argument('--gooey-validate-form', action='store_true')
-        args = self.original_parse_args(args, namespace)
-        del args.gooey_validate_form
-        print(json.dumps(vars(args)))
-        sys.exit(80085)
+        self.add_argument('--ignore-gooey', action='store_true')
+        for sub in list(filter(is_subparser, self._actions))[0].choices.values():
+            sub.add_argument('--gooey-validate-form', action='store_true')
+            sub.add_argument('--ignore-gooey', action='store_true')
+        try:
+            args = self.original_parse_args(args, namespace)
+            errors = {k: str(v.error) for k, v in vars(args).items()
+                      if v is not None and isinstance(v, Failure)}
+            print(json.dumps(errors))
+            sys.exit(80085)
+        except Exception as e:
+            print(e)
+            sys.exit(1)
     return parse_args
 
 

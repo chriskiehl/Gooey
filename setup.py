@@ -13,7 +13,8 @@ deps = [
     'psutil>=5.4.2',
     'colored>=1.3.93',
     'pygtrie>=2.3.3',
-    're-wx>=0.0.1'
+    're-wx>=0.0.1',
+    'typing-extensions==3.10.0.2'
 ]
 
 if sys.version[0] == '3':

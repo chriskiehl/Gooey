@@ -382,15 +382,20 @@ def is_standard(action):
     )
     return (not action.choices
             and not isinstance(action.type, argparse.FileType)
-            and not isinstance(action, _CountAction)
-            and not isinstance(action, _HelpAction)
+            and not isinstance(action, (_CountAction, _HelpAction))
+            # subclass checking is to handle the GooeyParser case
+            # where Action get wrapped in a custom class
+            and not issubclass(type(action), boolean_actions)
             and type(action) not in boolean_actions)
 
 
 def is_flag(action):
     """ _actions which are either storeconst, store_bool, etc.. """
+    # TODO: refactor to isinstance tuple form
     action_types = [_StoreTrueAction, _StoreFalseAction, _StoreConstAction]
-    return any(list(map(lambda Action: isinstance(action, Action), action_types)))
+    return (any(list(map(lambda Action: isinstance(action, Action), action_types)))
+            or issubclass(type(action), (_StoreTrueAction, _StoreFalseAction, _StoreConstAction)))
+
 
 
 def is_counter(action):

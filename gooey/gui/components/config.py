@@ -1,3 +1,5 @@
+from typing import Mapping
+
 import wx  # type: ignore
 from wx.lib.scrolledpanel import ScrolledPanel  # type: ignore
 
@@ -71,6 +73,25 @@ class ConfigPage(ScrolledPanel):
                 self.widgetsMap[id].setOptions(values)
             if id in radioWidgets:
                 radioWidgets[id].setOptions(values)
+
+
+    def setErrors(self, errorMap: Mapping[str, str]):
+        self.resetErrors()
+        radioWidgets = self.indexInternalRadioGroupWidgets()
+        widgetsByDest = {v._meta['dest']: v for k,v in self.widgetsMap.items()}
+        for id, message in errorMap.items():
+            if id in widgetsByDest:
+                widgetsByDest[id].setErrorString(message)
+                widgetsByDest[id].showErrorString(True)
+                widget = widgetsByDest[id]
+                while widget.GetParent():
+                    widget.Layout()
+                    widget = widget.GetParent()
+
+            if id in radioWidgets:
+                radioWidgets[id].setErrorString(message)
+                radioWidgets[id].showErrorString(True)
+
 
     def indexInternalRadioGroupWidgets(self):
         groups = filter(lambda x: x.info['type'] == 'RadioGroup', self.reifiedWidgets)

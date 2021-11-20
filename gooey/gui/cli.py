@@ -30,7 +30,7 @@ def formValidationCmd(target: str, subCommand: str, positionals: List[FieldValue
         *optional_args,
         '--ignore-gooey',
         '--gooey-validate-form',
-        '--',
+        '--' if positional_args else '',
         *positional_args]))
 
 

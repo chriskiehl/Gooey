@@ -95,7 +95,13 @@ class GooeyApplication(wx.Frame):
             optional
         )
 
-        result = seeder.communicate(x, self.buildSpec['encoding'])
+        errorMap = seeder.communicate(x, self.buildSpec['encoding'])
+        if errorMap:
+            config = self.navbar.getActiveConfig()
+            config.setErrors(errorMap)
+
+            return
+
         with transactUI(self):
             config = self.navbar.getActiveConfig()
             config.resetErrors()
