@@ -136,12 +136,17 @@ class GooeyParser(object):
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
-        lifted_kwargs = lift_relevant(**kwargs)
+        # TODO: move this to the control module. No need to do it
+        #       at creation time.
+        # lifted_kwargs = lift_relevant(**kwargs)
+        #
+        # action_cls = self.parser._pop_action_class(kwargs)
+        # enhanced_action = cls_wrapper(action_cls, **(options if options else {}))
+        #
+        # action = self.parser.add_argument(*args, **{**lifted_kwargs, 'action': enhanced_action})
 
-        action_cls = self.parser._pop_action_class(kwargs)
-        enhanced_action = cls_wrapper(action_cls, **(options if options else {}))
+        action = self.parser.add_argument(*args, **kwargs)
 
-        action = self.parser.add_argument(*args, **{**lifted_kwargs, 'action': enhanced_action})
         self.parser._actions[-1].metavar = metavar
 
         action_dest = self.parser._actions[-1].dest

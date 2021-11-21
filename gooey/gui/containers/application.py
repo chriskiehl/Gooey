@@ -70,11 +70,16 @@ class GooeyApplication(wx.Frame):
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
 
+        self.Bind(wx.EVT_CHILD_FOCUS, self.handleFocus)
+
         if self.buildSpec['poll_external_updates']:
             self.fetchExternalUpdates()
 
         if self.buildSpec.get('auto_start', False):
             self.onStart()
+
+    def handleFocus(self, event):
+        print(event)
 
     def applyConfiguration(self):
         self.SetTitle(self.buildSpec['program_name'])
@@ -84,23 +89,23 @@ class GooeyApplication(wx.Frame):
         """
         Verify user input and kick off the client's program if valid
         """
-        config = self.navbar.getActiveConfig()
-        group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
-        positional = config.getPositionalValues()
-        optional = config.getOptionalValues()
-        x = cli.formValidationCmd(
-            self.buildSpec['target'],
-            group['command'],
-            positional,
-            optional
-        )
+        # config = self.navbar.getActiveConfig()
+        # group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
+        # positional = config.getPositionalValues()
+        # optional = config.getOptionalValues()
+        # x = cli.formValidationCmd(
+        #     self.buildSpec['target'],
+        #     group['command'],
+        #     positional,
+        #     optional
+        # )
 
-        errorMap = seeder.communicate(x, self.buildSpec['encoding'])
-        if errorMap:
-            config = self.navbar.getActiveConfig()
-            config.setErrors(errorMap)
-
-            return
+        # errorMap = seeder.communicate(x, self.buildSpec['encoding'])
+        # if errorMap:
+        #     config = self.navbar.getActiveConfig()
+        #     config.setErrors(errorMap)
+        #
+        #     return
 
         with transactUI(self):
             config = self.navbar.getActiveConfig()
@@ -204,27 +209,6 @@ class GooeyApplication(wx.Frame):
         self.Destroy()
         sys.exit()
 
-    # def validate_field(self, fieldId):
-    #     client_updates = communicate('--validate-field -f foo & args', 'utf-8')
-    #     # validate correct shape (Map String String)
-    #     # validate same arg we submitted the request for
-    #     if client_updates:
-    #         self.update_ui(client_updates)
-    #         return None
-    #     else:
-    #         # run the program
-    #         return None
-
-    # def validate_form(self):
-    #     client_updates = seeder.communicate('--validate-form & args', 'utf-8')
-    #     # validate correct shape (Map String String)
-    #     # validate all known args
-    #     if client_updates:
-    #         self.update_ui(client_updates)
-    #         return None
-    #     else:
-    #         # run the program
-    #         return None
 
     def fetchExternalUpdates(self):
         """

@@ -18,4 +18,4 @@ class TestCliStringCreation(unittest.TestCase):
             {'clitype': 'optional', 'cmd': '-b 2', 'required': False},
         ]
 
-        print(cli.formValidationCmd('target', 'cmd', positionals, optionals))
+        # print(cli.formValidationCmd('target', 'cmd', positionals, optionals))

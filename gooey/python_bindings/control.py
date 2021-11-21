@@ -1,49 +1,18 @@
 import json
 import os
-import signal
 import sys
-import textwrap
 from argparse import ArgumentParser
 from functools import wraps
-from typing import List, Callable, Optional, Any
+from typing import List
 
-from gooey.python_bindings import signal_support
-from gooey.gui.util.freeze import getResourcePath
-from gooey.util.functional import merge
-from gooey.python_bindings import constants
 from gooey.python_bindings.argparse_to_json import is_subparser
-from gooey.python_bindings.gooey_decorator import gooey_params, IGNORE_COMMAND
 from gooey.python_bindings.types import GooeyParams, Failure
-from . import config_generator
+from gooey.python_bindings.parameters import gooey_params
 from . import cmd_args
+from . import config_generator
 
 
 
-
-def Gooey1(f=None, **gkwargs):
-    """TODO: explain the weirdness of decorators having different outputs"""
-    params: GooeyParams = gooey_params(**gkwargs)
-
-    @wraps(f)
-    def inner(*args, **kwargs):
-        parser_handler = choose_hander(params, gkwargs.get('cli', sys.argv))
-        # monkey patch parser
-        ArgumentParser.original_parse_args = ArgumentParser.parse_args
-        ArgumentParser.parse_args = parser_handler
-        # return the wrapped, now monkey-patched, user function
-        # to be later invoked
-        return f(*args, **kwargs)
-
-    def thunk(func):
-        """
-        Handles the case where the decorator is called
-        with arguments (i.e. @Gooey(foo=bar) rather than @Gooey).
-        TODO:
-        """
-        # type: ignore
-        return Gooey1(func, **params)
-
-    return inner if callable(f) else thunk
 
 
 
@@ -67,13 +36,10 @@ def bypass_gooey(params):
     return parse_args
 
 
-def validate_field(params):
-    def parse_args(self: ArgumentParser, args=None, namespace=None):
-        return None
-    return parse_args
-
-
 def valdiate_form(params):
+    """
+    Validates the user's current form.
+    """
     def parse_args(self: ArgumentParser, args=None, namespace=None):
         self.add_argument('--gooey-validate-form', action='store_true')
         self.add_argument('--ignore-gooey', action='store_true')
@@ -90,31 +56,6 @@ def valdiate_form(params):
             print(e)
             sys.exit(1)
     return parse_args
-
-
-def handle_success(params):
-    def parse_args(self: ArgumentParser, args=None, namespace=None):
-        return None
-    return parse_args
-
-
-def handle_error(params):
-    def parse_args(self: ArgumentParser, args=None, namespace=None):
-        return None
-    return parse_args
-
-
-def handle_field_update(params):
-    def parse_args(self: ArgumentParser, args=None, namespace=None):
-        return None
-    return parse_args
-
-
-def handle_submit(params):
-    def parse_args(self: ArgumentParser, args=None, namespace=None):
-        return None
-    return parse_args
-
 
 
 def boostrap_gooey(params):
@@ -153,7 +94,41 @@ def boostrap_gooey(params):
 
 
 
+def validate_field(params):
+    def parse_args(self: ArgumentParser, args=None, namespace=None):
+        raise NotImplementedError
+    return parse_args
+
+
+def handle_success(params):
+    def parse_args(self: ArgumentParser, args=None, namespace=None):
+        raise NotImplementedError
+    return parse_args
+
+
+def handle_error(params):
+    def parse_args(self: ArgumentParser, args=None, namespace=None):
+        raise NotImplementedError
+    return parse_args
+
+
+def handle_field_update(params):
+    def parse_args(self: ArgumentParser, args=None, namespace=None):
+        raise NotImplementedError
+    return parse_args
+
+
+def handle_submit(params):
+    def parse_args(self: ArgumentParser, args=None, namespace=None):
+        raise NotImplementedError
+    return parse_args
+
+
 def choose_hander(params: GooeyParams, cliargs: List[str]):
+    """
+    Dispatches to the appropriate handler based on values
+    found in the CLI arguments
+    """
     if '--gooey-validate-form' in cliargs:
         return valdiate_form(params)
     elif '--ignore-gooey' in cliargs:

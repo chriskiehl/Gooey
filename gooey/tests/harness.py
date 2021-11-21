@@ -7,7 +7,7 @@ import wx
 
 from gooey.gui import application
 from python_bindings.config_generator import create_from_parser
-from python_bindings.gooey_decorator import defaults
+from python_bindings.parameters import gooey_params
 from util.functional import merge
 
 
@@ -26,13 +26,13 @@ def instrumentGooey(parser, **kwargs):
         raise Exception("App instance has not been created! This is likely due to "
                         "you forgetting to add the magical import which makes all these "
                         "tests work. See the module doc in gooey.tests.__init__ for guidance")
-    buildspec = create_from_parser(parser, "", **merge(defaults, kwargs))
+    buildspec = create_from_parser(parser, "", **gooey_params(**kwargs))
     app, gooey = application._build_app(buildspec, app)
     app.SetTopWindow(gooey)
     try:
         yield (app, gooey)
     finally:
-        wx.CallAfter(app.ExitMainLoop)
         gooey.Destroy()
-        app.SetTopWindow(None)
+        wx.CallAfter(app.ExitMainLoop)
+        # app.SetTopWindow(None)
         del gooey
