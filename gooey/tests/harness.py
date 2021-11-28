@@ -6,9 +6,9 @@ from threading import Thread
 import wx
 
 from gooey.gui import application
-from python_bindings.config_generator import create_from_parser
-from python_bindings.parameters import gooey_params
-from util.functional import merge
+from gooey.python_bindings.config_generator import create_from_parser
+from gooey.python_bindings.parameters import gooey_params
+from gooey.util.functional import merge
 
 
 

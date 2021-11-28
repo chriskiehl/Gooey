@@ -4,39 +4,35 @@ dynamic defaults for the UI
 """
 import json
 import subprocess
+from json import JSONDecodeError
+from subprocess import CalledProcessError
 
-from typing_extensions import TypedDict
-
-
-def communicate(cmd, encoding):
-    proc = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=True # TODO: should this be true...? Why is it like this?
-    )
-    if proc.returncode != 0:
-        out, _ = proc.communicate()
-        return json.loads(out.decode(encoding))
-    else:
-        # TODO: useful feedback
-        return {}
+from gooey.python_bindings.types import Try, Success, Failure
 
 
-
-
-def fetchDynamicProperties(cmd, target, encoding):
+def communicate(cmd, encoding) -> Try:
     """
-    Sends a gooey-seed-ui request to the client program it retrieve
-    dynamically generated defaults with which to seed the UI
+    Invoke the processes specified by `cmd`.
+    Assumes that the process speaks JSON over stdout. Non-json response
+    are treated as an error.
+
+    Implementation Note: I don't know why, but `Popen` is like ~5-6x faster
+    than `check_output`. in practice, it means waiting for ~1/10th
+    of a second rather than ~7/10ths of a second. A
+    difference which is pretty weighty when there's a
+    user waiting on the other end.
     """
-    # TODO: this needs to apply the same argpase_to_json data cleaning rules
-    # cmd = '{} {}'.format(target, '--gooey-seed-ui')
-    proc = subprocess.Popen(cmd + ' --gooey-seed-ui', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    if proc.returncode != 0:
-        out, _ = proc.communicate()
-        return json.loads(out.decode(encoding))
-    else:
-        # TODO: useful feedback
-        return {}
+    try:
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        out, err = proc.communicate()
+        if out:
+            return Success(json.loads(out.decode(encoding)))
+        else:
+            return Failure(CalledProcessError(proc.returncode, cmd))
+    except JSONDecodeError as e:
+        return Failure(e)
 

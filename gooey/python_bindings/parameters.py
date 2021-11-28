@@ -3,11 +3,14 @@ import sys
 import textwrap
 
 import os
+from typing import List
 
+from gooey.python_bindings.constants import Events
 from gooey.python_bindings import constants
 from gooey.gui.util.freeze import getResourcePath
 from gooey.python_bindings.types import GooeyParams
-from util.functional import merge
+from gooey.util.functional import merge
+
 
 
 def _get_font_weight(kwargs):
@@ -99,6 +102,7 @@ def gooey_params(**kwargs) -> GooeyParams:
         'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
         'disable_stop_button': kwargs.get('disable_stop_button'),
         'shutdown_signal': kwargs.get('shutdown_signal', signal.SIGTERM),
+        'use_events': parse_events(kwargs.get('use_events', [])),
 
 
         'navigation': kwargs.get('navigation', constants.SIDEBAR),
@@ -124,5 +128,13 @@ def gooey_params(**kwargs) -> GooeyParams:
         'richtext_controls': kwargs.get('richtext_controls', False),
         'error_color': kwargs.get('error_color', '#ea7878'),
         # TODO: remove. Only useful for testing
-        'cli': kwargs.get('cli', sys.argv)
+        'cli': kwargs.get('cli', sys.argv),
     })
+
+
+def parse_events(events: List[str]) -> List[str]:
+    unknown_events = set(events) - {Events.VALIDATE_FORM}
+    if unknown_events:
+        raise ValueError('Unrecognized events: ', unknown_events)
+    else:
+        return events

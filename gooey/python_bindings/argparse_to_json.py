@@ -105,8 +105,8 @@ def convert(parser, **kwargs):
 
     group_defaults = {
         'legacy': {
-            'required_cols': kwargs['num_required_cols'],
-            'optional_cols': kwargs['num_optional_cols']
+            'required_cols': kwargs['required_cols'],
+            'optional_cols': kwargs['optional_cols']
         },
         'columns': 2,
         'padding': 10,
@@ -369,7 +369,8 @@ def is_writemode_file(action):
     return is_file(action) and 'r' not in action.type._mode
 
 def is_version(action):
-    return isinstance(action, _VersionAction)
+    return isinstance(action, _VersionAction) or issubclass(type(action), _VersionAction)
+
 
 def is_standard(action):
     """ actions which are general "store" instructions.

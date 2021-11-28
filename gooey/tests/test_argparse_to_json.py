@@ -152,7 +152,7 @@ class TestArgparse(unittest.TestCase):
         parser.add_argument("--foo", default=argparse.SUPPRESS)
         parser.add_argument('--version', action='version', version='1.0')
 
-        result = argparse_to_json.convert(parser, num_required_cols=2, num_optional_cols=2)
+        result = argparse_to_json.convert(parser, required_cols=2, optional_cols=2)
         groups = getin(result, ['widgets', 'test_program', 'contents'])
         for item in groups[0]['items']:
             self.assertEqual(getin(item, ['data', 'default']), None)
@@ -173,7 +173,7 @@ class TestArgparse(unittest.TestCase):
             with self.subTest([args, kwargs]):
                 parser = argparse.ArgumentParser(prog='test')
                 parser.add_argument(*args, **kwargs)
-                result = argparse_to_json.convert(parser, num_required_cols=2, num_optional_cols=2)
+                result = argparse_to_json.convert(parser, required_cols=2, optional_cols=2)
                 contents = getin(result, ['widgets', 'test', 'contents'])[0]
                 self.assertEqual(contents['items'][0]['type'], expectedType)
 

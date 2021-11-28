@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, List, Union, Mapping, Any, TypeVar, Callable
+from typing import Optional, Tuple, List, Union, Mapping, Any, TypeVar, Callable, Generic
 
 from dataclasses import dataclass
 from typing_extensions import TypedDict, TypeAlias
@@ -90,6 +90,7 @@ class GooeyParams(TypedDict):
     disable_progress_bar_animation: bool
     disable_stop_button: bool
     shutdown_signal: int
+    use_events: List[str]
 
     # Layouts
     navigation: str
@@ -153,18 +154,56 @@ class TextField(TypedDict):
     enabled: bool
     visible: bool
 
+A = TypeVar('A')
+
+@dataclass(frozen=True, eq=True)
+class CommandDetails:
+    target: str
+    subcommand: str
+    positionals: List[FieldValue]
+    optionals: List[FieldValue]
 
 
-@dataclass
-class Success:
-    value: Any
 
-@dataclass
+@dataclass(frozen=True, eq=True)
+class Success(Generic[A]):
+    value: A
+
+    def map(self, f):
+        return Success(f(self.value))
+    def flatmap(self, f):
+        return f(self.value)
+    def onSuccess(self, f):
+        f(self.value)
+        return self
+    def onError(self, f):
+        return self
+    def isSuccess(self):
+        return True
+    def getOrThrow(self):
+        return self.value
+
+@dataclass(frozen=True, eq=True)
 class Failure:
     error: Exception
 
+    def map(self, f):
+        return Failure(self.error)
+    def flatmap(self, f):
+        return Failure(self.error)
+    def onSuccess(self, f):
+        return self
+    def onError(self, f):
+        f(self.error)
+        return self
+    def isSuccess(self):
+        return False
+    def getOrThrow(self):
+        raise self.error
 
-Try = Union[Success, Failure]
+Try = Union[Success[A], Failure]
+
+
 
 ValidationResponse = Mapping[str, str]
 

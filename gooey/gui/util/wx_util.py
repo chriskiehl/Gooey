@@ -21,8 +21,6 @@ def transactUI(obj):
         obj.Thaw()
 
 
-
-
 styles = {
     'h0': (wx.FONTFAMILY_DEFAULT, Constants.WX_FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False),
     'h1': (wx.FONTFAMILY_DEFAULT, Constants.WX_FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD, False),

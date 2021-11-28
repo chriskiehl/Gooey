@@ -24,6 +24,7 @@ def formatArgument(metadata, value):
         return general(metadata, value)
 
 
+
 def checkbox(metadata, value):
     return metadata['commands'][0] if value else None
 

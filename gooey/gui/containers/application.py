@@ -3,10 +3,16 @@ Primary orchestration and control point for Gooey.
 """
 
 import sys
+from json import JSONDecodeError
+from subprocess import CalledProcessError
+from threading import Thread
+from typing import Mapping
 
 import wx  # type: ignore
 from wx.adv import TaskBarIcon  # type: ignore
 import signal
+
+from gooey import Events
 from gooey.gui import cli
 from gooey.gui import events
 from gooey.gui import seeder
@@ -25,6 +31,8 @@ from gooey.gui.pubsub import pub
 from gooey.gui.util import wx_util
 from gooey.gui.util.wx_util import transactUI
 from gooey.python_bindings import constants
+from gooey.python_bindings.types import Failure, Success, CommandDetails, Try
+from gooey.util.functional import merge
 
 
 class GooeyApplication(wx.Frame):
@@ -70,82 +78,83 @@ class GooeyApplication(wx.Frame):
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
 
-        self.Bind(wx.EVT_CHILD_FOCUS, self.handleFocus)
-
-        if self.buildSpec['poll_external_updates']:
-            self.fetchExternalUpdates()
+        # TODO: handle child focus for per-field level validation.
+        # self.Bind(wx.EVT_CHILD_FOCUS, self.handleFocus)
 
         if self.buildSpec.get('auto_start', False):
             self.onStart()
 
-    def handleFocus(self, event):
-        print(event)
 
     def applyConfiguration(self):
         self.SetTitle(self.buildSpec['program_name'])
         self.SetBackgroundColour(self.buildSpec.get('body_bg_color'))
 
+
     def onStart(self, *args, **kwarg):
         """
         Verify user input and kick off the client's program if valid
         """
-        # config = self.navbar.getActiveConfig()
-        # group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
-        # positional = config.getPositionalValues()
-        # optional = config.getOptionalValues()
-        # x = cli.formValidationCmd(
-        #     self.buildSpec['target'],
-        #     group['command'],
-        #     positional,
-        #     optional
-        # )
+        # navigates away from the button because a
+        # disabled focused button still looks enabled.
+        self.footer.cancel_button.Disable()
+        self.footer.start_button.Disable()
+        self.footer.start_button.Navigate()
+        if Events.VALIDATE_FORM in self.buildSpec.get('use_events', []):
+            # TODO: make this wx thread safe so that it can
+            # actually run asynchronously
+            Thread(target=self.onStartAsync).run()
+        else:
+            Thread(target=self.onStartAsync).run()
 
-        # errorMap = seeder.communicate(x, self.buildSpec['encoding'])
-        # if errorMap:
-        #     config = self.navbar.getActiveConfig()
-        #     config.setErrors(errorMap)
-        #
-        #     return
-
+    def onStartAsync(self, *args, **kwargs):
         with transactUI(self):
-            config = self.navbar.getActiveConfig()
-            config.resetErrors()
-            if config.isValid():
-                if self.buildSpec['clear_before_run']:
-                    self.console.clear()
-                self.clientRunner.run(self.buildCliString())
-                self.showConsole()
-            else:
-                config.displayErrors()
-                self.Layout()
-        
+            try:
+                errors = self.validateForm().getOrThrow()
+                if errors:  # TODO
+                    config = self.navbar.getActiveConfig()
+                    config.setErrors(errors)
+                    self.Layout()
+                    # TODO: account for tabbed layouts
+                    # TODO: scroll the first error into view
+                    # TODO: rather than just snapping to the top
+                    self.configs[0].Scroll(0, 0)
+                else:
+                    if self.buildSpec['clear_before_run']:
+                        self.console.clear()
+                    self.clientRunner.run(self.buildCliString())
+                    self.showConsole()
+            except CalledProcessError as e:
+                self.showError()
+                self.console.appendText(str(e))
+                self.console.appendText(
+                    '\n\nThis failure happens when Gooey tries to invoke your '
+                    'code for the VALIDATE_FORM event and receives an expected '
+                    'error code in response.'
+                )
+                wx.CallAfter(modals.showFailure)
+            except JSONDecodeError as e:
+                self.showError()
+                self.console.appendText(str(e))
+                self.console.appendText(
+                    '\n\nGooey was unable to parse the response to the VALIDATE_FORM event. '
+                    'This can happen if you have additional logs to stdout beyond what Gooey '
+                    'expects.'
+                )
+                wx.CallAfter(modals.showFailure)
+            # for some reason, we have to delay the re-enabling of
+            # the buttons by a few ms otherwise they pickup pending
+            # events created while they were disabled. Trial and error
+            # let to this solution.
+            wx.CallLater(20, self.footer.start_button.Enable)
+            wx.CallLater(20, self.footer.cancel_button.Enable)
+
+
     def onEdit(self):
         """Return the user to the settings screen for further editing"""
         with transactUI(self):
-            if self.buildSpec['poll_external_updates']:
-                self.fetchExternalUpdates()
             for config in self.configs:
                 config.resetErrors()
             self.showSettings()
-
-
-    def buildCliString(self):
-        """
-        Collect all of the required information from the config screen and
-        build a CLI string which can be used to invoke the client program
-        """
-        config = self.navbar.getActiveConfig()
-        group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
-        positional = config.getPositionalArgs()
-        optional = config.getOptionalArgs()
-        x = cli.buildCliString(
-            self.buildSpec['target'],
-            group['command'],
-            positional,
-            optional,
-            suppress_gooey_flag=self.buildSpec['suppress_gooey_flag']
-        )
-        return x
 
 
     def onComplete(self, *args, **kwargs):
@@ -200,6 +209,60 @@ class GooeyApplication(wx.Frame):
         else:
             self.destroyGooey()
 
+    def buildCliString(self) -> str:
+        """
+        Collect all of the required information from the config screen and
+        build a CLI string which can be used to invoke the client program
+        """
+        cmd = self.getCommandDetails()
+        return cli.cliCmd(
+            cmd.target,
+            cmd.subcommand,
+            cmd.positionals,
+            cmd.optionals,
+            suppress_gooey_flag=self.buildSpec['suppress_gooey_flag']
+        )
+
+    def validateForm(self) -> Try[Mapping[str, str]]:
+        config = self.navbar.getActiveConfig()
+        localErrors: Mapping[str, str] = config.getErrors()
+        dynamicResult: Try[Mapping[str, str]] = self.fetchDynamicValidations()
+
+        combineErrors = lambda m: merge(localErrors, m)
+        return dynamicResult.map(combineErrors)
+
+
+    def fetchDynamicValidations(self) -> Try[Mapping[str, str]]:
+        # only run the dynamic validation if the user has
+        # specifically subscribed to that event
+        if Events.VALIDATE_FORM in self.buildSpec.get('use_events', []):
+            cmd = self.getCommandDetails()
+            return seeder.communicate(cli.formValidationCmd(
+                cmd.target,
+                cmd.subcommand,
+                cmd.positionals,
+                cmd.optionals
+            ), self.buildSpec['encoding'])
+        else:
+            # shim response if nothing to do.
+            return Success({})
+
+
+    def getCommandDetails(self) -> CommandDetails:
+        """
+        Temporary helper for getting the state of the current Config.
+
+        To be deprecated upon (the desperately needed) refactor.
+        """
+        config = self.navbar.getActiveConfig()
+        group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
+        return CommandDetails(
+            self.buildSpec['target'],
+            group['command'],
+            config.getPositionalValues(),
+            config.getOptionalValues(),
+        )
+
 
     def shouldStopExecution(self):
         return not self.buildSpec['show_stop_warning'] or modals.confirmForceStop()
@@ -208,34 +271,6 @@ class GooeyApplication(wx.Frame):
     def destroyGooey(self):
         self.Destroy()
         sys.exit()
-
-
-    def fetchExternalUpdates(self):
-        """
-        !Experimental!
-        Calls out to the client code requesting seed values to use in the UI
-        !Experimental!
-        """
-        config = self.navbar.getActiveConfig()
-        group = self.buildSpec['widgets'][self.navbar.getSelectedGroup()]
-        positional = config.getPositionalArgs()
-        optional = config.getOptionalArgs()
-        x = cli.buildCliString(
-            self.buildSpec['target'],
-            group['command'],
-            positional,
-            optional,
-            suppress_gooey_flag=False
-        )
-
-
-        seeds = seeder.fetchDynamicProperties(
-            x,
-            self.buildSpec['target'],
-            self.buildSpec['encoding']
-        )
-        for config in self.configs:
-            config.seedUI(seeds)
 
     def layoutComponent(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -262,7 +297,6 @@ class GooeyApplication(wx.Frame):
             # as instance data (self.). Otherwise, it will not render correctly.
             self.taskbarIcon = TaskBarIcon(iconType=wx.adv.TBI_DOCK)
             self.taskbarIcon.SetIcon(icon)
-
 
 
     def buildNavigation(self):
@@ -326,7 +360,6 @@ class GooeyApplication(wx.Frame):
         self.footer.time_remaining_text.Show(True)
         if self.buildSpec.get('timing_options')['hide_time_remaining_on_complete']:
             self.footer.time_remaining_text.Show(False)
-
 
 
     def showSuccess(self):

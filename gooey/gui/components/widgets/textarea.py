@@ -1,3 +1,4 @@
+import os
 import wx  # type: ignore
 from functools import reduce
 
@@ -32,7 +33,7 @@ class Textarea(TextContainer):
         self.widget.AppendText(str(value))
         self.widget.SetInsertionPoint(0)
 
-    def formatOutput(self, metatdata, value):
-        return formatters.general(metatdata, value)
+    def formatOutput(self, metatdata, value: str):
+        return formatters.general(metatdata, value.replace('\n', os.linesep))
 
 

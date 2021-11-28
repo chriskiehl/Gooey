@@ -62,9 +62,12 @@ class ConfigPage(ScrolledPanel):
 
 
     def isValid(self):
-        states = [widget.getValue() for widget in self.reifiedWidgets]
-        return not any(compact([state['error'] for state in states]))
+        return not any(self.getErrors())
 
+    def getErrors(self):
+        states = [widget.getValue() for widget in self.reifiedWidgets]
+        return {state['meta']['dest']: state['error'] for state in states
+                if state['error']}
 
     def seedUI(self, seeds):
         radioWidgets = self.indexInternalRadioGroupWidgets()
@@ -78,16 +81,20 @@ class ConfigPage(ScrolledPanel):
     def setErrors(self, errorMap: Mapping[str, str]):
         self.resetErrors()
         radioWidgets = self.indexInternalRadioGroupWidgets()
-        widgetsByDest = {v._meta['dest']: v for k,v in self.widgetsMap.items()}
+        widgetsByDest = {v._meta['dest']: v for k,v in self.widgetsMap.items()
+                         if v.info['type'] is not 'RadioGroup'}
+
+        # if there are any errors, then all error blocks should
+        # be displayed so that the UI elements remain inline with
+        # each other.
+        if errorMap:
+            for widget in self.widgetsMap.values():
+                widget.showErrorString(True)
+
         for id, message in errorMap.items():
             if id in widgetsByDest:
                 widgetsByDest[id].setErrorString(message)
                 widgetsByDest[id].showErrorString(True)
-                widget = widgetsByDest[id]
-                while widget.GetParent():
-                    widget.Layout()
-                    widget = widget.GetParent()
-
             if id in radioWidgets:
                 radioWidgets[id].setErrorString(message)
                 radioWidgets[id].showErrorString(True)
@@ -96,7 +103,7 @@ class ConfigPage(ScrolledPanel):
     def indexInternalRadioGroupWidgets(self):
         groups = filter(lambda x: x.info['type'] == 'RadioGroup', self.reifiedWidgets)
         widgets = flatmap(lambda group: group.widgets, groups)
-        return indexunique(lambda x: x._id, widgets)
+        return indexunique(lambda x: x._meta['dest'], widgets)
 
 
     def displayErrors(self):

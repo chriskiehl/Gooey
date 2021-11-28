@@ -1,9 +1,5 @@
-from argparse import ArgumentParser, _SubParsersAction, ArgumentError
+from argparse import ArgumentParser, _SubParsersAction
 from argparse import _MutuallyExclusiveGroup, _ArgumentGroup
-from functools import wraps
-from textwrap import dedent
-
-from gooey.python_bindings.types import Failure, Success, Try
 
 
 class GooeySubParser(_SubParsersAction):
@@ -25,9 +21,7 @@ class GooeyArgumentGroup(_ArgumentGroup):
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
-        lifted_kwargs = {**kwargs, 'type': kwargs.get('type', identity)}
-
-        action = super(GooeyArgumentGroup, self).add_argument(*args, **lifted_kwargs)
+        action = super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
@@ -60,11 +54,8 @@ class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
-        lifted_kwargs = ({**kwargs, 'type': lift(kwargs.get('type', identity))}
-            if 'type' in kwargs
-            else kwargs)
 
-        super(GooeyMutuallyExclusiveGroup, self).add_argument(*args, **lifted_kwargs)
+        super(GooeyMutuallyExclusiveGroup, self).add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
@@ -225,24 +216,3 @@ class GooeyParser(object):
     def __setattr__(self, key, value):
         return setattr(self.parser, key, value)
 
-
-
-def lift(f):
-    @wraps(f)
-    def inner(x) -> Try:
-        try:
-            return Success(f(x))
-        except ArgumentError as e:
-            return Failure(e)
-        except (TypeError, ValueError) as e:
-            # name = getattr(action.type, '__name__', repr(action.type))
-            # args = {'type': name, 'value': arg_string}
-            # msg = _('invalid %(type)s value: %(value)r')
-            return Failure(e)
-        except Exception as e:
-            return Failure(e)
-    return inner
-
-
-def identity(x):
-    return x

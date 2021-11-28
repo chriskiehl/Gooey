@@ -152,7 +152,8 @@ class Footer(wx.Panel):
             style=style)
 
     def dispatch_click(self, event):
-        pub.send_message(event.GetId())
+        if event.EventObject.Enabled:
+            pub.send_message(event.GetId())
 
     def hide_all_buttons(self):
         for button in self.buttons:

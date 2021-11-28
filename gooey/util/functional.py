@@ -1,9 +1,11 @@
 """
 A collection of functional utilities/helpers
 """
-from functools import reduce
+from functools import reduce, wraps
 from copy import deepcopy
 from itertools import chain, dropwhile
+
+from gooey.python_bindings.types import Try, Success, Failure
 
 
 def getin(m, path, default=None):
@@ -100,4 +102,15 @@ def unit(val):
 def bind(val, f):
     return f(val) if val else None
 
+
+def lift(f):
+    @wraps(f)
+    def inner(x) -> Try:
+        try:
+            r = f(x)
+            result = Success(r)
+            return result
+        except Exception as e:
+            return Failure(e)
+    return inner
 

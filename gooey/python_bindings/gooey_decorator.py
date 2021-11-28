@@ -12,7 +12,6 @@ from gooey.python_bindings.types import GooeyParams
 IGNORE_COMMAND = '--ignore-gooey'
 
 
-
 def Gooey(f=None, **gkwargs):
     """
     Decoration entry point for the Gooey process.

@@ -20,16 +20,32 @@ fieldAction :: Target -> Command ->
 
 '''
 
-def formValidationCmd(target: str, subCommand: str, positionals: List[FieldValue], optionals: List[FieldValue]):
+def formValidationCmd(target: str, subCommand: str, positionals: List[FieldValue], optionals: List[FieldValue]) -> str:
     positional_args = [cmdOrPlaceholderOrNone(x) for x in positionals]
     optional_args = [cmdOrPlaceholderOrNone(x) for x in optionals]
-    command = subCommand if subCommand is not '::gooey/default' else ''
+    command = subCommand if not subCommand == '::gooey/default' else ''
     return u' '.join(compact([
         target,
         command,
         *optional_args,
-        '--ignore-gooey',
         '--gooey-validate-form',
+        '--' if positional_args else '',
+        *positional_args]))
+
+
+def cliCmd(target: str, subCommand: str,
+           positionals: List[FieldValue],
+           optionals: List[FieldValue],
+           suppress_gooey_flag=False) -> str:
+    positional_args = [arg['cmd'] for arg in positionals]
+    optional_args = [arg['cmd'] for arg in optionals]
+    command = subCommand if not subCommand == '::gooey/default' else ''
+    ignore_flag = '' if suppress_gooey_flag else '--ignore-gooey'
+    return u' '.join(compact([
+        target,
+        command,
+        *optional_args,
+        ignore_flag,
         '--' if positional_args else '',
         *positional_args]))
 
