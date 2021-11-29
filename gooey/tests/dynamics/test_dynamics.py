@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from typing import Dict
 from unittest.mock import MagicMock
 
-from python_bindings.dynamics import patch_argument, check_value
+from python_bindings.dynamics import patch_argument, monkey_patch_for_form_validation
 
 
 class TestDynamicUpdates(unittest.TestCase):
@@ -87,8 +87,7 @@ class TestDynamicUpdates(unittest.TestCase):
 
 
         # So we patch the check_value method witho our own
-        original_fn = ArgumentParser._check_value
-        ArgumentParser._check_value = check_value(arbitrary_dict, original_fn)
+        monkey_patch_for_form_validation(arbitrary_dict, parser)
         parser.parse_args(['nope', 'not-a-valid-choice'])
 
         # now, rather than failing after the very first violation, all

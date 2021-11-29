@@ -46,7 +46,7 @@ def check_value(registry: Dict[str, Exception], original_fn):
     def inner(self, action, value: Union[Any, Success, Failure]):
         def update_reg(_self, _action, _value):
             try:
-                original_fn(_self, _action, _value)
+                original_fn(_action, _value)
             except Exception as e:
                 # IMPORTANT! note that this mutates the
                 # reference that is passed in!
@@ -134,8 +134,7 @@ def monkey_patch_for_form_validation(error_registry: Dict[str, Exception], parse
     """
     lift_actions_mutating(parser)
     patch_argument(parser, '--gooey-validate-form', action='store_true')
-    ArgumentParser._original_check_value = ArgumentParser._check_value  # type: ignore
-    ArgumentParser._check_value = check_value(
-        error_registry, ArgumentParser._original_check_value)  # type: ignore
+    new_check_value = check_value(error_registry, parser._check_value)
+    parser._check_value = new_check_value.__get__(parser, ArgumentParser)
     return parser
 

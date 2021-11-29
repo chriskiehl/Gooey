@@ -18,9 +18,8 @@ class TestLiveDynamicUpdates(unittest.TestCase):
         from gooey.tests.dynamics.files import basic
         params = {
             'target': '{} -u {}'.format(sys.executable, basic.__file__),
-            'use_events': [Events.VALIDATE_FORM]
+            'use_events': [Events.VALIDATE_FORM],
         }
-
         with instrumentGooey(basic.parser, **params) as (app, gapp):
             # the parser has a single arg of type int.
             # We purposefully give it invalid input for the sake of the test.
@@ -41,7 +40,6 @@ class TestLiveDynamicUpdates(unittest.TestCase):
             'target': '{} -u {}'.format(sys.executable, basic.__file__),
             'use_events': [Events.VALIDATE_FORM]
         }
-
         with instrumentGooey(basic.parser, **params) as (app, gapp):
             valid_int = '10'
             gapp.configs[0].widgetsMap['foo'].setValue(valid_int)
