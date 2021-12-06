@@ -13,8 +13,9 @@ import wx.lib.inspection  # type: ignore
 from gooey.gui.lang import i18n
 
 from gooey.gui import image_repository
-from gooey.gui.containers.application import GooeyApplication
+from gooey.gui.containers.application import GooeyApplication, RGooey
 from gooey.util.functional import merge
+from rewx import render, create_element
 
 
 def run(build_spec):
@@ -38,6 +39,8 @@ def _build_app(build_spec, app):
     i18n.load(build_spec['language_dir'], build_spec['language'], build_spec['encoding'])
     imagesPaths = image_repository.loadImages(build_spec['image_dir'])
     gapp = GooeyApplication(merge(build_spec, imagesPaths))
-    # wx.lib.inspection.InspectionTool().Show()
+    gapp2 = render(create_element(RGooey, merge(build_spec, imagesPaths)), None)
+    wx.lib.inspection.InspectionTool().Show()
     gapp.Show()
+    gapp2.Show()
     return (app, gapp)

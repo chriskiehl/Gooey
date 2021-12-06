@@ -4,6 +4,7 @@ A collection of functional utilities/helpers
 from functools import reduce, wraps
 from copy import deepcopy
 from itertools import chain, dropwhile
+from typing import Tuple, Any, List, Union
 
 from gooey.python_bindings.types import Try, Success, Failure
 
@@ -38,6 +39,17 @@ def associn(m, path, value):
         p = path[0]
         return assoc(m, p, assoc_recursively(m.get(p,{}), path[1:], value))
     return assoc_recursively(m, path, value)
+
+
+def associnMany(m, *args: Tuple[Union[str, List[str]], Any]):
+    def apply(_m, change: Tuple[Union[str, List[str]], Any]):
+        path, value = change
+        if isinstance(path, list):
+            return associn(_m, path, value)
+        else:
+            return associn(_m, path.split('.'), value)
+    return reduce(apply, args, m)
+
 
 
 def merge(*maps):

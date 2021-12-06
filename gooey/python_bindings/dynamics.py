@@ -33,8 +33,9 @@ from gooey.gui.constants import VALUE_PLACEHOLDER
 
 def check_value(registry: Dict[str, Exception], original_fn):
     """
-    A Monkey Patch for `Argparse._check_value` which swallows
-    the Exception and records the failure to the
+    A Monkey Patch for `Argparse._check_value` which changes its
+    behavior from one which throws an exception, to one which swallows
+    the exception and silently records the failure.
 
     For certain argument types, Argparse calls a
     one-off `check_value` method. This method is inconvenient for us
@@ -135,6 +136,7 @@ def monkey_patch_for_form_validation(error_registry: Dict[str, Exception], parse
     lift_actions_mutating(parser)
     patch_argument(parser, '--gooey-validate-form', action='store_true')
     new_check_value = check_value(error_registry, parser._check_value)
+    # https://stackoverflow.com/questions/28127874/monkey-patching-python-an-instance-method
     parser._check_value = new_check_value.__get__(parser, ArgumentParser)
     return parser
 

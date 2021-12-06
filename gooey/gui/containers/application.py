@@ -1,14 +1,26 @@
 """
 Primary orchestration and control point for Gooey.
 """
-
+import queue
 import sys
 from json import JSONDecodeError
 from subprocess import CalledProcessError
 from threading import Thread
-from typing import Mapping
+from typing import Mapping, Dict, Type, Iterable
 
+import six
 import wx  # type: ignore
+from rewx.widgets import set_basic_props
+
+from gui.components.mouse import notifyMouseEvent
+from gui.state import initial_state, present_time, form_page, ProgressEvent, TimingEvent
+from gooey.gui import state as s
+from gui.three_to_four import Constants
+from rewx.core import Component, Ref, updatewx, patch
+from typing_extensions import TypedDict
+
+from rewx import wsx, render, create_element, mount, update
+from rewx import components as c
 from wx.adv import TaskBarIcon  # type: ignore
 import signal
 
@@ -32,8 +44,14 @@ from gooey.gui.util import wx_util
 from gooey.gui.util.wx_util import transactUI
 from gooey.python_bindings import constants
 from gooey.python_bindings.types import Failure, Success, CommandDetails, Try
-from gooey.util.functional import merge
+from gooey.util.functional import merge, associn, assoc
+from gooey.gui.image_repository import loadImages
 
+from threading import Lock
+
+from util.functional import associnMany
+
+lock = Lock()
 
 class GooeyApplication(wx.Frame):
     """
@@ -53,6 +71,28 @@ class GooeyApplication(wx.Frame):
         self.navbar = self.buildNavigation()
         self.footer = Footer(self, buildSpec)
         self.console = Console(self, buildSpec)
+
+
+        self.props = {
+            'background_color': self.buildSpec['header_bg_color'],
+            'title': self.buildSpec['program_name'],
+            'subtitle': self.buildSpec['program_description'],
+            'height': self.buildSpec['header_height'],
+            'image_uri': self.buildSpec['images']['configIcon'],
+            'image_size': (six.MAXSIZE, self.buildSpec['header_height'] - 10)}
+
+        state = form_page(initial_state(self.buildSpec))
+
+        self.fprops = {
+            'buttons': state['buttons'],
+            'progress': state['progress'],
+            'timing': state['timing'],
+            'bg_color': self.buildSpec['footer_bg_color']
+        }
+
+        # self.hhh = render(create_element(RHeader, self.props), self)
+        # self.fff = render(create_element(RFooter, self.fprops), self)
+        # patch(self.hhh, create_element(RHeader, {**self.props, 'image_uri': self.buildSpec['images']['runningIcon']}))
         self.layoutComponent()
         self.timer = Timing(self)
 
@@ -74,7 +114,9 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.CONSOLE_UPDATE, self.console.logOutput)
         pub.subscribe(events.EXECUTION_COMPLETE, self.onComplete)
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
-        pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
+        pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
+        # pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
+        pub.subscribe(events.TIME_UPDATE, self.updateTime)
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
 
@@ -83,6 +125,24 @@ class GooeyApplication(wx.Frame):
 
         if self.buildSpec.get('auto_start', False):
             self.onStart()
+
+
+    def updateProgressBar(self, *args, **kwargs):
+        with lock:
+            self.fprops = associn(self.fprops, ['progress', 'value'], kwargs.get('progress', 0))
+            vdom = create_element(RFooter, self.fprops)
+            patch(self.fff, vdom)
+
+
+    def updateTime(self, *args, **kwargs):
+        with lock:
+            self.fprops = associnMany(
+                self.fprops,
+                ('timing.elapsed_time', kwargs['elapsed_time']),
+                ('timing.estimatedRemaining', kwargs['estimatedRemaining']))
+            vdom = create_element(RFooter, self.fprops)
+            patch(self.fff, vdom)
+
 
 
     def applyConfiguration(self):
@@ -272,14 +332,20 @@ class GooeyApplication(wx.Frame):
         self.Destroy()
         sys.exit()
 
+    def block(self, **kwargs):
+        pass
+
+
     def layoutComponent(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
+        # sizer.Add(self.hhh, 0, wx.EXPAND)
         sizer.Add(self.header, 0, wx.EXPAND)
         sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
 
         sizer.Add(self.navbar, 1, wx.EXPAND)
         sizer.Add(self.console, 1, wx.EXPAND)
         sizer.Add(wx_util.horizontal_rule(self), 0, wx.EXPAND)
+        # sizer.Add(self.fff, 0, wx.EXPAND)
         sizer.Add(self.footer, 0, wx.EXPAND)
         self.SetMinSize((400, 300))
         self.SetSize(self.buildSpec['default_size'])
@@ -384,5 +450,299 @@ class GooeyApplication(wx.Frame):
         else:
             self.showSuccess()
         self.header.setSubtitle(_('finished_forced_quit'))
+
+
+class HeaderProps(TypedDict):
+    background_color: str
+    title: str
+    show_title: bool
+    subtitle: str
+    show_subtitle: bool
+
+
+class RFooter(Component):
+    def __init__(self, props):
+        super().__init__(props)
+        self.ref = Ref()
+
+    def component_did_mount(self):
+        """
+        We have to manually wire up LEFT_DOWN handlers
+        for every component due to wx limitations.
+        See: mouse.py docs for background.
+        """
+        block: wx.BoxSizer = self.ref.instance
+        for child in block.Children:
+            child.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+
+
+    def handle(self, btn):
+        def inner(*args, **kwargs):
+            print('hello!!!', btn)
+            pub.send_message(btn['id'])
+        return inner
+
+
+    def render(self):
+        return wsx(
+            [c.Block, {'orient': wx.VERTICAL,
+                       'min_size': (30, 53),
+                       'background_color': self.props['bg_color']},
+             [c.Block, {'orient': wx.VERTICAL, 'proportion': 1}],
+             [c.Block, {'orient': wx.HORIZONTAL,
+                        'border': 20,
+                        'flag': wx.EXPAND | wx.LEFT | wx.RIGHT,
+                        'ref': self.ref},
+              [c.Gauge, {'range': 100,
+                         'proportion': 1,
+                         'value': self.props['progress']['value'],
+                         'show': self.props['progress']['show']}],
+              [c.StaticText, {'label': present_time(self.props['timing']),
+                              'flag': wx.LEFT,
+                              'border': 20}],
+              [c.Block, {'orient': wx.HORIZONTAL, 'proportion': 1}],
+              *[[c.Button, {**btn,
+                            'min_size': (90, 23),
+                            'flag': wx.LEFT,
+                            'border': 10,
+                            'on_click': self.handle(btn)
+                            }]
+                for btn in self.props['buttons']]],
+             [c.Block, {'orient': wx.VERTICAL, 'proportion': 1}]]
+        )
+
+
+
+@mount.register(Tabbar)
+def tabbar(element, parent):
+    return update(element, Tabbar(parent, xxx, {'contents': []}))
+
+
+@update.register(Tabbar)
+def tabbar(element, instance: Tabbar):
+    set_basic_props(instance, element['props'])
+    return instance
+
+
+@mount.register(Sidebar)
+def sidebar(element, parent):
+    return update(element, Sidebar(parent, xxx, {'contents': []}))
+
+
+@update.register(Sidebar)
+def sidebar(element, instance: Sidebar):
+    set_basic_props(instance, element['props'])
+    return instance
+
+
+class RNavbar(Component):
+    def __init__(self, props):
+        super().__init__(props)
+
+    # if self.buildSpec['navigation'] == constants.TABBED:
+    #     navigation = Tabbar(self, self.buildSpec, self.configs)
+    # else:
+    #     navigation = Sidebar(self, self.buildSpec, self.configs)
+    #     if self.buildSpec['navigation'] == constants.HIDDEN:
+    #         navigation.Hide()
+    def render(self):
+        return wsx(
+
+        )
+
+def VerticalSpacer(props):
+    return wsx([c.Block, {'orient': wx.VERTICAL, 'min_size': (-1, props['height'])}])
+
+def SidebarControls(props):
+    return wsx(
+        [c.Block, {'orient': wx.VERTICAL,
+                   'min_size': (180, 0),
+                   'size': (180, 0),
+                   'flag': wx.EXPAND,
+                   'proportion': 0,
+                   'background_color': props['bg_color']},
+         [c.Block, {'orient': wx.VERTICAL,
+                    'min_size': (180, 0),
+                    'size': (180, 0),
+                    'flag': wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM,
+                    'border': 10,
+                    'proportion': 1,
+                    'background_color': props['bg_color']},
+          [VerticalSpacer, {'height': 15}],
+          [TitleText, {'label': props['label']}],
+          [VerticalSpacer, {'height': 5}],
+          [c.ListBox, {'choices': ['range', 'strange', 'mange'],
+                       'value': props['activeSelection'],
+                       'proportion': 1,
+                       'on_change': props['on_change'],
+                       'flag': wx.EXPAND}],
+          [VerticalSpacer, {'height': 10}]]]
+    )
+
+def RSidebar(props):
+    return wsx(
+        [c.Block,
+         {'orient': wx.HORIZONTAL, 'flag': props['flag'], 'proportion': props['proportion']},
+         [SidebarControls, props],
+         [c.StaticLine, {'style': wx.LI_VERTICAL,
+                         'flag': wx.EXPAND,
+                         'min_size': (1, -1)}],
+         *[[ConfigPage, {'flag': wx.EXPAND,
+                         'proportion': 1,
+                         'show': i == props['activeSelection']}]
+           for i in range(3)]
+         ]
+    )
+
+
+
+class RGooey(Component):
+    def __init__(self, props):
+        super().__init__(props)
+        self.buildSpec = props
+        self.state = initial_state(props)
+        self.headerprops = {
+            'background_color': self.buildSpec['header_bg_color'],
+            'title': self.buildSpec['program_name'],
+            'flag': wx.EXPAND,
+            'subtitle': self.buildSpec['program_description'],
+            'height': self.buildSpec['header_height'],
+            'image_uri': self.buildSpec['images']['configIcon'],
+            'image_size': (six.MAXSIZE, self.buildSpec['header_height'] - 10)}
+
+        state = form_page(initial_state(self.buildSpec))
+
+        self.fprops = {
+            'buttons': state['buttons'],
+            'progress': state['progress'],
+            'timing': state['timing'],
+            'bg_color': self.buildSpec['footer_bg_color'],
+            'flag': wx.EXPAND,
+        }
+
+        # pub.subscribe(events.WINDOW_START, self.onStart)
+        # pub.subscribe(events.WINDOW_RESTART, self.onStart)
+        # pub.subscribe(events.WINDOW_STOP, self.onStopExecution)
+        # pub.subscribe(events.WINDOW_CLOSE, self.onClose)
+        # pub.subscribe(events.WINDOW_CANCEL, self.onCancel)
+        # pub.subscribe(events.WINDOW_EDIT, self.onEdit)
+        # pub.subscribe(events.CONSOLE_UPDATE, self.console.logOutput)
+        # pub.subscribe(events.EXECUTION_COMPLETE, self.onComplete)
+        # pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
+        # pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
+        # # pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
+        # pub.subscribe(events.TIME_UPDATE, self.updateTime)
+        # # Top level wx close event
+        # self.Bind(wx.EVT_CLOSE, self.onClose)
+
+    def component_did_mount(self):
+        pass
+
+
+    def updateProgressBar(self, *args, **kwargs):
+        self.set_state(s.updateProgress(self.state, ProgressEvent(**kwargs)))
+
+    def updateTime(self, *args, **kwargs):
+        self.set_state(s.updateTime(self.state, TimingEvent(**kwargs)))
+
+    def handle_select_action(self, event):
+        self.set_state(assoc(self.state, 'activeSelection', event.Selection))
+
+    def render(self):
+        return wsx(
+            [c.Frame, {'title': self.buildSpec['program_name'],
+                       'background_color': self.buildSpec['body_bg_color'],
+                       'min_size': (400, 300),
+                       'size': self.buildSpec['default_size']},
+             [c.Block, {'orient': wx.VERTICAL},
+              [RHeader, self.headerprops],
+              [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
+              [RSidebar, {'bg_color': self.buildSpec['sidebar_bg_color'],
+                          'label': 'Some Action!',
+                          'activeSelection': self.state['activeSelection'],
+                          'on_change': self.handle_select_action,
+                          'flag': wx.EXPAND,
+                          'proportion': 1}],
+              # [c.Notebook, {'flag': wx.EXPAND, 'proportion': 1, 'on_change': self.handle_tab},
+              #  [c.NotebookItem, {'title': 'Page 1', 'selected': self.state['activeTab'] == 0},
+              #   [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]],
+              #  [c.NotebookItem, {'title': 'Page 2!!!', 'selected': self.state['activeTab'] == 1},
+              #   [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]]],
+              # [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}],
+              [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
+              [RFooter, self.fprops]]]
+        )
+
+
+class RHeader(Component):
+    def __init__(self, props):
+        super().__init__(props)
+
+    def render(self):
+        return wsx(
+            [c.Block, {'orient': wx.HORIZONTAL,
+                       'min_size': (120, self.props['height']),
+                       'background_color': self.props['background_color']},
+             [c.Block, {'orient': wx.VERTICAL,
+                        'flag': wx.ALIGN_CENTER_VERTICAL | wx.ALL,
+                        'proportion': 1,
+                        'border': 10},
+
+              [TitleText, {'label': self.props['title']}],
+              [c.StaticText, {'label': self.props['subtitle']}]],
+             [c.StaticBitmap, {
+                 'uri': self.props['image_uri'],
+                 'size': self.props['image_size'],
+                 'flag': wx.RIGHT,
+                 'border': 10}]
+             ]
+        )
+
+
+
+class TitleText(Component):
+    def __init__(self, props):
+        super().__init__(props)
+        self.ref = Ref()
+
+    def component_did_mount(self):
+        text: wx.StaticText = self.ref.instance
+        font_size = text.GetFont().GetPointSize()
+        text.SetFont(wx.Font(
+            int(font_size * 1.2),
+            wx.FONTFAMILY_DEFAULT,
+            Constants.WX_FONTSTYLE_NORMAL,
+            wx.FONTWEIGHT_BOLD,
+            False
+        ))
+
+    def render(self):
+        return wsx([c.StaticText, {'label': self.props['label'], 'ref': self.ref}])
+
+
+
+@mount.register(ConfigPage)
+def config(element, parent):
+    xxx = {'command': 'range', 'name': 'range', 'help': None, 'description': '', 'contents': [
+        {'name': 'optional_args_msg', 'items': [
+            {'id': '--length', 'type': 'TextField', 'cli_type': 'optional', 'required': False,
+             'data': {'display_name': 'length', 'help': None, 'required': False, 'nargs': '',
+                      'commands': ['--length'], 'choices': [], 'default': 10, 'dest': 'length'},
+             'options': {'error_color': '#ea7878', 'label_color': '#000000',
+                         'help_color': '#363636', 'full_width': False,
+                         'validator': {'type': 'ExpressionValidator', 'test': 'True',
+                                       'message': ''}, 'external_validator': {'cmd': ''}}}],
+         'groups': [], 'description': None,
+         'options': {'label_color': '#000000', 'description_color': '#363636',
+                     'legacy': {'required_cols': 2, 'optional_cols': 2}, 'columns': 2,
+                     'padding': 10, 'show_border': False}}]}
+    return update(element, ConfigPage(parent, xxx, {'contents': []}))
+
+
+@update.register(ConfigPage)
+def config(element, instance: ConfigPage):
+    set_basic_props(instance, element['props'])
+    return instance
+
 
 

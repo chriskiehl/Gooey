@@ -8,11 +8,15 @@ from gooey.gui.util import wx_util
 from gooey.util.functional import getin, flatmap, compact, indexunique
 from gooey.gui.lang.i18n import _
 from gooey.gui.components.mouse import notifyMouseEvent
+from rewx import Component, wsx
 
 
 class ConfigPage(ScrolledPanel):
+    self_managed = True
+
     def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
         super(ConfigPage, self).__init__(parent, *args, **kwargs)
+
         self.SetupScrolling(scroll_x=False, scrollToTop=False)
         self.rawWidgets = rawWidgets
         self.buildSpec = buildSpec
@@ -229,6 +233,18 @@ class ConfigPage(ScrolledPanel):
         from gooey.gui.components import widgets
         widgetClass = getattr(widgets, item['type'])
         return widgetClass(parent, item)
+
+
+class TabbedConfig(Component):
+    def __init__(self, props):
+        super().__init__(props)
+        self.state = {}
+
+    def render(self):
+        return wsx(
+
+        )
+
 
 
 

@@ -99,7 +99,7 @@ def gooey_params(**kwargs) -> GooeyParams:
             'show_time_remaining': False,
             'hide_time_remaining_on_complete': True
         }, kwargs.get('timing_options', {})),
-        'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation'),
+        'disable_progress_bar_animation': kwargs.get('disable_progress_bar_animation', False),
         'disable_stop_button': kwargs.get('disable_stop_button'),
         'shutdown_signal': kwargs.get('shutdown_signal', signal.SIGTERM),
         'use_events': parse_events(kwargs.get('use_events', [])),
