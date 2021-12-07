@@ -10,6 +10,7 @@ class Console(wx.Panel):
     '''
     Textbox console/terminal displayed during the client program's execution.
     '''
+    self_managed = True
 
     def __init__(self, parent, buildSpec, **kwargs):
         wx.Panel.__init__(self, parent, **kwargs)

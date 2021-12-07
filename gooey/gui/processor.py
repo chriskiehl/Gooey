@@ -12,9 +12,22 @@ from gooey.gui import events
 from gooey.gui.pubsub import pub
 from gooey.gui.util.casting import safe_float
 from gooey.util.functional import unit, bind
+from python_bindings.types import GooeyParams
 
 
 class ProcessController(object):
+
+    @classmethod
+    def of(cls, params: GooeyParams):
+        return cls(
+            params.get('progress_regex'),
+            params.get('progress_expr'),
+            params.get('hide_progress_msg'),
+            params.get('encoding'),
+            params.get('requires_shell'),
+            params.get('shutdown_signal', signal.SIGTERM)
+        )
+
     def __init__(self, progress_regex, progress_expr, hide_progress_msg,
                  encoding, shell=True, shutdown_signal=signal.SIGTERM):
         self._process = None

@@ -114,9 +114,7 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.CONSOLE_UPDATE, self.console.logOutput)
         pub.subscribe(events.EXECUTION_COMPLETE, self.onComplete)
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
-        pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
-        # pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
-        pub.subscribe(events.TIME_UPDATE, self.updateTime)
+        pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
         # Top level wx close event
         self.Bind(wx.EVT_CLOSE, self.onClose)
 
@@ -125,24 +123,6 @@ class GooeyApplication(wx.Frame):
 
         if self.buildSpec.get('auto_start', False):
             self.onStart()
-
-
-    def updateProgressBar(self, *args, **kwargs):
-        with lock:
-            self.fprops = associn(self.fprops, ['progress', 'value'], kwargs.get('progress', 0))
-            vdom = create_element(RFooter, self.fprops)
-            patch(self.fff, vdom)
-
-
-    def updateTime(self, *args, **kwargs):
-        with lock:
-            self.fprops = associnMany(
-                self.fprops,
-                ('timing.elapsed_time', kwargs['elapsed_time']),
-                ('timing.estimatedRemaining', kwargs['estimatedRemaining']))
-            vdom = create_element(RFooter, self.fprops)
-            patch(self.fff, vdom)
-
 
 
     def applyConfiguration(self):
@@ -478,7 +458,6 @@ class RFooter(Component):
 
     def handle(self, btn):
         def inner(*args, **kwargs):
-            print('hello!!!', btn)
             pub.send_message(btn['id'])
         return inner
 
@@ -499,9 +478,12 @@ class RFooter(Component):
                          'show': self.props['progress']['show']}],
               [c.StaticText, {'label': present_time(self.props['timing']),
                               'flag': wx.LEFT,
+                              # TODO: pass independent Show prop
+                              'show': self.props['progress']['show'],
                               'border': 20}],
               [c.Block, {'orient': wx.HORIZONTAL, 'proportion': 1}],
               *[[c.Button, {**btn,
+                            'label': _(btn['label_id']),
                             'min_size': (90, 23),
                             'flag': wx.LEFT,
                             'border': 10,
@@ -513,26 +495,40 @@ class RFooter(Component):
 
 
 
-@mount.register(Tabbar)
-def tabbar(element, parent):
-    return update(element, Tabbar(parent, xxx, {'contents': []}))
+# @mount.register(Tabbar)
+# def tabbar(element, parent):
+#     return update(element, Tabbar(parent, xxx, {'contents': []}))
+#
+#
+# @update.register(Tabbar)
+# def tabbar(element, instance: Tabbar):
+#     set_basic_props(instance, element['props'])
+#     return instance
 
 
-@update.register(Tabbar)
-def tabbar(element, instance: Tabbar):
+# @mount.register(Sidebar)
+# def sidebar(element, parent):
+#     return update(element, Sidebar(parent, xxx, {'contents': []}))
+#
+#
+# @update.register(Sidebar)
+# def sidebar(element, instance: Sidebar):
+#     set_basic_props(instance, element['props'])
+#     return instance
+
+
+@mount.register(Console)
+def console(element, parent):
+    return update(element, Console(parent, element['props']))
+
+
+@update.register(Console)
+def console(element, instance: Console):
     set_basic_props(instance, element['props'])
+    if 'show' in element['props']:
+        instance.Show(element['props']['show'])
     return instance
 
-
-@mount.register(Sidebar)
-def sidebar(element, parent):
-    return update(element, Sidebar(parent, xxx, {'contents': []}))
-
-
-@update.register(Sidebar)
-def sidebar(element, instance: Sidebar):
-    set_basic_props(instance, element['props'])
-    return instance
 
 
 class RNavbar(Component):
@@ -558,6 +554,7 @@ def SidebarControls(props):
         [c.Block, {'orient': wx.VERTICAL,
                    'min_size': (180, 0),
                    'size': (180, 0),
+                   'show': props.get('show', True),
                    'flag': wx.EXPAND,
                    'proportion': 0,
                    'background_color': props['bg_color']},
@@ -581,38 +578,48 @@ def SidebarControls(props):
 
 def RSidebar(props):
     return wsx(
-        [c.Block,
-         {'orient': wx.HORIZONTAL, 'flag': props['flag'], 'proportion': props['proportion']},
+        [c.Block, {'orient': wx.HORIZONTAL,
+                   'show': props.get('show', True),
+                   'flag': props['flag'],
+                   'proportion': props['proportion']},
          [SidebarControls, props],
          [c.StaticLine, {'style': wx.LI_VERTICAL,
                          'flag': wx.EXPAND,
                          'min_size': (1, -1)}],
          *[[ConfigPage, {'flag': wx.EXPAND,
-                         'proportion': 1,
+                         'proportion': 3,
                          'show': i == props['activeSelection']}]
            for i in range(3)]
          ]
     )
 
 
+def TabbedForm(props):
+    return wsx(
+        [c.Notebook, {'flag': wx.EXPAND, 'proportion': 1, 'on_change': props['on_change']},
+         [c.NotebookItem, {'title': 'Page 1', 'selected': props['activeTab'] == 0},
+          [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]],
+         [c.NotebookItem, {'title': 'Page 2!!!', 'selected': props['activeTab'] == 1},
+          [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]]],
+    )
 
 class RGooey(Component):
     def __init__(self, props):
         super().__init__(props)
         self.buildSpec = props
         self.state = initial_state(props)
-        self.headerprops = {
+        self.headerprops = lambda state: {
             'background_color': self.buildSpec['header_bg_color'],
-            'title': self.buildSpec['program_name'],
+            'title': state['title'],
+            'subtitle': state['subtitle'],
             'flag': wx.EXPAND,
-            'subtitle': self.buildSpec['program_description'],
             'height': self.buildSpec['header_height'],
-            'image_uri': self.buildSpec['images']['configIcon'],
+            'image_uri': state['image'],
             'image_size': (six.MAXSIZE, self.buildSpec['header_height'] - 10)}
 
         state = form_page(initial_state(self.buildSpec))
 
-        self.fprops = {
+        self.fprops = lambda state: {
             'buttons': state['buttons'],
             'progress': state['progress'],
             'timing': state['timing'],
@@ -620,24 +627,37 @@ class RGooey(Component):
             'flag': wx.EXPAND,
         }
 
-        # pub.subscribe(events.WINDOW_START, self.onStart)
+        self.clientRunner = ProcessController.of(self.buildSpec)
+
+        pub.subscribe(events.WINDOW_START, self.onStart)
         # pub.subscribe(events.WINDOW_RESTART, self.onStart)
-        # pub.subscribe(events.WINDOW_STOP, self.onStopExecution)
+        pub.subscribe(events.WINDOW_STOP, self.handleInterrupt)
         # pub.subscribe(events.WINDOW_CLOSE, self.onClose)
         # pub.subscribe(events.WINDOW_CANCEL, self.onCancel)
         # pub.subscribe(events.WINDOW_EDIT, self.onEdit)
         # pub.subscribe(events.CONSOLE_UPDATE, self.console.logOutput)
-        # pub.subscribe(events.EXECUTION_COMPLETE, self.onComplete)
+        pub.subscribe(events.EXECUTION_COMPLETE, self.handleComplete)
         # pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
-        # pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
         # # pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
-        # pub.subscribe(events.TIME_UPDATE, self.updateTime)
+        pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
+        pub.subscribe(events.TIME_UPDATE, self.updateTime)
         # # Top level wx close event
         # self.Bind(wx.EVT_CLOSE, self.onClose)
 
     def component_did_mount(self):
         pass
 
+    def onStart(self, *args, **kwargs):
+        messages = {'title': _("running_title"), 'subtitle': _('running_msg')}
+        self.set_state(s.start(self.state, messages, self.buildSpec))
+
+    def handleInterrupt(self, *args, **kwargs):
+        messages = {'title': 'Interrupted!!', 'subtitle': 'Boom'}
+        self.set_state(s.interrupt(self.state, messages, self.buildSpec))
+
+    def handleComplete(self, *args, **kwargs):
+        strings = {'title': _('finished_title'), 'subtitle': _('finished_msg')}
+        self.set_state(s.success(self.state, strings, self.buildSpec))
 
     def updateProgressBar(self, *args, **kwargs):
         self.set_state(s.updateProgress(self.state, ProgressEvent(**kwargs)))
@@ -652,13 +672,19 @@ class RGooey(Component):
         return wsx(
             [c.Frame, {'title': self.buildSpec['program_name'],
                        'background_color': self.buildSpec['body_bg_color'],
+                       'double_buffered': True,
                        'min_size': (400, 300),
                        'size': self.buildSpec['default_size']},
              [c.Block, {'orient': wx.VERTICAL},
-              [RHeader, self.headerprops],
+              [RHeader, self.headerprops(self.state)],
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
+              [Console, {**self.buildSpec,
+                         'flag': wx.EXPAND,
+                         'proportion': 1,
+                         'show': self.state['screen'] == 'CONSOLE'}],
               [RSidebar, {'bg_color': self.buildSpec['sidebar_bg_color'],
                           'label': 'Some Action!',
+                          'show': self.state['screen'] == 'FORM',
                           'activeSelection': self.state['activeSelection'],
                           'on_change': self.handle_select_action,
                           'flag': wx.EXPAND,
@@ -670,7 +696,7 @@ class RGooey(Component):
               #   [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]]],
               # [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}],
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
-              [RFooter, self.fprops]]]
+              [RFooter, self.fprops(self.state)]]]
         )
 
 
@@ -718,6 +744,8 @@ class TitleText(Component):
 
     def render(self):
         return wsx([c.StaticText, {'label': self.props['label'], 'ref': self.ref}])
+
+
 
 
 

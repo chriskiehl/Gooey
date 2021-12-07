@@ -18,6 +18,34 @@ class ProgressEvent(TypedDict):
     progress: Optional[int]
 
 
+def interrupt(state, event, params: GooeyParams):
+    use_buttons = ('edit', 'restart', 'close')
+    return associnMany(
+        state,
+        ('screen', 'CONSOLE'),
+        ('buttons', [{**btn, 'show': btn['label_id'] in use_buttons}
+                    for btn in state['buttons']]),
+        ('image', state['images']['errorIcon']),
+        ('title', event['title']),
+        ('subtitle', event['subtitle']),
+        ('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
+
+
+def success(state, event, params: GooeyParams):
+    print(('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
+    use_buttons = ('edit', 'restart', 'close')
+    return associnMany(
+        state,
+        ('screen', 'CONSOLE'),
+        ('buttons', [{**btn, 'show': btn['label_id'] in use_buttons}
+                     for btn in state['buttons']]),
+        ('image', state['images']['successIcon']),
+        ('title', event['title']),
+        ('subtitle', event['subtitle']),
+        ('progress.show', False),
+        ('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
+
+
 def initial_state(params: GooeyParams):
     buttons = [
         ('cancel', events.WINDOW_CANCEL, wx.ID_CANCEL),
@@ -28,27 +56,30 @@ def initial_state(params: GooeyParams):
         ('close', events.WINDOW_CLOSE, wx.ID_OK),
     ]
     return {
-        'screen': 'CONSOLE',
-        'title': 'running_title',
-        'subtitle': 'running_msg',
+        'screen': 'FORM',
+        'title': params['program_name'],
+        'subtitle': params['program_description'],
         'images': params['images'],
+        'image': params['images']['configIcon'],
         'buttons': [{
             'id': event_id,
             'style': style,
             'label_id': label,
-            'show': False}
+            'show': label in ('cancel', 'start')}
             for label, event_id, style in buttons],
         'progress': {
-            'show': True, # params['disable_progress_bar_animation'],
+            'show': False,
             'range': 100,
             'value': 0 if params['progress_regex'] else -1
         },
         'timing': {
-            'visible': True, #params['timing_options']['show_time_remaining'],
-            'elapsed_time': '00:00', # None,
-            'estimatedRemaining': '00:00', # None,
+            'show': False,
+            'elapsed_time': None,
+            'estimatedRemaining': None,
         },
-        'activeSelection': 1
+        'activeSelection': 1,
+        'forms': {}
+
      }
 
 def header_props(state, params):
@@ -72,18 +103,20 @@ def form_page(state):
 
 def start(state, event, params: GooeyParams):
     return {
+        **state,
         'screen': 'CONSOLE',
         'title': event['title'],
         'subtitle': event['subtitle'],
-        'buttons': [{**btn, 'visible': btn['id'] == 'stop'}
+        'image': state['images']['runningIcon'],
+        'buttons': [{**btn, 'show': btn['label_id'] == 'stop'}
                     for btn in state['buttons']],
         'progress': {
-            'visible': params['disable_progress_bar_animation'],
+            'show': True, # params['disable_progress_bar_animation'],
             'range': 100,
             'value': 0 if params['progress_regex'] else -1
         },
         'timing': {
-            'visible': params['timing_options']['show_time_remaining'],
+            'show': params['timing_options']['show_time_remaining'],
             'elapsed_time': None,
             'estimatedRemaining': None
         }
