@@ -116,7 +116,7 @@ class GooeyApplication(wx.Frame):
         pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
         pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
         # Top level wx close event
-        self.Bind(wx.EVT_CLOSE, self.onClose)
+        # self.Bind(wx.EVT_CLOSE, self.onClose)
 
         # TODO: handle child focus for per-field level validation.
         # self.Bind(wx.EVT_CHILD_FOCUS, self.handleFocus)
@@ -606,6 +606,9 @@ def TabbedForm(props):
 class RGooey(Component):
     def __init__(self, props):
         super().__init__(props)
+        self.frameRef = Ref()
+        self.consoleRef = Ref()
+
         self.buildSpec = props
         self.state = initial_state(props)
         self.headerprops = lambda state: {
@@ -626,26 +629,80 @@ class RGooey(Component):
             'bg_color': self.buildSpec['footer_bg_color'],
             'flag': wx.EXPAND,
         }
-
         self.clientRunner = ProcessController.of(self.buildSpec)
 
+
+    def component_did_mount(self):
         pub.subscribe(events.WINDOW_START, self.onStart)
-        # pub.subscribe(events.WINDOW_RESTART, self.onStart)
+        pub.subscribe(events.WINDOW_RESTART, self.onStart)
         pub.subscribe(events.WINDOW_STOP, self.handleInterrupt)
-        # pub.subscribe(events.WINDOW_CLOSE, self.onClose)
-        # pub.subscribe(events.WINDOW_CANCEL, self.onCancel)
-        # pub.subscribe(events.WINDOW_EDIT, self.onEdit)
-        # pub.subscribe(events.CONSOLE_UPDATE, self.console.logOutput)
+        pub.subscribe(events.WINDOW_CLOSE, self.handleClose)
+        pub.subscribe(events.WINDOW_CANCEL, self.handleCancel)
+        pub.subscribe(events.WINDOW_EDIT, self.handleEdit)
+        pub.subscribe(events.CONSOLE_UPDATE, self.consoleRef.instance.logOutput)
         pub.subscribe(events.EXECUTION_COMPLETE, self.handleComplete)
-        # pub.subscribe(events.PROGRESS_UPDATE, self.footer.updateProgressBar)
-        # # pub.subscribe(events.TIME_UPDATE, self.footer.updateTimeRemaining)
         pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
         pub.subscribe(events.TIME_UPDATE, self.updateTime)
         # # Top level wx close event
-        # self.Bind(wx.EVT_CLOSE, self.onClose)
+        self.frameRef.instance.Bind(wx.EVT_CLOSE, self.handleClose)
 
-    def component_did_mount(self):
-        pass
+    def onStartOLD(self, *args, **kwarg):
+        """
+        Verify user input and kick off the client's program if valid
+        """
+        # navigates away from the button because a
+        # disabled focused button still looks enabled.
+        self.set_state(s.enable_buttons(self.state, []))
+        if Events.VALIDATE_FORM in self.buildSpec.get('use_events', []):
+            # TODO: make this wx thread safe so that it can
+            # actually run asynchronously
+            Thread(target=self.onStartAsyncOLD).run()
+        else:
+            Thread(target=self.onStartAsyncOLD).run()
+
+    def onStartAsyncOLD(self, *args, **kwargs):
+        with transactUI(self):
+            try:
+                errors = self.validateForm().getOrThrow()
+                if errors:  # TODO
+                    config = self.navbar.getActiveConfig()
+                    config.setErrors(errors)
+                    self.Layout()
+                    # TODO: account for tabbed layouts
+                    # TODO: scroll the first error into view
+                    # TODO: rather than just snapping to the top
+                    self.configs[0].Scroll(0, 0)
+                else:
+                    if self.buildSpec['clear_before_run']:
+                        self.console.clear()
+                    self.clientRunner.run(self.buildCliString())
+                    self.showConsole()
+            except CalledProcessError as e:
+                self.showError()
+                self.console.appendText(str(e))
+                self.console.appendText(
+                    '\n\nThis failure happens when Gooey tries to invoke your '
+                    'code for the VALIDATE_FORM event and receives an expected '
+                    'error code in response.'
+                )
+                wx.CallAfter(modals.showFailure)
+            except JSONDecodeError as e:
+                self.showError()
+                self.console.appendText(str(e))
+                self.console.appendText(
+                    '\n\nGooey was unable to parse the response to the VALIDATE_FORM event. '
+                    'This can happen if you have additional logs to stdout beyond what Gooey '
+                    'expects.'
+                )
+                wx.CallAfter(modals.showFailure)
+            # for some reason, we have to delay the re-enabling of
+            # the buttons by a few ms otherwise they pickup pending
+            # events created while they were disabled. Trial and error
+            # let to this solution.
+            wx.CallLater(20, self.footer.start_button.Enable)
+            wx.CallLater(20, self.footer.cancel_button.Enable)
+
+
 
     def onStart(self, *args, **kwargs):
         messages = {'title': _("running_title"), 'subtitle': _('running_msg')}
@@ -658,6 +715,35 @@ class RGooey(Component):
     def handleComplete(self, *args, **kwargs):
         strings = {'title': _('finished_title'), 'subtitle': _('finished_msg')}
         self.set_state(s.success(self.state, strings, self.buildSpec))
+
+    def handleEdit(self, *args, **kwargs):
+        self.set_state(s.edit(self.state, self.buildSpec))
+
+    def handleCancel(self, *args, **kwargs):
+        if modals.confirmExit():
+            self.handleClose()
+
+    def handleClose(self, *args, **kwargs):
+        """Stop any actively running client program, cleanup the top
+        level WxFrame and shutdown the current process"""
+        # issue #592 - we need to run the same onStopExecution machinery
+        # when the exit button is clicked to ensure everything is cleaned
+        # up correctly.
+        frame: wx.Frame = self.frameRef.instance
+        if self.clientRunner.running():
+            if self.shouldStopExecution():
+                self.clientRunner.stop()
+                frame.Destroy()
+                # TODO: NOT exiting here would allow
+                # spawing the gooey to input params then
+                # returning control to the CLI
+                sys.exit()
+        else:
+            frame.Destroy()
+            sys.exit()
+
+    def shouldStopExecution(self):
+        return not self.buildSpec['show_stop_warning'] or modals.confirmForceStop()
 
     def updateProgressBar(self, *args, **kwargs):
         self.set_state(s.updateProgress(self.state, ProgressEvent(**kwargs)))
@@ -674,14 +760,16 @@ class RGooey(Component):
                        'background_color': self.buildSpec['body_bg_color'],
                        'double_buffered': True,
                        'min_size': (400, 300),
-                       'size': self.buildSpec['default_size']},
+                       'size': self.buildSpec['default_size'],
+                       'ref': self.frameRef},
              [c.Block, {'orient': wx.VERTICAL},
               [RHeader, self.headerprops(self.state)],
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
               [Console, {**self.buildSpec,
                          'flag': wx.EXPAND,
                          'proportion': 1,
-                         'show': self.state['screen'] == 'CONSOLE'}],
+                         'show': self.state['screen'] == 'CONSOLE',
+                         'ref': self.consoleRef}],
               [RSidebar, {'bg_color': self.buildSpec['sidebar_bg_color'],
                           'label': 'Some Action!',
                           'show': self.state['screen'] == 'FORM',

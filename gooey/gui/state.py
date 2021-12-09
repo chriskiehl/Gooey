@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from typing_extensions import TypedDict
 import wx
@@ -18,17 +18,39 @@ class ProgressEvent(TypedDict):
     progress: Optional[int]
 
 
+def enable_buttons(state, to_enable: List[str]):
+    updated = [{**btn, 'enabled': btn['label_id'] in to_enable}
+               for btn in state['buttons']]
+    return assoc(state, 'buttons', updated)
+
+
 def interrupt(state, event, params: GooeyParams):
     use_buttons = ('edit', 'restart', 'close')
     return associnMany(
         state,
         ('screen', 'CONSOLE'),
-        ('buttons', [{**btn, 'show': btn['label_id'] in use_buttons}
+        ('buttons', [{**btn,
+                      'show': btn['label_id'] in use_buttons,
+                      'enabled': True}
                     for btn in state['buttons']]),
         ('image', state['images']['errorIcon']),
         ('title', event['title']),
         ('subtitle', event['subtitle']),
         ('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
+
+
+def edit(state, params: GooeyParams):
+    use_buttons = ('cancel', 'start')
+    return associnMany(
+        state,
+        ('screen', 'FORM'),
+        ('buttons', [{**btn,
+                      'show': btn['label_id'] in use_buttons,
+                      'enabled': True}
+                     for btn in state['buttons']]),
+        ('image', state['images']['configIcon']),
+        ('title', params['program_name']),
+        ('subtitle', params['program_description']))
 
 
 def success(state, event, params: GooeyParams):
@@ -37,7 +59,9 @@ def success(state, event, params: GooeyParams):
     return associnMany(
         state,
         ('screen', 'CONSOLE'),
-        ('buttons', [{**btn, 'show': btn['label_id'] in use_buttons}
+        ('buttons', [{**btn,
+                      'show': btn['label_id'] in use_buttons,
+                      'enabled': True}
                      for btn in state['buttons']]),
         ('image', state['images']['successIcon']),
         ('title', event['title']),
@@ -65,7 +89,8 @@ def initial_state(params: GooeyParams):
             'id': event_id,
             'style': style,
             'label_id': label,
-            'show': label in ('cancel', 'start')}
+            'show': label in ('cancel', 'start'),
+            'enabled': True}
             for label, event_id, style in buttons],
         'progress': {
             'show': False,
@@ -108,7 +133,9 @@ def start(state, event, params: GooeyParams):
         'title': event['title'],
         'subtitle': event['subtitle'],
         'image': state['images']['runningIcon'],
-        'buttons': [{**btn, 'show': btn['label_id'] == 'stop'}
+        'buttons': [{**btn,
+                     'show': btn['label_id'] == 'stop',
+                     'enabled': True}
                     for btn in state['buttons']],
         'progress': {
             'show': True, # params['disable_progress_bar_animation'],

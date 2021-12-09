@@ -64,6 +64,11 @@ class ConfigPage(ScrolledPanel):
         return [widget.getValue() for widget in self.reifiedWidgets
                 if widget.info['cli_type'] != 'positional']
 
+    def getFormState(self):
+        return {
+            ''
+        }
+
 
     def isValid(self):
         return not any(self.getErrors())
