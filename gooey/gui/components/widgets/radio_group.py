@@ -4,7 +4,7 @@ from gooey.gui.lang.i18n import _
 from gooey.gui.util import wx_util
 from gooey.gui.components.widgets import CheckBox
 from gooey.util.functional import getin, findfirst, merge
-
+from gooey.python_bindings import types as t
 
 class RadioGroup(BaseWidget):
     """
@@ -45,6 +45,15 @@ class RadioGroup(BaseWidget):
             # just return the first widget's value even though it's
             # not active so that the expected interface is satisfied
             return self.widgets[0].getValue()
+
+
+    def getUiState(self):
+        return t.RadioGroup(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            selected=findfirst(lambda x: x.GetValue(), self.radioButtons),
+            options=[x.getUiState() for x in self.widgets]
+        )
 
     def setErrorString(self, message):
         for button, widget in zip(self.radioButtons, self.widgets):

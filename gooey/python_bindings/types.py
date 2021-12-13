@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, List, Union, Mapping, Any, TypeVar, Callable, Generic
+from typing import Optional, Tuple, List, Union, Mapping, Any, TypeVar, Callable, Generic, Dict
 
 from dataclasses import dataclass
 from typing_extensions import TypedDict, TypeAlias
@@ -129,6 +129,82 @@ class GooeyParams(TypedDict):
 #     widgets: str
 
 
+class GooeyField(TypedDict):
+    id: str
+    type: str
+    error: Optional[str]
+    enabled: bool
+    visible: bool
+
+class Dropdown(TypedDict):
+    id: str
+    choices: List[str]
+    selected: str
+
+class Chooser(TypedDict):
+    id: str
+    type: str
+    label: str
+    value: str
+    placeholder: str
+    error: str
+
+class Command(TypedDict):
+    id: str
+    type: str
+    value: str
+    placeholder: str
+    error: str
+
+class Counter(TypedDict):
+    id: str
+    type: str
+    selected: str
+    choices: List[str]
+    error: str
+
+class DropdownFilterable(TypedDict):
+    id: str
+    type: str
+    value: str
+    choices: List[str]
+
+class ListBox(TypedDict):
+    id: str
+    type: str
+    choices: List[str]
+    selected: List[int]
+
+
+class IntegerField(TypedDict):
+    id: str
+    type: str
+    value: str
+    min: int
+    max: int
+
+
+class DecimalField(TypedDict):
+    id: str
+    type: str
+    value: float
+    min: float
+    max: float
+
+class Slider(TypedDict):
+    id: str
+    type: str
+    value: float
+    min: float
+    max: float
+
+class Textarea(TypedDict):
+    id: str
+    type: str
+    value: float
+    height: int
+
+
 class FieldValue(TypedDict):
     """
     The current value of a widget in the UI.
@@ -139,6 +215,11 @@ class FieldValue(TypedDict):
     id: str
     cmd: Optional[str]
     rawValue: str
+    placeholder: str
+    positional: bool
+    required: bool
+    enabled: bool
+    visible: bool
     test: bool
     error: Optional[str]
     clitype: str
@@ -146,15 +227,69 @@ class FieldValue(TypedDict):
 
 
 
-## TODO: dynamic types
-
 class TextField(TypedDict):
     value: str
     error: Optional[str]
     enabled: bool
     visible: bool
 
+
+class Checkbox(TypedDict):
+    id: str
+    type: str
+    checked: bool
+    error: str
+
+
+class RadioGroup(TypedDict):
+    id: str
+    type: str
+    selected: Optional[int]
+    options: List['FormField']
+
+
+FormField = Union[Dropdown, Chooser, FieldValue, RadioGroup]
+
+
+class Group(TypedDict):
+    name: str
+    items: List[Any]
+    groups: List['Group']
+    description: str
+    options: Dict[Any, Any]
+
+
+class Item(TypedDict):
+    id: str
+    type: str
+    cli_type: str
+    group_name: str
+    required: bool
+    options: Dict[Any, Any]
+    data: 'ItemData'
+
+
+ItemData = Union['StandardData', 'RadioData']
+
+class StandardData(TypedDict):
+    display_name: str
+    help: str
+    required: bool
+    nargs: str
+    commands: List[str]
+    choices: List[str]
+    default: Union[str, List[str]]
+    dest: str
+
+class RadioData(TypedDict):
+    commands: List[List[str]]
+    widgets: List[Item]
+
+
 A = TypeVar('A')
+
+
+## TODO: dynamic types
 
 @dataclass(frozen=True, eq=True)
 class CommandDetails:

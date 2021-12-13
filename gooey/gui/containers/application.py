@@ -588,8 +588,9 @@ def RSidebar(props):
                          'min_size': (1, -1)}],
          *[[ConfigPage, {'flag': wx.EXPAND,
                          'proportion': 3,
+                         'config': config,
                          'show': i == props['activeSelection']}]
-           for i in range(3)]
+           for i, config in enumerate(props['config'].values())]
          ]
     )
 
@@ -619,8 +620,6 @@ class RGooey(Component):
             'height': self.buildSpec['header_height'],
             'image_uri': state['image'],
             'image_size': (six.MAXSIZE, self.buildSpec['header_height'] - 10)}
-
-        state = form_page(initial_state(self.buildSpec))
 
         self.fprops = lambda state: {
             'buttons': state['buttons'],
@@ -775,6 +774,7 @@ class RGooey(Component):
                           'show': self.state['screen'] == 'FORM',
                           'activeSelection': self.state['activeSelection'],
                           'on_change': self.handle_select_action,
+                          'config': self.buildSpec['widgets'],
                           'flag': wx.EXPAND,
                           'proportion': 1}],
               # [c.Notebook, {'flag': wx.EXPAND, 'proportion': 1, 'on_change': self.handle_tab},
@@ -839,20 +839,7 @@ class TitleText(Component):
 
 @mount.register(ConfigPage)
 def config(element, parent):
-    xxx = {'command': 'range', 'name': 'range', 'help': None, 'description': '', 'contents': [
-        {'name': 'optional_args_msg', 'items': [
-            {'id': '--length', 'type': 'TextField', 'cli_type': 'optional', 'required': False,
-             'data': {'display_name': 'length', 'help': None, 'required': False, 'nargs': '',
-                      'commands': ['--length'], 'choices': [], 'default': 10, 'dest': 'length'},
-             'options': {'error_color': '#ea7878', 'label_color': '#000000',
-                         'help_color': '#363636', 'full_width': False,
-                         'validator': {'type': 'ExpressionValidator', 'test': 'True',
-                                       'message': ''}, 'external_validator': {'cmd': ''}}}],
-         'groups': [], 'description': None,
-         'options': {'label_color': '#000000', 'description_color': '#363636',
-                     'legacy': {'required_cols': 2, 'optional_cols': 2}, 'columns': 2,
-                     'padding': 10, 'show_border': False}}]}
-    return update(element, ConfigPage(parent, xxx, {'contents': []}))
+    return update(element, ConfigPage(parent, element['props']['config'], {'contents': []}))
 
 
 @update.register(ConfigPage)

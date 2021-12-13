@@ -102,9 +102,8 @@ def initial_state(params: GooeyParams):
             'elapsed_time': None,
             'estimatedRemaining': None,
         },
-        'activeSelection': 1,
+        'activeSelection': 0,
         'forms': {}
-
      }
 
 def header_props(state, params):
@@ -195,4 +194,3 @@ def present_time(timer):
         return f'{elapsed_time_value}<{estimate_time_remaining}'
     else:
         return f'{elapsed_time_value}'
-

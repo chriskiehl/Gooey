@@ -417,8 +417,9 @@ def choose_name(name, subparser):
 
 
 def build_radio_group(mutex_group, widget_group, options):
+  dests = [action.dest for action in mutex_group._group_actions]
   return {
-    'id': str(uuid4()),
+    'id': 'radio-group-' + '-'.join(dests),
     'type': 'RadioGroup',
     'cli_type': 'optional',
     'group_name': 'Choose Option',

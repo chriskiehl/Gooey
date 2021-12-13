@@ -11,7 +11,7 @@ from gooey.util.functional import getin, ifPresent
 from gooey.gui.validators import runValidator
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.components.mouse import notifyMouseEvent
-from gooey.python_bindings.types import FieldValue
+from gooey.python_bindings.types import FieldValue, FormField, TextField
 
 
 class BaseWidget(wx.Panel):
@@ -70,6 +70,7 @@ class TextContainer(BaseWidget):
 
         self.info = widgetInfo
         self._id = widgetInfo['id']
+        self.widgetInfo = widgetInfo
         self._meta = widgetInfo['data']
         self._options = widgetInfo['options']
         self.label = wx.StaticText(self, label=widgetInfo['data']['display_name'])
@@ -169,6 +170,14 @@ class TextContainer(BaseWidget):
         # self.Layout()
         event.Skip()
 
+    def getUiState(self) -> FormField:
+        return TextField(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            value=self.getWidgetValue(),
+            enabled=self.Enabled,
+            visible=self.Shown
+        )
 
     def getValue(self) -> FieldValue:
         regexFunc: Callable[[str], bool] = lambda x: bool(re.match(userValidator, x))
@@ -186,6 +195,9 @@ class TextContainer(BaseWidget):
             cmd=self.formatOutput(self._meta, value),
             meta=self._meta,
             rawValue= value,
+            type=self.info['type'],
+            enabled=self.Enabled,
+            visible=self.Shown,
             test= runValidator(satisfies, value),
             error=None if runValidator(satisfies, value) else message,
             clitype=('positional'

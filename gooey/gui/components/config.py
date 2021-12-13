@@ -65,13 +65,15 @@ class ConfigPage(ScrolledPanel):
                 if widget.info['cli_type'] != 'positional']
 
     def getFormState(self):
-        return {
-            ''
-        }
+        return [widget.getValue()
+                for widget in self.reifiedWidgets]
 
 
     def isValid(self):
         return not any(self.getErrors())
+
+    def syncFromState(self, state):
+        pass
 
     def getErrors(self):
         states = [widget.getValue() for widget in self.reifiedWidgets]
