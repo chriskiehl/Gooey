@@ -796,9 +796,6 @@ Gooey also supports tracking elapsed / remaining time when progress is used! Thi
     })
 ```
 
-
-![Elapsed/Remaining Time](https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/gooey-estimated-finish.gif)
-
 --------------------------------------
 
 
