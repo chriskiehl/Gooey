@@ -41,7 +41,7 @@ def main():
 Catching them in your code is really easy! They conveniently show up as top-level Exceptions. Just wrap your main logic in a try/except and you'll be able to catch when Gooey tries to shut down your process.   
 
 ```python
-try
+try:
    # your code here
 except KeyboardInterrupt: 
    # cleanup and shutdown or ignore 
