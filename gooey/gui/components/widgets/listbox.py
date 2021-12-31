@@ -2,7 +2,7 @@ import wx  # type: ignore
 
 from gooey.gui import formatters
 from gooey.gui.components.widgets.bases import TextContainer
-
+from gooey.python_bindings import types as t
 
 class Listbox(TextContainer):
 
@@ -30,3 +30,15 @@ class Listbox(TextContainer):
 
     def formatOutput(self, metadata, value):
         return formatters.listbox(metadata, value)
+
+    def getUiState(self) -> t.FormField:
+        widget: wx.ComboBox = self.widget
+        return t.ListBox(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            selected=self.getWidgetValue(),
+            choices=self._meta['choices'],
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )

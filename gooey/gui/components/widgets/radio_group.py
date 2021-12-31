@@ -5,6 +5,7 @@ from gooey.gui.util import wx_util
 from gooey.gui.components.widgets import CheckBox
 from gooey.util.functional import getin, findfirst, merge
 from gooey.python_bindings import types as t
+from gooey.python_bindings import types as t
 
 class RadioGroup(BaseWidget):
     """

@@ -7,11 +7,12 @@ from mypy_extensions import KwArg
 
 from gooey.gui import formatters, events
 from gooey.gui.util import wx_util
+from gooey.python_bindings.types import FormField
 from gooey.util.functional import getin, ifPresent
 from gooey.gui.validators import runValidator
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.components.mouse import notifyMouseEvent
-from gooey.python_bindings.types import FieldValue, FormField, TextField
+from gooey.python_bindings import types as t
 
 
 class BaseWidget(wx.Panel):
@@ -170,16 +171,21 @@ class TextContainer(BaseWidget):
         # self.Layout()
         event.Skip()
 
-    def getUiState(self) -> FormField:
-        return TextField(
+    def getUiState(self) -> t.FormField:
+        return t.TextField(
             id=self._id,
             type=self.widgetInfo['type'],
             value=self.getWidgetValue(),
-            enabled=self.Enabled,
-            visible=self.Shown
+            placeholder=self.widget.widget.GetHint(),
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
         )
 
-    def getValue(self) -> FieldValue:
+    def syncUiState(self, state: FormField):
+        raise NotImplementedError
+
+    def getValue(self) -> t.FieldValue:
         regexFunc: Callable[[str], bool] = lambda x: bool(re.match(userValidator, x))
 
         userValidator = getin(self._options, ['validator', 'test'], 'True')
@@ -190,14 +196,14 @@ class TextContainer(BaseWidget):
         satisfies = testFunc if self._meta['required'] else ifPresent(testFunc)
         value = self.getWidgetValue()
 
-        return FieldValue(
+        return t.FieldValue(
             id=self._id,
             cmd=self.formatOutput(self._meta, value),
             meta=self._meta,
             rawValue= value,
-            type=self.info['type'],
-            enabled=self.Enabled,
-            visible=self.Shown,
+            # type=self.info['type'],
+            enabled=self.IsEnabled(),
+            visible=self.IsShown(),
             test= runValidator(satisfies, value),
             error=None if runValidator(satisfies, value) else message,
             clitype=('positional'
@@ -250,3 +256,15 @@ class BaseChooser(TextContainer):
 
     def formatOutput(self, metatdata, value):
         return formatters.general(metatdata, value)
+
+    def getUiState(self) -> t.FormField:
+        btn: wx.Button = self.button  # type: ignore
+        return t.Chooser(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            value=self.widget.GetValue(),
+            btn_label=btn.GetLabel(),
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )

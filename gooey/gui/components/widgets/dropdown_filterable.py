@@ -9,6 +9,7 @@ from gooey.gui.components.mouse import notifyMouseEvent
 from gooey.gui.components.widgets.dropdown import Dropdown
 from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
+from gooey.python_bindings import types as t
 
 __ALL__ = ('FilterableDropdown',)
 
@@ -109,6 +110,18 @@ class FilterableDropdown(Dropdown):
         # and keeps the tabbing at the top-level widget level
         self.listbox.AcceptsFocusFromKeyboard = lambda *args, **kwargs: False
         return self.comboCtrl
+
+    def getUiState(self) -> t.FormField:
+        widget: wx.ComboBox = self.widget
+        return t.DropdownFilterable(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            selected=self.getWidgetValue(),
+            choices=widget.GetStrings(),
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )
 
     def OnGetItem(self, n):
         return self.model.suggestions[n]

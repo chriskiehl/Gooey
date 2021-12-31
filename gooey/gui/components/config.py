@@ -1,10 +1,11 @@
-from typing import Mapping
+from typing import Mapping, List
 
 import wx  # type: ignore
 from wx.lib.scrolledpanel import ScrolledPanel  # type: ignore
 
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.util import wx_util
+from gooey.python_bindings.types import FormField
 from gooey.util.functional import getin, flatmap, compact, indexunique
 from gooey.gui.lang.i18n import _
 from gooey.gui.components.mouse import notifyMouseEvent
@@ -65,15 +66,17 @@ class ConfigPage(ScrolledPanel):
                 if widget.info['cli_type'] != 'positional']
 
     def getFormState(self):
-        return [widget.getValue()
+        return [widget.getUiState()
                 for widget in self.reifiedWidgets]
+
+    def syncFormState(self, formState: List[FormField]):
+        for item in formState:
+            self.widgetsMap[item['id']].syncUiState(item)
+
 
 
     def isValid(self):
         return not any(self.getErrors())
-
-    def syncFromState(self, state):
-        pass
 
     def getErrors(self):
         states = [widget.getValue() for widget in self.reifiedWidgets]
@@ -93,7 +96,7 @@ class ConfigPage(ScrolledPanel):
         self.resetErrors()
         radioWidgets = self.indexInternalRadioGroupWidgets()
         widgetsByDest = {v._meta['dest']: v for k,v in self.widgetsMap.items()
-                         if v.info['type'] is not 'RadioGroup'}
+                         if v.info['type'] != 'RadioGroup'}
 
         # if there are any errors, then all error blocks should
         # be displayed so that the UI elements remain inline with

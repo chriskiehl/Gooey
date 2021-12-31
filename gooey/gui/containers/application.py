@@ -12,10 +12,10 @@ import six
 import wx  # type: ignore
 from rewx.widgets import set_basic_props
 
-from gui.components.mouse import notifyMouseEvent
-from gui.state import initial_state, present_time, form_page, ProgressEvent, TimingEvent
+from gooey.gui.components.mouse import notifyMouseEvent
+from gooey.gui.state import initial_state, present_time, form_page, ProgressEvent, TimingEvent
 from gooey.gui import state as s
-from gui.three_to_four import Constants
+from gooey.gui.three_to_four import Constants
 from rewx.core import Component, Ref, updatewx, patch
 from typing_extensions import TypedDict
 
@@ -49,7 +49,7 @@ from gooey.gui.image_repository import loadImages
 
 from threading import Lock
 
-from util.functional import associnMany
+from gooey.util.functional import associnMany
 
 lock = Lock()
 
@@ -589,6 +589,7 @@ def RSidebar(props):
          *[[ConfigPage, {'flag': wx.EXPAND,
                          'proportion': 3,
                          'config': config,
+                         'ref': props['ref'],
                          'show': i == props['activeSelection']}]
            for i, config in enumerate(props['config'].values())]
          ]
@@ -609,6 +610,7 @@ class RGooey(Component):
         super().__init__(props)
         self.frameRef = Ref()
         self.consoleRef = Ref()
+        self.configRef = Ref()
 
         self.buildSpec = props
         self.state = initial_state(props)
@@ -651,7 +653,7 @@ class RGooey(Component):
         """
         # navigates away from the button because a
         # disabled focused button still looks enabled.
-        self.set_state(s.enable_buttons(self.state, []))
+        # self.set_state(s.enable_buttons(self.state, []))
         if Events.VALIDATE_FORM in self.buildSpec.get('use_events', []):
             # TODO: make this wx thread safe so that it can
             # actually run asynchronously
@@ -662,8 +664,8 @@ class RGooey(Component):
     def onStartAsyncOLD(self, *args, **kwargs):
         with transactUI(self):
             try:
-                errors = self.validateForm().getOrThrow()
-                if errors:  # TODO
+                # errors = self.validateForm().getOrThrow()
+                if False:  # TODO
                     config = self.navbar.getActiveConfig()
                     config.setErrors(errors)
                     self.Layout()
@@ -677,23 +679,25 @@ class RGooey(Component):
                     self.clientRunner.run(self.buildCliString())
                     self.showConsole()
             except CalledProcessError as e:
-                self.showError()
-                self.console.appendText(str(e))
-                self.console.appendText(
-                    '\n\nThis failure happens when Gooey tries to invoke your '
-                    'code for the VALIDATE_FORM event and receives an expected '
-                    'error code in response.'
-                )
-                wx.CallAfter(modals.showFailure)
+                pass
+                # self.showError()
+                # self.console.appendText(str(e))
+                # self.console.appendText(
+                #     '\n\nThis failure happens when Gooey tries to invoke your '
+                #     'code for the VALIDATE_FORM event and receives an expected '
+                #     'error code in response.'
+                # )
+                # wx.CallAfter(modals.showFailure)
             except JSONDecodeError as e:
-                self.showError()
-                self.console.appendText(str(e))
-                self.console.appendText(
-                    '\n\nGooey was unable to parse the response to the VALIDATE_FORM event. '
-                    'This can happen if you have additional logs to stdout beyond what Gooey '
-                    'expects.'
-                )
-                wx.CallAfter(modals.showFailure)
+                pass
+                # self.showError()
+                # self.console.appendText(str(e))
+                # self.console.appendText(
+                #     '\n\nGooey was unable to parse the response to the VALIDATE_FORM event. '
+                #     'This can happen if you have additional logs to stdout beyond what Gooey '
+                #     'expects.'
+                # )
+                # wx.CallAfter(modals.showFailure)
             # for some reason, we have to delay the re-enabling of
             # the buttons by a few ms otherwise they pickup pending
             # events created while they were disabled. Trial and error
@@ -705,7 +709,12 @@ class RGooey(Component):
 
     def onStart(self, *args, **kwargs):
         messages = {'title': _("running_title"), 'subtitle': _('running_msg')}
-        self.set_state(s.start(self.state, messages, self.buildSpec))
+        # self.set_state(s.start(self.state, messages, self.buildSpec))
+        ss = self.configRef.instance.getFormState()
+        self.configRef.instance.syncFormState([
+            {**ss[0], 'value': '11111'},
+            {**ss[1], 'checked': False}])
+        print()
 
     def handleInterrupt(self, *args, **kwargs):
         messages = {'title': 'Interrupted!!', 'subtitle': 'Boom'}
@@ -771,6 +780,7 @@ class RGooey(Component):
                          'ref': self.consoleRef}],
               [RSidebar, {'bg_color': self.buildSpec['sidebar_bg_color'],
                           'label': 'Some Action!',
+                          'ref': self.configRef,
                           'show': self.state['screen'] == 'FORM',
                           'activeSelection': self.state['activeSelection'],
                           'on_change': self.handle_select_action,

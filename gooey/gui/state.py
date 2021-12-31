@@ -4,7 +4,7 @@ from typing_extensions import TypedDict
 import wx
 
 from gooey.gui import events
-from gui.lang.i18n import _
+from gooey.gui.lang.i18n import _
 from gooey.python_bindings.types import GooeyParams
 from gooey.util.functional import associn, assoc, associnMany
 

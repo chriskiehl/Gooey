@@ -8,7 +8,7 @@ from typing import List, Optional
 from gooey.gui.constants import VALUE_PLACEHOLDER
 from gooey.gui.formatters import formatArgument
 from gooey.python_bindings.types import FieldValue
-from util.functional import merge  # type: ignore
+from gooey.util.functional import merge  # type: ignore
 
 '''
 primary :: Target -> Command -> Array Arg -> Array Arg -> Boolean -> CliString

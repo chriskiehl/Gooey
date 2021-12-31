@@ -138,16 +138,22 @@ class GooeyField(TypedDict):
 
 class Dropdown(TypedDict):
     id: str
+    type: str
+    selected: int
     choices: List[str]
-    selected: str
+    error: str
+    visible: bool
+    enabled: bool
 
 class Chooser(TypedDict):
     id: str
     type: str
-    label: str
+    btn_label: str
     value: str
     placeholder: str
     error: str
+    visible: bool
+    enabled: bool
 
 class Command(TypedDict):
     id: str
@@ -159,21 +165,29 @@ class Command(TypedDict):
 class Counter(TypedDict):
     id: str
     type: str
-    selected: str
+    selected: int
     choices: List[str]
     error: str
+    visible: bool
+    enabled: bool
 
 class DropdownFilterable(TypedDict):
     id: str
     type: str
-    value: str
+    selected: str
     choices: List[str]
+    error: str
+    visible: bool
+    enabled: bool
 
 class ListBox(TypedDict):
     id: str
     type: str
+    selected: List[str]
     choices: List[str]
-    selected: List[int]
+    error: str
+    visible: bool
+    enabled: bool
 
 
 class IntegerField(TypedDict):
@@ -182,6 +196,9 @@ class IntegerField(TypedDict):
     value: str
     min: int
     max: int
+    error: str
+    visible: bool
+    enabled: bool
 
 
 class DecimalField(TypedDict):
@@ -191,12 +208,16 @@ class DecimalField(TypedDict):
     min: float
     max: float
 
+
 class Slider(TypedDict):
     id: str
     type: str
     value: float
     min: float
     max: float
+    error: str
+    visible: bool
+    enabled: bool
 
 class Textarea(TypedDict):
     id: str
@@ -228,17 +249,25 @@ class FieldValue(TypedDict):
 
 
 class TextField(TypedDict):
+    id: str
+    type: str
     value: str
+    placeholder: str
     error: Optional[str]
     enabled: bool
     visible: bool
 
+
+class PasswordField(TextField):
+    pass
 
 class Checkbox(TypedDict):
     id: str
     type: str
     checked: bool
     error: str
+    visible: bool
+    enabled: bool
 
 
 class RadioGroup(TypedDict):
@@ -248,7 +277,21 @@ class RadioGroup(TypedDict):
     options: List['FormField']
 
 
-FormField = Union[Dropdown, Chooser, FieldValue, RadioGroup]
+FormField = Union[
+    Textarea,
+    Slider,
+    Command,
+    Counter,
+    Checkbox,
+    TextField,
+    Dropdown,
+    Chooser,
+    FieldValue,
+    RadioGroup,
+    DropdownFilterable,
+    ListBox,
+    IntegerField
+]
 
 
 class Group(TypedDict):

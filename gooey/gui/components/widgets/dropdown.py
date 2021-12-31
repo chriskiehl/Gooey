@@ -5,7 +5,7 @@ import wx  # type: ignore
 
 from gooey.gui import formatters
 from gooey.gui.lang.i18n import _
-
+from gooey.python_bindings import types as t
 
 class Dropdown(TextContainer):
     _gooey_options = {
@@ -43,6 +43,18 @@ class Dropdown(TextContainer):
 
     def formatOutput(self, metadata, value):
         return formatters.dropdown(metadata, value)
+
+    def getUiState(self) -> t.FormField:
+        widget: wx.ComboBox = self.widget
+        return t.Dropdown(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            selected=self.getWidgetValue(),
+            choices=widget.GetStrings(),
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )
 
     @contextmanager
     def retainSelection(self):

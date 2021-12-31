@@ -468,7 +468,7 @@ def action_to_json(action, widget, options):
     validate_gooey_options(action, widget, final_options)
 
     return {
-        'id': action.option_strings[0] if action.option_strings else action.dest,
+        'id': action.dest,
         'type': widget,
         'cli_type': choose_cli_type(action),
         'required': action.required,

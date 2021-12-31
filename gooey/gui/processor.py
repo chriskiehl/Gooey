@@ -12,7 +12,7 @@ from gooey.gui import events
 from gooey.gui.pubsub import pub
 from gooey.gui.util.casting import safe_float
 from gooey.util.functional import unit, bind
-from python_bindings.types import GooeyParams
+from gooey.python_bindings.types import GooeyParams
 
 
 class ProcessController(object):
