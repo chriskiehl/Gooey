@@ -3,25 +3,26 @@ import os
 import itertools
 
 from gooey.gui.util.quoting import quote
+from python_bindings.types import Item
 
 
-def formatArgument(metadata, value):
-    if metadata['type'] in ['CheckBox', 'BlockCheckbox']:
-        return checkbox(metadata, value)
-    elif metadata['type'] == 'MultiFileChooser':
-        return multiFileChooser(metadata, value)
-    elif metadata['type'] == 'Textarea':
-        return textArea(metadata, value)
-    elif metadata['type'] == 'CommandField':
-        return textArea(metadata, value)
-    elif metadata['type'] == 'Counter':
-        return counter(metadata, value)
-    elif metadata['type'] == 'Dropdown':
-        return dropdown(metadata, value)
-    elif metadata['type'] == 'Listbox':
-        return listbox(metadata, value)
+def formatArgument(item: Item, value):
+    if item['type'] in ['CheckBox', 'BlockCheckbox']:
+        return checkbox(item['data'], value)
+    elif item['type'] == 'MultiFileChooser':
+        return multiFileChooser(item['data'], value)
+    elif item['type'] == 'Textarea':
+        return textArea(item['data'], value)
+    elif item['type'] == 'CommandField':
+        return textArea(item['data'], value)
+    elif item['type'] == 'Counter':
+        return counter(item['data'], value)
+    elif item['type'] == 'Dropdown':
+        return dropdown(item['data'], value)
+    elif item['type'] == 'Listbox':
+        return listbox(item['data'], value)
     else:
-        return general(metadata, value)
+        return general(item['data'], value)
 
 
 

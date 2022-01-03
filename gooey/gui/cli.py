@@ -1,3 +1,4 @@
+import json
 from itertools import chain
 
 from copy import deepcopy
@@ -7,8 +8,9 @@ from typing import List, Optional
 
 from gooey.gui.constants import VALUE_PLACEHOLDER
 from gooey.gui.formatters import formatArgument
-from gooey.python_bindings.types import FieldValue
+from gooey.python_bindings.types import FieldValue, Group, Item
 from gooey.util.functional import merge  # type: ignore
+from gooey.gui.state import FullGooeyState
 
 '''
 primary :: Target -> Command -> Array Arg -> Array Arg -> Boolean -> CliString
@@ -19,6 +21,24 @@ failed :: Target -> Command -> FromState -> CliString
 fieldAction :: Target -> Command ->   
 
 '''
+
+
+def buildSuccessCmd(state: FullGooeyState):
+    subcommand = state['subcommands'][state['activeSelection']]
+    widgets = state['widgets'][subcommand]
+
+
+
+
+def onSuccessCmd(target: str, subCommand: str, formState: List[str]) -> str:
+    command = subCommand if not subCommand == '::gooey/default' else ''
+    return f'{target} {command} --gooey-on-success {json.dumps(formState)}'
+
+
+def onErrorCmd(target: str, subCommand: str, formState: List[str]) -> str:
+    command = subCommand if not subCommand == '::gooey/default' else ''
+    return f'{target} {command} --gooey-on-error {json.dumps(formState)}'
+
 
 def formValidationCmd(target: str, subCommand: str, positionals: List[FieldValue], optionals: List[FieldValue]) -> str:
     positional_args = [cmdOrPlaceholderOrNone(x) for x in positionals]
@@ -33,7 +53,8 @@ def formValidationCmd(target: str, subCommand: str, positionals: List[FieldValue
         *positional_args]))
 
 
-def cliCmd(target: str, subCommand: str,
+def cliCmd(target: str,
+           subCommand: str,
            positionals: List[FieldValue],
            optionals: List[FieldValue],
            suppress_gooey_flag=False) -> str:

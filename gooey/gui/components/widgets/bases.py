@@ -258,11 +258,11 @@ class BaseChooser(TextContainer):
         return formatters.general(metatdata, value)
 
     def getUiState(self) -> t.FormField:
-        btn: wx.Button = self.button  # type: ignore
+        btn: wx.Button = self.widget.button  # type: ignore
         return t.Chooser(
             id=self._id,
             type=self.widgetInfo['type'],
-            value=self.widget.GetValue(),
+            value=self.widget.getValue(),
             btn_label=btn.GetLabel(),
             error=self.error.GetLabel() or None,
             enabled=self.IsEnabled(),

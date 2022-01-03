@@ -4,7 +4,8 @@ import sys
 from argparse import ArgumentParser
 from typing import List, Dict
 
-from gooey.python_bindings.dynamics import monkey_patch_for_form_validation
+from gooey.python_bindings.dynamics import monkey_patch_for_form_validation, monkey_patch, \
+    patch_args
 from gooey.python_bindings.dynamics import patch_argument, collect_errors
 from gooey.python_bindings.types import GooeyParams
 from . import cmd_args
@@ -91,9 +92,28 @@ def validate_field(params):
     return parse_args
 
 
-def handle_success(params):
+def handle_success(params, write=print, exit=sys.exit):
     def parse_args(self: ArgumentParser, args=None, namespace=None):
-        raise NotImplementedError
+        # because we're running under the context of a successful
+        # invocation having just completed, the arguments supplied to
+        # the parser to trigger it are thus, by definition, safe to parse.
+        # So, we don't need any error patching monkey business and just need
+        # to attach our specific arg to parse the extra option Gooey passes
+        patched_parser = patch_argument(self, '--gooey-on-success', action='store', type=json.loads)
+
+        try:
+            args = patched_parser.parse_args(args, namespace)  # type: ignore
+            form_state = args.gooey_on_success
+            # removing the injected gooey value so as not
+            # to clutter the user's object
+            del args.gooey_on_success
+
+            next_state = self.on_success(args, form_state)  # type: ignore
+            write(json.dumps(next_state))
+            exit(0)
+        except Exception as e:
+            write(e)
+            exit(1)
     return parse_args
 
 
@@ -124,6 +144,8 @@ def choose_hander(params: GooeyParams, cliargs: List[str]):
         f.write(str(sys.argv))
     if '--gooey-validate-form' in cliargs:
         return validate_form(params)
+    elif '--gooey-on-success' in cliargs:
+        return handle_success(params)
     elif '--ignore-gooey' in cliargs:
         return bypass_gooey(params)
     else:

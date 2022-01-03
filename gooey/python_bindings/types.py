@@ -129,133 +129,63 @@ class GooeyParams(TypedDict):
 #     widgets: str
 
 
-class GooeyField(TypedDict):
+class BasicField(TypedDict):
     id: str
     type: str
+    required: bool
+    positional: bool
     error: Optional[str]
     enabled: bool
     visible: bool
 
-class Dropdown(TypedDict):
-    id: str
-    type: str
+class Dropdown(BasicField):
     selected: int
     choices: List[str]
-    error: str
-    visible: bool
-    enabled: bool
 
-class Chooser(TypedDict):
-    id: str
-    type: str
+class Chooser(BasicField):
     btn_label: str
     value: str
     placeholder: str
-    error: str
-    visible: bool
-    enabled: bool
 
-class Command(TypedDict):
-    id: str
-    type: str
+
+class Command(BasicField):
     value: str
     placeholder: str
-    error: str
 
-class Counter(TypedDict):
-    id: str
-    type: str
+class Counter(BasicField):
     selected: int
     choices: List[str]
-    error: str
-    visible: bool
-    enabled: bool
 
-class DropdownFilterable(TypedDict):
-    id: str
-    type: str
-    selected: str
+class DropdownFilterable(BasicField):
+    value: str
     choices: List[str]
-    error: str
-    visible: bool
-    enabled: bool
 
-class ListBox(TypedDict):
-    id: str
-    type: str
+class ListBox(BasicField):
     selected: List[str]
     choices: List[str]
-    error: str
-    visible: bool
-    enabled: bool
 
-
-class IntegerField(TypedDict):
-    id: str
-    type: str
+class IntegerField(BasicField):
     value: str
     min: int
     max: int
-    error: str
-    visible: bool
-    enabled: bool
 
-
-class DecimalField(TypedDict):
-    id: str
-    type: str
+class DecimalField(BasicField):
     value: float
     min: float
     max: float
 
-
-class Slider(TypedDict):
-    id: str
-    type: str
+class Slider(BasicField):
     value: float
     min: float
     max: float
-    error: str
-    visible: bool
-    enabled: bool
 
-class Textarea(TypedDict):
-    id: str
-    type: str
+class Textarea(BasicField):
     value: float
     height: int
 
-
-class FieldValue(TypedDict):
-    """
-    The current value of a widget in the UI.
-    TODO: Why are things like cmd and cli type tracked IN the
-    UI and returned as part of the getValue() call?
-    What the hell, young me?
-    """
-    id: str
-    cmd: Optional[str]
-    rawValue: str
-    placeholder: str
-    positional: bool
-    required: bool
-    enabled: bool
-    visible: bool
-    test: bool
-    error: Optional[str]
-    clitype: str
-    meta: Any
-
-
-
-class TextField(TypedDict):
-    id: str
-    type: str
+class TextField(BasicField):
     value: str
     placeholder: str
-    error: Optional[str]
-    enabled: bool
-    visible: bool
 
 
 class PasswordField(TextField):
@@ -286,7 +216,6 @@ FormField = Union[
     TextField,
     Dropdown,
     Chooser,
-    FieldValue,
     RadioGroup,
     DropdownFilterable,
     ListBox,
@@ -294,9 +223,37 @@ FormField = Union[
 ]
 
 
+
+
+class FieldValue(TypedDict):
+    """
+    The current value of a widget in the UI.
+    TODO: Why are things like cmd and cli type tracked IN the
+    UI and returned as part of the getValue() call?
+    What the hell, young me?
+    """
+    id: str
+    cmd: Optional[str]
+    rawValue: str
+    placeholder: str
+    positional: bool
+    required: bool
+    enabled: bool
+    visible: bool
+    test: bool
+    error: Optional[str]
+    clitype: str
+    meta: Any
+
+
+
+
+
+
+
 class Group(TypedDict):
     name: str
-    items: List[Any]
+    items: List['Item']
     groups: List['Group']
     description: str
     options: Dict[Any, Any]
@@ -311,6 +268,8 @@ class Item(TypedDict):
     options: Dict[Any, Any]
     data: 'ItemData'
 
+class ItemValue(Item):
+    value: Any
 
 ItemData = Union['StandardData', 'RadioData']
 
@@ -329,6 +288,13 @@ class RadioData(TypedDict):
     widgets: List[Item]
 
 
+class TopLevelParser(TypedDict):
+    command: str
+    name: str
+    help: Optional[str]
+    description: str
+    contents: List[Group]
+
 A = TypeVar('A')
 
 
@@ -341,7 +307,13 @@ class CommandDetails:
     positionals: List[FieldValue]
     optionals: List[FieldValue]
 
-
+@dataclass(frozen=True, eq=True)
+class CommandPieces:
+    target: str
+    subcommand: str
+    positionals: List[str]
+    optionals: List[str]
+    ignoreFlag: str
 
 @dataclass(frozen=True, eq=True)
 class Success(Generic[A]):

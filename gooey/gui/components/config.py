@@ -65,9 +65,11 @@ class ConfigPage(ScrolledPanel):
         return [widget.getValue() for widget in self.reifiedWidgets
                 if widget.info['cli_type'] != 'positional']
 
-    def getFormState(self):
+
+    def getFormState(self) -> List[FormField]:
         return [widget.getUiState()
                 for widget in self.reifiedWidgets]
+
 
     def syncFormState(self, formState: List[FormField]):
         for item in formState:
@@ -254,8 +256,6 @@ class TabbedConfig(Component):
         return wsx(
 
         )
-
-
 
 
 class TabbedConfigPage(ConfigPage):

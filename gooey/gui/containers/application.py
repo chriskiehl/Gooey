@@ -4,6 +4,7 @@ Primary orchestration and control point for Gooey.
 import queue
 import sys
 from json import JSONDecodeError
+from pprint import pprint
 from subprocess import CalledProcessError
 from threading import Thread
 from typing import Mapping, Dict, Type, Iterable
@@ -568,7 +569,7 @@ def SidebarControls(props):
           [VerticalSpacer, {'height': 15}],
           [TitleText, {'label': props['label']}],
           [VerticalSpacer, {'height': 5}],
-          [c.ListBox, {'choices': ['range', 'strange', 'mange'],
+          [c.ListBox, {'choices': props['options'],
                        'value': props['activeSelection'],
                        'proportion': 1,
                        'on_change': props['on_change'],
@@ -576,12 +577,43 @@ def SidebarControls(props):
           [VerticalSpacer, {'height': 10}]]]
     )
 
+
+def ProgressSpinner(props):
+    return wsx(
+        [c.Block, {'flag': wx.EXPAND, 'show': props['show']},
+         [c.Gauge, {'flag': wx.EXPAND,
+                    'value': -1,
+                    'size': (-1, 4)}],
+         [c.StaticLine, {'style': wx.LI_HORIZONTAL,
+                         'flag': wx.EXPAND}]]
+    )
+
+
+def ErrorWarning(props):
+    return wsx(
+        [c.Block, {'orient': wx.HORIZONTAL,
+                   'background_color': '#fdeded',
+                   'style': wx.SIMPLE_BORDER,
+                   'flag': wx.EXPAND | wx.ALL,
+                   'proportion': 0,
+                   'border': 5,
+                   'min_size': (-1, 45),
+                   'show': props.get('show', True)},
+         [c.StaticBitmap, {'size': (24, 24),
+                           'flag': wx.LEFT | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL,
+                           'border': 6,
+                           'uri': props['uri']}],
+         [c.StaticText, {'label': 'Whoops! You have some errors which must be corrected',
+                         'flag': wx.ALIGN_CENTER_VERTICAL}]]
+    )
+
 def RSidebar(props):
     return wsx(
         [c.Block, {'orient': wx.HORIZONTAL,
                    'show': props.get('show', True),
                    'flag': props['flag'],
-                   'proportion': props['proportion']},
+                   'proportion': props['proportion'],
+                   'ref': props['ref']},
          [SidebarControls, props],
          [c.StaticLine, {'style': wx.LI_VERTICAL,
                          'flag': wx.EXPAND,
@@ -589,7 +621,6 @@ def RSidebar(props):
          *[[ConfigPage, {'flag': wx.EXPAND,
                          'proportion': 3,
                          'config': config,
-                         'ref': props['ref'],
                          'show': i == props['activeSelection']}]
            for i, config in enumerate(props['config'].values())]
          ]
@@ -604,6 +635,7 @@ def TabbedForm(props):
          [c.NotebookItem, {'title': 'Page 2!!!', 'selected': props['activeTab'] == 1},
           [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]]],
     )
+
 
 class RGooey(Component):
     def __init__(self, props):
@@ -640,7 +672,7 @@ class RGooey(Component):
         pub.subscribe(events.WINDOW_CLOSE, self.handleClose)
         pub.subscribe(events.WINDOW_CANCEL, self.handleCancel)
         pub.subscribe(events.WINDOW_EDIT, self.handleEdit)
-        pub.subscribe(events.CONSOLE_UPDATE, self.consoleRef.instance.logOutput)
+        # pub.subscribe(events.CONSOLE_UPDATE, self.consoleRef.instance.logOutput)
         pub.subscribe(events.EXECUTION_COMPLETE, self.handleComplete)
         pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
         pub.subscribe(events.TIME_UPDATE, self.updateTime)
@@ -705,27 +737,94 @@ class RGooey(Component):
             wx.CallLater(20, self.footer.start_button.Enable)
             wx.CallLater(20, self.footer.cancel_button.Enable)
 
+    def getActiveFormState(self):
+        """
+        This boiler-plate and manual interrogation of the UIs
+        state is required until we finish porting the Config Form
+        over to rewx (which is a battle left for another day given
+        its complexity)
+        """
+        config = [config
+                  for config in self.configRef.instance.Children
+                  if isinstance(config, ConfigPage)][self.state['activeSelection']]
+        return config.getFormState()
 
+    def fullState(self):
+        formState = self.getActiveFormState()
+        return s.combine(self.state, self.props, formState)
 
     def onStart(self, *args, **kwargs):
+        if Events.VALIDATE_FORM in self.buildSpec.get('use_events', []):
+            self.startRun()
+        else:
+            self.startRun()
+        # print(s.build_cli(fullState))
+        # print(s.buildFormValidationCmd(fullState))
+        # print(s.buildOnSuccessCmd(fullState))
+        # print()
+        #
+        print('hey')
+        self.set_state({**self.state, 'asyncFetching': True})
+        # wx.CallLater(50, self.set_state, s.initial_state(self.buildSpec))
+
+    def startRun(self):
+        state = self.fullState()
         messages = {'title': _("running_title"), 'subtitle': _('running_msg')}
-        # self.set_state(s.start(self.state, messages, self.buildSpec))
-        ss = self.configRef.instance.getFormState()
-        self.configRef.instance.syncFormState([
-            {**ss[0], 'value': '11111'},
-            {**ss[1], 'checked': False}])
-        print()
+        self.set_state(s.start(state, messages))
+        if state['clear_before_run']:
+            self.consoleRef.instance.Clear()
+        self.clientRunner.run(s.build_cli(state))
+
+    def runValidation(self):
+        self.set_state({**self.state, 'fetchingAsync': True})
+
+        fullState = self.fullState()
+        cmd = s.buildFormValidationCmd(fullState)
+        try:
+            errors = seeder.communicate(cmd, fullState['encoding']).getOrThrow()
+            if errors:  # TODO
+                self.configs[0].Scroll(0, 0)
+            else:
+                if self.buildSpec['clear_before_run']:
+                    self.console.clear()
+                self.clientRunner.run(self.buildCliString())
+                self.showConsole()
+        except CalledProcessError as e:
+            # self.showError()
+            # self.console.appendText(str(e))
+            # self.console.appendText(
+            #     '\n\nThis failure happens when Gooey tries to invoke your '
+            #     'code for the VALIDATE_FORM event and receives an expected '
+            #     'error code in response.'
+            # )
+            # wx.CallAfter(modals.showFailure)
+        except JSONDecodeError as e:
+            pass
+            # self.showError()
+            # self.console.appendText(str(e))
+            # self.console.appendText(
+            #     '\n\nGooey was unable to parse the response to the VALIDATE_FORM event. '
+            #     'This can happen if you have additional logs to stdout beyond what Gooey '
+            #     'expects.'
+            # )
+            # wx.CallAfter(modals.showFailure)
+        self.set_state({**self.state, 'fetchingAsync': False})
+
 
     def handleInterrupt(self, *args, **kwargs):
         messages = {'title': 'Interrupted!!', 'subtitle': 'Boom'}
         self.set_state(s.interrupt(self.state, messages, self.buildSpec))
 
+
     def handleComplete(self, *args, **kwargs):
         strings = {'title': _('finished_title'), 'subtitle': _('finished_msg')}
         self.set_state(s.success(self.state, strings, self.buildSpec))
+        ss = self.configRef.instance.getFormState()
+
 
     def handleEdit(self, *args, **kwargs):
         self.set_state(s.edit(self.state, self.buildSpec))
+
 
     def handleCancel(self, *args, **kwargs):
         if modals.confirmExit():
@@ -759,8 +858,9 @@ class RGooey(Component):
     def updateTime(self, *args, **kwargs):
         self.set_state(s.updateTime(self.state, TimingEvent(**kwargs)))
 
-    def handle_select_action(self, event):
+    def handleSelectAction(self, event):
         self.set_state(assoc(self.state, 'activeSelection', event.Selection))
+
 
     def render(self):
         return wsx(
@@ -773,6 +873,9 @@ class RGooey(Component):
              [c.Block, {'orient': wx.VERTICAL},
               [RHeader, self.headerprops(self.state)],
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
+              [ProgressSpinner, {'show': self.state['asyncFetching']}],
+              [ErrorWarning, {'show': True,
+                              'uri': self.state['images']['errorIcon']}],
               [Console, {**self.buildSpec,
                          'flag': wx.EXPAND,
                          'proportion': 1,
@@ -783,7 +886,8 @@ class RGooey(Component):
                           'ref': self.configRef,
                           'show': self.state['screen'] == 'FORM',
                           'activeSelection': self.state['activeSelection'],
-                          'on_change': self.handle_select_action,
+                          'options': list(self.buildSpec['widgets'].keys()),
+                          'on_change': self.handleSelectAction,
                           'config': self.buildSpec['widgets'],
                           'flag': wx.EXPAND,
                           'proportion': 1}],
@@ -792,7 +896,6 @@ class RGooey(Component):
               #   [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]],
               #  [c.NotebookItem, {'title': 'Page 2!!!', 'selected': self.state['activeTab'] == 1},
               #   [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]]],
-              # [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}],
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
               [RFooter, self.fprops(self.state)]]]
         )

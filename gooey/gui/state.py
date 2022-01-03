@@ -1,21 +1,162 @@
-from typing import Optional, List
+import json
+from typing import Optional, List, Dict, Any, Union
 
 from typing_extensions import TypedDict
 import wx
 
 from gooey.gui import events
 from gooey.gui.lang.i18n import _
-from gooey.python_bindings.types import GooeyParams
-from gooey.util.functional import associn, assoc, associnMany
+from gooey.python_bindings.types import GooeyParams, Item, Group, TopLevelParser
+from gooey.util.functional import associn, assoc, associnMany, compact
+from gooey.gui.formatters import formatArgument
+from gooey.python_bindings.types import FormField, ItemValue
+from python_bindings.types import CommandPieces
 
 
 class TimingEvent(TypedDict):
     elapsed_time: Optional[str]
     estimatedRemaining: Optional[str]
 
-
 class ProgressEvent(TypedDict):
     progress: Optional[int]
+
+class ButtonState(TypedDict):
+    id: str
+    style: str
+    label_id: str
+    show: bool
+    enabled: bool
+
+class ProgressState(TypedDict):
+    show: bool
+    range: int
+    value: int
+
+class TimingState(TypedDict):
+    show: bool
+    elapsedTime: Optional[str]
+    estimated_remaining: Optional[str]
+
+class GooeyState(GooeyParams):
+    asyncFetching: bool
+    screen: str
+    title: str
+    subtitle: str
+    images: Dict[str, str]
+    image: str
+    buttons: List[ButtonState]
+    progress: ProgressState
+    timing: TimingState
+    subcommands: List[str]
+    activeSelection: int
+
+class FullGooeyState(GooeyState):
+    forms: Dict[str, List[FormField]]
+    widgets: Dict[str, Dict[str, Any]]
+
+
+def value(field: FormField):
+    if field['type'] in ['CheckBox', 'BlockCheckbox']:
+        return field['checked']
+    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
+        return field['selected']
+    else:
+        return field['value']
+
+
+def extract_items(groups: List[Group]) -> List[Item]:
+    if not groups:
+        return []
+    group = groups[0]
+    return group['items'] \
+           + extract_items(groups[1:]) \
+           + extract_items(group['groups'])
+
+
+def widgets(descriptor: TopLevelParser) -> List[Item]:
+    return extract_items(descriptor['contents'])
+
+
+def enrich_value(formState: List[FormField], items: List[Item]) -> List[ItemValue]:
+    formIndex = {k['id']:k for k in formState}
+    return [assoc(item, 'value', value(formIndex[item['id']])) for item in items]
+
+
+def positional(items: List[Union[Item, ItemValue]]):
+    return [item for item in items if item['cli_type'] == 'positional']
+
+
+def optional(items: List[Union[Item, ItemValue]]):
+    return [item for item in items if item['cli_type'] != 'positional']
+
+
+def cli_pieces(state: FullGooeyState) -> CommandPieces:
+    subcommand = state['subcommands'][state['activeSelection']]
+    parserSpec = state['widgets'][subcommand]
+    formState = state['forms'][subcommand]
+    items = enrich_value(formState, widgets(parserSpec))
+    positional_args = [formatArgument(item, item['value']) for item in positional(items)]
+    optional_args = [formatArgument(item, item['value']) for item in optional(items)]
+    ignoreFlag = '' if state['suppress_gooey_flag'] else '--ignore-gooey'
+    return CommandPieces(
+        target=state['target'],
+        subcommand=subcommand,
+        positionals=compact(positional_args),
+        optionals=compact(optional_args),
+        ignoreFlag=ignoreFlag
+    )
+
+
+def activeFormState(state: FullGooeyState):
+    subcommand = state['subcommands'][state['activeSelection']]
+    return state['forms'][subcommand]
+
+
+def build_cli(state: FullGooeyState):
+    pieces = cli_pieces(state)
+    return u' '.join(compact([
+        pieces.target,
+        pieces.subcommand,
+        *pieces.optionals,
+        pieces.ignoreFlag,
+        '--' if pieces.positionals else '',
+        *pieces.positionals]))
+
+
+def buildFormValidationCmd(state: FullGooeyState):
+    pieces = cli_pieces(state)
+    return u' '.join(compact([
+        pieces.target,
+        pieces.subcommand,
+        *pieces.optionals,
+        '--gooey-validate-form',
+        '--' if pieces.positionals else '',
+        *pieces.positionals]))
+
+
+def buildOnSuccessCmd(state: FullGooeyState):
+    pieces = cli_pieces(state)
+    return u' '.join(compact([
+        pieces.target,
+        pieces.subcommand,
+        *pieces.optionals,
+        '--gooey-on-success ' + json.dumps({'form': activeFormState(state)}),
+        '--' if pieces.positionals else '',
+        *pieces.positionals]))
+
+
+def combine(state: GooeyState, params: GooeyParams, formState: List[FormField]) -> FullGooeyState:
+    """
+    I'm leaving the refactor of the form elements to another day.
+    For now, we'll just merge in the state of the form fields as tracked
+    in the UI into the main state blob as needed.
+    """
+    subcommand = list(params['widgets'].keys())[state['activeSelection']]
+    return FullGooeyState(**{
+        **state,
+        **params,
+        'forms': {subcommand: formState}
+    })
 
 
 def enable_buttons(state, to_enable: List[str]):
@@ -53,7 +194,15 @@ def edit(state, params: GooeyParams):
         ('subtitle', params['program_description']))
 
 
-def success(state, event, params: GooeyParams):
+def activeCommand(state, params: GooeyParams):
+    """
+    Retrieve the active sub-parser command as determined by the
+    current selection.
+    """
+    return list(params['widgets'].keys())[state['activeSelection']]
+
+
+def success(state: GooeyState, event, params: GooeyParams) -> GooeyState:
     print(('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
     use_buttons = ('edit', 'restart', 'close')
     return associnMany(
@@ -70,7 +219,7 @@ def success(state, event, params: GooeyParams):
         ('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
 
 
-def initial_state(params: GooeyParams):
+def initial_state(params: GooeyParams) -> GooeyState:
     buttons = [
         ('cancel', events.WINDOW_CANCEL, wx.ID_CANCEL),
         ('start', events.WINDOW_START, wx.ID_OK),
@@ -79,32 +228,35 @@ def initial_state(params: GooeyParams):
         ('restart', events.WINDOW_RESTART, wx.ID_OK),
         ('close', events.WINDOW_CLOSE, wx.ID_OK),
     ]
-    return {
-        'screen': 'FORM',
-        'title': params['program_name'],
-        'subtitle': params['program_description'],
-        'images': params['images'],
-        'image': params['images']['configIcon'],
-        'buttons': [{
-            'id': event_id,
-            'style': style,
-            'label_id': label,
-            'show': label in ('cancel', 'start'),
-            'enabled': True}
+    # helping out the type system
+    params: Dict[str, Any] = params
+    return GooeyState(
+        **params,
+        asyncFetching=False,
+        screen='FORM',
+        title=params['program_name'],
+        subtitle=params['program_description'],
+        image=params['images']['configIcon'],
+        buttons=[ButtonState(
+            id=event_id,
+            style=style,
+            label_id=label,
+            show=label in ('cancel', 'start'),
+            enabled=True)
             for label, event_id, style in buttons],
-        'progress': {
-            'show': False,
-            'range': 100,
-            'value': 0 if params['progress_regex'] else -1
-        },
-        'timing': {
-            'show': False,
-            'elapsed_time': None,
-            'estimatedRemaining': None,
-        },
-        'activeSelection': 0,
-        'forms': {}
-     }
+        progress=ProgressState(
+            show=False,
+            range=100,
+            value=0 if params['progress_regex'] else -1
+        ),
+        timing=TimingState(
+            show=False,
+            elapsed_time=None,
+            estimatedRemaining=None,
+        ),
+        subcommands=list(params['widgets'].keys()),
+        activeSelection=0
+    )
 
 def header_props(state, params):
     return {
@@ -125,7 +277,7 @@ def form_page(state):
     }
 
 
-def start(state, event, params: GooeyParams):
+def start(state: FullGooeyState, event):
     return {
         **state,
         'screen': 'CONSOLE',
@@ -139,10 +291,10 @@ def start(state, event, params: GooeyParams):
         'progress': {
             'show': True, # params['disable_progress_bar_animation'],
             'range': 100,
-            'value': 0 if params['progress_regex'] else -1
+            'value': 0 if state['progress_regex'] else -1
         },
         'timing': {
-            'show': params['timing_options']['show_time_remaining'],
+            'show': state['timing_options']['show_time_remaining'],
             'elapsed_time': None,
             'estimatedRemaining': None
         }

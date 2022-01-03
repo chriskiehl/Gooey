@@ -10,7 +10,8 @@ This is all because Argparse's internal parsing design (a) really,
 really, REALLY wants to fail and sys.exit at the first error it
 finds, and (b) does these program ending validations at seemingly random
 points throughout its code base. Meaning, there is no single centralized
-validation module, class, or function which could be customized. W
+validation module, class, or function which could be overridden in order to
+achieve the desired behavior.
 
 All that means is that it takes a fair amount of indirect, non-standard, and
 gross monkey-patching to get Argparse to collect all its errors as it parses
@@ -23,7 +24,7 @@ https://github.com/chriskiehl/Gooey/issues/755
 """
 from argparse import ArgumentParser, _SubParsersAction
 from functools import wraps
-from typing import Union, Any, Mapping, Dict
+from typing import Union, Any, Mapping, Dict, Callable
 
 from gooey.python_bindings.types import Success, Failure, Try
 from gooey.python_bindings.argparse_to_json import is_subparser
@@ -63,6 +64,10 @@ def check_value(registry: Dict[str, Exception], original_fn):
     return inner
 
 
+def patch_args(*args, **kwargs):
+    def inner(parser):
+        return patch_argument(parser, *args, **kwargs)
+    return inner
 
 def patch_argument(parser, *args, **kwargs):
     """
@@ -127,6 +132,14 @@ def collect_errors(error_registry: Dict[str, Exception], args: Dict[str, Try]) -
     secondary = {k: str(e) for k, e in error_registry.items() if e}
     return merge(required_but_missing, errors, secondary)
 
+
+def monkey_patch(patcher, error_registry: Dict[str, Exception], parser):
+    lift_actions_mutating(parser)
+    patcher(parser)
+    new_check_value = check_value(error_registry, parser._check_value)
+    # https://stackoverflow.com/questions/28127874/monkey-patching-python-an-instance-method
+    parser._check_value = new_check_value.__get__(parser, ArgumentParser)
+    return parser
 
 def monkey_patch_for_form_validation(error_registry: Dict[str, Exception], parser):
     """
