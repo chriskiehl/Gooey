@@ -821,9 +821,9 @@ Images are discovered by Gooey based on their _filenames_. So, for example, in o
 
 Thanks to some [awesome contributors](https://github.com/chriskiehl/Gooey/issues/58), packaging Gooey as an executable is super easy. 
 
-The tl;dr [pyinstaller](https://github.com/pyinstaller/pyinstaller) version is to drop this [build.spec](https://github.com/chriskiehl/Gooey/files/29568/build.spec.txt) into the root directory of your application. Edit its contents so that the `application` and `name` are relevant to your project, then execute `pyinstaller build.spec` to bundle your app into a ready-to-go executable. 
+The tl;dr [pyinstaller](https://github.com/pyinstaller/pyinstaller) version is to drop this [build.spec](https://raw.githubusercontent.com/chriskiehl/Gooey/master/docs/packaging/build-win.spec) into the root directory of your application. Edit its contents so that the `APPPNAME` and `name` are relevant to your project and the `pathex` value points to your applications root, then execute `pyinstaller -F --windowed build.spec` to bundle your app into a ready-to-go executable. 
 
-Detailed step by step instructions can be found [here](http://chriskiehl.com/article/packaging-gooey-with-pyinstaller/). 
+Detailed step by step instructions can be found [here](https://github.com/chriskiehl/Gooey/blob/master/docs/packaging/Packaging-Gooey.md). 
 
 
 Screenshots
