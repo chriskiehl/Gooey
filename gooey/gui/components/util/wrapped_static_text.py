@@ -44,6 +44,7 @@ class AutoWrappedStaticText(wx.StaticText):
         """
 
         event.Skip()
+        print(self.GetLabel())
         if self.target:
             self.Wrap(self.target.GetSize().width)
         else:

@@ -4,10 +4,15 @@ dynamic defaults for the UI
 """
 import json
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from json import JSONDecodeError
 from subprocess import CalledProcessError
 
 from gooey.python_bindings.types import Try, Success, Failure
+
+def communicate2(cmd, encoding):
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(communicate, cmd, encoding)
 
 
 def communicate(cmd, encoding) -> Try:

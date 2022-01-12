@@ -137,7 +137,9 @@ class TextContainer(BaseWidget):
         layout.Add(self.getSublayout(), 0, wx.EXPAND)
         layout.Add(self.error, 1, wx.EXPAND)
 
-        self.error.Hide()
+        # self.error.SetLabel("HELLOOOOO??")
+        # self.error.Show()
+        # print(self.error.Shown)
         return layout
 
 
@@ -177,13 +179,17 @@ class TextContainer(BaseWidget):
             type=self.widgetInfo['type'],
             value=self.getWidgetValue(),
             placeholder=self.widget.widget.GetHint(),
-            error=self.error.GetLabel() or None,
+            error=self.error.GetLabel().replace('\n', ' '),
             enabled=self.IsEnabled(),
             visible=self.IsShown()
         )
 
     def syncUiState(self, state: FormField):
-        raise NotImplementedError
+        self.widget.setValue(state['value'])
+        if state['error']:
+            self.error.SetLabel(state['error'])
+            self.error.Show(True)
+
 
     def getValue(self) -> t.FieldValue:
         regexFunc: Callable[[str], bool] = lambda x: bool(re.match(userValidator, x))

@@ -133,7 +133,7 @@ def gooey_params(**kwargs) -> GooeyParams:
 
 
 def parse_events(events: List[str]) -> List[str]:
-    unknown_events = set(events) - {Events.VALIDATE_FORM}
+    unknown_events = set(events) - set(Events)
     if unknown_events:
         raise ValueError('Unrecognized events: ', unknown_events)
     else:

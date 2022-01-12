@@ -101,9 +101,11 @@ def cls_wrapper(cls, **options):
 
 class GooeyParser(object):
     def __init__(self, **kwargs):
+        on_success = kwargs.pop('on_success', None)
         self.__dict__['parser'] = ArgumentParser(**kwargs)
         self.widgets = {}
         self.options = {}
+        self.on_gooey_success = on_success
         if 'parents' in kwargs:
             for parent in kwargs['parents']:
                 if isinstance(parent, self.__class__):

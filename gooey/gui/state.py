@@ -1,5 +1,6 @@
 import json
-from typing import Optional, List, Dict, Any, Union
+from base64 import b64encode
+from typing import Optional, List, Dict, Any, Union, Callable
 
 from typing_extensions import TypedDict
 import wx
@@ -10,7 +11,7 @@ from gooey.python_bindings.types import GooeyParams, Item, Group, TopLevelParser
 from gooey.util.functional import associn, assoc, associnMany, compact
 from gooey.gui.formatters import formatArgument
 from gooey.python_bindings.types import FormField, ItemValue
-from python_bindings.types import CommandPieces
+from python_bindings.types import CommandPieces, PublicGooeyState
 
 
 class TimingEvent(TypedDict):
@@ -38,7 +39,7 @@ class TimingState(TypedDict):
     estimated_remaining: Optional[str]
 
 class GooeyState(GooeyParams):
-    asyncFetching: bool
+    fetchingUpdate: bool
     screen: str
     title: str
     subtitle: str
@@ -136,11 +137,13 @@ def buildFormValidationCmd(state: FullGooeyState):
 
 def buildOnSuccessCmd(state: FullGooeyState):
     pieces = cli_pieces(state)
+    serializedForm = json.dumps({'active_form': activeFormState(state)})
+    b64ecoded = b64encode(serializedForm.encode('utf-8'))
     return u' '.join(compact([
         pieces.target,
         pieces.subcommand,
         *pieces.optionals,
-        '--gooey-on-success ' + json.dumps({'form': activeFormState(state)}),
+        '--gooey-on-success ' + b64ecoded.decode('utf-8'),
         '--' if pieces.positionals else '',
         *pieces.positionals]))
 
@@ -165,34 +168,6 @@ def enable_buttons(state, to_enable: List[str]):
     return assoc(state, 'buttons', updated)
 
 
-def interrupt(state, event, params: GooeyParams):
-    use_buttons = ('edit', 'restart', 'close')
-    return associnMany(
-        state,
-        ('screen', 'CONSOLE'),
-        ('buttons', [{**btn,
-                      'show': btn['label_id'] in use_buttons,
-                      'enabled': True}
-                    for btn in state['buttons']]),
-        ('image', state['images']['errorIcon']),
-        ('title', event['title']),
-        ('subtitle', event['subtitle']),
-        ('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
-
-
-def edit(state, params: GooeyParams):
-    use_buttons = ('cancel', 'start')
-    return associnMany(
-        state,
-        ('screen', 'FORM'),
-        ('buttons', [{**btn,
-                      'show': btn['label_id'] in use_buttons,
-                      'enabled': True}
-                     for btn in state['buttons']]),
-        ('image', state['images']['configIcon']),
-        ('title', params['program_name']),
-        ('subtitle', params['program_description']))
-
 
 def activeCommand(state, params: GooeyParams):
     """
@@ -202,21 +177,26 @@ def activeCommand(state, params: GooeyParams):
     return list(params['widgets'].keys())[state['activeSelection']]
 
 
-def success(state: GooeyState, event, params: GooeyParams) -> GooeyState:
-    print(('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
-    use_buttons = ('edit', 'restart', 'close')
-    return associnMany(
-        state,
-        ('screen', 'CONSOLE'),
-        ('buttons', [{**btn,
-                      'show': btn['label_id'] in use_buttons,
-                      'enabled': True}
-                     for btn in state['buttons']]),
-        ('image', state['images']['successIcon']),
-        ('title', event['title']),
-        ('subtitle', event['subtitle']),
-        ('progress.show', False),
-        ('timing.show', not params['timing_options']['hide_time_remaining_on_complete']))
+def updateErrors(state: FullGooeyState, errors: Dict[str, str]):
+    subcommand = state['subcommands'][state['activeSelection']]
+    formItems: List[FormField] = state['forms'][subcommand]
+    updated = [assoc(item, 'error', errors.get(item['id'], None))
+               for item in formItems]
+    return associn(state, ['forms', subcommand], updated)
+
+
+def mergeExternalState(state: FullGooeyState, extern: PublicGooeyState):
+    # TODO: insane amounts of helpful validation
+    subcommand = state['subcommands'][state['activeSelection']]
+    formItems: List[FormField] = state['forms'][subcommand]
+    hostForm: List[FormField] = extern['active_form']
+    return associn(state, ['forms', subcommand], hostForm)
+
+
+def has_errors(state: FullGooeyState):
+    return any([item['error']
+                for items in state['forms'].values()
+                for item in items])
 
 
 def initial_state(params: GooeyParams) -> GooeyState:
@@ -232,7 +212,7 @@ def initial_state(params: GooeyParams) -> GooeyState:
     params: Dict[str, Any] = params
     return GooeyState(
         **params,
-        asyncFetching=False,
+        fetchingUpdate=False,
         screen='FORM',
         title=params['program_name'],
         subtitle=params['program_description'],
@@ -277,12 +257,12 @@ def form_page(state):
     }
 
 
-def start(state: FullGooeyState, event):
+def consoleScreen(_: Callable[[str], str], state: GooeyState):
     return {
         **state,
         'screen': 'CONSOLE',
-        'title': event['title'],
-        'subtitle': event['subtitle'],
+        'title': _("running_title"),
+        'subtitle': _('running_msg'),
         'image': state['images']['runningIcon'],
         'buttons': [{**btn,
                      'show': btn['label_id'] == 'stop',
@@ -300,6 +280,94 @@ def start(state: FullGooeyState, event):
         }
      }
 
+class CompletedEvent(TypedDict):
+    completedSuccessfully: bool
+    forcefullyStopped: bool
+
+
+def handleComplete(_: Callable[[str], str], state: FullGooeyState, event: CompletedEvent):
+    if event.completedSuccessfully:
+        if state['return_to_config']:
+            return editScreen(_, state)
+        else:
+            return successScreen(_, state)
+    else:
+        if event.forcefullyStopped:
+            # associn(state, )
+            pass
+        else:
+            pass
+
+
+def editScreen(_: Callable[[str], str], state: FullGooeyState):
+    use_buttons = ('cancel', 'start')
+    return associnMany(
+        state,
+        ('screen', 'FORM'),
+        ('buttons', [{**btn,
+                      'show': btn['label_id'] in use_buttons,
+                      'enabled': True}
+                     for btn in state['buttons']]),
+        ('image', state['images']['configIcon']),
+        ('title', state['program_name']),
+        ('subtitle', state['program_description']))
+
+
+def beginUpdate(state: GooeyState):
+    return {
+        **enable_buttons(state, ['cancel']),
+        'fetchingUpdate': True
+    }
+
+def finishUpdate(state: GooeyState):
+    return {
+        **enable_buttons(state, ['cancel', 'start']),
+        'fetchingUpdate': False
+    }
+
+def forceStoppedScreen(_: Callable[[str], str], state: FullGooeyState):
+    state: Dict[Any, Any] = state
+    return FullGooeyState(
+        **state,
+
+    )
+
+
+def finalScreen(_: Callable[[str], str], state: GooeyState) -> GooeyState:
+    use_buttons = ('edit', 'restart', 'close')
+    return associnMany(
+        state,
+        ('screen', 'CONSOLE'),
+        ('buttons', [{**btn,
+                      'show': btn['label_id'] in use_buttons,
+                      'enabled': True}
+                     for btn in state['buttons']]),
+        ('image', state['images']['successIcon']),
+        ('title', _('finished_title')),
+        ('subtitle', _('finished_msg')),
+        ('progress.show', False),
+        ('timing.show', not state['timing_options']['hide_time_remaining_on_complete']))
+
+
+def successScreen(_: Callable[[str], str], state: GooeyState) -> GooeyState:
+    return associnMany(
+        finalScreen(_, state),
+        ('image', state['images']['successIcon']),
+        ('title', _('finished_title')),
+        ('subtitle', _('finished_msg')))
+
+
+def errorScreen(_: Callable[[str], str], state: GooeyState) -> GooeyState:
+    return associnMany(
+        finalScreen(_, state),
+        ('image', state['images']['errorIcon']),
+        ('title', _('finished_title')),
+        ('subtitle', _('finished_error')))
+
+
+def interruptedScreen(_: Callable[[str], str], state: GooeyState):
+    next_state = errorScreen(_, state) if state['force_stop_is_error'] else successScreen(_, state)
+    return assoc(next_state, 'subtitle', _('finished_forced_quit'))
 
 
 def updateProgress(state, event: ProgressEvent):

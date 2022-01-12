@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 SIDEBAR = 'SIDEBAR'
 TABBED = 'TABBED'
 INLINE = 'INLINE'
@@ -15,6 +17,12 @@ FONTWEIGHT_HEAVY = 900
 FONTWEIGHT_EXTRAHEAVY = 1000
 
 
-class Events:
-    VALIDATE_FORM = 'VALIDATE_FORM'
+Events = namedtuple('Events', [
+    'VALIDATE_FORM', 'ON_SUCCESS', 'ON_ERROR'
+])('VALIDATE_FORM', 'ON_SUCCESS', 'ON_ERROR')
+
+# class Events:
+#     VALIDATE_FORM = 'VALIDATE_FORM'
+#     ON_SUCCESS = 'ON_SUCCESS'
+#     ON_ERROR = 'ON_ERROR'
 

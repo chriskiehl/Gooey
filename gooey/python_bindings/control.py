@@ -2,6 +2,7 @@ import json
 import os
 import sys
 from argparse import ArgumentParser
+from base64 import b64decode, b64encode
 from typing import List, Dict
 
 from gooey.python_bindings.dynamics import monkey_patch_for_form_validation, monkey_patch, \
@@ -54,7 +55,7 @@ def boostrap_gooey(params: GooeyParams):
     """Bootstraps the Gooey UI."""
     def parse_args(self: ArgumentParser, args=None, namespace=None):
         # This import is delayed so it is not in the --ignore-gooey codepath.
-        from gooey.gui import application
+        from gooey.gui import bootstrap
         source_path = sys.argv[0]
 
         build_spec = None
@@ -81,7 +82,7 @@ def boostrap_gooey(params: GooeyParams):
             print('Writing Build Config to: {}'.format(config_path))
             with open(config_path, 'w') as f:
                 f.write(json.dumps(build_spec, indent=2))
-        application.run(build_spec)
+        bootstrap.run(build_spec)
     return parse_args
 
 
@@ -99,16 +100,21 @@ def handle_success(params, write=print, exit=sys.exit):
         # the parser to trigger it are thus, by definition, safe to parse.
         # So, we don't need any error patching monkey business and just need
         # to attach our specific arg to parse the extra option Gooey passes
-        patched_parser = patch_argument(self, '--gooey-on-success', action='store', type=json.loads)
+        def decode_payload(x):
+            """
+            To avoid quoting shenanigans, the json state sent from
+            Gooey is b64ecoded for ease of CLI transfer.
+            """
+            return json.loads(b64decode(x))
+        patched_parser = patch_argument(self, '--gooey-on-success', action='store', type=decode_payload)
 
         try:
-            args = patched_parser.parse_args(args, namespace)  # type: ignore
+            args = patched_parser.original_parse_args(args, namespace)  # type: ignore
             form_state = args.gooey_on_success
             # removing the injected gooey value so as not
             # to clutter the user's object
             del args.gooey_on_success
-
-            next_state = self.on_success(args, form_state)  # type: ignore
+            next_state = getattr(self, 'on_gooey_success', lambda *args: None)(args, form_state)  # type: ignore
             write(json.dumps(next_state))
             exit(0)
         except Exception as e:

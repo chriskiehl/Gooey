@@ -59,6 +59,8 @@ def check_value(registry: Dict[str, Exception], original_fn):
         # be a lifted value.
         if isinstance(value, Success) and not isinstance(value, Failure):
             update_reg(self, action, value.value)
+        elif isinstance(value, list) and all(x.isSuccess() for x in value):
+            update_reg(self, action, [x.value for x in value])
         else:
             update_reg(self, action, value)
     return inner
@@ -89,6 +91,35 @@ def patch_argument(parser, *args, **kwargs):
     return parser
 
 
+def patch_all_parsers(patch_fn: Callable[[ArgumentParser], None], parser):
+    subparsers = list(filter(is_subparser, parser._actions))
+    if subparsers:
+        for sub in subparsers[0].choices.values():  # type: ignore
+            patch_all_parsers(patch_fn, sub)
+    return parser
+
+
+def recursively_patch_parser(parser, fn, *args):
+    fn(parser, *args)
+    subparsers = list(filter(is_subparser, parser._actions))
+    if subparsers:
+        for sub in subparsers[0].choices.values():  # type: ignore
+            recursively_patch_parser(sub, fn, *args)
+    return parser
+
+
+def recursively_patch_actions(parser, fn):
+    for action in parser._actions:
+        if issubclass(type(action), _SubParsersAction):
+            for subparser in action.choices.values():
+                recursively_patch_actions(subparser, fn)
+        else:
+            fn(action)
+
+def lift_action_type(action):
+    """"""
+    action.type = lift(action.type or identity)
+
 def lift_actions_mutating(parser):
     """
     Mutates the supplied parser to lift all of its (likely) partial
@@ -99,12 +130,13 @@ def lift_actions_mutating(parser):
     in an Either/Try, and defer deciding the actual success/failure of
     the type transform until later in the execution when we have control.
     """
-    for action in parser._actions:
-        if issubclass(type(action), _SubParsersAction):
-            for subparser in action.choices.values():
-                lift_actions_mutating(subparser)
-        else:
-            action.type = lift(action.type or identity)
+    recursively_patch_actions(parser, lift_action_type)
+    # for action in parser._actions:
+    #     if issubclass(type(action), _SubParsersAction):
+    #         for subparser in action.choices.values():
+    #             lift_actions_mutating(subparser)
+    #     else:
+    #         action.type = lift(action.type or identity)
 
 
 def collect_errors(error_registry: Dict[str, Exception], args: Dict[str, Try]) -> Dict[str, str]:
@@ -132,14 +164,23 @@ def collect_errors(error_registry: Dict[str, Exception], args: Dict[str, Try]) -
     secondary = {k: str(e) for k, e in error_registry.items() if e}
     return merge(required_but_missing, errors, secondary)
 
+def patch(obj, old_fn, new_fn):
+    setattr(obj, old_fn, new_fn.__get__(obj, ArgumentParser))
+
+def monkey_patch_check_value(parser, new_fn):
+    parser._check_value = new_fn.__get__(parser, ArgumentParser)
+    return parser
 
 def monkey_patch(patcher, error_registry: Dict[str, Exception], parser):
     lift_actions_mutating(parser)
     patcher(parser)
     new_check_value = check_value(error_registry, parser._check_value)
     # https://stackoverflow.com/questions/28127874/monkey-patching-python-an-instance-method
-    parser._check_value = new_check_value.__get__(parser, ArgumentParser)
+    # parser._check_value = new_check_value.__get__(parser, ArgumentParser)
+
     return parser
+
+
 
 def monkey_patch_for_form_validation(error_registry: Dict[str, Exception], parser):
     """
@@ -149,7 +190,9 @@ def monkey_patch_for_form_validation(error_registry: Dict[str, Exception], parse
     lift_actions_mutating(parser)
     patch_argument(parser, '--gooey-validate-form', action='store_true')
     new_check_value = check_value(error_registry, parser._check_value)
+    recursively_patch_parser(parser, monkey_patch_check_value, new_check_value)
     # https://stackoverflow.com/questions/28127874/monkey-patching-python-an-instance-method
-    parser._check_value = new_check_value.__get__(parser, ArgumentParser)
-    return parser
+    # patch(parser, '_check_value', new_check_value)
+    # parser._check_value = new_check_value.__get__(parser, ArgumentParser)
+    return monkey_patch_check_value(parser, new_check_value)
 

@@ -3,14 +3,20 @@ Primary orchestration and control point for Gooey.
 """
 import queue
 import sys
+import threading
+from contextlib import contextmanager
+from functools import wraps
 from json import JSONDecodeError
 from pprint import pprint
 from subprocess import CalledProcessError
-from threading import Thread
+from threading import Thread, get_ident
 from typing import Mapping, Dict, Type, Iterable
 
 import six
 import wx  # type: ignore
+
+from gui.state import FullGooeyState
+from python_bindings.types import PublicGooeyState
 from rewx.widgets import set_basic_props
 
 from gooey.gui.components.mouse import notifyMouseEvent
@@ -47,6 +53,8 @@ from gooey.python_bindings import constants
 from gooey.python_bindings.types import Failure, Success, CommandDetails, Try
 from gooey.util.functional import merge, associn, assoc
 from gooey.gui.image_repository import loadImages
+from gooey.gui import host
+
 
 from threading import Lock
 
@@ -672,70 +680,17 @@ class RGooey(Component):
         pub.subscribe(events.WINDOW_CLOSE, self.handleClose)
         pub.subscribe(events.WINDOW_CANCEL, self.handleCancel)
         pub.subscribe(events.WINDOW_EDIT, self.handleEdit)
-        # pub.subscribe(events.CONSOLE_UPDATE, self.consoleRef.instance.logOutput)
+        pub.subscribe(events.CONSOLE_UPDATE, self.consoleRef.instance.logOutput)
         pub.subscribe(events.EXECUTION_COMPLETE, self.handleComplete)
         pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
         pub.subscribe(events.TIME_UPDATE, self.updateTime)
         # # Top level wx close event
         self.frameRef.instance.Bind(wx.EVT_CLOSE, self.handleClose)
 
-    def onStartOLD(self, *args, **kwarg):
-        """
-        Verify user input and kick off the client's program if valid
-        """
-        # navigates away from the button because a
-        # disabled focused button still looks enabled.
-        # self.set_state(s.enable_buttons(self.state, []))
-        if Events.VALIDATE_FORM in self.buildSpec.get('use_events', []):
-            # TODO: make this wx thread safe so that it can
-            # actually run asynchronously
-            Thread(target=self.onStartAsyncOLD).run()
-        else:
-            Thread(target=self.onStartAsyncOLD).run()
-
-    def onStartAsyncOLD(self, *args, **kwargs):
-        with transactUI(self):
-            try:
-                # errors = self.validateForm().getOrThrow()
-                if False:  # TODO
-                    config = self.navbar.getActiveConfig()
-                    config.setErrors(errors)
-                    self.Layout()
-                    # TODO: account for tabbed layouts
-                    # TODO: scroll the first error into view
-                    # TODO: rather than just snapping to the top
-                    self.configs[0].Scroll(0, 0)
-                else:
-                    if self.buildSpec['clear_before_run']:
-                        self.console.clear()
-                    self.clientRunner.run(self.buildCliString())
-                    self.showConsole()
-            except CalledProcessError as e:
-                pass
-                # self.showError()
-                # self.console.appendText(str(e))
-                # self.console.appendText(
-                #     '\n\nThis failure happens when Gooey tries to invoke your '
-                #     'code for the VALIDATE_FORM event and receives an expected '
-                #     'error code in response.'
-                # )
-                # wx.CallAfter(modals.showFailure)
-            except JSONDecodeError as e:
-                pass
-                # self.showError()
-                # self.console.appendText(str(e))
-                # self.console.appendText(
-                #     '\n\nGooey was unable to parse the response to the VALIDATE_FORM event. '
-                #     'This can happen if you have additional logs to stdout beyond what Gooey '
-                #     'expects.'
-                # )
-                # wx.CallAfter(modals.showFailure)
-            # for some reason, we have to delay the re-enabling of
-            # the buttons by a few ms otherwise they pickup pending
-            # events created while they were disabled. Trial and error
-            # let to this solution.
-            wx.CallLater(20, self.footer.start_button.Enable)
-            wx.CallLater(20, self.footer.cancel_button.Enable)
+    def getActiveConfig(self):
+        return [config
+                for config in self.configRef.instance.Children
+                if isinstance(config, ConfigPage)][self.state['activeSelection']]
 
     def getActiveFormState(self):
         """
@@ -744,86 +699,185 @@ class RGooey(Component):
         over to rewx (which is a battle left for another day given
         its complexity)
         """
-        config = [config
-                  for config in self.configRef.instance.Children
-                  if isinstance(config, ConfigPage)][self.state['activeSelection']]
-        return config.getFormState()
+        return self.getActiveConfig().getFormState()
+
 
     def fullState(self):
+        """
+        Re: final porting is a to do. For now we merge the UI
+        state into the main tracked state.
+        """
         formState = self.getActiveFormState()
         return s.combine(self.state, self.props, formState)
 
     def onStart(self, *args, **kwargs):
-        if Events.VALIDATE_FORM in self.buildSpec.get('use_events', []):
-            self.startRun()
+        if Events.VALIDATE_FORM in self.state['use_events']:
+            self.runAsyncValidation()
         else:
             self.startRun()
-        # print(s.build_cli(fullState))
-        # print(s.buildFormValidationCmd(fullState))
-        # print(s.buildOnSuccessCmd(fullState))
-        # print()
-        #
-        print('hey')
-        self.set_state({**self.state, 'asyncFetching': True})
-        # wx.CallLater(50, self.set_state, s.initial_state(self.buildSpec))
 
     def startRun(self):
         state = self.fullState()
-        messages = {'title': _("running_title"), 'subtitle': _('running_msg')}
-        self.set_state(s.start(state, messages))
         if state['clear_before_run']:
             self.consoleRef.instance.Clear()
+        self.set_state(s.consoleScreen(_, state))
         self.clientRunner.run(s.build_cli(state))
+        self.frameRef.instance.Layout()
+        for child in self.frameRef.instance.Children:
+            child.Layout()
 
-    def runValidation(self):
-        self.set_state({**self.state, 'fetchingAsync': True})
 
-        fullState = self.fullState()
-        cmd = s.buildFormValidationCmd(fullState)
-        try:
-            errors = seeder.communicate(cmd, fullState['encoding']).getOrThrow()
-            if errors:  # TODO
-                self.configs[0].Scroll(0, 0)
+    def syncExternalState(self, state: FullGooeyState):
+        """
+        Sync the UI's state to what the host program has requested.
+        """
+        self.getActiveConfig().syncFormState(s.activeFormState(state))
+        self.frameRef.instance.Layout()
+        for child in self.frameRef.instance.Children:
+            child.Layout()
+
+
+    def runAsyncValidation(self):
+        def handleHostResponse(validationErrors: Dict[str, str]):
+            self.set_state(s.finishUpdate(self.state))
+            if validationErrors:
+                currentState = self.fullState()
+                nextState = s.updateErrors(currentState, validationErrors)
+                self.syncExternalState(nextState)
             else:
-                if self.buildSpec['clear_before_run']:
-                    self.console.clear()
-                self.clientRunner.run(self.buildCliString())
-                self.showConsole()
+                print("Calling start run from thread ", threading.get_ident())
+                self.startRun()
+
+        def onComplete(result: Try[Dict[str, str]]):
+            result.onSuccess(handleHostResponse)
+            result.onError(self.handleHostError)
+
+        print("Hello from thread", get_ident())
+        self.set_state(s.beginUpdate(self.state))
+        fullState = self.fullState()
+        host.communicateFormValidation(fullState, callafter(onComplete))
+
+
+    def runAsyncExternalSuccessHandler(self):
+        def handleHostResponse(hostState):
+            try:
+                if hostState:
+                    currentState = self.fullState()
+                    self.syncExternalState(s.mergeExternalState(currentState, hostState))
+                else:
+                    print("Calling start run from thread ", threading.get_ident())
+                    wx.CallAfter(self.startRun)
+            except Exception as e:
+                print(e)
+                print('uh oh!')
+
+        def onComplete(result: Try[PublicGooeyState]):
+            self.set_state({**self.state, 'fetchingUpdate': False})
+            result.onError(self.handleHostError)
+            result.onSuccess(handleHostResponse)
+
+        print("Hello from thread", get_ident())
+        fullState = self.fullState()
+        host.communicateSuccessState(fullState, callafter(onComplete))
+
+
+    def handleHostError(self, exception):
+        try:
+            raise exception
         except CalledProcessError as e:
-            # self.showError()
-            # self.console.appendText(str(e))
-            # self.console.appendText(
-            #     '\n\nThis failure happens when Gooey tries to invoke your '
-            #     'code for the VALIDATE_FORM event and receives an expected '
-            #     'error code in response.'
-            # )
-            # wx.CallAfter(modals.showFailure)
+            self.set_state(s.errorScreen(_, self.state))
+            self.consoleRef.instance.appendText(str(e))
+            self.consoleRef.instance.appendText(
+                f'\n\nThis failure happens when Gooey tries to invoke your '
+                'code for the {event} event and receives an unexpected '
+                'error code in response')
+            wx.CallAfter(modals.showFailure)
         except JSONDecodeError as e:
-            pass
-            # self.showError()
-            # self.console.appendText(str(e))
-            # self.console.appendText(
-            #     '\n\nGooey was unable to parse the response to the VALIDATE_FORM event. '
-            #     'This can happen if you have additional logs to stdout beyond what Gooey '
-            #     'expects.'
-            # )
-            # wx.CallAfter(modals.showFailure)
-        self.set_state({**self.state, 'fetchingAsync': False})
+            self.set_state(s.errorScreen(_, self.state))
+            self.consoleRef.instance.appendText(str(e))
+            self.consoleRef.instance.appendText(
+                f'\n\nGooey was unable to parse the response to the {event} event. '
+                'This can happen if you have additional logs to stdout beyond what Gooey '
+                'expects.')
+            wx.CallAfter(modals.showFailure)
+        except Exception as e:
+            self.set_state(s.errorScreen(_, self.state))
+            self.consoleRef.instance.appendText(str(e))
+        finally:
+            self.set_state({**self.state, 'fetchingUpdate': False})
 
 
     def handleInterrupt(self, *args, **kwargs):
-        messages = {'title': 'Interrupted!!', 'subtitle': 'Boom'}
-        self.set_state(s.interrupt(self.state, messages, self.buildSpec))
+        if self.shouldStopExecution():
+            self.clientRunner.stop()
 
 
     def handleComplete(self, *args, **kwargs):
+        state = self.state
+        if self.clientRunner.was_success():
+            self.handleSuccessfulRun()
+            self.runAsyncExternalSuccessHandler()
+        else:
+            self.handleErrantRun()
+
+    def handleSuccessfulRun(self):
+        if self.state['return_to_config']:
+            self.set_state(s.editScreen(_, self.state))
+        else:
+            self.set_state(s.successScreen(_, self.state))
+            if self.state['show_success_modal']:
+                wx.CallAfter(modals.showSuccess)
+
+
+    def handleErrantRun(self):
+        # with self.handleHostError(Events.ON_ERROR):
+        #     updates = host.fetchOnErrorState()
+        #     self.getActiveConfig().syncFormState(updates)
+
+        if self.clientRunner.wasForcefullyStopped:
+            self.set_state(s.interruptedScreen(_, self.state))
+        else:
+            self.set_state(s.errorScreen(_, self.state))
+            if self.state['show_failure_modal']:
+                wx.CallAfter(modals.showFailure)
+
+
+    def successScreen(self):
         strings = {'title': _('finished_title'), 'subtitle': _('finished_msg')}
         self.set_state(s.success(self.state, strings, self.buildSpec))
-        ss = self.configRef.instance.getFormState()
 
+
+    def showForceStopped(self):
+        self.showComplete()
+        if self.buildSpec.get('force_stop_is_error', True):
+            self.showError()
+        else:
+            self.showSuccess()
+        self.header.setSubtitle(_('finished_forced_quit'))
+
+    def onCompleteOLD(self, *args, **kwargs):
+        """
+        Display the appropriate screen based on the success/fail of the
+        host program
+        """
+        with transactUI(self):
+            if self.clientRunner.was_success():
+                if self.buildSpec.get('return_to_config', False):
+                    self.showSettings()
+                else:
+                    self.showSuccess()
+                    if self.buildSpec.get('show_success_modal', True):
+                        wx.CallAfter(modals.showSuccess)
+            else:
+                if self.clientRunner.wasForcefullyStopped:
+                    self.showForceStopped()
+                else:
+                    self.showError()
+                    if self.buildSpec.get('show_failure_modal'):
+                        wx.CallAfter(modals.showFailure)
 
     def handleEdit(self, *args, **kwargs):
-        self.set_state(s.edit(self.state, self.buildSpec))
+        self.set_state(s.editScreen(_, self.state))
 
 
     def handleCancel(self, *args, **kwargs):
@@ -850,7 +904,7 @@ class RGooey(Component):
             sys.exit()
 
     def shouldStopExecution(self):
-        return not self.buildSpec['show_stop_warning'] or modals.confirmForceStop()
+        return not self.state['show_stop_warning'] or modals.confirmForceStop()
 
     def updateProgressBar(self, *args, **kwargs):
         self.set_state(s.updateProgress(self.state, ProgressEvent(**kwargs)))
@@ -873,8 +927,8 @@ class RGooey(Component):
              [c.Block, {'orient': wx.VERTICAL},
               [RHeader, self.headerprops(self.state)],
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
-              [ProgressSpinner, {'show': self.state['asyncFetching']}],
-              [ErrorWarning, {'show': True,
+              [ProgressSpinner, {'show': self.state['fetchingUpdate']}],
+              [ErrorWarning, {'show': False,
                               'uri': self.state['images']['errorIcon']}],
               [Console, {**self.buildSpec,
                          'flag': wx.EXPAND,
@@ -891,11 +945,11 @@ class RGooey(Component):
                           'config': self.buildSpec['widgets'],
                           'flag': wx.EXPAND,
                           'proportion': 1}],
-              # [c.Notebook, {'flag': wx.EXPAND, 'proportion': 1, 'on_change': self.handle_tab},
-              #  [c.NotebookItem, {'title': 'Page 1', 'selected': self.state['activeTab'] == 0},
-              #   [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]],
-              #  [c.NotebookItem, {'title': 'Page 2!!!', 'selected': self.state['activeTab'] == 1},
-              #   [ConfigPage, {'flag': wx.EXPAND, 'proportion': 1}]]],
+              # [c.Notebook, {'flag': wx.EXPAND | wx.ALL, 'border': 20, 'proportion': 1, 'on_change': lambda *args: None},
+              #  [c.NotebookItem, {'title': 'Page 1', 'selected': self.state['activeSelection'] == 0},
+              #   [c.StaticText, {'label': "Hello!"}]],
+              #  [c.NotebookItem, {'title': 'Page 2!!!', 'selected': self.state['activeSelection'] == 1},
+              #   [c.StaticText, {'label': "Hello!"}]]],
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
               [RFooter, self.fprops(self.state)]]]
         )
@@ -906,6 +960,15 @@ class RHeader(Component):
         super().__init__(props)
 
     def render(self):
+        ps = {
+                 'uri': self.props['image_uri'],
+                 'size': self.props['image_size'],
+                 'flag': wx.RIGHT,
+                 'border': 10}\
+            if 'running' not in self.props['image_uri']\
+            else {'size': self.props['image_size'],
+                 'flag': wx.RIGHT,
+                 'border': 10}
         return wsx(
             [c.Block, {'orient': wx.HORIZONTAL,
                        'min_size': (120, self.props['height']),
@@ -917,12 +980,7 @@ class RHeader(Component):
 
               [TitleText, {'label': self.props['title']}],
               [c.StaticText, {'label': self.props['subtitle']}]],
-             [c.StaticBitmap, {
-                 'uri': self.props['image_uri'],
-                 'size': self.props['image_size'],
-                 'flag': wx.RIGHT,
-                 'border': 10}]
-             ]
+             [c.StaticBitmap, ps]]
         )
 
 
@@ -962,3 +1020,12 @@ def config(element, instance: ConfigPage):
 
 
 
+def callafter(f):
+    """
+    Wraps the supplied function in a wx.CallAfter
+    for Thread-safe interop with WX.
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        wx.CallAfter(f, *args, **kwargs)
+    return inner

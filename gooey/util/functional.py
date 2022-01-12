@@ -119,9 +119,7 @@ def lift(f):
     @wraps(f)
     def inner(x) -> Try:
         try:
-            r = f(x)
-            result = Success(r)
-            return result
+            return Success(f(x))
         except Exception as e:
             return Failure(e)
     return inner

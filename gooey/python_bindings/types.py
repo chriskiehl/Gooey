@@ -246,9 +246,10 @@ class FieldValue(TypedDict):
     meta: Any
 
 
-
-
-
+class PublicGooeyState(TypedDict):
+    """
+    """
+    active_form: List[FormField]
 
 
 class Group(TypedDict):
