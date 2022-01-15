@@ -135,7 +135,7 @@ def buildFormValidationCmd(state: FullGooeyState):
         *pieces.positionals]))
 
 
-def buildOnSuccessCmd(state: FullGooeyState):
+def buildOnCompleteCmd(state: FullGooeyState, was_success: bool):
     pieces = cli_pieces(state)
     serializedForm = json.dumps({'active_form': activeFormState(state)})
     b64ecoded = b64encode(serializedForm.encode('utf-8'))
@@ -143,9 +143,28 @@ def buildOnSuccessCmd(state: FullGooeyState):
         pieces.target,
         pieces.subcommand,
         *pieces.optionals,
-        '--gooey-on-success ' + b64ecoded.decode('utf-8'),
+        '--gooey-on-complete ' + b64ecoded.decode('utf-8'),
+        '--gooey-run-is-success' if was_success else '',
         '--' if pieces.positionals else '',
         *pieces.positionals]))
+
+
+def buildOnSuccessCmd(state: FullGooeyState):
+    return buildOnCompleteCmd(state, True)
+    # pieces = cli_pieces(state)
+    # serializedForm = json.dumps({'active_form': activeFormState(state)})
+    # b64ecoded = b64encode(serializedForm.encode('utf-8'))
+    # return u' '.join(compact([
+    #     pieces.target,
+    #     pieces.subcommand,
+    #     *pieces.optionals,
+    #     '--gooey-on-success ' + b64ecoded.decode('utf-8'),
+    #     '--' if pieces.positionals else '',
+    #     *pieces.positionals]))
+
+
+def buildOnErrorCmd(state: FullGooeyState):
+    return buildOnCompleteCmd(state, False)
 
 
 def combine(state: GooeyState, params: GooeyParams, formState: List[FormField]) -> FullGooeyState:

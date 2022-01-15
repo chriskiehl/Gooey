@@ -81,7 +81,6 @@ class GooeyApplication(wx.Frame):
         self.footer = Footer(self, buildSpec)
         self.console = Console(self, buildSpec)
 
-
         self.props = {
             'background_color': self.buildSpec['header_bg_color'],
             'title': self.buildSpec['program_name'],
@@ -686,6 +685,7 @@ class RGooey(Component):
         pub.subscribe(events.TIME_UPDATE, self.updateTime)
         # # Top level wx close event
         self.frameRef.instance.Bind(wx.EVT_CLOSE, self.handleClose)
+        self.frameRef.instance.SetMenuBar(MenuBar(self.buildSpec))
 
     def getActiveConfig(self):
         return [config
@@ -758,7 +758,7 @@ class RGooey(Component):
         host.communicateFormValidation(fullState, callafter(onComplete))
 
 
-    def runAsyncExternalSuccessHandler(self):
+    def runAsyncExternalOnCompleteHandler(self, was_success):
         def handleHostResponse(hostState):
             try:
                 if hostState:
@@ -778,7 +778,10 @@ class RGooey(Component):
 
         print("Hello from thread", get_ident())
         fullState = self.fullState()
-        host.communicateSuccessState(fullState, callafter(onComplete))
+        if was_success:
+            host.communicateSuccessState(fullState, callafter(onComplete))
+        else:
+            host.communicateErrorState(fullState, callafter(onComplete))
 
 
     def handleHostError(self, exception):
@@ -789,14 +792,14 @@ class RGooey(Component):
             self.consoleRef.instance.appendText(str(e))
             self.consoleRef.instance.appendText(
                 f'\n\nThis failure happens when Gooey tries to invoke your '
-                'code for the {event} event and receives an unexpected '
+                'code for the TODO event and receives an unexpected '
                 'error code in response')
             wx.CallAfter(modals.showFailure)
         except JSONDecodeError as e:
             self.set_state(s.errorScreen(_, self.state))
             self.consoleRef.instance.appendText(str(e))
             self.consoleRef.instance.appendText(
-                f'\n\nGooey was unable to parse the response to the {event} event. '
+                f'\n\nGooey was unable to parse the response to the TODO event. '
                 'This can happen if you have additional logs to stdout beyond what Gooey '
                 'expects.')
             wx.CallAfter(modals.showFailure)
@@ -813,12 +816,12 @@ class RGooey(Component):
 
 
     def handleComplete(self, *args, **kwargs):
-        state = self.state
         if self.clientRunner.was_success():
             self.handleSuccessfulRun()
-            self.runAsyncExternalSuccessHandler()
+            self.runAsyncExternalOnCompleteHandler(was_success=True)
         else:
             self.handleErrantRun()
+            self.runAsyncExternalOnCompleteHandler(was_success=False)
 
     def handleSuccessfulRun(self):
         if self.state['return_to_config']:

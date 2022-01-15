@@ -16,11 +16,14 @@ def communicateSuccessState(state: FullGooeyState, callback: Callable[[Try[Publi
     communicateAsync(s.buildOnSuccessCmd(state), state, callback)
 
 
+def communicateErrorState(state: FullGooeyState, callback: Callable[[Try[PublicGooeyState]], None]) -> None:
+    communicateAsync(s.buildOnErrorCmd(state), state, callback)
+
+
 def fetchFieldValidation():
     pass
 
-def communicateErrorState():
-    pass
+
 
 def fetchFieldAction():
     pass

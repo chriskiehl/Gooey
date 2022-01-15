@@ -2,17 +2,12 @@
 Util for talking to the client program in order to retrieve
 dynamic defaults for the UI
 """
-import json
 import subprocess
-from concurrent.futures import ThreadPoolExecutor
 from json import JSONDecodeError
 from subprocess import CalledProcessError
 
 from gooey.python_bindings.types import Try, Success, Failure
-
-def communicate2(cmd, encoding):
-    with ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(communicate, cmd, encoding)
+from python_bindings.coms import deserialize_inbound
 
 
 def communicate(cmd, encoding) -> Try:
@@ -35,9 +30,9 @@ def communicate(cmd, encoding) -> Try:
         )
         out, err = proc.communicate()
         if out:
-            return Success(json.loads(out.decode(encoding)))
+            return Success(deserialize_inbound(out, encoding))
         else:
-            return Failure(CalledProcessError(proc.returncode, cmd))
+            return Failure(CalledProcessError(proc.returncode, cmd, output=out, stderr=err))
     except JSONDecodeError as e:
         return Failure(e)
 

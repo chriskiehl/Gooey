@@ -9,8 +9,17 @@ from gooey.python_bindings.dynamics import monkey_patch_for_form_validation, mon
     patch_args
 from gooey.python_bindings.dynamics import patch_argument, collect_errors
 from gooey.python_bindings.types import GooeyParams
+from python_bindings.coms import serialize_outbound
 from . import cmd_args
 from . import config_generator
+
+
+def noop(*args, **kwargs):
+    """
+    No-op for dev/null-ing handlers which
+    haven't been specified by the user.
+    """
+    return None
 
 
 def bypass_gooey(params):
@@ -30,24 +39,6 @@ def bypass_gooey(params):
         # to deal with it or be confused by it
         del args.ignore_gooey
         return args
-    return parse_args
-
-
-def validate_form(params: GooeyParams, write=print, exit=sys.exit):
-    """
-    Validates the user's current form.
-    """
-    def parse_args(self: ArgumentParser, args=None, namespace=None):
-        error_registry: Dict[str, Exception] = {}
-        patched_parser = monkey_patch_for_form_validation(error_registry, self)
-        try:
-            args = patched_parser.original_parse_args(args, namespace)  # type: ignore
-            errors = collect_errors(error_registry, vars(args))
-            write(json.dumps(errors))
-            exit(0)
-        except Exception as e:
-            write(e)
-            exit(1)
     return parse_args
 
 
@@ -86,6 +77,27 @@ def boostrap_gooey(params: GooeyParams):
     return parse_args
 
 
+def validate_form(params: GooeyParams, write=print, exit=sys.exit):
+    """
+    Validates the user's current form.
+    """
+    def parse_args(self: ArgumentParser, args=None, namespace=None):
+        error_registry: Dict[str, Exception] = {}
+        patched_parser = monkey_patch_for_form_validation(error_registry, self)
+        try:
+            args = patched_parser.original_parse_args(args, namespace)  # type: ignore
+            errors = collect_errors(error_registry, vars(args))
+            write(serialize_outbound(json.dumps(errors)))
+            exit(0)
+        except Exception as e:
+            write(e)
+            exit(1)
+    return parse_args
+
+
+
+
+
 
 def validate_field(params):
     def parse_args(self: ArgumentParser, args=None, namespace=None):
@@ -93,7 +105,7 @@ def validate_field(params):
     return parse_args
 
 
-def handle_success(params, write=print, exit=sys.exit):
+def handle_completed_run(params, write=print, exit=sys.exit):
     def parse_args(self: ArgumentParser, args=None, namespace=None):
         # because we're running under the context of a successful
         # invocation having just completed, the arguments supplied to
@@ -103,19 +115,35 @@ def handle_success(params, write=print, exit=sys.exit):
         def decode_payload(x):
             """
             To avoid quoting shenanigans, the json state sent from
-            Gooey is b64ecoded for ease of CLI transfer.
+            Gooey is b64ecoded for ease of CLI transfer. Argparse will
+            usually barf when trying to parse json directly
             """
             return json.loads(b64decode(x))
-        patched_parser = patch_argument(self, '--gooey-on-success', action='store', type=decode_payload)
+        patched_parser = patch_argument(
+            patch_argument(
+                self,
+                '--gooey-on-complete',
+                action='store',
+                type=decode_payload
+            ),
+            '--gooey-run-is-success',
+            default=False,
+            action='store_true',
+        )
 
         try:
             args = patched_parser.original_parse_args(args, namespace)  # type: ignore
-            form_state = args.gooey_on_success
+            form_state = args.gooey_on_complete
+            was_success = args.gooey_run_is_success
             # removing the injected gooey value so as not
             # to clutter the user's object
-            del args.gooey_on_success
-            next_state = getattr(self, 'on_gooey_success', lambda *args: None)(args, form_state)  # type: ignore
-            write(json.dumps(next_state))
+            del args.gooey_on_complete
+            del args.gooey_run_is_success
+            if was_success:
+                next_state = getattr(self, 'on_gooey_success', noop)(args, form_state)  # type: ignore
+            else:
+                next_state = getattr(self, 'on_gooey_error', noop)(args, form_state)  # type: ignore
+            write(serialize_outbound(json.dumps(next_state)))
             exit(0)
         except Exception as e:
             write(e)
@@ -150,8 +178,8 @@ def choose_hander(params: GooeyParams, cliargs: List[str]):
         f.write(str(sys.argv))
     if '--gooey-validate-form' in cliargs:
         return validate_form(params)
-    elif '--gooey-on-success' in cliargs:
-        return handle_success(params)
+    elif '--gooey-on-complete' in cliargs:
+        return handle_completed_run(params)
     elif '--ignore-gooey' in cliargs:
         return bypass_gooey(params)
     else:
