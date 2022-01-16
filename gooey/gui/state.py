@@ -7,10 +7,10 @@ import wx
 
 from gooey.gui import events
 from gooey.gui.lang.i18n import _
-from gooey.python_bindings.types import GooeyParams, Item, Group, TopLevelParser
+from gooey.python_bindings.types import GooeyParams, Item, Group, TopLevelParser, EnrichedItem
 from gooey.util.functional import associn, assoc, associnMany, compact
 from gooey.gui.formatters import formatArgument
-from gooey.python_bindings.types import FormField, ItemValue
+from gooey.python_bindings.types import FormField
 from python_bindings.types import CommandPieces, PublicGooeyState
 
 
@@ -50,19 +50,14 @@ class GooeyState(GooeyParams):
     timing: TimingState
     subcommands: List[str]
     activeSelection: int
+    show_error_alert: bool
 
 class FullGooeyState(GooeyState):
     forms: Dict[str, List[FormField]]
     widgets: Dict[str, Dict[str, Any]]
 
 
-def value(field: FormField):
-    if field['type'] in ['CheckBox', 'BlockCheckbox']:
-        return field['checked']
-    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
-        return field['selected']
-    else:
-        return field['value']
+
 
 
 def extract_items(groups: List[Group]) -> List[Item]:
@@ -78,26 +73,27 @@ def widgets(descriptor: TopLevelParser) -> List[Item]:
     return extract_items(descriptor['contents'])
 
 
-def enrich_value(formState: List[FormField], items: List[Item]) -> List[ItemValue]:
+def enrichValue(formState: List[FormField], items: List[Item]) -> List[EnrichedItem]:
     formIndex = {k['id']:k for k in formState}
-    return [assoc(item, 'value', value(formIndex[item['id']])) for item in items]
+    return [EnrichedItem(field=formIndex[item['id']], **item) for item in items]  # type: ignore
 
 
-def positional(items: List[Union[Item, ItemValue]]):
+def positional(items: List[Union[Item, EnrichedItem]]):
     return [item for item in items if item['cli_type'] == 'positional']
 
 
-def optional(items: List[Union[Item, ItemValue]]):
+def optional(items: List[Union[Item, EnrichedItem]]):
     return [item for item in items if item['cli_type'] != 'positional']
 
 
 def cli_pieces(state: FullGooeyState) -> CommandPieces:
-    subcommand = state['subcommands'][state['activeSelection']]
-    parserSpec = state['widgets'][subcommand]
-    formState = state['forms'][subcommand]
-    items = enrich_value(formState, widgets(parserSpec))
-    positional_args = [formatArgument(item, item['value']) for item in positional(items)]
-    optional_args = [formatArgument(item, item['value']) for item in optional(items)]
+    parserName = state['subcommands'][state['activeSelection']]
+    parserSpec = state['widgets'][parserName]
+    formState = state['forms'][parserName]
+    subcommand = parserSpec['command'] if parserSpec['command'] != '::gooey/default' else ''
+    items = enrichValue(formState, widgets(parserSpec))
+    positional_args = [formatArgument(item) for item in positional(items)]
+    optional_args = [formatArgument(item) for item in optional(items)]
     ignoreFlag = '' if state['suppress_gooey_flag'] else '--ignore-gooey'
     return CommandPieces(
         target=state['target'],
@@ -113,7 +109,7 @@ def activeFormState(state: FullGooeyState):
     return state['forms'][subcommand]
 
 
-def build_cli(state: FullGooeyState):
+def buildInvocationCmd(state: FullGooeyState):
     pieces = cli_pieces(state)
     return u' '.join(compact([
         pieces.target,
@@ -126,11 +122,14 @@ def build_cli(state: FullGooeyState):
 
 def buildFormValidationCmd(state: FullGooeyState):
     pieces = cli_pieces(state)
+    serializedForm = json.dumps({'active_form': activeFormState(state)})
+    b64ecoded = b64encode(serializedForm.encode('utf-8'))
     return u' '.join(compact([
         pieces.target,
         pieces.subcommand,
         *pieces.optionals,
         '--gooey-validate-form',
+        '--gooey-state ' + b64ecoded.decode('utf-8'),
         '--' if pieces.positionals else '',
         *pieces.positionals]))
 
@@ -143,25 +142,14 @@ def buildOnCompleteCmd(state: FullGooeyState, was_success: bool):
         pieces.target,
         pieces.subcommand,
         *pieces.optionals,
-        '--gooey-on-complete ' + b64ecoded.decode('utf-8'),
-        '--gooey-run-is-success' if was_success else '',
+        '--gooey-state ' + b64ecoded.decode('utf-8'),
+        '--gooey-run-is-success' if was_success else '--gooey-run-is-failure',
         '--' if pieces.positionals else '',
         *pieces.positionals]))
 
 
 def buildOnSuccessCmd(state: FullGooeyState):
     return buildOnCompleteCmd(state, True)
-    # pieces = cli_pieces(state)
-    # serializedForm = json.dumps({'active_form': activeFormState(state)})
-    # b64ecoded = b64encode(serializedForm.encode('utf-8'))
-    # return u' '.join(compact([
-    #     pieces.target,
-    #     pieces.subcommand,
-    #     *pieces.optionals,
-    #     '--gooey-on-success ' + b64ecoded.decode('utf-8'),
-    #     '--' if pieces.positionals else '',
-    #     *pieces.positionals]))
-
 
 def buildOnErrorCmd(state: FullGooeyState):
     return buildOnCompleteCmd(state, False)
@@ -196,15 +184,7 @@ def activeCommand(state, params: GooeyParams):
     return list(params['widgets'].keys())[state['activeSelection']]
 
 
-def updateErrors(state: FullGooeyState, errors: Dict[str, str]):
-    subcommand = state['subcommands'][state['activeSelection']]
-    formItems: List[FormField] = state['forms'][subcommand]
-    updated = [assoc(item, 'error', errors.get(item['id'], None))
-               for item in formItems]
-    return associn(state, ['forms', subcommand], updated)
-
-
-def mergeExternalState(state: FullGooeyState, extern: PublicGooeyState):
+def mergeExternalState(state: FullGooeyState, extern: PublicGooeyState) -> FullGooeyState:
     # TODO: insane amounts of helpful validation
     subcommand = state['subcommands'][state['activeSelection']]
     formItems: List[FormField] = state['forms'][subcommand]
@@ -212,8 +192,16 @@ def mergeExternalState(state: FullGooeyState, extern: PublicGooeyState):
     return associn(state, ['forms', subcommand], hostForm)
 
 
+def show_alert(state: FullGooeyState):
+    return assoc(state, 'show_error_alert', True)
+
 def has_errors(state: FullGooeyState):
-    return any([item['error']
+    """
+    Searches through the form elements (including down into
+    RadioGroup's internal options to find the presence of
+    any errors.
+    """
+    return any([item['error'] or any(x['error'] for x in item.get('options', []))
                 for items in state['forms'].values()
                 for item in items])
 
@@ -253,6 +241,7 @@ def initial_state(params: GooeyParams) -> GooeyState:
             elapsed_time=None,
             estimatedRemaining=None,
         ),
+        show_error_alert=False,
         subcommands=list(params['widgets'].keys()),
         activeSelection=0
     )
@@ -296,7 +285,8 @@ def consoleScreen(_: Callable[[str], str], state: GooeyState):
             'show': state['timing_options']['show_time_remaining'],
             'elapsed_time': None,
             'estimatedRemaining': None
-        }
+        },
+        'show_error_alert': False
      }
 
 class CompletedEvent(TypedDict):

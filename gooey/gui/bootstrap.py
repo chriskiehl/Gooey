@@ -13,7 +13,8 @@ import wx.lib.inspection  # type: ignore
 from gooey.gui.lang import i18n
 
 from gooey.gui import image_repository
-from gooey.gui.containers.application import GooeyApplication, RGooey
+from gooey.gui.containers.application import GooeyApplication
+from gooey.gui.application.application import RGooey
 from gooey.util.functional import merge
 from rewx import render, create_element
 

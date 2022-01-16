@@ -51,9 +51,5 @@ class Listbox(TextContainer):
         widget.AppendItems(state.get('choices', []))
         for string in state['selected']:
             widget.SetStringSelection(string)
-        if state['error']:
-            self.error.SetLabel(state['error'])
-            self.error.Show(True)
-        else:
-            self.error.SetLabel('')
-            self.error.Hide()
+        self.error.SetLabel(state['error'] or '')
+        self.error.Show(state['error'] is not None and state['error'] is not '')

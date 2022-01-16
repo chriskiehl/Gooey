@@ -30,6 +30,7 @@ from gooey.python_bindings.types import Success, Failure, Try
 from gooey.python_bindings.argparse_to_json import is_subparser
 from gooey.util.functional import lift, identity, merge
 from gooey.gui.constants import VALUE_PLACEHOLDER
+from python_bindings.coms import decode_payload
 
 
 def check_value(registry: Dict[str, Exception], original_fn):
@@ -189,6 +190,7 @@ def monkey_patch_for_form_validation(error_registry: Dict[str, Exception], parse
     """
     lift_actions_mutating(parser)
     patch_argument(parser, '--gooey-validate-form', action='store_true')
+    patch_argument(parser, '--gooey-state', action='store', type=decode_payload)
     new_check_value = check_value(error_registry, parser._check_value)
     recursively_patch_parser(parser, monkey_patch_check_value, new_check_value)
     # https://stackoverflow.com/questions/28127874/monkey-patching-python-an-instance-method

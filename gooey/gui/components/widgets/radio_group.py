@@ -1,3 +1,5 @@
+from typing import Optional
+
 import wx  # type: ignore
 from gooey.gui.components.widgets.bases import BaseWidget
 from gooey.gui.lang.i18n import _
@@ -48,13 +50,31 @@ class RadioGroup(BaseWidget):
             return self.widgets[0].getValue()
 
 
+    def syncUiState(self, state: t.RadioGroup):
+        if state['selected'] is not None:
+            self.radioButtons[state['selected']].SetValue(True)
+        for option, widget in zip(state['options'], self.widgets):
+            widget.syncUiState(option)
+        self.Fit()
+
     def getUiState(self):
         return t.RadioGroup(
             id=self._id,
             type=self.widgetInfo['type'],
-            selected=findfirst(lambda x: x.GetValue(), self.radioButtons),
+            required=self.widgetInfo['required'],
+            positional=self.widgetInfo['cli_type'] != 'optional',
+            error=self.error.GetLabel(),
+            enabled=self.Enabled,
+            visible=self.Shown,
+            selected=self.getSelectedIndex(),
             options=[x.getUiState() for x in self.widgets]
         )
+
+    def getSelectedIndex(self) -> Optional[int]:
+        for index, btn in enumerate(self.radioButtons):
+            if btn.GetValue():
+                return index
+        return None
 
     def setErrorString(self, message):
         for button, widget in zip(self.radioButtons, self.widgets):
@@ -124,15 +144,23 @@ class RadioGroup(BaseWidget):
         # state of all the buttons and resetting each button's state as we go.
         # it's wonky as hell
         states = [x.GetValue() for x in self.radioButtons]
+        for widget in self.widgets:
+            widget.Enable()
         for button, selected, widget in zip(self.radioButtons, states, self.widgets):
             if isinstance(widget, CheckBox):
                 widget.hideInput()
             if not selected: # not checked
                 widget.Disable()
             else:
-                widget.Enable()
+                # More "I don't understand" style code
+                # Under some conditions, Enable() doesn't cascade
+                # as listed in the docs. We have to manually drill
+                # into the children to enable everything.
+                widget = widget
+                while widget:
+                    widget.Enable()
+                    widget = getattr(widget, 'widget', None)
             button.SetValue(selected)
-
 
     def handleImplicitCheck(self):
         """

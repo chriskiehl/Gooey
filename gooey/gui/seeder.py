@@ -29,7 +29,7 @@ def communicate(cmd, encoding) -> Try:
             stderr=subprocess.PIPE
         )
         out, err = proc.communicate()
-        if out:
+        if out and proc.poll() == 0:
             return Success(deserialize_inbound(out, encoding))
         else:
             return Failure(CalledProcessError(proc.returncode, cmd, output=out, stderr=err))

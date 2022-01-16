@@ -186,9 +186,8 @@ class TextContainer(BaseWidget):
 
     def syncUiState(self, state: FormField):
         self.widget.setValue(state['value'])
-        if state['error']:
-            self.error.SetLabel(state['error'])
-            self.error.Show(True)
+        self.error.SetLabel(state['error'] or '')
+        self.error.Show(state['error'] is not None and state['error'] is not '')
 
 
     def getValue(self) -> t.FieldValue:

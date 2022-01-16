@@ -70,8 +70,8 @@ class CheckBox(TextContainer):
         checkbox.SetValue(state['checked'])
         checkbox.Enable(state['enabled'])
         self.Show(state['visible'])
-        if state['error']:
-            self.setErrorString(state['error'])
+        self.error.SetLabel(state['error'] or '')
+        self.error.Show(state['error'] is not None and state['error'] is not '')
 
 
 

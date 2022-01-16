@@ -11,17 +11,19 @@ after.
 """
 
 import json
+from base64 import b64decode
+from typing import Dict, Any
 
 prefix = 'gooey::'
 
 
-def serialize_outbound(msg: str):
+def serialize_outbound(out: Dict[Any, Any]):
     """
     Attaches a prefix to whatever is about to be written
     to stdout so that we can differentiate it in the
     sea of other stdout writes
     """
-    return prefix + msg
+    return prefix + json.dumps(out)
 
 
 def deserialize_inbound(stdout: bytes, encoding):
@@ -33,3 +35,12 @@ def deserialize_inbound(stdout: bytes, encoding):
     => {active_form: [...]}
     """
     return json.loads(stdout.decode(encoding).split(prefix)[-1])
+
+
+def decode_payload(x):
+    """
+    To avoid quoting shenanigans, the json state sent from
+    Gooey is b64ecoded for ease of CLI transfer. Argparse will
+    usually barf when trying to parse json directly
+    """
+    return json.loads(b64decode(x))

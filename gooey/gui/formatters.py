@@ -3,26 +3,48 @@ import os
 import itertools
 
 from gooey.gui.util.quoting import quote
-from python_bindings.types import Item
+from gooey.python_bindings.types import EnrichedItem, FormField
 
 
-def formatArgument(item: Item, value):
-    if item['type'] in ['CheckBox', 'BlockCheckbox']:
-        return checkbox(item['data'], value)
-    elif item['type'] == 'MultiFileChooser':
-        return multiFileChooser(item['data'], value)
-    elif item['type'] == 'Textarea':
-        return textArea(item['data'], value)
-    elif item['type'] == 'CommandField':
-        return textArea(item['data'], value)
-    elif item['type'] == 'Counter':
-        return counter(item['data'], value)
-    elif item['type'] == 'Dropdown':
-        return dropdown(item['data'], value)
-    elif item['type'] == 'Listbox':
-        return listbox(item['data'], value)
+def value(field: FormField):
+    if field['type'] in ['CheckBox', 'BlockCheckbox']:
+        return field['checked']
+    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
+        return field['selected']
+    elif field['type'] == 'RadioGroup':
+        if field['selected'] is not None:
+            return value(field['options'][field['selected']])
+        else:
+            return None  # ?? Is this the right thing to do??
     else:
-        return general(item['data'], value)
+        return field['value']
+
+
+def formatArgument(item: EnrichedItem):
+    if item['type'] in ['CheckBox', 'BlockCheckbox']:
+        return checkbox(item['data'], value(item['field']))
+    elif item['type'] == 'MultiFileChooser':
+        return multiFileChooser(item['data'], value(item['field']))
+    elif item['type'] == 'Textarea':
+        return textArea(item['data'], value(item['field']))
+    elif item['type'] == 'CommandField':
+        return textArea(item['data'], value(item['field']))
+    elif item['type'] == 'Counter':
+        return counter(item['data'], value(item['field']))
+    elif item['type'] == 'Dropdown':
+        return dropdown(item['data'], value(item['field']))
+    elif item['type'] == 'Listbox':
+        return listbox(item['data'], value(item['field']))
+    elif item['type'] == 'RadioGroup':
+        selected = item['field']['selected']
+        if selected is not None:
+            formField = item['field']['options'][selected]
+            argparseDefinition = item['data']['widgets'][selected]
+            return general(argparseDefinition['data'], value(formField))
+        else:
+            return None
+    else:
+        return general(item['data'], value(item['field']))
 
 
 

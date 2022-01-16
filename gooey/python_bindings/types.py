@@ -200,9 +200,7 @@ class Checkbox(TypedDict):
     enabled: bool
 
 
-class RadioGroup(TypedDict):
-    id: str
-    type: str
+class RadioGroup(BasicField):
     selected: Optional[int]
     options: List['FormField']
 
@@ -269,8 +267,14 @@ class Item(TypedDict):
     options: Dict[Any, Any]
     data: 'ItemData'
 
-class ItemValue(Item):
-    value: Any
+
+class EnrichedItem(Item):
+    """
+    An argparse item paired with its associated Gooey form
+    field and current state.
+    """
+    field: FormField
+
 
 ItemData = Union['StandardData', 'RadioData']
 
