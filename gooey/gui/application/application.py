@@ -70,7 +70,9 @@ class RGooey(Component):
         self.headerprops = lambda state: {
             'background_color': self.buildSpec['header_bg_color'],
             'title': state['title'],
+            'show_title': state['header_show_title'],
             'subtitle': state['subtitle'],
+            'show_subtitle': state['header_show_subtitle'],
             'flag': wx.EXPAND,
             'height': self.buildSpec['header_height'],
             'image_uri': state['image'],

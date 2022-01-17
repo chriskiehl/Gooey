@@ -40,13 +40,13 @@ class TestGooeyDropdown(unittest.TestCase):
     #
     #     for choices, default, initalSelection, dynamicUpdate, expectedFinalSelection in testcases:
     #         parser = self.makeParser(choices=choices, default=default)
-    #         with instrumentGooey(parser) as (app, gooeyApp):
-    #             dropdown = gooeyApp.configs[0].reifiedWidgets[0]
+    #         with instrumentGooey(parser) as (app, frame):
+    #             dropdown = frame.configs[0].reifiedWidgets[0]
     #             # ensure that default values (when supplied) are selected in the UI
     #             self.assertEqual(dropdown.widget.GetValue(), initalSelection)
     #             # fire a dynamic update with the mock values
     #             mock.return_value = {'--dropdown': dynamicUpdate}
-    #             gooeyApp.fetchExternalUpdates()
+    #             frame.fetchExternalUpdates()
     #             # the values in the UI now reflect those returned from the update
     #             # note: we're appending the ['select option'] bit here as it gets automatically added
     #             # in the UI.
@@ -83,8 +83,8 @@ class TestGooeyDropdown(unittest.TestCase):
         for case in cases:
             with self.subTest(case):
                 parser = self.makeParser(**case['inputs'])
-                with instrumentGooey(parser) as (app, gooeyApp):
-                    widget = gooeyApp.configs[0].reifiedWidgets[0]
+                with instrumentGooey(parser) as (app, frame, gapp):
+                    widget = gapp.getActiveConfig().reifiedWidgets[0]
                     self.assertEqual(widget.getValue()['rawValue'], case['expect'])
 
 

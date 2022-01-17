@@ -53,9 +53,12 @@ class RHeader(Component):
                         'flag': wx.ALIGN_CENTER_VERTICAL | wx.ALL,
                         'proportion': 1,
                         'border': 10},
-
-              [TitleText, {'label': self.props['title']}],
-              [c.StaticText, {'label': self.props['subtitle']}]],
+              [TitleText, {'label': self.props['title'],
+                           'show': self.props['show_title'],
+                           'wx_name': 'header_title'}],
+              [c.StaticText, {'label': self.props['subtitle'],
+                              'show': self.props['show_subtitle'],
+                              'wx_name': 'header_subtitle'}]],
              [c.StaticBitmap, imageProps]]
         )
 
@@ -99,8 +102,8 @@ class RFooter(Component):
                          'show': self.props['progress']['show']}],
               [c.StaticText, {'label': present_time(self.props['timing']),
                               'flag': wx.LEFT,
-                              # TODO: pass independent Show prop
-                              'show': self.props['progress']['show'],
+                              'wx_name': 'timing',
+                              'show': self.props['timing']['show'],
                               'border': 20}],
               [c.Block, {'orient': wx.HORIZONTAL, 'proportion': 1}],
               *[[c.Button, {**btn,
@@ -282,7 +285,7 @@ class TitleText(Component):
         ))
 
     def render(self):
-        return wsx([c.StaticText, {'label': self.props['label'], 'ref': self.ref}])
+        return wsx([c.StaticText, {**self.props, 'label': self.props['label'], 'ref': self.ref}])
 
 
 

@@ -2,6 +2,7 @@ from contextlib import contextmanager
 
 import time
 from threading import Thread
+from typing import Tuple
 
 import wx
 
@@ -9,12 +10,11 @@ from gooey.gui import bootstrap
 from gooey.python_bindings.config_generator import create_from_parser
 from gooey.python_bindings.parameters import gooey_params
 from gooey.util.functional import merge
-
-
+from gooey.gui.application.application import RGooey
 
 
 @contextmanager
-def instrumentGooey(parser, **kwargs):
+def instrumentGooey(parser, **kwargs) -> Tuple[wx.App, wx.Frame, RGooey]:
     """
     Context manager used during testing for setup/tear down of the
     WX infrastructure during subTests.
@@ -27,12 +27,20 @@ def instrumentGooey(parser, **kwargs):
                         "you forgetting to add the magical import which makes all these "
                         "tests work. See the module doc in gooey.tests.__init__ for guidance")
     buildspec = create_from_parser(parser, "", **gooey_params(**kwargs))
-    app, gooey = bootstrap._build_app(buildspec, app)
-    app.SetTopWindow(gooey)
+    app, frame = bootstrap._build_app(buildspec, app)
+    app.SetTopWindow(frame)
     try:
-        yield (app, gooey)
+        # we need to run the main loop temporarily to get it to
+        # apply any pending updates from the initial creation.
+        # The UI state will be stale otherwise
+        # this works because CallLater just enqueues the message to
+        # be processed. The MainLoop starts running, picks it up, and
+        # then exists
+        wx.CallLater(1, app.ExitMainLoop)
+        app.MainLoop()
+        yield (app, frame, frame._instance)
     finally:
-        gooey.Destroy()
+        frame.Destroy()
         wx.CallAfter(app.ExitMainLoop)
         # app.SetTopWindow(None)
-        del gooey
+        del frame

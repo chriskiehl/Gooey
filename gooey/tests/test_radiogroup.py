@@ -50,8 +50,8 @@ class TestRadioGroupBehavior(unittest.TestCase):
         for options, expected in testCases:
             parser = self.mutext_group(options)
             with self.subTest(options):
-                with instrumentGooey(parser) as (app, gooeyApp):
-                    radioGroup = gooeyApp.configs[0].reifiedWidgets[0]
+                with instrumentGooey(parser) as (app, frame, gapp):
+                    radioGroup = gapp.getActiveConfig().reifiedWidgets[0]
 
                     # verify that the checkboxes themselves are correct
                     if expected['selected'] is not None:
@@ -88,8 +88,8 @@ class TestRadioGroupBehavior(unittest.TestCase):
                 # wire up the parse with our test case options
                 parser = self.mutext_group(testcase['input'])
 
-                with instrumentGooey(parser) as (app, gooeyApp):
-                    radioGroup = gooeyApp.configs[0].reifiedWidgets[0]
+                with instrumentGooey(parser) as (app, frame, gapp):
+                    radioGroup = gapp.getActiveConfig().reifiedWidgets[0]
 
                     for scenario in testcase['scenario']:
                         targetButton = scenario['clickButton']

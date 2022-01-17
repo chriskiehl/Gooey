@@ -58,8 +58,8 @@ class TestNumbericInputs(unittest.TestCase):
         for inputs, expected in cases:
             with self.subTest(inputs):
                 parser = self.makeParser(**inputs)
-                with instrumentGooey(parser) as (app, gooeyApp):
-                    input = gooeyApp.configs[0].reifiedWidgets[0]
+                with instrumentGooey(parser) as (app, frame, gapp):
+                    input = gapp.getActiveConfig().reifiedWidgets[0]
                     self.assertEqual(input.getValue()['rawValue'], expected)
 
     def testGooeyOptions(self):
@@ -78,8 +78,8 @@ class TestNumbericInputs(unittest.TestCase):
         for case in cases:
             with self.subTest(case):
                 parser = self.makeParser(**case)
-                with instrumentGooey(parser) as (app, gooeyApp):
-                    wxWidget = gooeyApp.configs[0].reifiedWidgets[0].widget
+                with instrumentGooey(parser) as (app, frame, gapp):
+                    wxWidget = gapp.getActiveConfig().reifiedWidgets[0].widget
                     for option, value in case['gooey_options'].items():
                         self.assertEqual(using[option](wxWidget), value)
 
@@ -90,16 +90,16 @@ class TestNumbericInputs(unittest.TestCase):
         it being interpreted as falsey
         """
         parser = self.makeParser(widget='IntegerField')
-        with instrumentGooey(parser) as (app, gooeyApp):
-            field = gooeyApp.configs[0].reifiedWidgets[0]
+        with instrumentGooey(parser) as (app, frame, gapp):
+            field = gapp.getActiveConfig().reifiedWidgets[0]
             result = field.getValue()
             self.assertEqual(result['rawValue'], 0)
             self.assertIsNotNone(result['cmd'])
 
     def testNoLossOfPrecision(self):
         parser = self.makeParser(widget='DecimalField', default=12.23534, gooey_options={'precision': 20})
-        with instrumentGooey(parser) as (app, gooeyApp):
-            field = gooeyApp.configs[0].reifiedWidgets[0]
+        with instrumentGooey(parser) as (app, frame, gapp):
+            field = gapp.getActiveConfig().reifiedWidgets[0]
             result = field.getValue()
             self.assertEqual(result['rawValue'], 12.23534)
             self.assertIsNotNone(result['cmd'])

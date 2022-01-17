@@ -20,16 +20,16 @@ class TestGooeyHeader(unittest.TestCase):
         """
         for testdata in self.testcases():
             with self.subTest(testdata):
-                with instrumentGooey(self.make_parser(), **testdata) as (app, gooeyApp):
-                    header = gooeyApp.header
+                with instrumentGooey(self.make_parser(), **testdata) as (app, frame, gapp):
+                    frame: wx.Frame = frame
 
                     self.assertEqual(
-                        header._header.IsShown(),
+                        frame.FindWindowByName("header_title").IsShown(),
                         testdata.get('header_show_title', True)
                     )
 
                     self.assertEqual(
-                        header._subheader.IsShown(),
+                        frame.FindWindowByName("header_subtitle").IsShown(),
                         testdata.get('header_show_subtitle', True)
                     )
 
@@ -40,9 +40,9 @@ class TestGooeyHeader(unittest.TestCase):
         placed into the UI.
         """
         parser = ArgumentParser(description='Foobar')
-        with instrumentGooey(parser, program_name='BaZzEr') as (app, gooeyApp):
-            self.assertEqual(gooeyApp.header._header.GetLabelText(), 'BaZzEr')
-            self.assertEqual(gooeyApp.header._subheader.GetLabelText(), 'Foobar')
+        with instrumentGooey(parser, program_name='BaZzEr') as (app, frame, gapp):
+            self.assertEqual(frame.FindWindowByName("header_title").GetLabel(), 'BaZzEr')
+            self.assertEqual(frame.FindWindowByName("header_subtitle").GetLabel(), 'Foobar')
 
 
     def testcases(self):
