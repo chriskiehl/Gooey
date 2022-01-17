@@ -277,7 +277,7 @@ def consoleScreen(_: Callable[[str], str], state: GooeyState):
                      'enabled': True}
                     for btn in state['buttons']],
         'progress': {
-            'show': True, # params['disable_progress_bar_animation'],
+            'show': not state['disable_progress_bar_animation'],
             'range': 100,
             'value': 0 if state['progress_regex'] else -1
         },

@@ -7,11 +7,10 @@ from gooey.gui.util import wx_util
 from gooey.gui.components.widgets import CheckBox
 from gooey.util.functional import getin, findfirst, merge
 from gooey.python_bindings import types as t
-from gooey.python_bindings import types as t
+
 
 class RadioGroup(BaseWidget):
     """
-    TODO: Dynamics:
     """
 
     def __init__(self, parent, widgetInfo, *args, **kwargs):
@@ -55,6 +54,8 @@ class RadioGroup(BaseWidget):
             self.radioButtons[state['selected']].SetValue(True)
         for option, widget in zip(state['options'], self.widgets):
             widget.syncUiState(option)
+        # Fit required here to force WX to actually
+        # show newly Enabled/Shown things for some reason.
         self.Fit()
 
     def getUiState(self):

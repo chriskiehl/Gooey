@@ -1,6 +1,7 @@
 '''
 Main runner entry point for Gooey.
 '''
+from typing import Any, Tuple
 
 import wx  # type: ignore
 # wx.html and wx.xml imports required here to make packaging with
@@ -29,7 +30,7 @@ def build_app(build_spec):
     return _build_app(build_spec, app)
 
 
-def _build_app(build_spec, app):
+def _build_app(build_spec, app) -> Tuple[Any, wx.Frame]:
     """
     Note: this method is broken out with app as
     an argument to facilitate testing.
@@ -41,7 +42,7 @@ def _build_app(build_spec, app):
     imagesPaths = image_repository.loadImages(build_spec['image_dir'])
     # gapp2 = GooeyApplication(merge(build_spec, imagesPaths))
     gapp2 = render(create_element(RGooey, merge(build_spec, imagesPaths)), None)
-    wx.lib.inspection.InspectionTool().Show()
+    # wx.lib.inspection.InspectionTool().Show()
     # gapp.Show()
     gapp2.Show()
     return (app, gapp2)

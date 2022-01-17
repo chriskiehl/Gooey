@@ -34,8 +34,6 @@ def fetchFormAction():
 
 def communicateAsync(cmd: str, state: FullGooeyState, callback: Callable[[Any], None]):
     """
-    TODO: Docs
-
     Callable MUST be wrapped in wx.CallAfter if its going to
     modify the UI.
     """

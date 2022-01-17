@@ -5,7 +5,7 @@ from threading import Thread
 
 import wx
 
-from gooey.gui import application
+from gooey.gui import bootstrap
 from gooey.python_bindings.config_generator import create_from_parser
 from gooey.python_bindings.parameters import gooey_params
 from gooey.util.functional import merge
@@ -27,7 +27,7 @@ def instrumentGooey(parser, **kwargs):
                         "you forgetting to add the magical import which makes all these "
                         "tests work. See the module doc in gooey.tests.__init__ for guidance")
     buildspec = create_from_parser(parser, "", **gooey_params(**kwargs))
-    app, gooey = application._build_app(buildspec, app)
+    app, gooey = bootstrap._build_app(buildspec, app)
     app.SetTopWindow(gooey)
     try:
         yield (app, gooey)

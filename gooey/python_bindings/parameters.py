@@ -135,7 +135,7 @@ def gooey_params(**kwargs) -> GooeyParams:
 def parse_events(events: List[str]) -> List[str]:
     if not isinstance(events, list):
         raise TypeError(
-            f"use_events requires a list of events. You provided "
+            f"`use_events` requires a list of events. You provided "
             "{events}. \n"
             "Example: \n"
             "\tfrom gooey import Events"
@@ -144,7 +144,7 @@ def parse_events(events: List[str]) -> List[str]:
     unknown_events = set(events) - set(Events)
     if unknown_events:
         raise ValueError(
-            f'Unrecognized event(s): {unknown_events}\n'
+            f'nrecognized event(s) were passed to `use_events`: {unknown_events}\n'
             f'Must be one of {Events._fields}\n'
             f'Consider using the `Events` object: `from gooey import Events`')
     else:

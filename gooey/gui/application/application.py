@@ -30,6 +30,7 @@ from gooey.gui.application.components import RHeader, ProgressSpinner, ErrorWarn
     RSidebar, RFooter
 from gooey.gui.state import FullGooeyState
 from gooey.python_bindings.types import PublicGooeyState
+from python_bindings.dynamics import unexpected_exit_explanations, deserialize_failure_explanations
 from rewx import components as c
 from rewx import wsx
 from rewx.core import Component, Ref
@@ -37,7 +38,26 @@ from rewx.core import Component, Ref
 
 class RGooey(Component):
     """
-    TODO:
+    Main Application container for Gooey.
+
+    State Management
+    ----------------
+
+    Pending further refactor, state is tracked in two places:
+    1. On this instance (React style)
+    2. In the WX Form Elements themselves[0]
+
+    As needed, these two states are merged to form the `FullGooeyState`, which
+    is the canonical state object against which all logic runs.
+
+
+    Dynamic Updates
+    ---------------
+
+    TODO
+
+    [0] this is legacy and will (eventually) be refactored away
+
     """
     def __init__(self, props):
         super().__init__(props)
@@ -80,6 +100,8 @@ class RGooey(Component):
         # # Top level wx close event
         self.frameRef.instance.Bind(wx.EVT_CLOSE, self.handleClose)
         self.frameRef.instance.SetMenuBar(MenuBar(self.buildSpec))
+        if self.state['fullscreen']:
+            self.frameRef.instance.ShowFullScreen(True)
 
     def getActiveConfig(self):
         return [config
@@ -104,18 +126,26 @@ class RGooey(Component):
         formState = self.getActiveFormState()
         return s.combine(self.state, self.props, formState)
 
+
     def onStart(self, *args, **kwargs):
+        """
+        Dispatches the start behavior.
+        """
         if Events.VALIDATE_FORM in self.state['use_events']:
             self.runAsyncValidation()
         else:
             self.startRun()
 
+
     def startRun(self):
+        """
+        Kicks off a run by invoking the host's code
+        and pumping its stdout to Gooey's Console window.
+        """
         state = self.fullState()
         if state['clear_before_run']:
             self.consoleRef.instance.Clear()
         self.set_state(s.consoleScreen(_, state))
-        xs = s.buildInvocationCmd(state)
         self.clientRunner.run(s.buildInvocationCmd(state))
         self.frameRef.instance.Layout()
         for child in self.frameRef.instance.Children:
@@ -134,83 +164,6 @@ class RGooey(Component):
 
 
 
-    def runAsyncValidation(self):
-        def handleHostResponse(hostState: PublicGooeyState):
-            self.set_state(s.finishUpdate(self.state))
-            currentState = self.fullState()
-            self.syncExternalState(s.mergeExternalState(currentState, hostState))
-            if not s.has_errors(self.fullState()):
-                self.startRun()
-            else:
-                self.set_state(s.editScreen(_, s.show_alert(self.fullState())))
-
-        def onComplete(result: Try[Dict[str, str]]):
-            result.onSuccess(handleHostResponse)
-            result.onError(self.handleHostError)
-
-        print("Hello from thread", get_ident())
-        self.set_state(s.beginUpdate(self.state))
-        fullState = self.fullState()
-        host.communicateFormValidation(fullState, callafter(onComplete))
-
-
-    def runAsyncExternalOnCompleteHandler(self, was_success):
-        def handleHostResponse(hostState):
-            try:
-                if hostState:
-                    currentState = self.fullState()
-                    self.syncExternalState(s.mergeExternalState(currentState, hostState))
-                else:
-                    print("Calling start run from thread ", threading.get_ident())
-                    wx.CallAfter(self.startRun)
-            except Exception as e:
-                print(e)
-                print('uh oh!')
-
-        def onComplete(result: Try[PublicGooeyState]):
-            self.set_state({**self.state, 'fetchingUpdate': False})
-            result.onError(self.handleHostError)
-            result.onSuccess(handleHostResponse)
-
-        print("Hello from thread", get_ident())
-        fullState = self.fullState()
-        if was_success:
-            host.communicateSuccessState(fullState, callafter(onComplete))
-        else:
-            host.communicateErrorState(fullState, callafter(onComplete))
-
-
-    def handleHostError(self, exception):
-        try:
-            raise exception
-        except CalledProcessError as e:
-            # Only show the modal if we're not already on the screen
-            # (which can be the case when one of the on_complete handlers
-            # failed)
-            if self.state['image'] != self.state['images']['errorIcon']:
-                wx.CallAfter(modals.showFailure)
-            self.set_state(s.errorScreen(_, self.state))
-            self.consoleRef.instance.appendText(str(e))
-            self.consoleRef.instance.appendText(str(e.output))
-            self.consoleRef.instance.appendText(str(e.stderr))
-            self.consoleRef.instance.appendText(
-                f'\n\nThis failure happens when Gooey tries to invoke your '
-                'code for the TODO event and receives an unexpected '
-                'error code in response')
-            wx.CallAfter(modals.showFailure)
-        except JSONDecodeError as e:
-            self.set_state(s.errorScreen(_, self.state))
-            self.consoleRef.instance.appendText(str(e))
-            self.consoleRef.instance.appendText(
-                f'\n\nGooey was unable to parse the response to the TODO event. '
-                'This can happen if you have additional logs to stdout beyond what Gooey '
-                'expects.')
-
-        except Exception as e:
-            self.set_state(s.errorScreen(_, self.state))
-            self.consoleRef.instance.appendText(str(e))
-        finally:
-            self.set_state({**self.state, 'fetchingUpdate': False})
 
 
     def handleInterrupt(self, *args, **kwargs):
@@ -322,6 +275,60 @@ class RGooey(Component):
 
     def handleSelectAction(self, event):
         self.set_state(assoc(self.state, 'activeSelection', event.Selection))
+
+
+    def runAsyncValidation(self):
+        def handleHostResponse(hostState: PublicGooeyState):
+            self.set_state(s.finishUpdate(self.state))
+            currentState = self.fullState()
+            self.syncExternalState(s.mergeExternalState(currentState, hostState))
+            if not s.has_errors(self.fullState()):
+                self.startRun()
+            else:
+                self.set_state(s.editScreen(_, s.show_alert(self.fullState())))
+
+        def onComplete(self, result: Try[PublicGooeyState]):
+            result.onSuccess(handleHostResponse)
+            result.onError(self.handleHostError)
+
+        self.set_state(s.beginUpdate(self.state))
+        fullState = self.fullState()
+        host.communicateFormValidation(fullState, callafter(onComplete))
+
+
+    def runAsyncExternalOnCompleteHandler(self, was_success):
+        def handleHostResponse(hostState):
+            if hostState:
+                self.syncExternalState(s.mergeExternalState(self.fullState(), hostState))
+
+        def onComplete(result: Try[PublicGooeyState]):
+            result.onError(self.handleHostError)
+            result.onSuccess(handleHostResponse)
+
+        if was_success:
+            host.communicateSuccessState(self.fullState(), callafter(onComplete))
+        else:
+            host.communicateErrorState(self.fullState(), callafter(onComplete))
+
+
+    def handleHostError(self, ex):
+        """
+        All async errors get pumped here where we dump out the
+        error and they hopefully provide a lot of helpful debugging info
+        for the user.
+        """
+        try:
+            self.set_state(s.errorScreen(_, self.state))
+            self.consoleRef.instance.appendText(str(ex))
+            self.consoleRef.instance.appendText(str(getattr(ex, 'output', '')))
+            self.consoleRef.instance.appendText(str(getattr(ex, 'stderr', '')))
+            raise ex
+        except JSONDecodeError as e:
+            self.consoleRef.instance.appendText(deserialize_failure_explanations)
+        except Exception as e:
+            self.consoleRef.instance.appendText(unexpected_exit_explanations)
+        finally:
+            self.set_state({**self.state, 'fetchingUpdate': False})
 
 
     def render(self):

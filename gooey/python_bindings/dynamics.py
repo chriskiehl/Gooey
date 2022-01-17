@@ -30,7 +30,42 @@ from gooey.python_bindings.types import Success, Failure, Try
 from gooey.python_bindings.argparse_to_json import is_subparser
 from gooey.util.functional import lift, identity, merge
 from gooey.gui.constants import VALUE_PLACEHOLDER
-from python_bindings.coms import decode_payload
+from gooey.python_bindings.constants import Events
+from gooey.python_bindings.coms import decode_payload
+
+unexpected_exit_explanations = f'''
++=======================+
+|Gooey Unexpected Error!|
++=======================+
+
+Gooey encountered an unexpected error while trying to communicate 
+with your program to process one of the {Events._fields} events.
+
+These features are new and experimental! You may have encountered a bug! 
+
+You can open a ticket with a small reproducible example here
+https://github.com/chriskiehl/Gooey/issues
+'''
+
+
+deserialize_failure_explanations = f'''
++==================================+
+|Gooey Event Deserialization Error!|
++==================================+
+
+Gooey was unable to deserialize the payload returned from your 
+program when processing one of the {Events._fields} events. 
+
+The payload *MUST* be in the `GooeyPublicState` schema. You can 
+view the type information in `gooey.python_bindings.types.py`
+
+Note, these features are new an experimental. This may be a bug on 
+Gooey's side! 
+
+You can open a ticket with a small reproducible example here:  
+https://github.com/chriskiehl/Gooey/issues
+'''
+
 
 
 def check_value(registry: Dict[str, Exception], original_fn):
