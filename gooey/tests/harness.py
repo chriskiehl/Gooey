@@ -41,6 +41,4 @@ def instrumentGooey(parser, **kwargs) -> Tuple[wx.App, wx.Frame, RGooey]:
         yield (app, frame, frame._instance)
     finally:
         frame.Destroy()
-        wx.CallAfter(app.ExitMainLoop)
-        # app.SetTopWindow(None)
         del frame

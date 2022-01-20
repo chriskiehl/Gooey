@@ -1,101 +1,52 @@
-from gooey import Gooey
+"""
+Parser containing all Gooey widgets.
+"""
+
 from gooey import GooeyParser
 
 
-@Gooey(
-    sidebar_title="Your Custom Title",
-    show_sidebar=True,
-    dump_build_config=True,
-    show_success_modal=False,
-    force_stop_is_error=False,
-    language='chinese'
+parser = GooeyParser()
+
+parser.add_argument('--textfield', default=2, widget="TextField")
+parser.add_argument('--textarea', default="oneline twoline", widget='Textarea')
+parser.add_argument('--password', default="hunter42", widget='PasswordField')
+parser.add_argument('--commandfield', default="cmdr", widget='CommandField')
+parser.add_argument('--dropdown', choices=["one", "two"], default="two", widget='Dropdown')
+parser.add_argument(
+    '--listboxie',
+    nargs='+',
+    default=['three', 'four'],
+    choices=['one', 'two', 'three', 'four'],
+    widget='Listbox',
+    gooey_options={
+        'height': 300,
+        'validate': '',
+        'heading_color': '',
+        'text_color': '',
+        'hide_heading': True,
+        'hide_text': True,
+    }
 )
-def main():
-    desc = "Example application to show Gooey's various widgets"
-    parser = GooeyParser(description=desc, add_help=False)
+parser.add_argument('--counter', default=3, action='count', widget='Counter')
+parser.add_argument("--overwrite1", action="store_true", default=True, widget='CheckBox')
+parser.add_argument("--overwrite2", action="store_true", default=True, widget='BlockCheckbox')
 
-    parser.add_argument('--textfield', default=2, widget="TextField", gooey_options={
-        'validator': {
-            'test': 'int(user_input) > 5',
-            'message': 'number must be greater than 5'
-        }
-    })
-    parser.add_argument('--textarea', default="oneline twoline", widget='Textarea')
-    parser.add_argument('--password', default="hunter42", widget='PasswordField')
-    parser.add_argument('--commandfield', default="cmdr", widget='CommandField')
-    parser.add_argument('--dropdown',
-                        choices=["one", "two"], default="two", widget='Dropdown')
-    parser.add_argument('--listboxie',
-                    nargs='+',
-                    default=['Option three', 'Option four'],
-                    choices=['Option one', 'Option two', 'Option three',
-                             'Option four'],
-                    widget='Listbox',
-                    gooey_options={
-                        'height': 300,
-                        'validate': '',
-                        'heading_color': '',
-                        'text_color': '',
-                        'hide_heading': True,
-                        'hide_text': True,
-                    }
-                )
-    parser.add_argument('-c', '--counter', default=3, action='count', widget='Counter')
-    #
-    parser.add_argument("-o", "--overwrite", action="store_true",
-                                default=True,
-                                widget='CheckBox')
+verbosity = parser.add_mutually_exclusive_group(
+    gooey_options={
+        'initial_selection': 0
+    }
+)
+verbosity.add_argument('--mutexone', default='hello')
 
-    ### Mutex Group ###
-    verbosity = parser.add_mutually_exclusive_group(
-        required=True,
-        gooey_options={
-            'initial_selection': 1
-        }
-    )
-    verbosity.add_argument(
-        '--mutexone',
-        default=True,
-        action='store_true',
-        help="Show more details")
+parser.add_argument('--mutextwo', default='3', widget='Slider')
+parser.add_argument('--mutextwo', default='1', widget='IntegerField')
+parser.add_argument('--mutextwo', default='4', widget='DecimalField')
 
-    verbosity.add_argument(
-        '--mutextwo',
-        default='mut-2',
-        widget='TextField')
-
-    parser.add_argument("--filechooser", default="fc-value", widget='FileChooser')
-    parser.add_argument("--filesaver", default="fs-value", widget='FileSaver')
-    parser.add_argument("--dirchooser", default="dc-value", widget='DirChooser')
-    parser.add_argument("--datechooser", default="2015-01-01", widget='DateChooser')
-    parser.add_argument("--colourchooser", default="#000000", widget='ColourChooser')
-
-    dest_vars = [
-        'textfield',
-        'textarea',
-        'password',
-        'commandfield',
-        'dropdown',
-        'listboxie',
-        'counter',
-        'overwrite',
-        'mutextwo',
-        'filechooser',
-        'filesaver',
-        'dirchooser',
-        'datechooser',
-        'colourchooser'
-
-    ]
+parser.add_argument("--filechooser", default="fc-value", widget='FileChooser')
+parser.add_argument("--filesaver", default="fs-value", widget='FileSaver')
+parser.add_argument("--dirchooser", default="dc-value", widget='DirChooser')
+parser.add_argument("--datechooser", default="2015-01-01", widget='DateChooser')
+parser.add_argument("--colourchooser", default="#000000", widget='ColourChooser')
 
 
-    args = parser.parse_args()
-    import time
-    time.sleep(3)
-    for i in dest_vars:
-        assert getattr(args, i) is not None
-    print("Success")
 
-
-if __name__ == '__main__':
-    main()
