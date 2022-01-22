@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 with open('README.md') as readme:
     long_description = readme.read()
 
-version = '1.0.8.1'
+version = '1.2.0.0-PREVIEW'
 
 deps = [
     'Pillow>=4.3.0',
@@ -14,12 +14,9 @@ deps = [
     'colored>=1.3.93',
     'pygtrie>=2.3.3',
     're-wx>=0.0.1',
-    'typing-extensions==3.10.0.2'
+    'typing-extensions==3.10.0.2',
+    'wxpython>=4.1.0'
 ]
-
-if sys.version[0] == '3':
-    deps.append('wxpython>=4.1.0')
-
 
 setup(
     name='Gooey',
@@ -40,7 +37,6 @@ setup(
         'Topic :: Desktop Environment',
         'Topic :: Software Development :: Build Tools',
         'Topic :: Software Development :: Widget Sets',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License'
     ],
