@@ -7,7 +7,7 @@ from gooey.gui.components.widgets.textfield import TextField
 from gooey.gui.components.widgets.bases import TextContainer
 from gooey.gui import formatters
 from gooey.python_bindings import types as t
-from python_bindings.types import FormField
+from gooey.python_bindings.types import FormField
 
 
 class Textarea(TextContainer):

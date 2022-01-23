@@ -30,8 +30,8 @@ from gooey.gui.application.components import RHeader, ProgressSpinner, ErrorWarn
     RSidebar, RFooter
 from gooey.gui.state import FullGooeyState
 from gooey.python_bindings.types import PublicGooeyState
-from gui.components.config import TabbedConfigPage
-from python_bindings.dynamics import unexpected_exit_explanations, deserialize_failure_explanations
+from gooey.gui.components.config import TabbedConfigPage
+from gooey.python_bindings.dynamics import unexpected_exit_explanations, deserialize_failure_explanations
 from rewx import components as c
 from rewx import wsx
 from rewx.core import Component, Ref

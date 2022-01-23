@@ -6,7 +6,7 @@ import wx  # type: ignore
 from gooey.gui import formatters
 from gooey.gui.lang.i18n import _
 from gooey.python_bindings import types as t
-from python_bindings.types import FormField
+from gooey.python_bindings.types import FormField
 
 
 class Dropdown(TextContainer):

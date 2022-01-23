@@ -7,7 +7,7 @@ from json import JSONDecodeError
 from subprocess import CalledProcessError
 
 from gooey.python_bindings.types import Try, Success, Failure
-from python_bindings.coms import deserialize_inbound
+from gooey.python_bindings.coms import deserialize_inbound
 
 
 def communicate(cmd, encoding) -> Try:

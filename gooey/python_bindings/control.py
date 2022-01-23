@@ -28,8 +28,8 @@ from typing import List, Dict
 from gooey.python_bindings.dynamics import monkey_patch_for_form_validation
 from gooey.python_bindings.dynamics import patch_argument, collect_errors
 from gooey.python_bindings.types import GooeyParams
-from python_bindings.coms import serialize_outbound, decode_payload
-from python_bindings.types import PublicGooeyState
+from gooey.python_bindings.coms import serialize_outbound, decode_payload
+from gooey.python_bindings.types import PublicGooeyState
 from . import cmd_args
 from . import config_generator
 

@@ -15,8 +15,8 @@ from typing import Mapping, Dict, Type, Iterable
 import six
 import wx  # type: ignore
 
-from gui.state import FullGooeyState
-from python_bindings.types import PublicGooeyState
+from gooey.gui.state import FullGooeyState
+from gooey.python_bindings.types import PublicGooeyState
 from rewx.widgets import set_basic_props
 
 from gooey.gui.components.mouse import notifyMouseEvent

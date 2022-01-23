@@ -1,9 +1,15 @@
 import re
 import signal
+import subprocess
+import sys
 import unittest
-
+import os
 import time
 
+import wx
+
+from gooey.gui import events, processor
+from gooey.gui.pubsub import pub
 from gooey.gui.processor import ProcessController
 
 
@@ -49,17 +55,18 @@ class TestProcessor(unittest.TestCase):
         primarily seems to come down to how long the time.sleep() is before sending the shutdown
         signal.
         """
-        import os
+
         cmd = 'python ' + os.path.join(os.getcwd(), 'files', 'infinite_loop.py')
 
-        windows_signals = [signal.SIGTERM, signal.CTRL_BREAK_EVENT, signal.CTRL_C_EVENT]
-
         try:
-            for sig in windows_signals:
+            import _winapi
+            signals = [signal.SIGTERM, signal.CTRL_BREAK_EVENT, signal.CTRL_C_EVENT]
+        except ModuleNotFoundError:
+            signals = [signal.SIGTERM, signal.SIGINT]
+        try:
+            for sig in signals:
                 print('sig', sig)
                 processor = ProcessController(None, None, False, 'utf-8', True, shutdown_signal=sig)
-
-                import subprocess
 
                 processor.run(cmd)
                 self.assertTrue(processor.running())
@@ -75,3 +82,43 @@ class TestProcessor(unittest.TestCase):
                 self.assertFalse(processor.running())
         except KeyboardInterrupt:
             pass
+
+
+    def test_ignore_sigint_family_signals(self):
+        try:
+            import _winapi
+            signals = [signal.CTRL_BREAK_EVENT, signal.CTRL_C_EVENT]
+            programs = ['ignore_interrupt.py', 'ignore_break.py']
+        except ModuleNotFoundError:
+            signals = [signal.SIGINT]
+            programs = ['ignore_interrupt.py']
+
+
+        for program in programs:
+            cmd = sys.executable + ' ' + os.path.join(os.getcwd(), 'files', program)
+            for sig in signals:
+                process = processor = ProcessController(None, None, False, 'utf-8', True, shutdown_signal=sig, testmode=True)
+                process.run(cmd)
+                # super-duper important sleep so that the
+                # signal is actually received by the child process
+                # see: https://stackoverflow.com/questions/32023719/how-to-simulate-a-terminal-ctrl-c-event-from-a-unittest
+                time.sleep(1)
+                process.send_shutdown_signal()
+                # now our signal should have been received, but rejected.
+                self.assertTrue(processor.running())
+                # so we sigterm to actually shut down the process.
+                process._send_signal(signal.SIGTERM)
+                # sanity wait
+                max_wait = time.time() + 2
+                while processor.running() and time.time() < max_wait:
+                    time.sleep(0.1)
+                # now we should be shut down due to killing the process.
+                self.assertFalse(processor.running())
+                # and we'll see in the stdout out from the process that our
+                # interrupt was received
+                output = process._process.stdout.read().decode('utf-8')
+                self.assertIn("INTERRUPT", str(output))
+                # but indeed ignored. It continued running and writing to stdout after
+                # receiving the signal
+                self.assertTrue(output.index("INTERRUPT") < len(output))
+

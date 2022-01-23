@@ -32,7 +32,7 @@ from gooey.util.functional import lift, identity, merge
 from gooey.gui.constants import VALUE_PLACEHOLDER
 from gooey.python_bindings.constants import Events
 from gooey.python_bindings.coms import decode_payload
-from gui.constants import RADIO_PLACEHOLDER
+from gooey.gui.constants import RADIO_PLACEHOLDER
 
 unexpected_exit_explanations = f'''
 +=======================+

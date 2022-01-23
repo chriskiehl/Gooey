@@ -12,9 +12,9 @@ from gooey.python_bindings.types import GooeyParams, Item, Group, TopLevelParser
 from gooey.util.functional import associn, assoc, associnMany, compact
 from gooey.gui.formatters import formatArgument
 from gooey.python_bindings.types import FormField
-from gui.constants import VALUE_PLACEHOLDER
-from gui.formatters import add_placeholder
-from python_bindings.types import CommandPieces, PublicGooeyState
+from gooey.gui.constants import VALUE_PLACEHOLDER
+from gooey.gui.formatters import add_placeholder
+from gooey.python_bindings.types import CommandPieces, PublicGooeyState
 
 
 class TimingEvent(TypedDict):

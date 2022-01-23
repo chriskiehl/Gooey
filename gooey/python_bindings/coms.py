@@ -14,8 +14,8 @@ import json
 from base64 import b64decode
 from typing import Dict, Any
 
-from python_bindings.schema import validate_public_state
-from python_bindings.types import PublicGooeyState
+from gooey.python_bindings.schema import validate_public_state
+from gooey.python_bindings.types import PublicGooeyState
 
 prefix = 'gooey::'
 

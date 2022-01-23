@@ -4,8 +4,8 @@ import itertools
 
 from gooey.gui.util.quoting import quote
 from gooey.python_bindings.types import EnrichedItem, FormField
-from gui.constants import VALUE_PLACEHOLDER, RADIO_PLACEHOLDER
-from util.functional import assoc, associnMany
+from gooey.gui.constants import VALUE_PLACEHOLDER, RADIO_PLACEHOLDER
+from gooey.util.functional import assoc, associnMany
 
 
 def value(field: FormField):
