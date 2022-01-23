@@ -659,7 +659,7 @@ def main():
 ```
 
 
-<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/dynamic-validation-1-2-0.JPG" width="400" height="auto" align="right" />
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/dynamic-validation-1-2-0.JPG" />
 
 Now, when you run Gooey, before it invokes your main program, it'll send a separate pre-validation check and record any issues raised from your `type` functions.  
 
@@ -685,9 +685,6 @@ def main():
     print(args)
 ```
 
-<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34465024-f011ac3e-ee4f-11e7-80ae-330adb4c47d6.png" width="400" height="auto" align="left" />
-
-With the validator in place, Gooey can present the error messages next to the relevant input field if any validators fail.  
 
 
 
