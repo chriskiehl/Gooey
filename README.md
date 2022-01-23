@@ -1,5 +1,6 @@
-Gooey 
-=====  
+# Gooey 
+  
+
 Turn (almost) any Python 3 Console Program into a GUI application with one line
 
 <p align="center">
@@ -36,8 +37,8 @@ Table of Contents
     - [Basic](#basic)
     - [No Config](#no-config)
 - [Menus](#menus)    
-- [Input Validation](#input-validation)
-- [Using Dynamic Values](#using-dynamic-values)
+- [Dynamic Validation](#dynamic-validation)
+- [Lifecycle Events and UI control](#lifecycle-events-and-ui-control)
 - [Showing Progress](#showing-progress)
     - [Elapsed / Remaining Time](#elapsed--remaining-time)
 - [Customizing Icons](#customizing-icons)
@@ -604,63 +605,84 @@ Two menu groups ("File" and "Help") with four menu items between them.
 ---------------------------------------  
 
 
-### Input Validation
+### Dynamic Validation 
 
 
 <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png" width="400" height="auto" align="right" />
 
-
 >:warning: 
->Note! This functionality is experimental. Its API may be changed or removed altogether. Feedback/thoughts on this feature is welcome and encouraged! 
-
-Gooey can optionally do some basic pre-flight validation on user input. Internally, it uses these validator functions to check for the presence of required arguments. However, by using [GooeyParser](#gooeyparser), you can extend these functions with your own validation rules. This allows Gooey to show much, much more user friendly feedback before it hands control off to your program. 
-
-
-**Writing a validator:**
-
-Validators are specified as part of the `gooey_options` map available to `GooeyParser`. It's a simple map structure made up of a root key named `validator` and two internal pairs: 
-
- * `test` The inner body of the validation test you wish to perform 
- * `message` the error message that should display given a validation failure
+>Note! This functionality is experimental and likely to be unstable. Its API may be changed or removed altogether. Feedback/thoughts on this feature is welcome and encouraged!
  
-e.g.
+>:warning: 
+>See [Release Notes]() for guidance on upgrading from 1.0.8 to 1.2.0 
 
+
+Before passing the user's inputs to your program, Gooey can optionally run a special pre-flight validation to check that all arguments pass your specified validations.  
+
+**How does it work?**   
+
+Gooey piggy backs on the `type` parameter available to most Argparse Argument types. 
+
+```python
+parser.add_argument('--some-number', type=int)
+parser.add_argument('--some-number', type=float)
 ```
-gooey_options={
-    'validator':{
-        'test': 'len(user_input) > 3',
-        'message': 'some helpful message'
-    }
-}
+
+In addition to simple builtins like `int` and `float`, you can supply your own function to the `type` parameter to vet the incoming values. 
+
+```python
+def must_be_exactly_ten(value): 
+    number = int(value) 
+    if number == 10:
+        return number
+    else: 
+        raise TypeError("Hey! you need to provide exactly the number 10!")
+        
+        
+def main(): 
+    parser = ArgumentParser()
+    parser.add_argument('--ten', type=must_be_exactly_ten)
 ```
 
-**The `test` function**
+**How to enable the pre-flight validation**
 
-Your test function can be made up of any valid Python expression. It receives the variable `user_input` as an argument against which to perform its validation. Note that all values coming from Gooey are in the form of a string, so you'll have to cast as needed in order to perform your validation.   
+By default, Gooey won't run the validation. Why? This feature is fairly experimental and does a lot of intense Monkey Patching behind the scenes. As such, it's currently opt-in. 
+
+You enable to validation by telling Gooey you'd like to subscribe to the `VALIDATE_FORM` event. 
+
+```python
+from gooey import Gooey, Events 
+
+@Gooey(use_events=[Events.VALIDATE_FORM])
+def main(): 
+    ... 
+```
+
+
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/dynamic-validation-1-2-0.JPG" width="400" height="auto" align="right" />
+
+Now, when you run Gooey, before it invokes your main program, it'll send a separate pre-validation check and record any issues raised from your `type` functions.  
+
 
 **Full Code Example**
 
 ```
-from gooey.python_bindings.gooey_decorator import Gooey
-from gooey.python_bindings.gooey_parser import GooeyParser
+from gooey import Gooey, Events
+from argparse import ArgumentParser
 
-@Gooey
+def must_be_exactly_ten(value):
+    number = int(value)
+    if number == 10:
+        return number
+    else:
+        raise TypeError("Hey! you need to provide exactly the number 10!")
+
+@Gooey(program_name='Validation Example', use_events=[Events.VALIDATE_FORM])
 def main():
-    parser = GooeyParser(description='Example validator')
-    parser.add_argument(
-        'secret',
-        metavar='Super Secret Number',
-        help='A number specifically between 2 and 14',
-        gooey_options={
-            'validator': {
-                'test': '2 <= int(user_input) <= 14',
-                'message': 'Must be between 2 and 14'
-            }
-        })
-
+    parser = ArgumentParser(description="Checkout this validation!")
+    parser.add_argument('--ten', metavar='This field should be 10', type=must_be_exactly_ten)
     args = parser.parse_args()
-
-    print("Cool! Your secret number is: ", args.secret)
+    print(args)
 ```
 
 <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34465024-f011ac3e-ee4f-11e7-80ae-330adb4c47d6.png" width="400" height="auto" align="left" />
@@ -672,40 +694,72 @@ With the validator in place, Gooey can present the error messages next to the re
 ---------------------------------------
   
 
-## Using Dynamic Values
+## Lifecycle Events and UI control
 
 >:warning: 
 >Note! This functionality is experimental. Its API may be changed or removed altogether. Feedback on this feature is welcome and encouraged! 
 
-Gooey's Choice style fields (Dropdown, Listbox) can be fed a dynamic set of values at runtime by enabling the `poll_external_updates` option. This will cause Gooey to request updated values from your program every time the user visits the Configuration page. This can be used to, for instance, show the result of a previous execution on the config screen without requiring that the user restart the program. 
+As of 1.2.0, Gooey now exposes coarse grain lifecycle hooks to your program. This means you can now take additional follow-up actions in response to successful runs or failures and even control the current state of the UI itself! 
 
-**How does it work?**
+Currently, two primary hooks are exposed: 
 
-<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/35487459-bd7fe938-0430-11e8-9f6d-fa8f703b9da5.gif" align="right" width="420"/>
+* `on_success`
+* `on_error`
 
-At runtime, whenever the user hits the Configuration screen, Gooey will call your program with a single CLI argument: `gooey-seed-ui`. This is a request to your program for updated values for the UI. In response to this, on `stdout`, your program should return a JSON string mapping cli-inputs to a list of options.
+These fire exactly when you'd expect: after your process has completed. 
 
-For example, assuming a setup where you have a dropdown that lists user files:
 
+**Anatomy of an lifecycle handler**:
+
+Both `on_success` and `on_error` have the same type signature. 
+
+```python
+from typing import Mapping, Any, Optional
+from gooey.types import PublicGooeyState  
+
+def on_success(args: Mapping[str, Any], state: PublicGooeyState) -> Optional[PublicGooeyState]:
+    """
+    You can do anything you want in the handler including 
+    returning an updated UI state for your next run!   
+    """ 
+    return state
+    
+def on_error(args: Mapping[str, Any], state: PublicGooeyState) -> Optional[PublicGooeyState]:
+    """
+    You can do anything you want in the handler including 
+    returning an updated UI state for your next run!   
+    """ 
+    return state    
 ```
- ...
- parser.add_argument(
-        '--load',
-        metavar='Load Previous Save',
-        help='Load a Previous save file',
-        dest='filename',
-        widget='Dropdown',
-        choices=list_savefiles(),
-    )
+
+* **args** This is the parsed Argparse object (e.g. the output of `parse_args()`). This will be a mapping of the user's arguments as existed when your program was invoked.
+* **state** This is the current state of Gooey's UI. If your program uses subparsers, this currently just lists the state of the active parser/form. Whatever updated version of this state you return will be reflected in the UI!    
+
+
+**Attaching the handlers:**
+
+Handlers are attached when instantiating the `GooeyParser`.
+
+```python
+parser = GooeyParser(
+    on_success=my_success_handler,
+    on_failure=my_failure_handler)
+``` 
+
+
+**Subscribing to the lifecycle events**
+
+Just like [Validation](#dynamic-validation), these lifecycle events are opt-in. Pass the event you'd like to subscribe to into the `use_events` Gooey decorator argument. 
+
+```python
+from gooey import Gooey, Events 
+
+@Gooey(use_events=[Events.ON_SUCCESS, Events.ON_ERROR])
+def main(): 
+    ... 
 ```
 
-Here the input we want to populate is `--load`. So, in response to the `gooey-seed-ui` request, you would return a JSON string with `--load` as the key, and a list of strings that you'd like to display to the user as the value. e.g.  
 
-```
-{"--load": ["Filename_1.txt", "filename_2.txt", ..., "filename_n.txt]}
-```
-
-Checkout the full example code in the [Examples Repository](https://github.com/chriskiehl/GooeyExamples/blob/master/examples/dynamic_updates.py). Or checkout a larger example in the silly little tool that spawned this feature: [SavingOverIt](https://github.com/chriskiehl/SavingOverIt). 
 
 -------------------------------------
 
