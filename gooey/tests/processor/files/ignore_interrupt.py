@@ -8,8 +8,13 @@ SIGTERM family signals.
 """
 
 import time
-import signal
-end = time.time() + 0.5
+import sys
+
+if sys.platform.startswith('win'):
+    import ctypes
+    kernel32 = ctypes.WinDLL('kernel32')
+    kernel32.SetConsoleCtrlHandler(None, 0)
+
 
 while True:
     try:

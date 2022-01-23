@@ -432,12 +432,8 @@ def update_time(state, event: TimingEvent):
     }
 
 
-
-
 def update_progress(state, event: ProgressEvent):
     return associn(state, ['progress', 'value'], event['value'])
-
-
 
 
 def present_time(timer):

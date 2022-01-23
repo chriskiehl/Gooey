@@ -17,7 +17,7 @@ from gooey.python_bindings.types import GooeyParams
 
 try:
     import _winapi
-    creationflag = signal.CREATE_NEW_PROCESS_GROUP
+    creationflag = subprocess.CREATE_NEW_PROCESS_GROUP
 except ModuleNotFoundError:
     # default Popen creation flag
     creationflag = 0

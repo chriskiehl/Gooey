@@ -156,7 +156,7 @@ def RichTextConsole(**layout_options):
 @_include_global_option_docs
 def ListBox(initial_value=None, height=None, **layout_options):
     """
-    :param height: The height of the ListBox
+    :param height: The height of the Listbox
     """
     return _clean(locals())
 

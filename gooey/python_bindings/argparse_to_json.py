@@ -555,7 +555,7 @@ def coerse_nargs_list(default):
     instance, ['one two', 'three'] => "one two" "three"
 
     This only applies when the target widget is a text input. List
-    based widgets such as ListBox should keep their defaults in list form
+    based widgets such as Listbox should keep their defaults in list form
 
     Without this transformation, `add_arg('--foo', default=['a b'], nargs='*')` would show up in
     the UI as the literal string `['a b']` brackets and all.

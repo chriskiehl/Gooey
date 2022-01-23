@@ -10,13 +10,11 @@ import time
 import signal
 
 def ignored_it(*args):
-    print("Ignoring Ctrl+BREAK!")
+    print("INTERRUPT")
 
 signal.signal(signal.SIGBREAK, ignored_it)
 
 
-
-end = time.time() + 0.5
-while time.time() < end:
+while True:
     print(time.time())
-    time.sleep(0.01)
+    time.sleep(0.1)

@@ -88,37 +88,38 @@ class TestProcessor(unittest.TestCase):
         try:
             import _winapi
             signals = [signal.CTRL_BREAK_EVENT, signal.CTRL_C_EVENT]
-            programs = ['ignore_interrupt.py', 'ignore_break.py']
+            programs = ['ignore_break.py', 'ignore_interrupt.py']
         except ModuleNotFoundError:
             signals = [signal.SIGINT]
             programs = ['ignore_interrupt.py']
 
 
-        for program in programs:
+        for program, sig in zip(programs, signals):
             cmd = sys.executable + ' ' + os.path.join(os.getcwd(), 'files', program)
-            for sig in signals:
-                process = processor = ProcessController(None, None, False, 'utf-8', True, shutdown_signal=sig, testmode=True)
-                process.run(cmd)
-                # super-duper important sleep so that the
-                # signal is actually received by the child process
-                # see: https://stackoverflow.com/questions/32023719/how-to-simulate-a-terminal-ctrl-c-event-from-a-unittest
-                time.sleep(1)
-                process.send_shutdown_signal()
-                # now our signal should have been received, but rejected.
-                self.assertTrue(processor.running())
-                # so we sigterm to actually shut down the process.
-                process._send_signal(signal.SIGTERM)
-                # sanity wait
-                max_wait = time.time() + 2
-                while processor.running() and time.time() < max_wait:
-                    time.sleep(0.1)
-                # now we should be shut down due to killing the process.
-                self.assertFalse(processor.running())
-                # and we'll see in the stdout out from the process that our
-                # interrupt was received
-                output = process._process.stdout.read().decode('utf-8')
-                self.assertIn("INTERRUPT", str(output))
-                # but indeed ignored. It continued running and writing to stdout after
-                # receiving the signal
-                self.assertTrue(output.index("INTERRUPT") < len(output))
+            process = processor = ProcessController(None, None, False, 'utf-8', True, shutdown_signal=sig, testmode=True)
+            process.run(cmd)
+            # super-duper important sleep so that the
+            # signal is actually received by the child process
+            # see: https://stackoverflow.com/questions/32023719/how-to-simulate-a-terminal-ctrl-c-event-from-a-unittest
+            time.sleep(1)
+            process.send_shutdown_signal()
+            # wait to give stdout enough time to write
+            time.sleep(1)
+            # now our signal should have been received, but rejected.
+            self.assertTrue(processor.running())
+            # so we sigterm to actually shut down the process.
+            process._send_signal(signal.SIGTERM)
+            # sanity wait
+            max_wait = time.time() + 2
+            while processor.running() and time.time() < max_wait:
+                time.sleep(0.1)
+            # now we should be shut down due to killing the process.
+            self.assertFalse(processor.running())
+            # and we'll see in the stdout out from the process that our
+            # interrupt was received
+            output = process._process.stdout.read().decode('utf-8')
+            self.assertIn("INTERRUPT", str(output))
+            # but indeed ignored. It continued running and writing to stdout after
+            # receiving the signal
+            self.assertTrue(output.index("INTERRUPT") < len(output))
 

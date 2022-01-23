@@ -51,6 +51,7 @@ class TimingOptions(TypedDict):
 class GooeyParams(TypedDict):
     # when running with a custom target, there is no need to inject
     # --ignore-gooey into the CLI args
+    show_preview_warning: bool
     suppress_gooey_flag: bool
     advanced: bool
     language: str
@@ -145,8 +146,31 @@ class Dropdown(BasicField):
 class Chooser(BasicField):
     btn_label: str
     value: str
-    placeholder: str
 
+
+class MultiFileChooser(Chooser):
+    pass
+
+class FileChooser(Chooser):
+    pass
+
+class FileSaver(Chooser):
+    pass
+
+class DirChooser(Chooser):
+    pass
+
+class MultiDirChooser(Chooser):
+    pass
+
+class DateChooser(Chooser):
+    pass
+
+class TimeChooser(Chooser):
+    pass
+
+class ColourChooser(Chooser):
+    pass
 
 class Command(BasicField):
     value: str
@@ -160,7 +184,7 @@ class DropdownFilterable(BasicField):
     value: str
     choices: List[str]
 
-class ListBox(BasicField):
+class Listbox(BasicField):
     selected: List[str]
     choices: List[str]
 
@@ -216,7 +240,7 @@ FormField = Union[
     Chooser,
     RadioGroup,
     DropdownFilterable,
-    ListBox,
+    Listbox,
     IntegerField
 ]
 

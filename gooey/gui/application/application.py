@@ -1,11 +1,5 @@
 import sys
-import sys
-import threading
-from functools import wraps
 from json import JSONDecodeError
-from subprocess import CalledProcessError
-from threading import get_ident
-from typing import Dict
 
 import six
 import wx  # type: ignore
@@ -32,6 +26,40 @@ from gooey.gui.state import FullGooeyState
 from gooey.python_bindings.types import PublicGooeyState
 from gooey.gui.components.config import TabbedConfigPage
 from gooey.python_bindings.dynamics import unexpected_exit_explanations, deserialize_failure_explanations
+from gui.util.time import Timing
+from rewx import components as c
+from rewx import wsx
+from rewx.core import Component, Ref
+import sys
+from json import JSONDecodeError
+
+import six
+import wx  # type: ignore
+
+from gooey import Events
+from gooey.gui import events
+from gooey.gui import host
+from gooey.gui import state as s
+from gooey.gui.application.components import RHeader, ProgressSpinner, ErrorWarning, RTabbedLayout, \
+    RSidebar, RFooter
+from gooey.gui.components import modals
+from gooey.gui.components.config import ConfigPage
+from gooey.gui.components.config import TabbedConfigPage
+from gooey.gui.components.console import Console
+from gooey.gui.components.menubar import MenuBar
+from gooey.gui.lang.i18n import _
+from gooey.gui.processor import ProcessController
+from gooey.gui.pubsub import pub
+from gooey.gui.state import FullGooeyState
+from gooey.gui.state import initial_state, ProgressEvent, TimingEvent
+from gooey.gui.util.wx_util import transactUI, callafter
+from gooey.python_bindings import constants
+from gooey.python_bindings.dynamics import unexpected_exit_explanations, \
+    deserialize_failure_explanations
+from gooey.python_bindings.types import PublicGooeyState
+from gooey.python_bindings.types import Try
+from gooey.util.functional import assoc
+from gui.util.time import Timing
 from rewx import components as c
 from rewx import wsx
 from rewx.core import Component, Ref
@@ -87,6 +115,7 @@ class RGooey(Component):
             'flag': wx.EXPAND,
         }
         self.clientRunner = ProcessController.of(self.buildSpec)
+        self.timer = None
 
 
     def component_did_mount(self):
@@ -104,8 +133,21 @@ class RGooey(Component):
         frame: wx.Frame = self.frameRef.instance
         frame.Bind(wx.EVT_CLOSE, self.handleClose)
         frame.SetMenuBar(MenuBar(self.buildSpec))
+        self.timer = Timing(frame)
+
         if self.state['fullscreen']:
             frame.ShowFullScreen(True)
+
+        if self.state['show_preview_warning']:
+            wx.MessageDialog(None, message="""
+                This is a preview build of 1.2.0! There may be instability or 
+                broken functionality. If you encounter any issues, please open an issue 
+                here: https://github.com/chriskiehl/Gooey/issues 
+                
+                NOTE! You can disable this message by setting `show_preview_warning` to False. 
+                
+                e.g. `@Gooey(show_preview_warning=False)`
+                """).ShowModal()
 
     def getActiveConfig(self):
         return [item
@@ -154,8 +196,8 @@ class RGooey(Component):
         if state['clear_before_run']:
             self.consoleRef.instance.Clear()
         self.set_state(s.consoleScreen(_, state))
-        print(s.buildInvocationCmd(state))
         self.clientRunner.run(s.buildInvocationCmd(state))
+        self.timer.start()
         self.frameRef.instance.Layout()
         for child in self.frameRef.instance.Children:
             child.Layout()
@@ -175,8 +217,8 @@ class RGooey(Component):
         if self.shouldStopExecution():
             self.clientRunner.stop()
 
-
     def handleComplete(self, *args, **kwargs):
+        self.timer.stop()
         if self.clientRunner.was_success():
             self.handleSuccessfulRun()
             if Events.ON_SUCCESS in self.state['use_events']:
@@ -196,10 +238,6 @@ class RGooey(Component):
 
 
     def handleErrantRun(self):
-        # with self.handleHostError(Events.ON_ERROR):
-        #     updates = host.fetchOnErrorState()
-        #     self.getActiveConfig().syncFormState(updates)
-
         if self.clientRunner.wasForcefullyStopped:
             self.set_state(s.interruptedScreen(_, self.state))
         else:
@@ -338,8 +376,6 @@ class RGooey(Component):
 
 
     def render(self):
-        print(list(self.buildSpec['widgets'].keys()))
-        print(self.state['activeSelection'])
         return wsx(
             [c.Frame, {'title': self.buildSpec['program_name'],
                        'background_color': self.buildSpec['body_bg_color'],

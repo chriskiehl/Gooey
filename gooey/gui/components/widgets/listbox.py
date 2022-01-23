@@ -35,7 +35,7 @@ class Listbox(TextContainer):
 
     def getUiState(self) -> t.FormField:
         widget: wx.ComboBox = self.widget
-        return t.ListBox(
+        return t.Listbox(
             id=self._id,
             type=self.widgetInfo['type'],
             selected=self.getWidgetValue(),

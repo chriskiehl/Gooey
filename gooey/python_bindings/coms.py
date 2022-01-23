@@ -37,7 +37,8 @@ def deserialize_inbound(stdout: bytes, encoding):
     std='foo\nbar\nstarting run\ngooey::{active_form: [...]}\n'
     => {active_form: [...]}
     """
-    return validate_public_state(**json.loads(stdout.decode(encoding).split(prefix)[-1]))
+    data = json.loads(stdout.decode(encoding).split(prefix)[-1])
+    return validate_public_state(data)
 
 
 def decode_payload(x):
