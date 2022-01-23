@@ -4,10 +4,12 @@ import itertools
 
 from gooey.gui.util.quoting import quote
 from gooey.python_bindings.types import EnrichedItem, FormField
+from gui.constants import VALUE_PLACEHOLDER, RADIO_PLACEHOLDER
+from util.functional import assoc, associnMany
 
 
 def value(field: FormField):
-    if field['type'] in ['CheckBox', 'BlockCheckbox']:
+    if field['type'] in ['Checkbox', 'BlockCheckbox']:
         return field['checked']
     elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
         return field['selected']
@@ -15,13 +17,42 @@ def value(field: FormField):
         if field['selected'] is not None:
             return value(field['options'][field['selected']])
         else:
-            return None  # ?? Is this the right thing to do??
+            return None
     else:
         return field['value']
 
 
+def add_placeholder(field: FormField, placeholder=VALUE_PLACEHOLDER):
+    """
+    TODO: Docs about placeholders
+    """
+    if field['type'] in ['Checkbox', 'CheckBox', 'BlockCheckbox']:
+        # there's no sane placeholder we can make for this one, as
+        # it's kind of a nonsensical case: a required optional flag.
+        # We set it to True here, which is equally nonsensical, but
+        # ultimately will allow the validation to pass. We have no
+        # way of passing a placeholder without even MORE monket patching
+        # of the user's parser to rewrite the action type
+        return assoc(field, 'checked', True)
+    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
+        return assoc(field, 'selected', placeholder)
+    elif field['type'] == 'RadioGroup':
+        # We arbitrarily attach a placeholder for first RadioGroup option
+        # and mark it as the selected one.
+        return {
+            **field,
+            'selected': 0,
+            'options': [
+                add_placeholder(field['options'][0], placeholder=RADIO_PLACEHOLDER),
+                *field['options'][1:]
+            ]
+        }
+    else:
+        return assoc(field, 'value', placeholder)
+
+
 def formatArgument(item: EnrichedItem):
-    if item['type'] in ['CheckBox', 'BlockCheckbox']:
+    if item['type'] in ['Checkbox', 'CheckBox', 'BlockCheckbox']:
         return checkbox(item['data'], value(item['field']))
     elif item['type'] == 'MultiFileChooser':
         return multiFileChooser(item['data'], value(item['field']))
@@ -40,12 +71,15 @@ def formatArgument(item: EnrichedItem):
         if selected is not None:
             formField = item['field']['options'][selected]
             argparseDefinition = item['data']['widgets'][selected]
-            return general(argparseDefinition['data'], value(formField))
+            return formatArgument(assoc(argparseDefinition, 'field', formField))
         else:
             return None
     else:
         return general(item['data'], value(item['field']))
 
+
+def placeholder(item: EnrichedItem):
+    pass
 
 
 def checkbox(metadata, value):

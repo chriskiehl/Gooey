@@ -58,7 +58,7 @@ class CheckBox(TextContainer):
     def getUiState(self) -> t.FormField:
         return t.Checkbox(
             id=self._id,
-            type=self.widgetInfo['type'],
+            type='Checkbox',
             checked=self.widget.GetValue(),
             error=self.error.GetLabel() or None,
             enabled=self.IsEnabled(),

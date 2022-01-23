@@ -13,7 +13,7 @@ from argparse import (
     _StoreTrueAction,
     _StoreAction,
     _SubParsersAction,
-    _VersionAction)
+    _VersionAction, _MutuallyExclusiveGroup)
 from collections import OrderedDict
 from functools import partial
 from uuid import uuid4
@@ -419,7 +419,7 @@ def choose_name(name, subparser):
 def build_radio_group(mutex_group, widget_group, options):
   dests = [action.dest for action in mutex_group._group_actions]
   return {
-    'id': 'radio-group-' + '-'.join(dests),
+    'id': 'group_' + '_'.join(dests),
     'type': 'RadioGroup',
     'cli_type': 'optional',
     'group_name': 'Choose Option',

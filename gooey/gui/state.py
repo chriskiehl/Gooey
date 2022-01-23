@@ -7,10 +7,13 @@ import wx
 
 from gooey.gui import events
 from gooey.gui.lang.i18n import _
-from gooey.python_bindings.types import GooeyParams, Item, Group, TopLevelParser, EnrichedItem
+from gooey.python_bindings.types import GooeyParams, Item, Group, TopLevelParser, EnrichedItem, \
+    FieldValue
 from gooey.util.functional import associn, assoc, associnMany, compact
 from gooey.gui.formatters import formatArgument
 from gooey.python_bindings.types import FormField
+from gui.constants import VALUE_PLACEHOLDER
+from gui.formatters import add_placeholder
 from python_bindings.types import CommandPieces, PublicGooeyState
 
 
@@ -86,14 +89,14 @@ def optional(items: List[Union[Item, EnrichedItem]]):
     return [item for item in items if item['cli_type'] != 'positional']
 
 
-def cli_pieces(state: FullGooeyState) -> CommandPieces:
+def cli_pieces(state: FullGooeyState, formatter=formatArgument) -> CommandPieces:
     parserName = state['subcommands'][state['activeSelection']]
     parserSpec = state['widgets'][parserName]
     formState = state['forms'][parserName]
     subcommand = parserSpec['command'] if parserSpec['command'] != '::gooey/default' else ''
     items = enrichValue(formState, widgets(parserSpec))
-    positional_args = [formatArgument(item) for item in positional(items)]
-    optional_args = [formatArgument(item) for item in optional(items)]
+    positional_args = [formatter(item) for item in positional(items)]
+    optional_args = [formatter(item) for item in optional(items)]
     ignoreFlag = '' if state['suppress_gooey_flag'] else '--ignore-gooey'
     return CommandPieces(
         target=state['target'],
@@ -121,10 +124,10 @@ def buildInvocationCmd(state: FullGooeyState):
 
 
 def buildFormValidationCmd(state: FullGooeyState):
-    pieces = cli_pieces(state)
+    pieces = cli_pieces(state, formatter=cmdOrPlaceholderOrNone)
     serializedForm = json.dumps({'active_form': activeFormState(state)})
     b64ecoded = b64encode(serializedForm.encode('utf-8'))
-    return u' '.join(compact([
+    return ' '.join(compact([
         pieces.target,
         pieces.subcommand,
         *pieces.optionals,
@@ -153,6 +156,29 @@ def buildOnSuccessCmd(state: FullGooeyState):
 
 def buildOnErrorCmd(state: FullGooeyState):
     return buildOnCompleteCmd(state, False)
+
+
+def cmdOrPlaceholderOrNone(item: EnrichedItem) -> Optional[str]:
+    # Argparse has a fail-fast-and-exit behavior for any missing
+    # values. This poses a problem for dynamic validation, as we
+    # want to collect _all_ errors to be more useful to the user.
+    # As such, if there is no value currently available, we pass
+    # through a stock placeholder values which allows GooeyParser
+    # to handle it being missing without Argparse exploding due to
+    # it actually being missing.
+    if item['cli_type'] == 'positional':
+        return formatArgument(item) or VALUE_PLACEHOLDER
+    elif item['cli_type'] != 'positional' and item['required']:
+        # same rationale applies here. We supply the argument
+        # along with a fixed placeholder (when relevant i.e. `store`
+        # actions)
+        return formatArgument(item) or formatArgument(assoc(item, 'field', add_placeholder(item['field'])))
+    else:
+        # Optional values are, well, optional. So, like usual, we send
+        # them if present or drop them if not.
+        return formatArgument(item)
+
+
 
 
 def combine(state: GooeyState, params: GooeyParams, formState: List[FormField]) -> FullGooeyState:

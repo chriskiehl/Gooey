@@ -14,6 +14,7 @@ import json
 from base64 import b64decode
 from typing import Dict, Any
 
+from python_bindings.schema import validate_public_state
 from python_bindings.types import PublicGooeyState
 
 prefix = 'gooey::'
@@ -35,11 +36,8 @@ def deserialize_inbound(stdout: bytes, encoding):
     e.g.
     std='foo\nbar\nstarting run\ngooey::{active_form: [...]}\n'
     => {active_form: [...]}
-
-    Note: Gooey exclusively talks over the public Gooey state, which
-    is why we blindly cast it here. Any deviation is an error.
     """
-    return PublicGooeyState(**json.loads(stdout.decode(encoding).split(prefix)[-1]))
+    return validate_public_state(**json.loads(stdout.decode(encoding).split(prefix)[-1]))
 
 
 def decode_payload(x):

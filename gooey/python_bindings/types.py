@@ -132,8 +132,8 @@ class GooeyParams(TypedDict):
 class BasicField(TypedDict):
     id: str
     type: str
-    required: bool
-    positional: bool
+    # required: bool
+    # positional: bool
     error: Optional[str]
     enabled: bool
     visible: bool
@@ -362,3 +362,6 @@ Try = Union[Success[A], Failure]
 
 ValidationResponse = Mapping[str, str]
 
+
+class InvalidChoiceException(ValueError):
+    pass

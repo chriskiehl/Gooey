@@ -22,16 +22,17 @@ https://github.com/chriskiehl/Gooey/issues/755
 
 
 """
-from argparse import ArgumentParser, _SubParsersAction
+from argparse import ArgumentParser, _SubParsersAction, _MutuallyExclusiveGroup
 from functools import wraps
 from typing import Union, Any, Mapping, Dict, Callable
 
-from gooey.python_bindings.types import Success, Failure, Try
+from gooey.python_bindings.types import Success, Failure, Try, InvalidChoiceException
 from gooey.python_bindings.argparse_to_json import is_subparser
 from gooey.util.functional import lift, identity, merge
 from gooey.gui.constants import VALUE_PLACEHOLDER
 from gooey.python_bindings.constants import Events
 from gooey.python_bindings.coms import decode_payload
+from gui.constants import RADIO_PLACEHOLDER
 
 unexpected_exit_explanations = f'''
 +=======================+
@@ -68,6 +69,11 @@ https://github.com/chriskiehl/Gooey/issues
 
 
 
+
+
+
+
+
 def check_value(registry: Dict[str, Exception], original_fn):
     """
     A Monkey Patch for `Argparse._check_value` which changes its
@@ -86,9 +92,17 @@ def check_value(registry: Dict[str, Exception], original_fn):
             try:
                 original_fn(_action, _value)
             except Exception as e:
+                # check_value exclusively handles validating that the
+                # supplied argument is a member of the `choices` set.
+                # by default, it pops an exception containing all of the
+                # available choices. However, since we're in a UI environment
+                # all of that is redundant information. It's also *way too much*
+                # information for things like FilterableDropdown. Thus we just
+                # remap it to a 'simple' exception here.
+                error = InvalidChoiceException("Selected option is not a valid choice")
                 # IMPORTANT! note that this mutates the
                 # reference that is passed in!
-                registry[action.dest] = e
+                registry[action.dest] = error
 
         # Inside of Argparse, `type_func` gets applied before the calls
         # to `check_value`. A such, depending on the type, this may already
@@ -175,7 +189,7 @@ def lift_actions_mutating(parser):
     #         action.type = lift(action.type or identity)
 
 
-def collect_errors(error_registry: Dict[str, Exception], args: Dict[str, Try]) -> Dict[str, str]:
+def collect_errors(parser, error_registry: Dict[str, Exception], args: Dict[str, Try]) -> Dict[str, str]:
     """
     Merges all the errors from the Args mapping and error registry
     into a final dict.
@@ -192,13 +206,49 @@ def collect_errors(error_registry: Dict[str, Exception], args: Dict[str, Try]) -
                             for k, v in args.items()
                             if isinstance(v, Success) and v.value == VALUE_PLACEHOLDER}
 
-    errors = {k: str(v.error) for k, v in args.items()
+    mutexes_required_but_missing = collect_mutex_errors(parser, args)
+
+    errors = {k: str(v.error)
+              for k, v in args.items()
               if v is not None and isinstance(v, Failure)}
     # Secondary errors are those which get frustratingly applied by
     # Argparse in a way which can't be easily tracked with patching
     # or higher order functions. See: `check_value` for more details.
     secondary = {k: str(e) for k, e in error_registry.items() if e}
-    return merge(required_but_missing, errors, secondary)
+    return merge(required_but_missing, errors, secondary, mutexes_required_but_missing)
+
+
+def collect_mutex_errors(parser, args: Dict[str, Try]):
+    """
+    RadioGroups / MutuallyExclusiveGroup require extra care.
+    Mutexes are not normal actions. They're not argument targets
+    themselves, they have no `dest`, they're just parse-time containers
+    for arguments. As such, there's no top-level argument destination
+    we can tie a single error to. So, the strategy here is to mark _all_ of
+    a radio group's children with an error if *any* of them are missing.
+
+    It's a bit clunky, but what we've got to work with.
+    """
+    def dest_targets(group: _MutuallyExclusiveGroup):
+        return [action.dest for action in group._group_actions]
+
+    mutexes_missing = {dest for dest, v in args.items()
+                     if isinstance(v, Success) and v.value == RADIO_PLACEHOLDER}
+
+    return {dest: 'One of these must be provided'
+            for group in parser._mutually_exclusive_groups
+            for dest in dest_targets(group)
+            # if the group is required and we've got one of its
+            # children marked as missing
+            if group.required and set(dest_targets(group)).intersection(mutexes_missing)}
+
+
+
+
+
+
+
+
 
 def patch(obj, old_fn, new_fn):
     setattr(obj, old_fn, new_fn.__get__(obj, ArgumentParser))

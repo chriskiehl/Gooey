@@ -1,18 +1,35 @@
+"""
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!DEBUGGING NOTE!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+PyCharm will inject addition params into stdout when starting
+a new process. This can make debugging VERY VERY CONFUSING as
+the thing being injected starts complaining about unknown
+arguments...
+
+TL;DR: disable the "Attaach to subprocess automatically" option
+in the Debugger settings, and the world will be sane again.
+
+See: https://youtrack.jetbrains.com/issue/PY-24929
+and: https://www.jetbrains.com/help/pycharm/2017.1/python-debugger.html
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!DEBUGGING NOTE!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+"""
 import json
 import os
 import sys
 from argparse import ArgumentParser
-from base64 import b64decode, b64encode
 from copy import deepcopy
 from typing import List, Dict
 
-from gooey.python_bindings.dynamics import monkey_patch_for_form_validation, monkey_patch, \
-    patch_args
+from gooey.python_bindings.dynamics import monkey_patch_for_form_validation
 from gooey.python_bindings.dynamics import patch_argument, collect_errors
 from gooey.python_bindings.types import GooeyParams
 from python_bindings.coms import serialize_outbound, decode_payload
 from python_bindings.types import PublicGooeyState
-from util.functional import assoc
 from . import cmd_args
 from . import config_generator
 
@@ -36,6 +53,8 @@ def bypass_gooey(params):
         # See: https://github.com/chriskiehl/Gooey/issues/686
         # So, we instead modify the parser to transparently
         # consume the extra token.
+        for action in self._actions:
+            print(action)
         patched_parser = patch_argument(self, '--ignore-gooey', action='store_true')
         args = patched_parser.original_parse_args(args, namespace)  # type: ignore
         # removed from the arg object so the user doesn't have
@@ -102,7 +121,7 @@ def validate_form(params: GooeyParams, write=print, exit=sys.exit):
         try:
             args = patched_parser.original_parse_args(args, namespace)  # type: ignore
             state = args.gooey_state
-            next_state = merge_errors(state, collect_errors(error_registry, vars(args)))
+            next_state = merge_errors(state, collect_errors(patched_parser, error_registry, vars(args)))
             write(serialize_outbound(next_state))
             exit(0)
         except Exception as e:
@@ -173,6 +192,8 @@ def choose_hander(params: GooeyParams, cliargs: List[str]):
     Dispatches to the appropriate handler based on values
     found in the CLI arguments
     """
+    with open('tmp.txt', 'w') as f:
+        f.write(str(sys.argv))
     if '--gooey-validate-form' in cliargs:
         return validate_form(params)
     elif '--gooey-run-is-success' in cliargs or '--gooey-run-is-failure' in cliargs:

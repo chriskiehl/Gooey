@@ -51,7 +51,7 @@ class PrefixSearch(object):
 
     def updateChoices(self, choices):
         self.choices = sorted(filter(None, choices))
-        self.searchtree = trie.Trie()
+        self.searchtree = self.buildSearchTrie(choices)
 
     def findMatches(self, token):
         if not token:

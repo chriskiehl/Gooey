@@ -116,12 +116,19 @@ class FilterableDropdown(Dropdown):
         return t.DropdownFilterable(
             id=self._id,
             type=self.widgetInfo['type'],
-            selected=self.getWidgetValue(),
-            choices=widget.GetStrings(),
+            value=self.model.actualValue,
+            choices=self.model.choices,
             error=self.error.GetLabel() or None,
             enabled=self.IsEnabled(),
             visible=self.IsShown()
         )
+
+    def syncUiState(self, state: t.DropdownFilterable):
+        self.setOptions(state['choices'])
+        if state['value'] is not None:
+            self.setValue(state['value'])
+        self.error.SetLabel(state['error'] or '')
+        self.error.Show(state['error'] is not None and state['error'] is not '')
 
     def OnGetItem(self, n):
         return self.model.suggestions[n]

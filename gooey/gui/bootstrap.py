@@ -42,7 +42,7 @@ def _build_app(build_spec, app) -> Tuple[Any, wx.Frame]:
     imagesPaths = image_repository.loadImages(build_spec['image_dir'])
     # gapp2 = GooeyApplication(merge(build_spec, imagesPaths))
     gapp2 = render(create_element(RGooey, merge(build_spec, imagesPaths)), None)
-    # wx.lib.inspection.InspectionTool().Show()
+    wx.lib.inspection.InspectionTool().Show()
     # gapp.Show()
     gapp2.Show()
     return (app, gapp2)

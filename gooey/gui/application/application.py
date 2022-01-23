@@ -30,6 +30,7 @@ from gooey.gui.application.components import RHeader, ProgressSpinner, ErrorWarn
     RSidebar, RFooter
 from gooey.gui.state import FullGooeyState
 from gooey.python_bindings.types import PublicGooeyState
+from gui.components.config import TabbedConfigPage
 from python_bindings.dynamics import unexpected_exit_explanations, deserialize_failure_explanations
 from rewx import components as c
 from rewx import wsx
@@ -100,15 +101,20 @@ class RGooey(Component):
         pub.subscribe(events.PROGRESS_UPDATE, self.updateProgressBar)
         pub.subscribe(events.TIME_UPDATE, self.updateTime)
         # # Top level wx close event
-        self.frameRef.instance.Bind(wx.EVT_CLOSE, self.handleClose)
-        self.frameRef.instance.SetMenuBar(MenuBar(self.buildSpec))
+        frame: wx.Frame = self.frameRef.instance
+        frame.Bind(wx.EVT_CLOSE, self.handleClose)
+        frame.SetMenuBar(MenuBar(self.buildSpec))
         if self.state['fullscreen']:
-            self.frameRef.instance.ShowFullScreen(True)
+            frame.ShowFullScreen(True)
 
     def getActiveConfig(self):
-        return [config
-                for config in self.configRef.instance.Children
-                if isinstance(config, ConfigPage)][self.state['activeSelection']]
+        return [item
+                for child in self.configRef.instance.Children
+                # we descend down another level of children  to account
+                # for Notebook layouts (which have wrapper objects)
+                for item in [child] + list(child.Children)
+                if isinstance(item, ConfigPage)
+                or isinstance(item, TabbedConfigPage)][self.state['activeSelection']]
 
     def getActiveFormState(self):
         """
@@ -148,6 +154,7 @@ class RGooey(Component):
         if state['clear_before_run']:
             self.consoleRef.instance.Clear()
         self.set_state(s.consoleScreen(_, state))
+        print(s.buildInvocationCmd(state))
         self.clientRunner.run(s.buildInvocationCmd(state))
         self.frameRef.instance.Layout()
         for child in self.frameRef.instance.Children:
@@ -162,10 +169,6 @@ class RGooey(Component):
         self.frameRef.instance.Layout()
         for child in self.frameRef.instance.Children:
             child.Layout()
-
-
-
-
 
 
     def handleInterrupt(self, *args, **kwargs):
@@ -276,6 +279,7 @@ class RGooey(Component):
         self.set_state(s.updateTime(self.state, TimingEvent(**kwargs)))
 
     def handleSelectAction(self, event):
+        print("event.Selection", event.Selection, self.state['activeSelection'])
         self.set_state(assoc(self.state, 'activeSelection', event.Selection))
 
 
@@ -289,7 +293,7 @@ class RGooey(Component):
             else:
                 self.set_state(s.editScreen(_, s.show_alert(self.fullState())))
 
-        def onComplete(self, result: Try[PublicGooeyState]):
+        def onComplete(result: Try[PublicGooeyState]):
             result.onSuccess(handleHostResponse)
             result.onError(self.handleHostError)
 
@@ -334,11 +338,14 @@ class RGooey(Component):
 
 
     def render(self):
+        print(list(self.buildSpec['widgets'].keys()))
+        print(self.state['activeSelection'])
         return wsx(
             [c.Frame, {'title': self.buildSpec['program_name'],
                        'background_color': self.buildSpec['body_bg_color'],
                        'double_buffered': True,
                        'min_size': (400, 300),
+                       'icon_uri': self.state['images']['programIcon'],
                        'size': self.buildSpec['default_size'],
                        'ref': self.frameRef},
              [c.Block, {'orient': wx.VERTICAL},

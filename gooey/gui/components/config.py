@@ -75,8 +75,6 @@ class ConfigPage(ScrolledPanel):
         for item in formState:
             self.widgetsMap[item['id']].syncUiState(item)
 
-
-
     def isValid(self):
         return not any(self.getErrors())
 
@@ -247,22 +245,11 @@ class ConfigPage(ScrolledPanel):
         return widgetClass(parent, item)
 
 
-class TabbedConfig(Component):
-    def __init__(self, props):
-        super().__init__(props)
-        self.state = {}
-
-    def render(self):
-        return wsx(
-
-        )
-
 
 class TabbedConfigPage(ConfigPage):
     """
     Splits top-level groups across tabs
     """
-
 
     def layoutComponent(self):
         # self.rawWidgets['contents'] = self.rawWidgets['contents'][1:2]
@@ -285,5 +272,6 @@ class TabbedConfigPage(ConfigPage):
         self.Layout()
 
 
-
+    def snapToErrorTab(self):
+        pass
 

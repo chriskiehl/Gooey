@@ -5,7 +5,7 @@ from gooey.gui.components.widgets.bases import BaseWidget
 from gooey.gui.lang.i18n import _
 from gooey.gui.util import wx_util
 from gooey.gui.components.widgets import CheckBox
-from gooey.util.functional import getin, findfirst, merge
+from gooey.util.functional import getin, merge
 from gooey.python_bindings import types as t
 
 
@@ -62,8 +62,6 @@ class RadioGroup(BaseWidget):
         return t.RadioGroup(
             id=self._id,
             type=self.widgetInfo['type'],
-            required=self.widgetInfo['required'],
-            positional=self.widgetInfo['cli_type'] != 'optional',
             error=self.error.GetLabel(),
             enabled=self.Enabled,
             visible=self.Shown,

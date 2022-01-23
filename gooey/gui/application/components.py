@@ -21,6 +21,16 @@ from rewx.core import Component, Ref
 from rewx.widgets import set_basic_props
 
 
+def attach_notifier(parent):
+    """
+    Recursively attaches the mouseEvent notifier
+    to all elements in the tree
+    """
+    parent.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
+    for child in parent.Children:
+        attach_notifier(child)
+
+
 class HeaderProps(TypedDict):
     background_color: str
     title: str
@@ -32,6 +42,10 @@ class HeaderProps(TypedDict):
 class RHeader(Component):
     def __init__(self, props):
         super().__init__(props)
+        self.parentRef = Ref()
+
+    def component_did_mount(self):
+        attach_notifier(self.parentRef.instance)
 
     def render(self):
         if 'running' not in self.props['image_uri']:
@@ -47,6 +61,7 @@ class RHeader(Component):
                 'border': 10}
         return wsx(
             [c.Block, {'orient': wx.HORIZONTAL,
+                       'ref': self.parentRef,
                        'min_size': (120, self.props['height']),
                        'background_color': self.props['background_color']},
              [c.Block, {'orient': wx.VERTICAL,
@@ -76,15 +91,12 @@ class RFooter(Component):
         See: mouse.py docs for background.
         """
         block: wx.BoxSizer = self.ref.instance
-        for child in block.Children:
-            child.Bind(wx.EVT_LEFT_DOWN, notifyMouseEvent)
-
+        attach_notifier(block)
 
     def handle(self, btn):
         def inner(*args, **kwargs):
             pub.send_message(btn['id'])
         return inner
-
 
     def render(self):
         return wsx(
@@ -116,10 +128,6 @@ class RFooter(Component):
                 for btn in self.props['buttons']]],
              [c.Block, {'orient': wx.VERTICAL, 'proportion': 1}]]
         )
-
-
-
-
 
 
 class RNavbar(Component):
@@ -221,9 +229,12 @@ def RSidebar(props):
 def RTabbedLayout(props):
     return wsx(
         [c.Notebook, {'flag': wx.EXPAND | wx.ALL,
+                      'show': props.get('show', True),
                       'proportion': 1,
-                      'on_change': props['on_change']},
-         *[[c.NotebookItem, {'title': 'Page 1', 'selected': props['activeSelection'] == 0},
+                      'on_change': props['on_change'],
+                      'ref': props['ref']},
+         *[[c.NotebookItem,
+            {'title': props['options'][i], 'selected': props['activeSelection'] == i},
             [TabbedConfigPage if props['tabbed_groups'] else ConfigPage,
              {'flag': wx.EXPAND,
               'proportion': 3,

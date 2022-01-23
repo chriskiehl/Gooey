@@ -73,12 +73,6 @@ def indexunique(f, coll):
     return zipmap(map(f, coll), coll)
 
 
-def findfirst(f, coll):
-    """Return first occurrence matching f, otherwise None"""
-    result = list(dropwhile(f, coll))
-    return result[0] if result else None
-
-
 def zipmap(keys, vals):
     """Return a map from keys to values"""
     return dict(zip(keys, vals))

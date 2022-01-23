@@ -206,6 +206,20 @@ class TestControl(unittest.TestCase):
                 self.assertEqual(expected, actual)
 
 
+    def test_ignore_gooey(self):
+        parser = GooeyParser()
+        subs = parser.add_subparsers()
+        foo = subs.add_parser('foo')
+        foo.add_argument('a')
+        foo.add_argument('b')
+        foo.add_argument('p')
+
+        bar = subs.add_parser('bar')
+        bar.add_argument('a')
+        bar.add_argument('b')
+        bar.add_argument('z')
+
+        control.bypass_gooey(gooey_params())(parser)
 
 def get_by_id(items: List[FormField], id: str):
     return [x for x in items if x['id'] == id][0]
