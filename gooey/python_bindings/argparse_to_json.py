@@ -474,7 +474,7 @@ def action_to_json(action, widget, options):
         'required': action.required,
         'data': {
             'display_name': action.metavar or action.dest,
-            'help': action.help,
+            'help': getattr(action, 'help', '').replace('%%', '%'),
             'required': action.required,
             'nargs': action.nargs or '',
             'commands': action.option_strings,
