@@ -8,38 +8,6 @@ from gooey import Events
 from gooey.gui import events
 from gooey.gui import host
 from gooey.gui import state as s
-from gooey.gui.components import modals
-from gooey.gui.components.config import ConfigPage
-from gooey.gui.components.console import Console
-from gooey.gui.components.menubar import MenuBar
-from gooey.gui.lang.i18n import _
-from gooey.gui.processor import ProcessController
-from gooey.gui.pubsub import pub
-from gooey.gui.state import initial_state, ProgressEvent, TimingEvent
-from gooey.gui.util.wx_util import transactUI, callafter
-from gooey.python_bindings import constants
-from gooey.python_bindings.types import Try
-from gooey.util.functional import assoc
-from gooey.gui.application.components import RHeader, ProgressSpinner, ErrorWarning, RTabbedLayout, \
-    RSidebar, RFooter
-from gooey.gui.state import FullGooeyState
-from gooey.python_bindings.types import PublicGooeyState
-from gooey.gui.components.config import TabbedConfigPage
-from gooey.python_bindings.dynamics import unexpected_exit_explanations, deserialize_failure_explanations
-from gui.util.time import Timing
-from rewx import components as c
-from rewx import wsx
-from rewx.core import Component, Ref
-import sys
-from json import JSONDecodeError
-
-import six
-import wx  # type: ignore
-
-from gooey import Events
-from gooey.gui import events
-from gooey.gui import host
-from gooey.gui import state as s
 from gooey.gui.application.components import RHeader, ProgressSpinner, ErrorWarning, RTabbedLayout, \
     RSidebar, RFooter
 from gooey.gui.components import modals
@@ -59,10 +27,10 @@ from gooey.python_bindings.dynamics import unexpected_exit_explanations, \
 from gooey.python_bindings.types import PublicGooeyState
 from gooey.python_bindings.types import Try
 from gooey.util.functional import assoc
-from gui.util.time import Timing
-from rewx import components as c
-from rewx import wsx
-from rewx.core import Component, Ref
+from gooey.gui.util.time import Timing
+from rewx import components as c  # type: ignore
+from rewx import wsx  # type: ignore
+from rewx.core import Component, Ref  # type: ignore
 
 
 class RGooey(Component):
@@ -83,7 +51,6 @@ class RGooey(Component):
     Dynamic Updates
     ---------------
 
-    TODO
 
     [0] this is legacy and will (eventually) be refactored away
 
@@ -310,11 +277,12 @@ class RGooey(Component):
     def shouldStopExecution(self):
         return not self.state['show_stop_warning'] or modals.confirmForceStop()
 
-    def updateProgressBar(self, *args, **kwargs):
-        self.set_state(s.updateProgress(self.state, ProgressEvent(**kwargs)))
+    def updateProgressBar(self, *args, progress=None):
+        self.set_state(s.updateProgress(self.state, ProgressEvent(progress=progress)))
 
-    def updateTime(self, *args, **kwargs):
-        self.set_state(s.updateTime(self.state, TimingEvent(**kwargs)))
+    def updateTime(self, *args, elapsed_time=None, estimatedRemaining=None):
+        event = TimingEvent(elapsed_time=elapsed_time, estimatedRemaining=estimatedRemaining)
+        self.set_state(s.updateTime(self.state, event))
 
     def handleSelectAction(self, event):
         print("event.Selection", event.Selection, self.state['activeSelection'])

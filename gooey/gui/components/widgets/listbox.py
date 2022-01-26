@@ -3,7 +3,6 @@ import wx  # type: ignore
 from gooey.gui import formatters
 from gooey.gui.components.widgets.bases import TextContainer
 from gooey.python_bindings import types as t
-from gooey.python_bindings.types import FormField
 
 
 class Listbox(TextContainer):
@@ -45,7 +44,7 @@ class Listbox(TextContainer):
             visible=self.IsShown()
         )
 
-    def syncUiState(self, state: FormField):
+    def syncUiState(self, state: t.Listbox):  # type: ignore
         widget: wx.ComboBox = self.widget
         widget.Clear()
         widget.AppendItems(state.get('choices', []))

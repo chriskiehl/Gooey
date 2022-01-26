@@ -10,6 +10,6 @@ class PasswordField(TextField):
     def __init__(self, *args, **kwargs):
         super(PasswordField, self).__init__(*args, **kwargs)
 
-    def getUiState(self) -> t.FormField:
-        return t.PasswordField(**super().getUiState())
+    def getUiState(self) -> t.FormField:  # type: ignore
+        return t.PasswordField(**super().getUiState())  # type: ignore
 

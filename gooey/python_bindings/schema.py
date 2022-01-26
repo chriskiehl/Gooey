@@ -19,4 +19,4 @@ def validate_public_state(state: Dict[str, Any]) -> PublicGooeyState:
         a = set(expected_keys)
         b = set(item.keys())
         assert set(expected_keys) == set(item.keys())
-    return PublicGooeyState(**state)
+    return state

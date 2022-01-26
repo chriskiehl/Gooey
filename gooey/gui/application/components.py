@@ -15,10 +15,10 @@ from gooey.gui.pubsub import pub
 from gooey.gui.state import present_time
 from gooey.gui.three_to_four import Constants
 from gooey.python_bindings import constants
-from rewx import components as c
-from rewx import wsx, mount, update
-from rewx.core import Component, Ref
-from rewx.widgets import set_basic_props
+from rewx import components as c  # type: ignore
+from rewx import wsx, mount, update  # type: ignore
+from rewx.core import Component, Ref  # type: ignore
+from rewx.widgets import set_basic_props  # type: ignore
 
 
 def attach_notifier(parent):
@@ -299,37 +299,33 @@ class TitleText(Component):
         return wsx([c.StaticText, {**self.props, 'label': self.props['label'], 'ref': self.ref}])
 
 
+##
+## REWX definitions:
+##
 
-
-@mount.register(ConfigPage)
+@mount.register(ConfigPage)  # type: ignore
 def config(element, parent):
     return update(element, ConfigPage(parent, element['props']['config'], {'contents': []}))
 
-
-@update.register(ConfigPage)
+@update.register(ConfigPage)  # type: ignore
 def config(element, instance: ConfigPage):
     set_basic_props(instance, element['props'])
     return instance
 
-
-@mount.register(TabbedConfigPage)
+@mount.register(TabbedConfigPage)  # type: ignore
 def tabbedconfig(element, parent):
     return update(element, TabbedConfigPage(parent, element['props']['config'], {'contents': []}))
 
-
-@update.register(TabbedConfigPage)
+@update.register(TabbedConfigPage)  # type: ignore
 def tabbedconfig(element, instance: TabbedConfigPage):
     set_basic_props(instance, element['props'])
     return instance
 
-
-
-@mount.register(Console)
+@mount.register(Console)  # type: ignore
 def console(element, parent):
     return update(element, Console(parent, element['props']))
 
-
-@update.register(Console)
+@update.register(Console)  # type: ignore
 def console(element, instance: Console):
     set_basic_props(instance, element['props'])
     if 'show' in element['props']:

@@ -1,7 +1,7 @@
-from typing import Optional, Tuple, List, Union, Mapping, Any, TypeVar, Callable, Generic, Dict
+from typing import Optional, Tuple, List, Union, Mapping, Any, TypeVar, Generic, Dict
 
 from dataclasses import dataclass
-from typing_extensions import TypedDict, TypeAlias
+from typing_extensions import TypedDict
 
 
 class MenuHtmlDialog(TypedDict):
@@ -67,7 +67,7 @@ class GooeyParams(TypedDict):
     show_stop_warning: bool
     show_success_modal: bool
     show_failure_modal: bool
-    force_stope_is_error: bool
+    force_stop_is_error: bool
     poll_external_updates: bool  # BEING DEPRECATED
     return_to_config: bool
     show_restart_button: bool
@@ -215,13 +215,9 @@ class TextField(BasicField):
 class PasswordField(TextField):
     pass
 
-class Checkbox(TypedDict):
-    id: str
-    type: str
+
+class Checkbox(BasicField):
     checked: bool
-    error: str
-    visible: bool
-    enabled: bool
 
 
 class RadioGroup(BasicField):
@@ -270,6 +266,7 @@ class FieldValue(TypedDict):
 
 class PublicGooeyState(TypedDict):
     """
+    A minimal representation of Gooey's current UI state
     """
     active_form: List[FormField]
 

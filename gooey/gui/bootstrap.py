@@ -8,16 +8,15 @@ import wx  # type: ignore
 # pyinstaller on OSX possible without manually specifying `hidden_imports`
 # in the build.spec
 import wx.html  # type: ignore
-import wx.xml  # type: ignore
-import wx.richtext  # type: ignore
 import wx.lib.inspection  # type: ignore
-from gooey.gui.lang import i18n
+import wx.richtext  # type: ignore
+import wx.xml  # type: ignore
 
 from gooey.gui import image_repository
-from gooey.gui.containers.application import GooeyApplication
 from gooey.gui.application.application import RGooey
+from gooey.gui.lang import i18n
 from gooey.util.functional import merge
-from rewx import render, create_element
+from rewx import render, create_element  # type: ignore
 
 
 def run(build_spec):
@@ -40,9 +39,8 @@ def _build_app(build_spec, app) -> Tuple[Any, wx.Frame]:
 
     i18n.load(build_spec['language_dir'], build_spec['language'], build_spec['encoding'])
     imagesPaths = image_repository.loadImages(build_spec['image_dir'])
-    # gapp2 = GooeyApplication(merge(build_spec, imagesPaths))
     gapp2 = render(create_element(RGooey, merge(build_spec, imagesPaths)), None)
-    wx.lib.inspection.InspectionTool().Show()
+    # wx.lib.inspection.InspectionTool().Show()
     # gapp.Show()
     gapp2.Show()
     return (app, gapp2)

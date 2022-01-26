@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 from gooey.gui.components.widgets.dropdown import Dropdown
 from gooey.python_bindings import types as t

@@ -20,7 +20,7 @@ from gooey.python_bindings.types import PublicGooeyState
 prefix = 'gooey::'
 
 
-def serialize_outbound(out: Dict[Any, Any]):
+def serialize_outbound(out: PublicGooeyState):
     """
     Attaches a prefix to whatever is about to be written
     to stdout so that we can differentiate it in the

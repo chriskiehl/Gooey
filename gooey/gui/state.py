@@ -95,8 +95,8 @@ def cli_pieces(state: FullGooeyState, formatter=formatArgument) -> CommandPieces
     formState = state['forms'][parserName]
     subcommand = parserSpec['command'] if parserSpec['command'] != '::gooey/default' else ''
     items = enrichValue(formState, widgets(parserSpec))
-    positional_args = [formatter(item) for item in positional(items)]
-    optional_args = [formatter(item) for item in optional(items)]
+    positional_args = [formatter(item) for item in positional(items)]  # type: ignore
+    optional_args = [formatter(item) for item in optional(items)]      # type: ignore
     ignoreFlag = '' if state['suppress_gooey_flag'] else '--ignore-gooey'
     return CommandPieces(
         target=state['target'],
@@ -315,24 +315,6 @@ def consoleScreen(_: Callable[[str], str], state: GooeyState):
         'show_error_alert': False
      }
 
-class CompletedEvent(TypedDict):
-    completedSuccessfully: bool
-    forcefullyStopped: bool
-
-
-def handleComplete(_: Callable[[str], str], state: FullGooeyState, event: CompletedEvent):
-    if event.completedSuccessfully:
-        if state['return_to_config']:
-            return editScreen(_, state)
-        else:
-            return successScreen(_, state)
-    else:
-        if event.forcefullyStopped:
-            # associn(state, )
-            pass
-        else:
-            pass
-
 
 def editScreen(_: Callable[[str], str], state: FullGooeyState):
     use_buttons = ('cancel', 'start')
@@ -359,13 +341,6 @@ def finishUpdate(state: GooeyState):
         **enable_buttons(state, ['cancel', 'start']),
         'fetchingUpdate': False
     }
-
-def forceStoppedScreen(_: Callable[[str], str], state: FullGooeyState):
-    state: Dict[Any, Any] = state
-    return FullGooeyState(
-        **state,
-
-    )
 
 
 def finalScreen(_: Callable[[str], str], state: GooeyState) -> GooeyState:
@@ -430,10 +405,6 @@ def update_time(state, event: TimingEvent):
             'estimatedRemaining': event['estimatedRemaining']
         }
     }
-
-
-def update_progress(state, event: ProgressEvent):
-    return associn(state, ['progress', 'value'], event['value'])
 
 
 def present_time(timer):

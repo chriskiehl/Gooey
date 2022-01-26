@@ -39,7 +39,7 @@ class Textarea(TextContainer):
         return formatters.general(metatdata, value.replace('\n', os.linesep))
 
     def syncUiState(self, state: FormField):
-        self.setValue(state['value'])
+        self.setValue(state['value'])  # type: ignore
         self.error.SetLabel(state['error'] or '')
         self.error.Show(state['error'] is not None and state['error'] is not '')
 

@@ -107,11 +107,11 @@ def validate_form(params: GooeyParams, write=print, exit=sys.exit):
         changes = deepcopy(state['active_form'])
         for item in changes:
             if item['type'] == 'RadioGroup':
-                for subitem in item['options']:
+                for subitem in item['options']:  # type: ignore
                     subitem['error'] = errors.get(subitem['id'], None)
-                item['error'] = any(x['error'] for x in item['options'])
+                item['error'] = any(x['error'] for x in item['options'])   # type: ignore
             else:
-                item['error'] = errors.get(item['id'], None)
+                item['error'] = errors.get(item['id'], None)  # type: ignore
 
         return PublicGooeyState(active_form=changes)
 

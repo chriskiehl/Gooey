@@ -8,4 +8,4 @@ __ALL__ = ('CommandField',)
 class CommandField(TextField):
 
     def getUiState(self) -> t.FormField:
-        return t.Command(**super().getUiState())
+        return t.Command(**super().getUiState())  # type: ignore

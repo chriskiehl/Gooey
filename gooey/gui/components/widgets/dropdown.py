@@ -48,9 +48,9 @@ class Dropdown(TextContainer):
 
 
     def syncUiState(self, state: FormField):
-        self.setOptions(state['choices'])
-        if state['selected'] is not None:
-            self.setValue(state['selected'])
+        self.setOptions(state['choices'])  # type: ignore
+        if state['selected'] is not None:  # type: ignore
+            self.setValue(state['selected'])  # type: ignore
         self.error.SetLabel(state['error'] or '')
         self.error.Show(state['error'] is not None and state['error'] is not '')
 

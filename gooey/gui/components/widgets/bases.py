@@ -184,8 +184,8 @@ class TextContainer(BaseWidget):
             visible=self.IsShown()
         )
 
-    def syncUiState(self, state: FormField):
-        self.widget.setValue(state['value'])
+    def syncUiState(self, state: FormField):  # type: ignore
+        self.widget.setValue(state['value'])  # type: ignore
         self.error.SetLabel(state['error'] or '')
         self.error.Show(state['error'] is not None and state['error'] is not '')
 
@@ -201,7 +201,7 @@ class TextContainer(BaseWidget):
         satisfies = testFunc if self._meta['required'] else ifPresent(testFunc)
         value = self.getWidgetValue()
 
-        return t.FieldValue(
+        return t.FieldValue(  # type: ignore
             id=self._id,
             cmd=self.formatOutput(self._meta, value),
             meta=self._meta,

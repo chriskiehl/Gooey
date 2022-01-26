@@ -10,16 +10,16 @@ from gooey.util.functional import assoc, associnMany
 
 def value(field: FormField):
     if field['type'] in ['Checkbox', 'BlockCheckbox']:
-        return field['checked']
+        return field['checked']   # type: ignore
     elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
-        return field['selected']
+        return field['selected']   # type: ignore
     elif field['type'] == 'RadioGroup':
-        if field['selected'] is not None:
-            return value(field['options'][field['selected']])
+        if field['selected'] is not None:  # type: ignore
+            return value(field['options'][field['selected']])  # type: ignore
         else:
             return None
     else:
-        return field['value']
+        return field['value'] # type: ignore
 
 
 def add_placeholder(field: FormField, placeholder=VALUE_PLACEHOLDER):
@@ -43,8 +43,8 @@ def add_placeholder(field: FormField, placeholder=VALUE_PLACEHOLDER):
             **field,
             'selected': 0,
             'options': [
-                add_placeholder(field['options'][0], placeholder=RADIO_PLACEHOLDER),
-                *field['options'][1:]
+                add_placeholder(field['options'][0], placeholder=RADIO_PLACEHOLDER),  # type: ignore
+                *field['options'][1:]  # type: ignore
             ]
         }
     else:
@@ -67,11 +67,11 @@ def formatArgument(item: EnrichedItem):
     elif item['type'] == 'Listbox':
         return listbox(item['data'], value(item['field']))
     elif item['type'] == 'RadioGroup':
-        selected = item['field']['selected']
+        selected = item['field']['selected']  # type: ignore
         if selected is not None:
-            formField = item['field']['options'][selected]
-            argparseDefinition = item['data']['widgets'][selected]
-            return formatArgument(assoc(argparseDefinition, 'field', formField))
+            formField = item['field']['options'][selected]  # type: ignore
+            argparseDefinition = item['data']['widgets'][selected]  # type: ignore
+            return formatArgument(assoc(argparseDefinition, 'field', formField))  # type: ignore
         else:
             return None
     else:

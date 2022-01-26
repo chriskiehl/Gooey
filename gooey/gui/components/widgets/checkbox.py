@@ -60,12 +60,12 @@ class CheckBox(TextContainer):
             id=self._id,
             type='Checkbox',
             checked=self.widget.GetValue(),
-            error=self.error.GetLabel() or None,
+            error=self.error.GetLabel() or None,  # type: ignore
             enabled=self.IsEnabled(),
             visible=self.IsShown()
         )
 
-    def syncUiState(self, state: t.Checkbox):
+    def syncUiState(self, state: t.Checkbox):  # type: ignore
         checkbox: wx.CheckBox = self.widget
         checkbox.SetValue(state['checked'])
         checkbox.Enable(state['enabled'])

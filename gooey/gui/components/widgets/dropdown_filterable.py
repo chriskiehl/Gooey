@@ -123,7 +123,7 @@ class FilterableDropdown(Dropdown):
             visible=self.IsShown()
         )
 
-    def syncUiState(self, state: t.DropdownFilterable):
+    def syncUiState(self, state: t.DropdownFilterable):  # type: ignore
         self.setOptions(state['choices'])
         if state['value'] is not None:
             self.setValue(state['value'])

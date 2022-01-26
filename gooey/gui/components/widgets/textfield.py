@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 from gooey.gui import formatters
 from gooey.gui.components.widgets.bases import TextContainer
@@ -20,7 +20,7 @@ class TextField(TextContainer):
     def formatOutput(self, metatdata, value):
         return formatters.general(metatdata, value)
 
-    def syncUiState(self, state: t.TextField):
+    def syncUiState(self, state: t.TextField):  # type: ignore
         textctr: wx.TextCtrl = self.widget.widget
         textctr.SetValue(state['value'])
         textctr.SetHint(state['placeholder'])
