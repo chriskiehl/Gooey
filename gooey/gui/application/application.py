@@ -52,6 +52,8 @@ class RGooey(Component):
     ---------------
 
 
+
+
     [0] this is legacy and will (eventually) be refactored away
 
     """
@@ -105,15 +107,19 @@ class RGooey(Component):
         if self.state['fullscreen']:
             frame.ShowFullScreen(True)
 
-        if self.state['show_preview_warning']:
-            wx.MessageDialog(None, message="""
+        if self.state['show_preview_warning'] and not 'unittest' in sys.modules.keys():
+            wx.MessageDialog(None, caption='YOU CAN DISABLE THIS MESSAGE',
+                             message="""
                 This is a preview build of 1.2.0! There may be instability or 
                 broken functionality. If you encounter any issues, please open an issue 
                 here: https://github.com/chriskiehl/Gooey/issues 
                 
+                The current stable version is 1.0.8. 
+                
                 NOTE! You can disable this message by setting `show_preview_warning` to False. 
                 
-                e.g. `@Gooey(show_preview_warning=False)`
+                e.g. 
+                `@Gooey(show_preview_warning=False)`
                 """).ShowModal()
 
     def getActiveConfig(self):
@@ -218,38 +224,8 @@ class RGooey(Component):
         self.set_state(s.success(self.state, strings, self.buildSpec))
 
 
-    def showForceStopped(self):
-        self.showComplete()
-        if self.buildSpec.get('force_stop_is_error', True):
-            self.showError()
-        else:
-            self.showSuccess()
-        self.header.setSubtitle(_('finished_forced_quit'))
-
-    def onCompleteOLD(self, *args, **kwargs):
-        """
-        Display the appropriate screen based on the success/fail of the
-        host program
-        """
-        with transactUI(self):
-            if self.clientRunner.was_success():
-                if self.buildSpec.get('return_to_config', False):
-                    self.showSettings()
-                else:
-                    self.showSuccess()
-                    if self.buildSpec.get('show_success_modal', True):
-                        wx.CallAfter(modals.showSuccess)
-            else:
-                if self.clientRunner.wasForcefullyStopped:
-                    self.showForceStopped()
-                else:
-                    self.showError()
-                    if self.buildSpec.get('show_failure_modal'):
-                        wx.CallAfter(modals.showFailure)
-
     def handleEdit(self, *args, **kwargs):
         self.set_state(s.editScreen(_, self.state))
-
 
     def handleCancel(self, *args, **kwargs):
         if modals.confirmExit():
@@ -280,12 +256,11 @@ class RGooey(Component):
     def updateProgressBar(self, *args, progress=None):
         self.set_state(s.updateProgress(self.state, ProgressEvent(progress=progress)))
 
-    def updateTime(self, *args, elapsed_time=None, estimatedRemaining=None):
+    def updateTime(self, *args, elapsed_time=None, estimatedRemaining=None, **kwargs):
         event = TimingEvent(elapsed_time=elapsed_time, estimatedRemaining=estimatedRemaining)
         self.set_state(s.updateTime(self.state, event))
 
     def handleSelectAction(self, event):
-        print("event.Selection", event.Selection, self.state['activeSelection'])
         self.set_state(assoc(self.state, 'activeSelection', event.Selection))
 
 

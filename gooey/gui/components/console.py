@@ -13,7 +13,7 @@ class Console(wx.Panel):
     self_managed = True
 
     def __init__(self, parent, buildSpec, **kwargs):
-        wx.Panel.__init__(self, parent, **kwargs)
+        wx.Panel.__init__(self, parent, name='console', **kwargs)
         self.buildSpec = buildSpec
 
         self.text = wx.StaticText(self, label=_("status"))

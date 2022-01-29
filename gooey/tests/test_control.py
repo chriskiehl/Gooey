@@ -34,6 +34,13 @@ def custom_type(x):
 
 class TestControl(unittest.TestCase):
 
+    def tearDown(self):
+        """
+        Undoes the monkey patching after every tests
+        """
+        if hasattr(ArgumentParser, 'original_parse_args'):
+            ArgumentParser.parse_args = ArgumentParser.original_parse_args
+
     def test_validate_form(self):
         """
         Testing the major validation cases we support.

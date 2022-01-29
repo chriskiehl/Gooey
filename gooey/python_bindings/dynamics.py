@@ -65,7 +65,7 @@ Gooey's side!
 
 You can open a ticket with a small reproducible example here:  
 https://github.com/chriskiehl/Gooey/issues
-'''  # type: ignore
+'''
 
 
 def check_value(registry: Dict[str, Exception], original_fn):

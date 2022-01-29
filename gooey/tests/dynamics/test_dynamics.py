@@ -8,6 +8,13 @@ from python_bindings.dynamics import patch_argument, monkey_patch_for_form_valid
 
 class TestDynamicUpdates(unittest.TestCase):
 
+    def tearDown(self):
+        """
+        Undoes the monkey patching after every tests
+        """
+        if hasattr(ArgumentParser, 'original_parse_args'):
+            ArgumentParser.parse_args = ArgumentParser.original_parse_args
+
     def test_patch_argument(self):
         """
         Asserting that regardless of parser complexity, we attach our
@@ -59,47 +66,4 @@ class TestDynamicUpdates(unittest.TestCase):
         assert parser.parse_args('a a1 --level-2 some-value --some-flag'.split())
         assert parser.parse_args('b b1 --level-2 some-value --some-flag'.split())
         assert not mock.called
-
-
-    def test_check_value_wrapper(self):
-        parser = ArgumentParser()
-        parser.add_argument('foo', choices=[1, 2, 3])
-        parser.add_argument('bar', choices=[1, 2, 3])
-
-        # demo'ing default behavior. Prior to the patching, argparse
-        # explodes during the check_value call if any invariants are violated
-        def kaboom():
-            raise Exception('boom')
-        mock = MagicMock(side_effect=kaboom)
-        try:
-            parser.error = mock
-            parser.parse_args(['nope', 'not-a-valid-choice'])
-            self.fail('Should have thrown an error during check_value')
-        except Exception as e:
-            # note that we exploded after the first one
-            # thus the error method was only called once
-            assert mock.called
-            assert mock.call_count == 1
-
-        # What we want is to capture ALL errors without failing early
-        arbitrary_dict: Dict[str, Exception] = {}
-        self.assertTrue(len(arbitrary_dict) == 0)
-
-
-        # So we patch the check_value method witho our own
-        monkey_patch_for_form_validation(arbitrary_dict, parser)
-        parser.parse_args(['nope', 'not-a-valid-choice'])
-
-        # now, rather than failing after the very first violation, all
-        # errors are recorded into our map
-        self.assertTrue(len(arbitrary_dict) > 0)
-        assert 'foo' in arbitrary_dict
-        assert 'bar' in arbitrary_dict
-
-        assert 'invalid choice' in str(arbitrary_dict['foo'])
-        assert 'invalid choice' in str(arbitrary_dict['bar'])
-
-
-
-
 

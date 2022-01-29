@@ -21,6 +21,7 @@ and: https://www.jetbrains.com/help/pycharm/2017.1/python-debugger.html
 import json
 import os
 import sys
+import traceback
 from argparse import ArgumentParser
 from copy import deepcopy
 from typing import List, Dict
@@ -47,14 +48,11 @@ def bypass_gooey(params):
     Bypasses all the Gooey machinery and runs the user's code directly.
     """
     def parse_args(self: ArgumentParser, args=None, namespace=None):
-        # TODO: document that this is an experimental change
         # We previously mutated sys.argv directly to remove
         # the --ignore-gooey flag. But this caused lots of issues
         # See: https://github.com/chriskiehl/Gooey/issues/686
         # So, we instead modify the parser to transparently
         # consume the extra token.
-        for action in self._actions:
-            print(action)
         patched_parser = patch_argument(self, '--ignore-gooey', action='store_true')
         args = patched_parser.original_parse_args(args, namespace)  # type: ignore
         # removed from the arg object so the user doesn't have
@@ -164,6 +162,7 @@ def handle_completed_run(params, write=print, exit=sys.exit):
             write(serialize_outbound(next_state))
             exit(0)
         except Exception as e:
+            write(''.join(traceback.format_stack()))
             write(e)
             exit(1)
     return parse_args
