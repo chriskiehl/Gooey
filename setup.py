@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 with open('README.md') as readme:
     long_description = readme.read()
 
-version = '1.2.0.0-PREVIEW'
+version = '1.2.0-ALPHA'
 
 deps = [
     'Pillow>=4.3.0',
