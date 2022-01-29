@@ -18,8 +18,8 @@ class TestGooeyFilterableDropdown(unittest.TestCase):
 
     def test_input_spawns_popup(self):
         parser = self.make_parser(choices=['alpha1', 'alpha2', 'beta', 'gamma'])
-        with instrumentGooey(parser) as (app, gooeyApp):
-            dropdown = gooeyApp.configs[0].reifiedWidgets[0]
+        with instrumentGooey(parser) as (app, frame, gapp):
+            dropdown = gapp.getActiveConfig().reifiedWidgets[0]
 
             event = wx.CommandEvent(wx.wxEVT_TEXT, wx.Window.NewControlId())
             event.SetEventObject(dropdown.widget.GetTextCtrl())
@@ -60,8 +60,8 @@ class TestGooeyFilterableDropdown(unittest.TestCase):
 
         for actions in scenarios:
             parser = self.make_parser(choices=choices)
-            with instrumentGooey(parser) as (app, gooeyApp):
-                dropdown = gooeyApp.configs[0].reifiedWidgets[0]
+            with instrumentGooey(parser) as (app, frame, gapp):
+                dropdown = gapp.getActiveConfig().reifiedWidgets[0]
                 # sanity check we're starting from our known initial state
                 self.assertEqual(dropdown.model.suggestionsVisible, initial.expectVisible)
                 self.assertEqual(dropdown.model.displayValue, initial.expectedDisplayValue)
@@ -95,9 +95,9 @@ class TestGooeyFilterableDropdown(unittest.TestCase):
 
 def mockKeyEvent(keycode):
     """
-    Manually bypassing the setters as they don'y allow
+    Manually bypassing the setters as they don't allow
     the non wx.wxXXX event variants by default.
-    The internal WX post/prcess machinery doesn't handle key
+    The internal WX post/process machinery doesn't handle key
     codes well for some reason, thus has to be mocked and
     manually passed to the relevant handler.
     """

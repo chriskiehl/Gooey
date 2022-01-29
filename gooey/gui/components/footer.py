@@ -1,5 +1,5 @@
 import sys
-import wx
+import wx  # type: ignore
 
 from gooey.gui import events
 from gooey.gui.lang.i18n import _
@@ -138,7 +138,7 @@ class Footer(wx.Panel):
         self.edit_button.Hide()
         self.restart_button.Hide()
         self.close_button.Hide()
-        self.progress_bar.Hide()
+        # self.progress_bar.Hide()
 
         v_sizer.AddStretchSpacer(1)
         self.SetSizer(v_sizer)
@@ -152,7 +152,8 @@ class Footer(wx.Panel):
             style=style)
 
     def dispatch_click(self, event):
-        pub.send_message(event.GetId())
+        if event.EventObject.Enabled:
+            pub.send_message(event.GetId())
 
     def hide_all_buttons(self):
         for button in self.buttons:

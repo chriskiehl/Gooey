@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 from collections import defaultdict
 
 __ALL__ = ['pub']

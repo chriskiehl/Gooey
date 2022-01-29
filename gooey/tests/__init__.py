@@ -31,12 +31,47 @@ from gooey.tests import *
 ```
 """
 import wx
+import locale
+import platform
+
+class TestApp(wx.App):
+    """
+    Stolen from the mailing list here:
+    https://groups.google.com/g/wxpython-users/c/q5DSyyuKluA
+
+    Wx started randomly exploding with locale issues while running
+    the tests. For whatever reason, manually setting it in InitLocale
+    seems to solve the problem.
+    """
+    def __init__(self, with_c_locale=None, **kws):
+        if with_c_locale is None:
+            with_c_locale = (platform.system() == 'Windows')
+        self.with_c_locale = with_c_locale
+        wx.App.__init__(self, **kws)
+
+    def InitLocale(self):
+        """over-ride wxPython default initial locale"""
+        if self.with_c_locale:
+            self._initial_locale = None
+            locale.setlocale(locale.LC_ALL, 'C')
+        else:
+            lang, enc = locale.getdefaultlocale()
+            self._initial_locale = wx.Locale(lang, lang[:2], lang)
+            locale.setlocale(locale.LC_ALL, lang)
+
+    def OnInit(self):
+        self.createApp()
+        return True
+
+    def createApp(self):
+        return True
+
 
 app = None
 
 def setUpModule():
     global app
-    app = wx.App()
+    app = TestApp()
 
 def tearDownModule():
     global app

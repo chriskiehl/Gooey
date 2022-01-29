@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 
 def standard_layout(title, subtitle, widget):

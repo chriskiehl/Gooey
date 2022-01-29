@@ -47,7 +47,7 @@ class TestFormatters(unittest.TestCase):
     def test_multifilechooser_formatter(self):
         """
         Should return files (quoted), separated by spaces if there is more
-        than one, preceeded by optional command if the argument is optional.
+        than one, preceded by optional command if the argument is optional.
 
         Assumes the argument has been created with some form of nargs, which
         only makes sense for possibly choosing multiple values.

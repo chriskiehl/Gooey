@@ -1,16 +1,22 @@
-import wx
-from wx.lib.scrolledpanel import ScrolledPanel
+from typing import Mapping, List
 
-from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
-from gooey.gui.util import wx_util
-from gooey.util.functional import getin, flatmap, compact, indexunique
-from gooey.gui.lang.i18n import _
+import wx  # type: ignore
+from wx.lib.scrolledpanel import ScrolledPanel  # type: ignore
+
 from gooey.gui.components.mouse import notifyMouseEvent
+from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
+from gooey.gui.lang.i18n import _
+from gooey.gui.util import wx_util
+from gooey.python_bindings.types import FormField
+from gooey.util.functional import getin, flatmap, indexunique
 
 
 class ConfigPage(ScrolledPanel):
+    self_managed = True
+
     def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
         super(ConfigPage, self).__init__(parent, *args, **kwargs)
+
         self.SetupScrolling(scroll_x=False, scrollToTop=False)
         self.rawWidgets = rawWidgets
         self.buildSpec = buildSpec
@@ -49,10 +55,32 @@ class ConfigPage(ScrolledPanel):
                 if widget.info['cli_type'] != 'positional']
 
 
-    def isValid(self):
-        states = [widget.getValue() for widget in self.reifiedWidgets]
-        return not any(compact([state['error'] for state in states]))
+    def getPositionalValues(self):
+        return [widget.getValue() for widget in self.reifiedWidgets
+                if widget.info['cli_type'] == 'positional']
 
+
+    def getOptionalValues(self):
+        return [widget.getValue() for widget in self.reifiedWidgets
+                if widget.info['cli_type'] != 'positional']
+
+
+    def getFormState(self) -> List[FormField]:
+        return [widget.getUiState()
+                for widget in self.reifiedWidgets]
+
+
+    def syncFormState(self, formState: List[FormField]):
+        for item in formState:
+            self.widgetsMap[item['id']].syncUiState(item)
+
+    def isValid(self):
+        return not any(self.getErrors())
+
+    def getErrors(self):
+        states = [widget.getValue() for widget in self.reifiedWidgets]
+        return {state['meta']['dest']: state['error'] for state in states
+                if state['error']}
 
     def seedUI(self, seeds):
         radioWidgets = self.indexInternalRadioGroupWidgets()
@@ -62,10 +90,33 @@ class ConfigPage(ScrolledPanel):
             if id in radioWidgets:
                 radioWidgets[id].setOptions(values)
 
+
+    def setErrors(self, errorMap: Mapping[str, str]):
+        self.resetErrors()
+        radioWidgets = self.indexInternalRadioGroupWidgets()
+        widgetsByDest = {v._meta['dest']: v for k,v in self.widgetsMap.items()
+                         if v.info['type'] != 'RadioGroup'}
+
+        # if there are any errors, then all error blocks should
+        # be displayed so that the UI elements remain inline with
+        # each other.
+        if errorMap:
+            for widget in self.widgetsMap.values():
+                widget.showErrorString(True)
+
+        for id, message in errorMap.items():
+            if id in widgetsByDest:
+                widgetsByDest[id].setErrorString(message)
+                widgetsByDest[id].showErrorString(True)
+            if id in radioWidgets:
+                radioWidgets[id].setErrorString(message)
+                radioWidgets[id].showErrorString(True)
+
+
     def indexInternalRadioGroupWidgets(self):
         groups = filter(lambda x: x.info['type'] == 'RadioGroup', self.reifiedWidgets)
         widgets = flatmap(lambda group: group.widgets, groups)
-        return indexunique(lambda x: x._id, widgets)
+        return indexunique(lambda x: x._meta['dest'], widgets)
 
 
     def displayErrors(self):
@@ -199,7 +250,6 @@ class TabbedConfigPage(ConfigPage):
     Splits top-level groups across tabs
     """
 
-
     def layoutComponent(self):
         # self.rawWidgets['contents'] = self.rawWidgets['contents'][1:2]
         self.notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
@@ -221,5 +271,6 @@ class TabbedConfigPage(ConfigPage):
         self.Layout()
 
 
-
+    def snapToErrorTab(self):
+        pass
 

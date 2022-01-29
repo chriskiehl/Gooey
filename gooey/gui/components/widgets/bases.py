@@ -1,23 +1,26 @@
 import re
 from functools import reduce
+from typing import Optional, Callable, Any, Type, Union
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui import formatters, events
 from gooey.gui.util import wx_util
+from gooey.python_bindings.types import FormField
 from gooey.util.functional import getin, ifPresent
 from gooey.gui.validators import runValidator
 from gooey.gui.components.util.wrapped_static_text import AutoWrappedStaticText
 from gooey.gui.components.mouse import notifyMouseEvent
+from gooey.python_bindings import types as t
 
 
 class BaseWidget(wx.Panel):
-    widget_class = None
+    widget_class: Any
 
     def arrange(self, label, text):
         raise NotImplementedError
 
-    def getWidget(self, parent, **options):
+    def getWidget(self, parent: wx.Window, **options):
         return self.widget_class(parent, **options)
 
     def connectSignal(self):
@@ -57,13 +60,14 @@ class TextContainer(BaseWidget):
     #     - This should be broken apart.
     #     - presentation can be ad-hoc or composed
     #     - behavioral just needs a typeclass of get/set/format for Gooey's purposes
-    widget_class = None
+    widget_class = None  # type: ignore
 
     def __init__(self, parent, widgetInfo, *args, **kwargs):
         super(TextContainer, self).__init__(parent, *args, **kwargs)
 
         self.info = widgetInfo
         self._id = widgetInfo['id']
+        self.widgetInfo = widgetInfo
         self._meta = widgetInfo['data']
         self._options = widgetInfo['options']
         self.label = wx.StaticText(self, label=widgetInfo['data']['display_name'])
@@ -129,7 +133,9 @@ class TextContainer(BaseWidget):
         layout.Add(self.getSublayout(), 0, wx.EXPAND)
         layout.Add(self.error, 1, wx.EXPAND)
 
-        self.error.Hide()
+        # self.error.SetLabel("HELLOOOOO??")
+        # self.error.Show()
+        # print(self.error.Shown)
         return layout
 
 
@@ -163,9 +169,25 @@ class TextContainer(BaseWidget):
         # self.Layout()
         event.Skip()
 
+    def getUiState(self) -> t.FormField:
+        return t.TextField(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            value=self.getWidgetValue(),
+            placeholder=self.widget.widget.GetHint(),
+            error=self.error.GetLabel().replace('\n', ' '),
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )
 
-    def getValue(self):
-        regexFunc = lambda x: bool(re.match(userValidator, x))
+    def syncUiState(self, state: FormField):  # type: ignore
+        self.widget.setValue(state['value'])  # type: ignore
+        self.error.SetLabel(state['error'] or '')
+        self.error.Show(state['error'] is not None and state['error'] is not '')
+
+
+    def getValue(self) -> t.FieldValue:
+        regexFunc: Callable[[str], bool] = lambda x: bool(re.match(userValidator, x))
 
         userValidator = getin(self._options, ['validator', 'test'], 'True')
         message = getin(self._options, ['validator', 'message'], '')
@@ -175,16 +197,20 @@ class TextContainer(BaseWidget):
         satisfies = testFunc if self._meta['required'] else ifPresent(testFunc)
         value = self.getWidgetValue()
 
-        return {
-            'id': self._id,
-            'cmd': self.formatOutput(self._meta, value),
-            'rawValue': value,
-            'test': runValidator(satisfies, value),
-            'error': None if runValidator(satisfies, value) else message,
-            'clitype': 'positional'
+        return t.FieldValue(  # type: ignore
+            id=self._id,
+            cmd=self.formatOutput(self._meta, value),
+            meta=self._meta,
+            rawValue= value,
+            # type=self.info['type'],
+            enabled=self.IsEnabled(),
+            visible=self.IsShown(),
+            test= runValidator(satisfies, value),
+            error=None if runValidator(satisfies, value) else message,
+            clitype=('positional'
                         if self._meta['required'] and not self._meta['commands']
-                        else 'optional'
-        }
+                        else 'optional')
+        )
 
     def setValue(self, value):
         self.widget.SetValue(value)
@@ -211,7 +237,7 @@ class TextContainer(BaseWidget):
     def dispatchChange(self, value, **kwargs):
         raise NotImplementedError
 
-    def formatOutput(self, metadata, value):
+    def formatOutput(self, metadata, value) -> str:
         raise NotImplementedError
 
 
@@ -231,3 +257,15 @@ class BaseChooser(TextContainer):
 
     def formatOutput(self, metatdata, value):
         return formatters.general(metatdata, value)
+
+    def getUiState(self) -> t.FormField:
+        btn: wx.Button = self.widget.button  # type: ignore
+        return t.Chooser(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            value=self.widget.getValue(),
+            btn_label=btn.GetLabel(),
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )

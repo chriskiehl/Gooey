@@ -41,8 +41,8 @@ class TestCounter(unittest.TestCase):
         for case in cases:
             with self.subTest(case):
                 parser = self.makeParser(**case['inputs'])
-                with instrumentGooey(parser) as (app, gooeyApp):
-                    widget = gooeyApp.configs[0].reifiedWidgets[0]
+                with instrumentGooey(parser) as (app, frame, gapp):
+                    widget = gapp.getActiveConfig().reifiedWidgets[0]
                     self.assertEqual(widget.getValue()['rawValue'], case['expect'])
 
 

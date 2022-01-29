@@ -1,7 +1,7 @@
 """
 Module for evaluating time elapsed & time remaining from progress
 """
-import wx
+import wx  # type: ignore
 from gooey.gui.pubsub import pub
 from gooey.gui import events
 

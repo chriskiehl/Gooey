@@ -1,6 +1,7 @@
-Gooey 
-=====  
-Turn (almost) any Python 2 or 3 Console Program into a GUI application with one line
+# Gooey 
+  
+
+Turn (almost) any Python 3 Console Program into a GUI application with one line
 
 <p align="center">
     <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/1-0-4-title-card.png" />
@@ -29,8 +30,8 @@ Table of Contents
     - [Basic](#basic)
     - [No Config](#no-config)
 - [Menus](#menus)    
-- [Input Validation](#input-validation)
-- [Using Dynamic Values](#using-dynamic-values)
+- [Dynamic Validation](#dynamic-validation)
+- [Lifecycle Events and UI control](#lifecycle-events-and-ui-control)
 - [Showing Progress](#showing-progress)
     - [Elapsed / Remaining Time](#elapsed--remaining-time)
 - [Customizing Icons](#customizing-icons)
@@ -62,8 +63,6 @@ run `setup.py`
 
     python setup.py install
     
-**NOTE:** Python 2 users must manually install WxPython! Unfortunately, this cannot be done as part of the pip installation and should be manually downloaded from the [wxPython website](http://www.wxpython.org/download.php).
-
 
 
 ### Usage  
@@ -224,7 +223,7 @@ Gooey is international ready and easily ported to your host language. Languages 
 
 All program text is stored externally in `json` files. So adding new language support is as easy as pasting a few key/value pairs in the `gooey/languages/` directory. 
 
-Thanks to some awesome [contributers](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
+Thanks to some awesome [contributors](https://github.com/chriskiehl/Gooey/graphs/contributors), Gooey currently comes pre-stocked with over 18 different translations! 
 
 Want to add another one? Submit a [pull request!](https://github.com/chriskiehl/Gooey/compare)
 
@@ -251,11 +250,11 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 
 | fullscreen | start Gooey in fullscreen mode |
-| required_cols | Controls how many columns are in the Required Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
-| optional_cols | Controls how many columns are in the Optional Arguments section <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern layout controls|
+| required_cols | Controls how many columns are in the Required Arguments section <br> :warning: **Deprecation notice:** See [Layout Customization](https://github.com/chriskiehl/Gooey#layout-customization) for modern layout controls|
+| optional_cols | Controls how many columns are in the Optional Arguments section <br> :warning: **Deprecation notice:** See [Layout Customization](https://github.com/chriskiehl/Gooey#layout-customization) for modern layout controls|
 | dump_build_config | Saves a `json` copy of its build configuration on disk for reuse/editing | 
 | load_build_config | Loads a `json` copy of its build configuration from disk | 
-| monospace_display | Uses a mono-spaced font in the output screen <br> :warning: **Deprecation notice:** See [Group Parameters](#group-configuration) for modern font configuration| 
+| monospace_display | Uses a mono-spaced font in the output screen <br> :warning: **Deprecation notice:** See [Layout Customization](https://github.com/chriskiehl/Gooey#layout-customization) for modern font configuration| 
 | image_dir | Path to the directory in which Gooey should look for custom images/icons |
 | language_dir | Path to the directory in which Gooey should look for custom languages files |
 | disable_stop_button | Disable the `Stop` button when running |
@@ -276,6 +275,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | show_time_remaining | Disable the time remaining text see [Elapsed / Remaining Time](#elapsed--remaining-time) |
 | hide_time_remaining_on_complete | Hide time remaining on complete screen see [Elapsed / Remaining Time](#elapsed--remaining-time) |
 | requires_shell | Controls whether or not the `shell` argument is used when invoking your program. [More info here](https://stackoverflow.com/questions/3172470/actual-meaning-of-shell-true-in-subprocess#3172488) |
+| shutdown_signal | Specifies the `signal` to send to the child process when the `stop` button is pressed. See [Gracefully Stopping](https://github.com/chriskiehl/Gooey/tree/master/docs) in the docs for more info. | 
 | navigation | Sets the "navigation" style of Gooey's top level window. <br>Options: <table> <thead> <tr><th>TABBED</th><th>SIDEBAR</th></tr></thead> <tbody> <tr> <td><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464826-2a946ba2-ee47-11e7-92a4-4afeb49dc9ca.png" width="200" height="auto"></td><td><img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464847-9918fbb0-ee47-11e7-8d5f-0d42631c2bc0.png" width="200" height="auto"></td></tr></tbody></table>|
 | sidebar_title | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
 | show_sidebar | Show/Hide the sidebar in when navigation mode == `SIDEBAR` |
@@ -400,6 +400,14 @@ The basic view is best for times when the user is familiar with Console Applicat
 
 No Config pretty much does what you'd expect: it doesn't show a configuration screen. It hops right to the `display` section and begins execution of the host program. This is the one for improving the appearance of little one-off scripts. 
 
+To use this mode, set `auto_start=True` in the Gooey decorator. 
+
+```python
+@Gooey(auto_start=True) 
+def main (): 
+    ... 
+```
+
 <p align="center">
     <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/f54fe6f2-07c5-11e5-92e4-f72a2ae12862.png">
 </p>
@@ -447,6 +455,7 @@ Currently, three types of menu options are supported:
  * AboutDialog 
  * MessageDialog
  * Link
+ * HtmlDialog
  
 
 <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/47251026-9ffc1400-d3e1-11e8-9095-982a6367561b.png" width="400" height="auto" align="right" />
@@ -515,6 +524,36 @@ Example:
 }
 ```
 
+
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/docs/menus/html-dialog.PNG" width="400" height="auto" align="right" />
+
+**HtmlDialog** gives you full control over what's displayed in the message dialog (bonus: people can copy/paste text from this one!). 
+
+
+
+Schema: 
+
+ * `caption` - (_optional_) the caption in the title bar of the modal   
+ * `html` - (_required_) the html you want displayed in the dialog. Note: only a small subset of HTML is supported. [See the WX docs for more info](https://wxpython.org/Phoenix/docs/html/html_overview.html). 
+
+Example: 
+
+```python
+{
+    'type': 'HtmlDialog',
+    'menuTitle': 'Fancy Dialog!',
+    'caption': 'Demo of the HtmlDialog',
+    'html': '''
+    <body bgcolor="white">
+        <img src=/path/to/your/image.png" /> 
+        <h1>Hello world!</h1> 
+        <p><font color="red">Lorem ipsum dolor sit amet, consectetur</font></p>
+    </body>
+    '''
+}
+
+```
+
 **A full example:**
 
 Two menu groups ("File" and "Help") with four menu items between them. 
@@ -559,108 +598,158 @@ Two menu groups ("File" and "Help") with four menu items between them.
 ---------------------------------------  
 
 
-### Input Validation
+### Dynamic Validation 
 
 
 <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34464861-0e82c214-ee48-11e7-8f4a-a8e00721efef.png" width="400" height="auto" align="right" />
 
-
 >:warning: 
->Note! This functionality is experimental. Its API may be changed or removed altogether. Feedback/thoughts on this feature is welcome and encouraged! 
-
-Gooey can optionally do some basic pre-flight validation on user input. Internally, it uses these validator functions to check for the presence of required arguments. However, by using [GooeyParser](#gooeyparser), you can extend these functions with your own validation rules. This allows Gooey to show much, much more user friendly feedback before it hands control off to your program. 
-
-
-**Writing a validator:**
-
-Validators are specified as part of the `gooey_options` map available to `GooeyParser`. It's a simple map structure made up of a root key named `validator` and two internal pairs: 
-
- * `test` The inner body of the validation test you wish to perform 
- * `message` the error message that should display given a validation failure
+>Note! This functionality is experimental and likely to be unstable. Its API may be changed or removed altogether. Feedback/thoughts on this feature is welcome and encouraged!
  
-e.g.
+>:warning: 
+>See [Release Notes]() for guidance on upgrading from 1.0.8 to 1.2.0 
 
+
+Before passing the user's inputs to your program, Gooey can optionally run a special pre-flight validation to check that all arguments pass your specified validations.  
+
+**How does it work?**   
+
+Gooey piggy backs on the `type` parameter available to most Argparse Argument types. 
+
+```python
+parser.add_argument('--some-number', type=int)
+parser.add_argument('--some-number', type=float)
 ```
-gooey_options={
-    'validator':{
-        'test': 'len(user_input) > 3',
-        'message': 'some helpful message'
-    }
-}
+
+In addition to simple builtins like `int` and `float`, you can supply your own function to the `type` parameter to vet the incoming values. 
+
+```python
+def must_be_exactly_ten(value): 
+    number = int(value) 
+    if number == 10:
+        return number
+    else: 
+        raise TypeError("Hey! you need to provide exactly the number 10!")
+        
+        
+def main(): 
+    parser = ArgumentParser()
+    parser.add_argument('--ten', type=must_be_exactly_ten)
 ```
 
-**The `test` function**
+**How to enable the pre-flight validation**
 
-Your test function can be made up of any valid Python expression. It receives the variable `user_input` as an argument against which to perform its validation. Note that all values coming from Gooey are in the form of a string, so you'll have to cast as needed in order to perform your validation.   
+By default, Gooey won't run the validation. Why? This feature is fairly experimental and does a lot of intense Monkey Patching behind the scenes. As such, it's currently opt-in. 
+
+You enable to validation by telling Gooey you'd like to subscribe to the `VALIDATE_FORM` event. 
+
+```python
+from gooey import Gooey, Events 
+
+@Gooey(use_events=[Events.VALIDATE_FORM])
+def main(): 
+    ... 
+```
+
+
+<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/dynamic-validation-1-2-0.JPG" />
+
+Now, when you run Gooey, before it invokes your main program, it'll send a separate pre-validation check and record any issues raised from your `type` functions.  
+
 
 **Full Code Example**
 
 ```
-from gooey.python_bindings.gooey_decorator import Gooey
-from gooey.python_bindings.gooey_parser import GooeyParser
+from gooey import Gooey, Events
+from argparse import ArgumentParser
 
-@Gooey
+def must_be_exactly_ten(value):
+    number = int(value)
+    if number == 10:
+        return number
+    else:
+        raise TypeError("Hey! you need to provide exactly the number 10!")
+
+@Gooey(program_name='Validation Example', use_events=[Events.VALIDATE_FORM])
 def main():
-    parser = GooeyParser(description='Example validator')
-    parser.add_argument(
-        'secret',
-        metavar='Super Secret Number',
-        help='A number specifically between 2 and 14',
-        gooey_options={
-            'validator': {
-                'test': '2 <= int(user_input) <= 14',
-                'message': 'Must be between 2 and 14'
-            }
-        })
-
+    parser = ArgumentParser(description="Checkout this validation!")
+    parser.add_argument('--ten', metavar='This field should be 10', type=must_be_exactly_ten)
     args = parser.parse_args()
-
-    print("Cool! Your secret number is: ", args.secret)
+    print(args)
 ```
 
-<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34465024-f011ac3e-ee4f-11e7-80ae-330adb4c47d6.png" width="400" height="auto" align="left" />
-
-With the validator in place, Gooey can present the error messages next to the relevant input field if any validators fail.  
 
 
 
 ---------------------------------------
   
 
-## Using Dynamic Values
+## Lifecycle Events and UI control
 
 >:warning: 
 >Note! This functionality is experimental. Its API may be changed or removed altogether. Feedback on this feature is welcome and encouraged! 
 
-Gooey's Choice style fields (Dropdown, Listbox) can be fed a dynamic set of values at runtime by enabling the `poll_external_updates` option. This will cause Gooey to request updated values from your program every time the user visits the Configuration page. This can be used to, for instance, show the result of a previous execution on the config screen without requiring that the user restart the program. 
+As of 1.2.0, Gooey now exposes coarse grain lifecycle hooks to your program. This means you can now take additional follow-up actions in response to successful runs or failures and even control the current state of the UI itself! 
 
-**How does it work?**
+Currently, two primary hooks are exposed: 
 
-<img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/35487459-bd7fe938-0430-11e8-9f6d-fa8f703b9da5.gif" align="right" width="420"/>
+* `on_success`
+* `on_error`
 
-At runtime, whenever the user hits the Configuration screen, Gooey will call your program with a single CLI argument: `gooey-seed-ui`. This is a request to your program for updated values for the UI. In response to this, on `stdout`, your program should return a JSON string mapping cli-inputs to a list of options.
+These fire exactly when you'd expect: after your process has completed. 
 
-For example, assuming a setup where you have a dropdown that lists user files:
 
+**Anatomy of an lifecycle handler**:
+
+Both `on_success` and `on_error` have the same type signature. 
+
+```python
+from typing import Mapping, Any, Optional
+from gooey.types import PublicGooeyState  
+
+def on_success(args: Mapping[str, Any], state: PublicGooeyState) -> Optional[PublicGooeyState]:
+    """
+    You can do anything you want in the handler including 
+    returning an updated UI state for your next run!   
+    """ 
+    return state
+    
+def on_error(args: Mapping[str, Any], state: PublicGooeyState) -> Optional[PublicGooeyState]:
+    """
+    You can do anything you want in the handler including 
+    returning an updated UI state for your next run!   
+    """ 
+    return state    
 ```
- ...
- parser.add_argument(
-        '--load',
-        metavar='Load Previous Save',
-        help='Load a Previous save file',
-        dest='filename',
-        widget='Dropdown',
-        choices=list_savefiles(),
-    )
+
+* **args** This is the parsed Argparse object (e.g. the output of `parse_args()`). This will be a mapping of the user's arguments as existed when your program was invoked.
+* **state** This is the current state of Gooey's UI. If your program uses subparsers, this currently just lists the state of the active parser/form. Whatever updated version of this state you return will be reflected in the UI!    
+
+
+**Attaching the handlers:**
+
+Handlers are attached when instantiating the `GooeyParser`.
+
+```python
+parser = GooeyParser(
+    on_success=my_success_handler,
+    on_failure=my_failure_handler)
+``` 
+
+
+**Subscribing to the lifecycle events**
+
+Just like [Validation](#dynamic-validation), these lifecycle events are opt-in. Pass the event you'd like to subscribe to into the `use_events` Gooey decorator argument. 
+
+```python
+from gooey import Gooey, Events 
+
+@Gooey(use_events=[Events.ON_SUCCESS, Events.ON_ERROR])
+def main(): 
+    ... 
 ```
 
-Here the input we want to populate is `--load`. So, in response to the `gooey-seed-ui` request, you would return a JSON string with `--load` as the key, and a list of strings that you'd like to display to the user as the value. e.g.  
 
-```
-{"--load": ["Filename_1.txt", "filename_2.txt", ..., "filename_n.txt]}
-```
-
-Checkout the full example code in the [Examples Repository](https://github.com/chriskiehl/GooeyExamples/blob/master/examples/dynamic_updates.py). Or checkout a larger example in the silly little tool that spawned this feature: [SavingOverIt](https://github.com/chriskiehl/SavingOverIt). 
 
 -------------------------------------
 
@@ -733,7 +822,7 @@ Images are discovered by Gooey based on their _filenames_. So, for example, in o
 
 ## Packaging
 
-Thanks to some [awesome contributers](https://github.com/chriskiehl/Gooey/issues/58), packaging Gooey as an executable is super easy. 
+Thanks to some [awesome contributors](https://github.com/chriskiehl/Gooey/issues/58), packaging Gooey as an executable is super easy. 
 
 The tl;dr [pyinstaller](https://github.com/pyinstaller/pyinstaller) version is to drop this [build.spec](https://github.com/chriskiehl/Gooey/files/29568/build.spec.txt) into the root directory of your application. Edit its contents so that the `application` and `name` are relevant to your project, then execute `pyinstaller build.spec` to bundle your app into a ready-to-go executable. 
 

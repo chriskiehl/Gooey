@@ -1,9 +1,10 @@
-import wx
+import wx  # type: ignore
 
 from gooey.gui import formatters
 from gooey.gui.components.widgets.bases import TextContainer
 from gooey.gui.lang.i18n import _
 from gooey.gui.util import wx_util
+from gooey.python_bindings import types as t
 
 
 class CheckBox(TextContainer):
@@ -52,6 +53,25 @@ class CheckBox(TextContainer):
 
     def hideInput(self):
         self.widget.Hide()
+
+
+    def getUiState(self) -> t.FormField:
+        return t.Checkbox(
+            id=self._id,
+            type='Checkbox',
+            checked=self.widget.GetValue(),
+            error=self.error.GetLabel() or None,  # type: ignore
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )
+
+    def syncUiState(self, state: t.Checkbox):  # type: ignore
+        checkbox: wx.CheckBox = self.widget
+        checkbox.SetValue(state['checked'])
+        checkbox.Enable(state['enabled'])
+        self.Show(state['visible'])
+        self.error.SetLabel(state['error'] or '')
+        self.error.Show(state['error'] is not None and state['error'] is not '')
 
 
 

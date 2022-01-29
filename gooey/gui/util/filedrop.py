@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 
 class FileDrop(wx.FileDropTarget):

@@ -1,5 +1,5 @@
-import wx
-import wx.lib.agw.multidirdialog as MDD
+import wx  # type: ignore
+import wx.lib.agw.multidirdialog as MDD  # type: ignore
 import os
 import re
 

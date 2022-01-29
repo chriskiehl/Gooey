@@ -43,8 +43,8 @@ class TestGooeySlider(unittest.TestCase):
         for inputs, expected in cases:
             with self.subTest(inputs):
                 parser = self.makeParser(**inputs)
-                with instrumentGooey(parser) as (app, gooeyApp):
-                    slider = gooeyApp.configs[0].reifiedWidgets[0]
+                with instrumentGooey(parser) as (app, frame, gapp):
+                    slider = gapp.getActiveConfig().reifiedWidgets[0]
                     self.assertEqual(slider.getValue()['rawValue'], expected)
 
     def testZerosAreReturned(self):
@@ -53,8 +53,8 @@ class TestGooeySlider(unittest.TestCase):
         it being interpreted as falsey
         """
         parser = self.makeParser()
-        with instrumentGooey(parser) as (app, gooeyApp):
-            field = gooeyApp.configs[0].reifiedWidgets[0]
+        with instrumentGooey(parser) as (app, frame, gapp):
+            field = gapp.getActiveConfig().reifiedWidgets[0]
             result = field.getValue()
             self.assertEqual(result['rawValue'], 0)
             self.assertIsNotNone(result['cmd'])

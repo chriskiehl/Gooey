@@ -3,8 +3,8 @@ Utilities for loading, resizing and converting between PIL and WX image formats
 '''
 
 import six
-from PIL import Image
-import wx
+from PIL import Image  # type: ignore
+import wx  # type: ignore
 
 from gooey.gui.three_to_four import bitmapFromBufferRGBA
 

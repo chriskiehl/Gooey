@@ -1,6 +1,6 @@
 from gooey.gui.lang.i18n import _
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui.three_to_four import Constants
 
@@ -47,10 +47,7 @@ class BaseDialog(wx.Dialog):
     """
       Return the value chosen in the picker.
       The method is called GetPath() instead of getPath() to emulate the WX Pickers API.
-      This allows the Chooser class to work same way with native WX dialogs or childs of BaseDialog.
+      This allows the Chooser class to work same way with native WX dialogs or children of BaseDialog.
     """
 
     return self.pickerGetter(self.picker)
-
-
-

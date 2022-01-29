@@ -1,9 +1,12 @@
 """
 A collection of functional utilities/helpers
 """
-from functools import reduce
+from functools import reduce, wraps
 from copy import deepcopy
 from itertools import chain, dropwhile
+from typing import Tuple, Any, List, Union
+
+from gooey.python_bindings.types import Try, Success, Failure
 
 
 def getin(m, path, default=None):
@@ -38,6 +41,17 @@ def associn(m, path, value):
     return assoc_recursively(m, path, value)
 
 
+def associnMany(m, *args: Tuple[Union[str, List[str]], Any]):
+    def apply(_m, change: Tuple[Union[str, List[str]], Any]):
+        path, value = change
+        if isinstance(path, list):
+            return associn(_m, path, value)
+        else:
+            return associn(_m, path.split('.'), value)
+    return reduce(apply, args, m)
+
+
+
 def merge(*maps):
     """Merge all maps left to right"""
     copies = map(deepcopy, maps)
@@ -57,12 +71,6 @@ def indexunique(f, coll):
     Note: duplicates, if present, are overwritten
     """
     return zipmap(map(f, coll), coll)
-
-
-def findfirst(f, coll):
-    """Return first occurrence matching f, otherwise None"""
-    result = list(dropwhile(f, coll))
-    return result[0] if result else None
 
 
 def zipmap(keys, vals):
@@ -99,3 +107,14 @@ def unit(val):
 
 def bind(val, f):
     return f(val) if val else None
+
+
+def lift(f):
+    @wraps(f)
+    def inner(x) -> Try:
+        try:
+            return Success(f(x))
+        except Exception as e:
+            return Failure(e)
+    return inner
+

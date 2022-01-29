@@ -7,7 +7,7 @@ def _include_layout_docs(f):
     Combines the layout_options docsstring with the
     wrapped function's doc string.
     """
-    f.__doc__ = (f.__doc__ or '') + LayoutOptions.__doc__
+    f.__doc__ = (f.__doc__ or '') + (LayoutOptions.__doc__ or '')
     return f
 
 
@@ -156,7 +156,7 @@ def RichTextConsole(**layout_options):
 @_include_global_option_docs
 def ListBox(initial_value=None, height=None, **layout_options):
     """
-    :param height: The height of the ListBox
+    :param height: The height of the Listbox
     """
     return _clean(locals())
 

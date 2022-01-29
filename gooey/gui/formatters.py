@@ -3,18 +3,87 @@ import os
 import itertools
 
 from gooey.gui.util.quoting import quote
+from gooey.python_bindings.types import EnrichedItem, FormField
+from gooey.gui.constants import VALUE_PLACEHOLDER, RADIO_PLACEHOLDER
+from gooey.util.functional import assoc, associnMany
+
+
+def value(field: FormField):
+    if field['type'] in ['Checkbox', 'BlockCheckbox']:
+        return field['checked']   # type: ignore
+    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
+        return field['selected']   # type: ignore
+    elif field['type'] == 'RadioGroup':
+        if field['selected'] is not None:  # type: ignore
+            return value(field['options'][field['selected']])  # type: ignore
+        else:
+            return None
+    else:
+        return field['value'] # type: ignore
+
+
+def add_placeholder(field: FormField, placeholder=VALUE_PLACEHOLDER):
+    """
+    TODO: Docs about placeholders
+    """
+    if field['type'] in ['Checkbox', 'CheckBox', 'BlockCheckbox']:
+        # there's no sane placeholder we can make for this one, as
+        # it's kind of a nonsensical case: a required optional flag.
+        # We set it to True here, which is equally nonsensical, but
+        # ultimately will allow the validation to pass. We have no
+        # way of passing a placeholder without even MORE monket patching
+        # of the user's parser to rewrite the action type
+        return assoc(field, 'checked', True)
+    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
+        return assoc(field, 'selected', placeholder)
+    elif field['type'] == 'RadioGroup':
+        # We arbitrarily attach a placeholder for first RadioGroup option
+        # and mark it as the selected one.
+        return {
+            **field,
+            'selected': 0,
+            'options': [
+                add_placeholder(field['options'][0], placeholder=RADIO_PLACEHOLDER),  # type: ignore
+                *field['options'][1:]  # type: ignore
+            ]
+        }
+    else:
+        return assoc(field, 'value', placeholder)
+
+
+def formatArgument(item: EnrichedItem):
+    if item['type'] in ['Checkbox', 'CheckBox', 'BlockCheckbox']:
+        return checkbox(item['data'], value(item['field']))
+    elif item['type'] == 'MultiFileChooser':
+        return multiFileChooser(item['data'], value(item['field']))
+    elif item['type'] == 'Textarea':
+        return textArea(item['data'], value(item['field']))
+    elif item['type'] == 'CommandField':
+        return textArea(item['data'], value(item['field']))
+    elif item['type'] == 'Counter':
+        return counter(item['data'], value(item['field']))
+    elif item['type'] == 'Dropdown':
+        return dropdown(item['data'], value(item['field']))
+    elif item['type'] == 'Listbox':
+        return listbox(item['data'], value(item['field']))
+    elif item['type'] == 'RadioGroup':
+        selected = item['field']['selected']  # type: ignore
+        if selected is not None:
+            formField = item['field']['options'][selected]  # type: ignore
+            argparseDefinition = item['data']['widgets'][selected]  # type: ignore
+            return formatArgument(assoc(argparseDefinition, 'field', formField))  # type: ignore
+        else:
+            return None
+    else:
+        return general(item['data'], value(item['field']))
+
+
+def placeholder(item: EnrichedItem):
+    pass
 
 
 def checkbox(metadata, value):
     return metadata['commands'][0] if value else None
-
-
-def radioGroup(metadata, value):
-    # TODO
-    try:
-        return self.commands[self._value.index(True)][0]
-    except ValueError:
-        return None
 
 
 def multiFileChooser(metadata, value):

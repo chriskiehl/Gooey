@@ -1,0 +1,1 @@
+['C:/Users/Chris/Documents/Gooey/gooey/tests/dynamics/files/basic.py', '--ignore-gooey', '--', '1234']

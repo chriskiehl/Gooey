@@ -19,11 +19,11 @@ class TestTextarea(unittest.TestCase):
         ]
         for options, expected in cases:
             parser = self.makeParser(gooey_options=options)
-            with instrumentGooey(parser) as (app, gooeyApp):
+            with instrumentGooey(parser) as (app, frame, gapp):
                 # because of how poorly designed the Gooey widgets are
                 # we have to reach down 3 levels in order to find the
                 # actual WX object we need to test.
-                widget = gooeyApp.configs[0].reifiedWidgets[0]
+                widget = gapp.getActiveConfig().reifiedWidgets[0]
                 self.assertEqual(widget.widget.GetHint(), expected)
 
 

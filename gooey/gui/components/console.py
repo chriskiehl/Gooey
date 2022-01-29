@@ -1,6 +1,6 @@
 import webbrowser
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui.lang.i18n import _
 from .widgets.basictextconsole import BasicTextConsole
@@ -10,9 +10,10 @@ class Console(wx.Panel):
     '''
     Textbox console/terminal displayed during the client program's execution.
     '''
+    self_managed = True
 
     def __init__(self, parent, buildSpec, **kwargs):
-        wx.Panel.__init__(self, parent, **kwargs)
+        wx.Panel.__init__(self, parent, name='console', **kwargs)
         self.buildSpec = buildSpec
 
         self.text = wx.StaticText(self, label=_("status"))

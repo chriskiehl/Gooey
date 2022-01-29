@@ -1,11 +1,23 @@
 """
 Collection of Utility methods for creating often used, pre-styled wx Widgets
 """
+from functools import wraps
 
-import wx
+import wx  # type: ignore
 from contextlib import contextmanager
 
 from gooey.gui.three_to_four import Constants
+
+
+def callafter(f):
+    """
+    Wraps the supplied function in a wx.CallAfter
+    for Thread-safe interop with WX.
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        wx.CallAfter(f, *args, **kwargs)
+    return inner
 
 
 @contextmanager
@@ -19,8 +31,6 @@ def transactUI(obj):
     finally:
         obj.Layout()
         obj.Thaw()
-
-
 
 
 styles = {

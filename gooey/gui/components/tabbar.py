@@ -1,4 +1,4 @@
-import wx
+import wx  # type: ignore
 
 from gooey.gui import events
 from gooey.gui.pubsub import pub

@@ -4,7 +4,9 @@ Created on Dec 23, 2013
 @author: Chris
 '''
 
-import wx
+import wx  # type: ignore
+from rewx import wsx
+import rewx.components as c
 
 from gooey.gui import imageutil, image_repository
 from gooey.gui.util import wx_util
@@ -13,6 +15,9 @@ from gooey.util.functional import getin
 from gooey.gui.components.mouse import notifyMouseEvent
 
 PAD_SIZE = 10
+
+
+
 
 
 class FrameHeader(wx.Panel):
@@ -47,6 +52,7 @@ class FrameHeader(wx.Panel):
             img.Show(False)
         getattr(self, image).Show(True)
         self.Layout()
+
 
     def layoutComponent(self):
         self.SetBackgroundColour(self.buildSpec['header_bg_color'])

@@ -84,12 +84,12 @@ def is_bool(value):
 @lift
 def non_empty_string(value):
     """Must be a non-empty non-blank string"""
-    return value and bool(value.strip())
+    return bool(value) and bool(value.strip())
 
 @lift
 def is_tokenization_operator(value):
     """Operator must be a valid OperatorType i.e. one of: (AND, OR)"""
-    return value in (OperatorType.AND, OperatorType.OR)
+    return bool(value) in (OperatorType.AND, OperatorType.OR)
 
 @lift
 def is_tokenizer(value):

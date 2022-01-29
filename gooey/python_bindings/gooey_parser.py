@@ -1,6 +1,5 @@
 from argparse import ArgumentParser, _SubParsersAction
 from argparse import _MutuallyExclusiveGroup, _ArgumentGroup
-from textwrap import dedent
 
 
 class GooeySubParser(_SubParsersAction):
@@ -21,6 +20,7 @@ class GooeyArgumentGroup(_ArgumentGroup):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
+
         action = super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
@@ -54,18 +54,60 @@ class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
+
         super(GooeyMutuallyExclusiveGroup, self).add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
 
 
+class MyArgumentParser(ArgumentParser):
+    def __init__(self, **kwargs):
+        self._errors = []
+        super(MyArgumentParser, self).__init__(**kwargs)
+
+    def error(self, message):
+        self._errors.append(message)
+
+
+def lift_relevant(**kwargs):
+    """
+    Lifts the user's (likely) partial function into
+    total one of type `String -> Either Error a`
+    """
+    try:
+        # Not all Parser Actions accept a type function. Rather
+        # than track what allows what explicitly, we just try to
+        # pass the `type` var to constructor. If is doesn't
+        # explode, then we're good and we use the lifted type. Otherwise
+        # we use the original kwargs
+        p = ArgumentParser()
+        lifted_kwargs = {**kwargs, 'type': lift(kwargs.get('type', identity))}
+        p.add_argument('-a', **lifted_kwargs)
+        return lifted_kwargs
+    except TypeError as e:
+        return kwargs
+
+
+def cls_wrapper(cls, **options):
+    def inner(*args, **kwargs):
+        class ActionWrapper(cls):
+            def __call__(self, p, namespace, values, option_string, **qkwargs):
+                # print('hello from', options, namespace, values, option_string, qkwargs)
+                super(ActionWrapper, self).__call__(p, namespace, values, option_string, **qkwargs)
+        return ActionWrapper(*args, **kwargs)
+    return inner
+
 
 class GooeyParser(object):
     def __init__(self, **kwargs):
+        on_success = kwargs.pop('on_success', None)
+        on_error = kwargs.pop('on_error', None)
         self.__dict__['parser'] = ArgumentParser(**kwargs)
         self.widgets = {}
         self.options = {}
+        self.on_gooey_success = on_success
+        self.on_gooey_error = on_error
         if 'parents' in kwargs:
             for parent in kwargs['parents']:
                 if isinstance(parent, self.__class__):
@@ -89,7 +131,17 @@ class GooeyParser(object):
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
+        # TODO: move this to the control module. No need to do it
+        #       at creation time.
+        # lifted_kwargs = lift_relevant(**kwargs)
+        #
+        # action_cls = self.parser._pop_action_class(kwargs)
+        # enhanced_action = cls_wrapper(action_cls, **(options if options else {}))
+        #
+        # action = self.parser.add_argument(*args, **{**lifted_kwargs, 'action': enhanced_action})
+
         action = self.parser.add_argument(*args, **kwargs)
+
         self.parser._actions[-1].metavar = metavar
 
         action_dest = self.parser._actions[-1].dest
@@ -167,3 +219,4 @@ class GooeyParser(object):
 
     def __setattr__(self, key, value):
         return setattr(self.parser, key, value)
+

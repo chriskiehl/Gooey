@@ -1,6 +1,6 @@
 
 
-def runValidator(f, value):
+def runValidator(f, value) -> bool:
     """
     Attempt to run the user supplied validation function
 

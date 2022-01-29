@@ -75,7 +75,7 @@ The `Analysis` section is where you'll tell PyInstaller about your program. Usin
 
 Next is `EXE`. In this section you'll replace the `name` argument with what you'd like the final `.exe` to be named.
 
->Note: if you're providing your own icon file, EXE is where you'll provide it.   
+>Note: if you're providing your own icon file, EXE is where you'll provide it. If you're on Windows, you must provide an .ico file (not PNG).
 
 If you're on OSX, you'll have an additional `BUNDLE` section. You'll need to make one final edit here as well to control the name of the `.app` bundle that PyInstaller produces. Additionally, if you're customizing the bundle's icon, this is where you would supply the override (versus Windows, which places it in the EXE section). 
 

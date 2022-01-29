@@ -1,9 +1,10 @@
 import webbrowser
 from functools import partial
 
-import wx
+import wx  # type: ignore
 
 from gooey.gui import three_to_four
+from gooey.gui.components.dialogs import HtmlDialog
 
 
 class MenuBar(wx.MenuBar):
@@ -38,7 +39,8 @@ class MenuBar(wx.MenuBar):
         handlers = {
             'Link': self.openBrowser,
             'AboutDialog': self.spawnAboutDialog,
-            'MessageDialog': self.spawnMessageDialog
+            'MessageDialog': self.spawnMessageDialog,
+            'HtmlDialog': self.spawnHtmlDialog
         }
         f = handlers[item['type']]
         return partial(f, item)
@@ -57,6 +59,10 @@ class MenuBar(wx.MenuBar):
         """
         wx.MessageDialog(self, item.get('message', ''),
                                caption=item.get('caption', '')).ShowModal()
+
+
+    def spawnHtmlDialog(self, item, *args, **kwargs):
+        HtmlDialog(caption=item.get('caption', ''), html=item.get('html')).ShowModal()
 
 
     def spawnAboutDialog(self, item, *args, **kwargs):
@@ -79,3 +85,5 @@ class MenuBar(wx.MenuBar):
                 getattr(about, method)(item[field])
 
         three_to_four.AboutBox(about)
+
+

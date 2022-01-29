@@ -1,6 +1,6 @@
 import re
 
-import pygtrie as trie
+import pygtrie as trie  # type: ignore
 from functools import reduce
 
 __ALL__ = ('PrefixTokenizers', 'PrefixSearch')
@@ -51,7 +51,7 @@ class PrefixSearch(object):
 
     def updateChoices(self, choices):
         self.choices = sorted(filter(None, choices))
-        self.searchtree = trie.Trie()
+        self.searchtree = self.buildSearchTrie(choices)
 
     def findMatches(self, token):
         if not token:

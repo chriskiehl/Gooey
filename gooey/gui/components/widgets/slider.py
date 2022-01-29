@@ -1,7 +1,8 @@
-import wx
+import wx  # type: ignore
 
 from gooey.gui import formatters
 from gooey.gui.components.widgets.bases import TextContainer
+from gooey.python_bindings import types as t
 
 
 class Slider(TextContainer):
@@ -25,4 +26,15 @@ class Slider(TextContainer):
     def formatOutput(self, metatdata, value):
         return formatters.general(metatdata, str(value))
 
-
+    def getUiState(self) -> t.FormField:
+        widget: wx.Slider = self.widget
+        return t.Slider(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            value=self.getWidgetValue(),
+            min=widget.GetMin(),
+            max=widget.GetMax(),
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )

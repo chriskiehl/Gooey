@@ -13,7 +13,7 @@ from argparse import (
     _StoreTrueAction,
     _StoreAction,
     _SubParsersAction,
-    _VersionAction)
+    _VersionAction, _MutuallyExclusiveGroup)
 from collections import OrderedDict
 from functools import partial
 from uuid import uuid4
@@ -105,8 +105,8 @@ def convert(parser, **kwargs):
 
     group_defaults = {
         'legacy': {
-            'required_cols': kwargs['num_required_cols'],
-            'optional_cols': kwargs['num_optional_cols']
+            'required_cols': kwargs['required_cols'],
+            'optional_cols': kwargs['optional_cols']
         },
         'columns': 2,
         'padding': 10,
@@ -287,8 +287,11 @@ def categorize(actions, widget_dict, options):
         elif is_standard(action):
             yield action_to_json(action, _get_widget(action, 'TextField'), options)
         
-        elif is_file(action):
+        elif is_writemode_file(action):
             yield action_to_json(action, _get_widget(action, 'FileSaver'), options)
+
+        elif is_readmode_file(action):
+            yield action_to_json(action, _get_widget(action, 'FileChooser'), options)
 
         elif is_choice(action):
             yield action_to_json(action, _get_widget(action, 'Dropdown'), options)
@@ -355,8 +358,19 @@ def is_file(action):
     ''' action with FileType '''
     return isinstance(action.type, argparse.FileType)
 
+def is_readmode_file(action):
+    return is_file(action) and 'r' in action.type._mode
+
+def is_writemode_file(action):
+    # FileType uses the same modes as the builtin `open`
+    # as such, all modes that aren't explicitly `r` (which is
+    # also the default) are writable or read/writable, thus
+    # making a FileChooser a good choice.
+    return is_file(action) and 'r' not in action.type._mode
+
 def is_version(action):
-    return isinstance(action, _VersionAction)
+    return isinstance(action, _VersionAction) or issubclass(type(action), _VersionAction)
+
 
 def is_standard(action):
     """ actions which are general "store" instructions.
@@ -369,15 +383,20 @@ def is_standard(action):
     )
     return (not action.choices
             and not isinstance(action.type, argparse.FileType)
-            and not isinstance(action, _CountAction)
-            and not isinstance(action, _HelpAction)
+            and not isinstance(action, (_CountAction, _HelpAction))
+            # subclass checking is to handle the GooeyParser case
+            # where Action get wrapped in a custom class
+            and not issubclass(type(action), boolean_actions)
             and type(action) not in boolean_actions)
 
 
 def is_flag(action):
     """ _actions which are either storeconst, store_bool, etc.. """
+    # TODO: refactor to isinstance tuple form
     action_types = [_StoreTrueAction, _StoreFalseAction, _StoreConstAction]
-    return any(list(map(lambda Action: isinstance(action, Action), action_types)))
+    return (any(list(map(lambda Action: isinstance(action, Action), action_types)))
+            or issubclass(type(action), (_StoreTrueAction, _StoreFalseAction, _StoreConstAction)))
+
 
 
 def is_counter(action):
@@ -398,8 +417,9 @@ def choose_name(name, subparser):
 
 
 def build_radio_group(mutex_group, widget_group, options):
+  dests = [action.dest for action in mutex_group._group_actions]
   return {
-    'id': str(uuid4()),
+    'id': 'group_' + '_'.join(dests),
     'type': 'RadioGroup',
     'cli_type': 'optional',
     'group_name': 'Choose Option',
@@ -448,13 +468,13 @@ def action_to_json(action, widget, options):
     validate_gooey_options(action, widget, final_options)
 
     return {
-        'id': action.option_strings[0] if action.option_strings else action.dest,
+        'id': action.dest,
         'type': widget,
         'cli_type': choose_cli_type(action),
         'required': action.required,
         'data': {
             'display_name': action.metavar or action.dest,
-            'help': action.help,
+            'help': (action.help or '').replace('%%', '%'),
             'required': action.required,
             'nargs': action.nargs or '',
             'commands': action.option_strings,
@@ -535,7 +555,7 @@ def coerse_nargs_list(default):
     instance, ['one two', 'three'] => "one two" "three"
 
     This only applies when the target widget is a text input. List
-    based widgets such as ListBox should keep their defaults in list form
+    based widgets such as Listbox should keep their defaults in list form
 
     Without this transformation, `add_arg('--foo', default=['a b'], nargs='*')` would show up in
     the UI as the literal string `['a b']` brackets and all.
@@ -589,7 +609,7 @@ def clean_default(default):
         return default
     except TypeError as e:
         # see: Issue #377
-        # if is ins't json serializable (i.e. primitive data) there's nothing
+        # if is isn't json serializable (i.e. primitive data) there's nothing
         # useful for Gooey to do with it (since Gooey deals in primitive data
         # types). So the correct behavior is dropping them. This affects ONLY
         # gooey, not the client code.

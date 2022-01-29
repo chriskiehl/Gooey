@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
-import wx
-import wx.html
+import wx  # type: ignore
+import wx.html  # type: ignore
 
 import gooey.gui.events as events
 from gooey.gui.components.filtering.prefix_filter import PrefixSearch
@@ -9,6 +9,7 @@ from gooey.gui.components.mouse import notifyMouseEvent
 from gooey.gui.components.widgets.dropdown import Dropdown
 from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
+from gooey.python_bindings import types as t
 
 __ALL__ = ('FilterableDropdown',)
 
@@ -34,8 +35,8 @@ class FilterableDropdown(Dropdown):
 
     FAQ:
     Q: Why does it slide down rather than hover over elements like the native ComboBox?
-    A: The only mecahnism for layering in WX is the wx.PopupTransientWindow. There's a long
-       standing issue in wxPython which prevents ListBox/Ctrl from capturing events when
+    A: The only mechanism for layering in WX is the wx.PopupTransientWindow. There's a long
+       standing issue in wxPython which prevents Listbox/Ctrl from capturing events when
        inside of a PopupTransientWindow (see: https://tinyurl.com/y28ngh7v)
 
     Q: Why is visibility handled by changing its size rather than using Show/Hide?
@@ -109,6 +110,25 @@ class FilterableDropdown(Dropdown):
         # and keeps the tabbing at the top-level widget level
         self.listbox.AcceptsFocusFromKeyboard = lambda *args, **kwargs: False
         return self.comboCtrl
+
+    def getUiState(self) -> t.FormField:
+        widget: wx.ComboBox = self.widget
+        return t.DropdownFilterable(
+            id=self._id,
+            type=self.widgetInfo['type'],
+            value=self.model.actualValue,
+            choices=self.model.choices,
+            error=self.error.GetLabel() or None,
+            enabled=self.IsEnabled(),
+            visible=self.IsShown()
+        )
+
+    def syncUiState(self, state: t.DropdownFilterable):  # type: ignore
+        self.setOptions(state['choices'])
+        if state['value'] is not None:
+            self.setValue(state['value'])
+        self.error.SetLabel(state['error'] or '')
+        self.error.Show(state['error'] is not None and state['error'] is not '')
 
     def OnGetItem(self, n):
         return self.model.suggestions[n]

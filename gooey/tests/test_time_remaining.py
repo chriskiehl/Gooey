@@ -2,11 +2,13 @@ import time
 import unittest
 from argparse import ArgumentParser
 from itertools import *
-
+from gooey.gui import state as s
 from tests.harness import instrumentGooey
 
 
 from gooey.tests import *
+from gooey.util.functional import identity
+
 
 class TestFooterTimeRemaining(unittest.TestCase):
 
@@ -17,28 +19,32 @@ class TestFooterTimeRemaining(unittest.TestCase):
     def test_time_remaining_visibility(self):
         for testdata in self.testcases():
             with self.subTest(testdata):
-                with instrumentGooey(self.make_parser(), timing_options=testdata) as (app, gooeyApp):
+                with instrumentGooey(self.make_parser(), timing_options=testdata) as (app, frame, gapp):
 
-                    gooeyApp.showConsole()
-                    footer = gooeyApp.footer
+                    gapp.set_state(s.consoleScreen(identity, gapp.state))
+                    app: wx.App = app
+                    wx.CallLater(1, app.ExitMainLoop)
+                    app.MainLoop()
 
                     self.assertEqual(
-                        footer.time_remaining_text.Shown,
+                        frame.FindWindowByName('timing').Shown,
                         testdata.get('show_time_remaining',False)
                     )
 
     def test_time_remaining_visibility_on_complete(self):
         for testdata in self.testcases():
             with self.subTest(testdata):
-                with instrumentGooey(self.make_parser(), timing_options=testdata) as (app, gooeyApp):
+                with instrumentGooey(self.make_parser(), timing_options=testdata) as (app, frame, gapp):
 
-                    gooeyApp.showComplete()
-                    footer = gooeyApp.footer
+                    gapp.set_state(s.successScreen(identity, gapp.state))
+                    app: wx.App = app
+                    wx.CallLater(1, app.ExitMainLoop)
+                    app.MainLoop()
 
 
                     if not testdata.get('show_time_remaining') and testdata:
                         self.assertEqual(
-                            footer.time_remaining_text.Shown,
+                            frame.FindWindowByName('timing').Shown,
                             testdata.get('hide_time_remaining_on_complete',True)
                         )
                     else:
