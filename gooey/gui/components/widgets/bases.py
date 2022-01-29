@@ -3,7 +3,6 @@ from functools import reduce
 from typing import Optional, Callable, Any, Type, Union
 
 import wx  # type: ignore
-from mypy_extensions import KwArg
 
 from gooey.gui import formatters, events
 from gooey.gui.util import wx_util
@@ -16,10 +15,7 @@ from gooey.python_bindings import types as t
 
 
 class BaseWidget(wx.Panel):
-    widget_class: Union[
-        Type[Any],
-        Callable[[Any, KwArg(Any)], Any]
-    ]
+    widget_class: Any
 
     def arrange(self, label, text):
         raise NotImplementedError

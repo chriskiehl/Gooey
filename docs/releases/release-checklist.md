@@ -14,6 +14,7 @@
  - [ ] all debug prints removed  
  - [ ] setup.py version is updated 
  - [ ] __init__.py version is updated
+ - [ ] types check (for the most part) `./venv/Scripts/python.exe -m mypy /path/to/python_bindings/types.py`
  - [ ] pip install of release branch works.   
      - [ ] All Gooey Examples run and work as expected
  - [ ] pypi is updated 
