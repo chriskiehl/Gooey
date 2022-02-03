@@ -42,6 +42,11 @@ setup(
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License'
     ],
+    entry_points = {
+        'console_scripts': [
+            'gooey = gooey.application:main',
+        ],
+    },
     long_description='''
 
 Gooey (Beta)
