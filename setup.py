@@ -33,6 +33,7 @@ setup(
     install_requires=deps,
     include_package_data=True,
     dependency_links = ["http://www.wxpython.org/download.php"],
+    entry_points={'console_scripts': ['gooey = gooey.cli:main']},
     classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
