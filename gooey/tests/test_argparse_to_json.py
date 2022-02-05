@@ -7,8 +7,8 @@ from gooey import GooeyParser
 from gooey.python_bindings import argparse_to_json
 from gooey.util.functional import getin
 from gooey.tests import *
-from gui.components.options.options import FileChooser
-from gui.components.widgets import FileSaver
+from gooey.gui.components.options.options import FileChooser
+from gooey.gui.components.widgets import FileSaver
 
 
 class TestArgparse(unittest.TestCase):

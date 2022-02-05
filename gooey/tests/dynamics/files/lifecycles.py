@@ -1,5 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.join(__file__, '../../../../..'))
 from argparse import ArgumentParser
-
 from gooey import Events, Gooey, GooeyParser
 from gooey import types as t
 

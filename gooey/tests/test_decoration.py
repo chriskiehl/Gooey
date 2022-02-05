@@ -2,7 +2,7 @@ import unittest
 from argparse import ArgumentParser
 from functools import wraps
 
-from python_bindings.types import TimingOptions
+from gooey.python_bindings.types import TimingOptions
 
 
 # TODO:

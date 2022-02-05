@@ -1,7 +1,7 @@
 import unittest
 from collections import namedtuple
 
-from tests.harness import instrumentGooey
+from gooey.tests.harness import instrumentGooey
 from gooey import GooeyParser
 from gooey.tests import *
 

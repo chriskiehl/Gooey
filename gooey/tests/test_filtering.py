@@ -1,7 +1,7 @@
 import unittest
 
 from gooey import PrefixTokenizers
-from gui.components.filtering.prefix_filter import SearchOptions, PrefixSearch
+from gooey.gui.components.filtering.prefix_filter import SearchOptions, PrefixSearch
 from collections import namedtuple
 
 TestData = namedtuple('TestData', [

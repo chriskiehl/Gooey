@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from typing import Dict
 from unittest.mock import MagicMock
 
-from python_bindings.dynamics import patch_argument, monkey_patch_for_form_validation
+from gooey.python_bindings.dynamics import patch_argument, monkey_patch_for_form_validation
 
 
 class TestDynamicUpdates(unittest.TestCase):

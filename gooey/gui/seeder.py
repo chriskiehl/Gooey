@@ -6,6 +6,8 @@ import subprocess
 from json import JSONDecodeError
 from subprocess import CalledProcessError
 
+import os
+
 from gooey.python_bindings.types import Try, Success, Failure
 from gooey.python_bindings.coms import deserialize_inbound
 
@@ -26,7 +28,8 @@ def communicate(cmd, encoding) -> Try:
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            env=os.environ.copy()
         )
         out, err = proc.communicate()
         if out and proc.poll() == 0:
