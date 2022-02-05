@@ -46,6 +46,21 @@ You can find the current release branch by checking out the [branches page](http
 * Make sure it works on both Python 2.7 and Python 3.x (this is often overlooked!) 
 * Backwards compatibility must be honored 
 
+
+**How to run the test suite:**
+
+Gooey uses the good ol' fashion built in [unittest library](https://docs.python.org/3/library/unittest.html). 
+
+The unittest test docs give lots of examples for running indiviudal modules, classes, and methods. However, to run the entire suite, the easiest thing to do is just let unittest discover all the tests automatically. 
+
+```
+python -m unittest
+```
+
+>README! Important note on test stability! Some of the tests are _hellishly flakey_. I still haven't figured out how to make wxpython behave reliably across the numerous setup/teardowns that happen thorughout the test suite. Factor in launching subprocesses as part of everything else and... yeah, some tests will occassionally give false negatives. If you're seeing failures, run the tests individually, rather than part of the whole suite, to verify their true behavior. It remains a TODO to figure out the best way to run several instances of WxPython during the tests. 
+
+
+
 **When to PEP8:**
 
 The vast majority of Gooey's code does _not_ follow PEP8. This is because the vast majority of Gooey's code is build on top of WxPython code, which does not follow PEP8. Everything in Gooey's core honors the general camelCase style used throughout Wx. 
