@@ -2,7 +2,10 @@
 
 import sys
 from importlib import import_module
-from importlib.metadata import entry_points
+try:
+    from importlib.metadata import entry_points
+except ImportError:
+    from importlib_metadata import entry_points
 
 from gooey import Gooey
 
@@ -26,6 +29,9 @@ def main(args=None):
         # the path to a function was passed
         module_path, function_name = args[0].split(':')
         prog = module_path.split('.', 1)[0]
+    else:
+        print('usage: gooey [SCRIPT | MODULE:FUNCTION] [-- SCRIPT_ARGS...]', file=sys.stderr)
+        sys.exit(1)
     if len(args) > 1:
         if args[1] == '--':
             del args[1]
