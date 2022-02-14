@@ -38,4 +38,4 @@ def main(args=None):
     sys.argv = [prog, *args[1:]]
     module = import_module(module_path)
     function = getattr(module, function_name)
-    return Gooey(use_cmd_args=True)(function)
+    return Gooey(function, use_cmd_args=True)()
