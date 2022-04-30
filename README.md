@@ -733,7 +733,7 @@ Handlers are attached when instantiating the `GooeyParser`.
 ```python
 parser = GooeyParser(
     on_success=my_success_handler,
-    on_failure=my_failure_handler)
+    on_error=my_failure_handler)
 ``` 
 
 
