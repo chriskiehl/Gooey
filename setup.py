@@ -16,6 +16,7 @@ deps = [
     're-wx>=0.0.9',
     'typing-extensions==3.10.0.2',
     'wxpython>=4.1.0',
+    "dataclasses>=0.8;python_version<'3.7'",
 ]
 
 setup(
