@@ -705,7 +705,7 @@ Both `on_success` and `on_error` have the same type signature.
 
 ```python
 from typing import Mapping, Any, Optional
-from gooey.types import PublicGooeyState  
+from gooey.python_bindings.types import PublicGooeyState  
 
 def on_success(args: Mapping[str, Any], state: PublicGooeyState) -> Optional[PublicGooeyState]:
     """
