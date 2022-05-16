@@ -59,10 +59,12 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         # Actions for coloring text
         for index, hex in enumerate(kColorList):
             escSeq = '{}{}{}'.format(colored.fore.ESC, index, colored.fore.END)
+            escSeqShort = '\x1b[0;{}{}'.format(index, colored.fore.END)
             wxcolor = wx.Colour(int(hex[1:3],16), int(hex[3:5],16), int(hex[5:],16), alpha=wx.ALPHA_OPAQUE)
             # NB : we use a default parameter to force the evaluation of the binding
-            self.actionsMap[escSeq] = lambda bindedColor=wxcolor: self.BeginTextColour(bindedColor)
-            
+            self.actionsMap[escSeqShort] = self.actionsMap[escSeq] = \
+                lambda bindedColor=wxcolor: self.BeginTextColour(bindedColor)
+
         self.Bind(wx.EVT_MOUSEWHEEL, self.onMouseWheel)
 
 
