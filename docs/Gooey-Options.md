@@ -52,6 +52,7 @@ parser.add_argument('-my-arg', gooey_options={
     'help_bg_color': '#ffffff',
     'error_color': '#ffffff',
     'error_bg_color': '#ffffff',
+    'description_color': '#ffffff',
     'show_label': bool,
     'show_help': bool, 
     'visible': bool,
@@ -67,6 +68,7 @@ parser.add_argument('-my-arg', gooey_options={
 | help_bg_color | hex string | The background color of the help text. |
 | error_color | hex string | The foreground color of the error text (when visible). |
 | error_bg_color | hex string | The background color of the error text (when visible). |
+| description_color | hex string | The foreground color of description text. |
 | show_label | bool | Toggles whether or not to display the label text |
 | show_help | bool | Toggles whether or not to display the help text |
 | visible | bool | Hides the entire widget when `False`. Note: the widget is still present in the UI and will still send along any default values that have been provided in code. This option is here for when you want to hide certain advanced / dangerous inputs from your GUI users. |
