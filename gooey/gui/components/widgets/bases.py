@@ -196,10 +196,18 @@ class TextContainer(BaseWidget):
                    else eval('lambda user_input: bool(%s)' % userValidator)
         satisfies = testFunc if self._meta['required'] else ifPresent(testFunc)
         value = self.getWidgetValue()
+        cmd = self.formatOutput(self._meta, value)
+        if 'cli_formatter' in self._options:
+            cmd = self._options['cli_formatter'].format(cmd=cmd,
+                                                        value=value,
+                                                        id=self._id,
+                                                        meta=self._meta,
+                                                        options=self._options,
+                                                        dest=self._meta.get('dest'))
 
         return t.FieldValue(  # type: ignore
             id=self._id,
-            cmd=self.formatOutput(self._meta, value),
+            cmd=cmd,
             meta=self._meta,
             rawValue= value,
             # type=self.info['type'],

@@ -50,5 +50,33 @@ class TestCommonProperties(unittest.TestCase):
                         self.assertEqual(widget.getValue()['rawValue'], case.initialExpected)
 
 
+    def testCustomFormatter(self):
+        widgets = ['ColourChooser',
+                   'CommandField',
+                   'DateChooser', 'DirChooser', 'FileChooser', 'FileSaver',
+                   'FilterableDropdown',  'MultiDirChooser', 'MultiFileChooser',
+                   'PasswordField',  'TextField', 'Textarea', 'TimeChooser']
+
+        cases = [
+            Case(
+                {'default': 'default'},
+                 '--widget \'default\''),
+            Case(
+                {'default': 'default', 'gooey_options': {'cli_formatter': 'test=value'}},
+                'test=value'),
+            Case(
+                {'default': 'default', 'gooey_options': {'cli_formatter': '{dest}={value}'}},
+                'widget=default'),
+        ]
+
+        for widgetName in widgets:
+            with self.subTest(widgetName):
+                for case in cases:
+                    parser = self.makeParser(widget=widgetName, **case.inputs)
+                    with instrumentGooey(parser) as (app, gooeyApp):
+                        widget = gooeyApp.configs[0].reifiedWidgets[0]
+                        self.assertEqual(widget.getValue()['cmd'], case.initialExpected)
+
+
 if __name__ == '__main__':
     unittest.main()
