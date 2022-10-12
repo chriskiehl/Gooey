@@ -14,7 +14,7 @@ class MenuBar(wx.MenuBar):
     """
 
     def __init__(self, buildSpec, *args, **kwargs):
-        super(MenuBar,self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.buildSpec = buildSpec
         self.makeMenuItems(buildSpec.get('menu', []))
 
@@ -85,5 +85,3 @@ class MenuBar(wx.MenuBar):
                 getattr(about, method)(item[field])
 
         three_to_four.AboutBox(about)
-
-

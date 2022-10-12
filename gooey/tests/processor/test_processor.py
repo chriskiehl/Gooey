@@ -122,4 +122,3 @@ class TestProcessor(unittest.TestCase):
             # but indeed ignored. It continued running and writing to stdout after
             # receiving the signal
             self.assertTrue(output.index("INTERRUPT") < len(output))
-

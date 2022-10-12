@@ -1,8 +1,8 @@
 import unittest
 
-from gooey import PrefixTokenizers
-from gui.components.filtering.prefix_filter import SearchOptions, PrefixSearch
 from collections import namedtuple
+from gui.components.filtering.prefix_filter import SearchOptions, PrefixSearch
+from gooey import PrefixTokenizers
 
 TestData = namedtuple('TestData', [
     'options',
@@ -88,5 +88,3 @@ class TestPrefixFilter(unittest.TestCase):
                 searcher = PrefixSearch(self.testdata, case.options)
                 result = searcher.findMatches(case.input_string)
                 self.assertEqual(result, case.expected_results)
-
-

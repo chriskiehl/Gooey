@@ -276,4 +276,3 @@ def monkey_patch_for_form_validation(error_registry: Dict[str, Exception], parse
     # patch(parser, '_check_value', new_check_value)
     # parser._check_value = new_check_value.__get__(parser, ArgumentParser)
     return monkey_patch_check_value(parser, new_check_value)
-

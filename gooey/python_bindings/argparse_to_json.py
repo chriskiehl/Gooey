@@ -57,7 +57,6 @@ class UnsupportedConfiguration(Exception):
     pass
 
 
-
 # TODO: merge the default foreground and bg colors from the
 # baseline build_spec
 item_default = {
@@ -138,7 +137,8 @@ def process(parser, widget_dict, options, group_defaults):
     mutex_groups = parser._mutually_exclusive_groups
     raw_action_groups = [extract_groups(group, group_defaults) for group in parser._action_groups
                          if group._group_actions]
-    corrected_action_groups = reapply_mutex_groups(mutex_groups, raw_action_groups)
+    corrected_action_groups = reapply_mutex_groups(
+        mutex_groups, raw_action_groups)
 
     return categorize2(strip_empty(corrected_action_groups), widget_dict, options)
 
@@ -159,15 +159,14 @@ def iter_parsers(parser):
     ''' Iterate over name, parser pairs '''
     try:
         return get_subparser(parser._actions).choices.items()
-    except:
+    except Exception:
         return iter([('::gooey/default', parser)])
 
 
 def get_subparser_help(parser):
     if isinstance(parser, GooeyParser):
         return getattr(parser.parser, 'usage', '')
-    else:
-        return getattr(parser, 'usage', '')
+    return getattr(parser, 'usage', '')
 
 
 def extract_groups(action_group, group_defaults):
@@ -212,11 +211,9 @@ def handle_option_merge(group_defaults, incoming_options, title):
         req_cols = getin(group_defaults, ['legacy', 'required_cols'], 2)
         new_defaults = assoc(group_defaults, 'columns', req_cols)
         return merge(new_defaults, incoming_options)
-    else:
-        opt_cols = getin(group_defaults, ['legacy', 'optional_cols'], 2)
-        new_defaults = assoc(group_defaults, 'columns', opt_cols)
-        return merge(new_defaults, incoming_options)
-
+    opt_cols = getin(group_defaults, ['legacy', 'optional_cols'], 2)
+    new_defaults = assoc(group_defaults, 'columns', opt_cols)
+    return merge(new_defaults, incoming_options)
 
 
 def apply_default_rewrites(spec):
@@ -257,7 +254,7 @@ def reapply_mutex_groups(mutex_groups, action_groups):
                 actions[targetindex] = mutexgroup
                 # remove the duplicated individual actions
                 actions = [action for action in actions
-                        if action not in mutex_actions]
+                           if action not in mutex_actions]
         return actions
 
     return [group.update({'items': swap_actions(group['items'])}) or group
@@ -271,7 +268,7 @@ def categorize2(groups, widget_dict, options):
         'items': list(categorize(group['items'], widget_dict, options)),
         'groups': categorize2(group['groups'], widget_dict, options),
         'description': group['description'],
-        'options': merge(defaults ,group['options'])
+        'options': merge(defaults, group['options'])
     } for group in groups]
 
 
@@ -286,7 +283,7 @@ def categorize(actions, widget_dict, options):
 
         elif is_standard(action):
             yield action_to_json(action, _get_widget(action, 'TextField'), options)
-        
+
         elif is_writemode_file(action):
             yield action_to_json(action, _get_widget(action, 'FileSaver'), options)
 
@@ -300,7 +297,8 @@ def categorize(actions, widget_dict, options):
             yield action_to_json(action, _get_widget(action, 'CheckBox'), options)
 
         elif is_counter(action):
-            _json = action_to_json(action, _get_widget(action, 'Counter'), options)
+            _json = action_to_json(
+                action, _get_widget(action, 'Counter'), options)
             # pre-fill the 'counter' dropdown
             _json['data']['choices'] = list(map(str, range(0, 11)))
             yield _json
@@ -319,7 +317,7 @@ def is_required(action):
     through `nargs` being '*' or '?'
     '''
     return not isinstance(action, _SubParsersAction) and (
-    action.required == True and action.nargs not in ['*', '?'])
+        action.required is True and action.nargs not in ['*', '?'])
 
 
 def is_mutex(action):
@@ -354,12 +352,15 @@ def is_choice(action):
     ''' action with choices supplied '''
     return action.choices
 
+
 def is_file(action):
     ''' action with FileType '''
     return isinstance(action.type, argparse.FileType)
 
+
 def is_readmode_file(action):
     return is_file(action) and 'r' in action.type._mode
+
 
 def is_writemode_file(action):
     # FileType uses the same modes as the builtin `open`
@@ -367,6 +368,7 @@ def is_writemode_file(action):
     # also the default) are writable or read/writable, thus
     # making a FileChooser a good choice.
     return is_file(action) and 'r' not in action.type._mode
+
 
 def is_version(action):
     return isinstance(action, _VersionAction) or issubclass(type(action), _VersionAction)
@@ -398,7 +400,6 @@ def is_flag(action):
             or issubclass(type(action), (_StoreTrueAction, _StoreFalseAction, _StoreConstAction)))
 
 
-
 def is_counter(action):
     """ _actions which are of type _CountAction """
     return isinstance(action, _CountAction)
@@ -417,19 +418,19 @@ def choose_name(name, subparser):
 
 
 def build_radio_group(mutex_group, widget_group, options):
-  dests = [action.dest for action in mutex_group._group_actions]
-  return {
-    'id': 'group_' + '_'.join(dests),
-    'type': 'RadioGroup',
-    'cli_type': 'optional',
-    'group_name': 'Choose Option',
-    'required': mutex_group.required,
-    'options': merge(item_default, getattr(mutex_group, 'gooey_options', {})),
-    'data': {
-      'commands': [action.option_strings for action in mutex_group._group_actions],
-      'widgets': list(categorize(mutex_group._group_actions, widget_group, options))
+    dests = [action.dest for action in mutex_group._group_actions]
+    return {
+        'id': 'group_' + '_'.join(dests),
+        'type': 'RadioGroup',
+        'cli_type': 'optional',
+        'group_name': 'Choose Option',
+        'required': mutex_group.required,
+        'options': merge(item_default, getattr(mutex_group, 'gooey_options', {})),
+        'data': {
+            'commands': [action.option_strings for action in mutex_group._group_actions],
+            'widgets': list(categorize(mutex_group._group_actions, widget_group, options))
+        }
     }
-  }
 
 
 def action_to_json(action, widget, options):
@@ -455,14 +456,13 @@ def action_to_json(action, widget, options):
         },
     })
 
-    if (options.get(action.dest) or {}).get('initial_value') != None:
+    if (options.get(action.dest) or {}).get('initial_value') is not None:
         value = options[action.dest]['initial_value']
-        options[action.dest]['initial_value'] = handle_initial_values(action, widget, value)
+        options[action.dest]['initial_value'] = handle_initial_values(
+            action, widget, value)
     default = handle_initial_values(action, widget, action.default)
     if default == argparse.SUPPRESS:
         default = None
-
-
 
     final_options = merge(base, options.get(action.dest) or {})
     validate_gooey_options(action, widget, final_options)
@@ -503,7 +503,7 @@ def validate_gooey_options(action, widget, options):
     debug which `gooey_option` key had an issue in a large program.
 
     That said "better is the enemy of done." This is good enough for now. It'll be
-    a TODO: better validation 
+    a TODO: better validation
     """
     errors = collect_errors(validators, options)
     if errors:
@@ -513,8 +513,8 @@ def validate_gooey_options(action, widget, options):
 
 def choose_cli_type(action):
     return 'positional' \
-            if action.required and not action.option_strings \
-            else 'optional'
+        if action.required and not action.option_strings \
+        else 'optional'
 
 
 def coerce_default(default, widget):
@@ -562,6 +562,7 @@ def coerse_nargs_list(default):
     """
     return ' '.join('"{}"'.format(x) for x in default)
 
+
 def is_widget(name):
     def equals(action, widget):
         return widget == name
@@ -584,7 +585,6 @@ def textinput_with_nargs_and_list_default(action, widget):
 def is_list_based_nargs(action):
     """ """
     return isinstance(action.nargs, int) or action.nargs in {'*', '+', '...'}
-
 
 
 def clean_list_defaults(default_values):
@@ -623,8 +623,7 @@ def safe_string(value):
     """
     if value is None or isinstance(value, bool):
         return value
-    else:
-        return str(value)
+    return str(value)
 
 
 def coerce_str(value):
@@ -632,7 +631,6 @@ def coerce_str(value):
     Coerce the incoming type to string as long as it isn't None
     """
     return str(value) if value is not None else value
-
 
 
 def this_is_a_comment(action, widget):

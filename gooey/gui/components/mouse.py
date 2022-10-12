@@ -17,7 +17,7 @@ See: https://github.com/wxWidgets/Phoenix/blob/705aa63d75715f8abe484f4559a37cb6b
 
 
 from gooey.gui.pubsub import pub
-import gooey.gui.events as events
+from gooey.gui import events
 
 def notifyMouseEvent(event):
     """

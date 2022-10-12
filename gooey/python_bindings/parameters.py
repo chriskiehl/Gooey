@@ -148,5 +148,4 @@ def parse_events(events: List[str]) -> List[str]:
             f'nrecognized event(s) were passed to `use_events`: {unknown_events}\n'
             f'Must be one of {Events._fields}\n'
             f'Consider using the `Events` object: `from gooey import Events`')
-    else:
-        return events
+    return events

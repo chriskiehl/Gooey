@@ -1,7 +1,8 @@
 import re
 
-import pygtrie as trie  # type: ignore
 from functools import reduce
+import pygtrie as trie  # type: ignore
+
 
 __ALL__ = ('PrefixTokenizers', 'PrefixSearch')
 
@@ -38,7 +39,7 @@ class SearchOptions:
 
 
 
-class PrefixSearch(object):
+class PrefixSearch():
     """
     A trie backed index for quickly finding substrings
     in a list of options.
@@ -86,8 +87,7 @@ class PrefixSearch(object):
             return [token[i:]
                     for token in tokens
                     for i in range(len(token) - 2)]
-        else:
-            return tokens
+        return tokens
 
     def clean(self, text):
         return text.lower() if self.options.ignore_case else text

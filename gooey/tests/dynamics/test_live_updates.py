@@ -98,4 +98,3 @@ class TestLiveDynamicUpdates(unittest.TestCase):
                     textfield = gapp.getActiveFormState()[0]
                     print(case['expected_update'], textfield['value'])
                     self.assertEqual(case['expected_update'], textfield['value'])
-

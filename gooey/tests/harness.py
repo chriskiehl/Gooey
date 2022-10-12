@@ -22,7 +22,7 @@ def instrumentGooey(parser, **kwargs) -> Tuple[wx.App, wx.Frame, RGooey]:
     Weirdness warning: this uses a globally reused wx.App instance.
     """
     from gooey.tests import app
-    if app == None:
+    if app is None:
         raise Exception("App instance has not been created! This is likely due to "
                         "you forgetting to add the magical import which makes all these "
                         "tests work. See the module doc in gooey.tests.__init__ for guidance")

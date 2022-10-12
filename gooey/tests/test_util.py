@@ -24,7 +24,7 @@ class TestTimeUtil(unittest.TestCase):
         _start_time = get_current_time()
         self.assertGreater(_start_time,0)
 
-    
+
     def test_format_interval(self):
         # Test same as TQDM https://github.com/tqdm/tqdm/blob/0cd9448b2bc08125e74538a2aea6af42ee1a7b6f/tqdm/tests/tests_tqdm.py#L234
         # but in unittest form

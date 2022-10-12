@@ -1,10 +1,11 @@
-import wx
 import time
 import unittest
+import wx
 
-from gooey.gui.lang.i18n import _
 from tests.integration.programs import \
     all_widgets_subparser  as all_widgets_subparser_module
+from gooey.gui.lang.i18n import _
+
 
 
 class TestGooeyIntegration11(unittest.TestCase):
@@ -54,9 +55,3 @@ class TestGooeyIntegration11(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-

@@ -4,7 +4,7 @@ from functools import wraps
 from gooey.gui.components.filtering.prefix_filter import OperatorType
 
 
-class SuperBool(object):
+class SuperBool():
     """
     A boolean which keeps with it the rationale
     for when it is false.
@@ -117,12 +117,11 @@ def is_valid_color(value):
     """Must be either a valid hex string or RGB list"""
     if is_str(value):
         return is_hex_string(value)
-    elif is_tuple_or_list(value):
+    if is_tuple_or_list(value):
         return (is_tuple_or_list(value)
                 and is_three_channeled(value)
                 and has_valid_channel_values(value))
-    else:
-        return is_str_or_coll(value)
+    return is_str_or_coll(value)
 
 
 validators = {
@@ -197,5 +196,3 @@ if __name__ == '__main__':
     # print(is_valid_color([255, 244, 256]))
     # print(non_empty_string('asdf') and non_empty_string('asdf'))
     # validate(is_valid_color, 1234)
-
-

@@ -30,7 +30,7 @@ class AutoWrappedStaticText(wx.StaticText):
 
     def __init__(self, parent, *args, **kwargs):
         self.target = kwargs.pop('target', None)
-        super(AutoWrappedStaticText, self).__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self.label = kwargs.get('label')
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.parent = parent

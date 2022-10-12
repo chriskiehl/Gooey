@@ -4,6 +4,10 @@ from json import JSONDecodeError
 import six
 import wx  # type: ignore
 
+from rewx import components as c  # type: ignore
+from rewx import wsx  # type: ignore
+from rewx.core import Component, Ref  # type: ignore
+
 from gooey import Events
 from gooey.gui import events
 from gooey.gui import host
@@ -28,9 +32,7 @@ from gooey.python_bindings.types import PublicGooeyState
 from gooey.python_bindings.types import Try
 from gooey.util.functional import assoc
 from gooey.gui.util.time import Timing
-from rewx import components as c  # type: ignore
-from rewx import wsx  # type: ignore
-from rewx.core import Component, Ref  # type: ignore
+
 
 
 class RGooey(Component):
@@ -107,7 +109,7 @@ class RGooey(Component):
         if self.state['fullscreen']:
             frame.ShowFullScreen(True)
 
-        if self.state['show_preview_warning'] and not 'unittest' in sys.modules.keys():
+        if self.state['show_preview_warning'] and not 'unittest' in sys.modules:
             wx.MessageDialog(None, caption='YOU CAN DISABLE THIS MESSAGE',
                              message="""
                 This is a preview build of 1.2.0! There may be instability or 
@@ -354,7 +356,3 @@ class RGooey(Component):
               [c.StaticLine, {'style': wx.LI_HORIZONTAL, 'flag': wx.EXPAND}],
               [RFooter, self.fprops(self.state)]]]
         )
-
-
-
-

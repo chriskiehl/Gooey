@@ -24,7 +24,7 @@ def merge_dictionaries(x,y):
         y = {}
     try:
         return {**x,**y}
-    except:
+    except Exception:
         z = x.copy()
         z.update(y)
         return z

@@ -25,6 +25,5 @@ def fetchDynamicValidations(self) -> Try[Mapping[str, str]]:
             cmd.positionals,
             cmd.optionals
         ), self.buildSpec['encoding'])
-    else:
-        # shim response if nothing to do.
-        return Success({})
+    # shim response if nothing to do.
+    return Success({})

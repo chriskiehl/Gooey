@@ -31,8 +31,6 @@ def communicate(cmd, encoding) -> Try:
         out, err = proc.communicate()
         if out and proc.poll() == 0:
             return Success(deserialize_inbound(out, encoding))
-        else:
-            return Failure(CalledProcessError(proc.returncode, cmd, output=out, stderr=err))
+        return Failure(CalledProcessError(proc.returncode, cmd, output=out, stderr=err))
     except JSONDecodeError as e:
         return Failure(e)
-

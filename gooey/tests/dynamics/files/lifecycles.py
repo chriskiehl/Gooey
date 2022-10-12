@@ -4,7 +4,7 @@ from gooey import Events, Gooey, GooeyParser
 from gooey import types as t
 
 
-with open('tmp.txt', 'w') as f:
+with open('tmp.txt', 'w', encoding='utf-8') as f:
     import sys
     f.write(str(sys.argv))
 
@@ -38,4 +38,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

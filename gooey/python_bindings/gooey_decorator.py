@@ -48,4 +48,3 @@ def Gooey(f=None, **gkwargs):
         return Gooey(func, **params)
 
     return inner if callable(f) else thunk
-

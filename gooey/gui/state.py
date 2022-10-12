@@ -114,7 +114,7 @@ def activeFormState(state: FullGooeyState):
 
 def buildInvocationCmd(state: FullGooeyState):
     pieces = cli_pieces(state)
-    return u' '.join(compact([
+    return ' '.join(compact([
         pieces.target,
         pieces.subcommand,
         *pieces.optionals,
@@ -141,7 +141,7 @@ def buildOnCompleteCmd(state: FullGooeyState, was_success: bool):
     pieces = cli_pieces(state)
     serializedForm = json.dumps({'active_form': activeFormState(state)})
     b64ecoded = b64encode(serializedForm.encode('utf-8'))
-    return u' '.join(compact([
+    return ' '.join(compact([
         pieces.target,
         pieces.subcommand,
         *pieces.optionals,
@@ -168,15 +168,14 @@ def cmdOrPlaceholderOrNone(item: EnrichedItem) -> Optional[str]:
     # it actually being missing.
     if item['cli_type'] == 'positional':
         return formatArgument(item) or VALUE_PLACEHOLDER
-    elif item['cli_type'] != 'positional' and item['required']:
+    if item['cli_type'] != 'positional' and item['required']:
         # same rationale applies here. We supply the argument
         # along with a fixed placeholder (when relevant i.e. `store`
         # actions)
         return formatArgument(item) or formatArgument(assoc(item, 'field', add_placeholder(item['field'])))
-    else:
-        # Optional values are, well, optional. So, like usual, we send
-        # them if present or drop them if not.
-        return formatArgument(item)
+    # Optional values are, well, optional. So, like usual, we send
+    # them if present or drop them if not.
+    return formatArgument(item)
 
 
 
@@ -412,7 +411,6 @@ def present_time(timer):
     elapsed_time_value = timer['elapsed_time']
     if elapsed_time_value is None:
         return ''
-    elif estimate_time_remaining is not None:
+    if estimate_time_remaining is not None:
         return f'{elapsed_time_value}<{estimate_time_remaining}'
-    else:
-        return f'{elapsed_time_value}'
+    return f'{elapsed_time_value}'

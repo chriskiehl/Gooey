@@ -14,7 +14,7 @@ class RadioGroup(BaseWidget):
     """
 
     def __init__(self, parent, widgetInfo, *args, **kwargs):
-        super(RadioGroup, self).__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self._parent = parent
         self.info = widgetInfo
         self._id = widgetInfo['id']

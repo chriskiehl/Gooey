@@ -1,7 +1,7 @@
-import wx  # type: ignore
-import wx.lib.agw.multidirdialog as MDD  # type: ignore
 import os
 import re
+import wx  # type: ignore
+import wx.lib.agw.multidirdialog as MDD  # type: ignore
 
 from gooey.gui.components.widgets.core.text_input import TextInput
 from gooey.gui.components.widgets.dialogs.calender_dialog import CalendarDlg
@@ -31,7 +31,7 @@ class Chooser(wx.Panel):
         'pathsep': str
     }
     def __init__(self, parent, *args, **kwargs):
-        super(Chooser, self).__init__(parent)
+        super().__init__(parent)
         self.options = parent._options
         buttonLabel = kwargs.pop('label', _('browse'))
         self.widget = TextInput(self, *args, **kwargs)
@@ -153,7 +153,7 @@ class DateChooser(Chooser):
     """ Launches a date picker which returns an ISO Date """
     def __init__(self, *args, **kwargs):
         defaults = {'label': _('choose_date')}
-        super(DateChooser, self).__init__(*args, **merge(kwargs, defaults))
+        super().__init__(*args, **merge(kwargs, defaults))
 
     def getDialog(self):
         return CalendarDlg(self)
@@ -163,7 +163,7 @@ class TimeChooser(Chooser):
     """ Launches a time picker which returns and ISO Time """
     def __init__(self, *args, **kwargs):
         defaults = {'label': _('choose_time')}
-        super(TimeChooser, self).__init__(*args, **merge(kwargs, defaults))
+        super().__init__(*args, **merge(kwargs, defaults))
 
     def getDialog(self):
         return TimeDlg(self)
@@ -174,7 +174,7 @@ class ColourChooser(Chooser):
     def __init__(self, *args, **kwargs):
         defaults = {'label': _('choose_colour'),
                     'style': wx.TE_RICH}
-        super(ColourChooser, self).__init__(*args, **merge(kwargs, defaults))
+        super().__init__(*args, **merge(kwargs, defaults))
 
     def setValue(self, value):
         colour = wx.Colour(value)

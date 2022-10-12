@@ -28,14 +28,14 @@ def assert_visibility_requirements(action, options):
         raise ValueError(dedent(
             '''
             When using Gooey's hidden field functionality, you must either '
-      
+
               (a) provide a default value, or '
               (b) provide a custom validator'
-              
-            Without one of those, your users will be unable to advance past 
-            the configuration screen as they cannot interact with your 
-            hidden field, and the default validator requires something to 
-            be present for fields marked as `required`.  
+
+            Without one of those, your users will be unable to advance past
+            the configuration screen as they cannot interact with your
+            hidden field, and the default validator requires something to
+            be present for fields marked as `required`.
             '''
         ))
 
@@ -46,4 +46,3 @@ def assert_listbox_constraints(widget, **kwargs):
                 'Gooey\'s Listbox widget requires that nargs be specified.\n'
                 'Nargs must be set to either `*` or `+` (e.g. nargs="*")'
             )
-

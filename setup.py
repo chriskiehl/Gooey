@@ -3,7 +3,7 @@ import sys
 from setuptools import setup, find_packages
 
 
-with open('README.md') as readme:
+with open('README.md', encoding="utf-8") as readme:
     long_description = readme.read()
 
 version = '1.2.0-ALPHA'

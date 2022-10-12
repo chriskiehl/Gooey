@@ -2,9 +2,10 @@ import unittest
 from argparse import ArgumentParser
 from unittest.mock import patch
 
-from gooey import GooeyParser
 from tests.harness import instrumentGooey
 from gooey.tests import *
+from gooey import GooeyParser
+
 
 class TestGooeyDropdown(unittest.TestCase):
 

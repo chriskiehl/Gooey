@@ -5,7 +5,7 @@ import wx  # type: ignore
 from gooey.gui.pubsub import pub
 from gooey.gui import events
 
-class Timing(object):
+class Timing():
 
     def __init__(self, parent):
         self.startTime = 0
@@ -18,10 +18,10 @@ class Timing(object):
 
     def _updateEstimate(self, *args, **kwargs):
         prog = kwargs.get('progress')
-        if(not prog): 
+        if not prog:
             self.estimatedRemaining = None
             return
-        if(prog > 0):
+        if prog > 0:
             self.estimatedRemaining = estimate_time_remaining(prog,self.startTime)
 
     def publishTime(self, *args, **kwargs):
@@ -58,9 +58,8 @@ def format_interval(timeValue):
         h, m = divmod(mins, 60)
         if h:
             return '{0:d}:{1:02d}:{2:02d}'.format(h, m, s)
-        else:
-            return '{0:02d}:{1:02d}'.format(m, s)
-    except:
+        return '{0:02d}:{1:02d}'.format(m, s)
+    except Exception:
         return None
 
 def get_elapsed_time(startTime):
@@ -79,7 +78,7 @@ def estimate_time_remaining(progress,startTime):
     # https://github.com/tqdm/tqdm/blob/0cd9448b2bc08125e74538a2aea6af42ee1a7b6f/tqdm/std.py#L392
     # https://github.com/tqdm/tqdm/blob/0cd9448b2bc08125e74538a2aea6af42ee1a7b6f/tqdm/std.py#L417
     _rate = progress / get_elapsed_time(startTime)
-    return ((100 - progress) / _rate)
+    return (100 - progress) / _rate
 
 def get_current_time():
     """
@@ -91,6 +90,6 @@ def get_current_time():
     try:
         from time import perf_counter
         return perf_counter()
-    except:
+    except Exception:
         import timeit
         return timeit.default_timer()

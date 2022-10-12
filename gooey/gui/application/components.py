@@ -5,6 +5,11 @@ the main application window.
 import wx  # type: ignore
 from typing_extensions import TypedDict
 
+from rewx import components as c  # type: ignore
+from rewx import wsx, mount, update  # type: ignore
+from rewx.core import Component, Ref  # type: ignore
+from rewx.widgets import set_basic_props  # type: ignore
+
 from gooey.gui.components.config import ConfigPage, TabbedConfigPage
 from gooey.gui.components.console import Console
 from gooey.gui.components.mouse import notifyMouseEvent
@@ -15,10 +20,7 @@ from gooey.gui.pubsub import pub
 from gooey.gui.state import present_time
 from gooey.gui.three_to_four import Constants
 from gooey.python_bindings import constants
-from rewx import components as c  # type: ignore
-from rewx import wsx, mount, update  # type: ignore
-from rewx.core import Component, Ref  # type: ignore
-from rewx.widgets import set_basic_props  # type: ignore
+
 
 
 def attach_notifier(parent):
@@ -331,4 +333,3 @@ def console(element, instance: Console):
     if 'show' in element['props']:
         instance.Show(element['props']['show'])
     return instance
-

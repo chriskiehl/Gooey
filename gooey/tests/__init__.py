@@ -30,9 +30,9 @@ into the test's global scope
 from gooey.tests import *
 ```
 """
-import wx
 import locale
 import platform
+import wx
 
 class TestApp(wx.App):
     """

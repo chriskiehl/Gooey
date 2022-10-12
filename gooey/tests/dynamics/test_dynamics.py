@@ -66,4 +66,3 @@ class TestDynamicUpdates(unittest.TestCase):
         assert parser.parse_args('a a1 --level-2 some-value --some-flag'.split())
         assert parser.parse_args('b b1 --level-2 some-value --some-flag'.split())
         assert not mock.called
-

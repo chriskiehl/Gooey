@@ -1,8 +1,8 @@
 from contextlib import contextmanager
 
-from gooey.gui.components.widgets.bases import TextContainer
-import wx  # type: ignore
 
+import wx  # type: ignore
+from gooey.gui.components.widgets.bases import TextContainer
 from gooey.gui import formatters
 from gooey.gui.lang.i18n import _
 from gooey.python_bindings import types as t
@@ -52,7 +52,7 @@ class Dropdown(TextContainer):
         if state['selected'] is not None:  # type: ignore
             self.setValue(state['selected'])  # type: ignore
         self.error.SetLabel(state['error'] or '')
-        self.error.Show(state['error'] is not None and state['error'] is not '')
+        self.error.Show(state['error'] is not None and state['error'] != '')
 
     def getUiState(self) -> t.FormField:
         widget: wx.ComboBox = self.widget

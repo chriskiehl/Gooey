@@ -16,7 +16,7 @@ def _include_global_option_docs(f):
     Combines docstrings for options available to
     all widget types.
     """
-    _doc = """:param initial_value:  Sets the initial value in the UI. 
+    _doc = """:param initial_value:  Sets the initial value in the UI.
     """
     f.__doc__ = (f.__doc__ or '') + _doc
     return f
@@ -26,7 +26,7 @@ def _include_chooser_msg_wildcard_docs(f):
     Combines the basic Chooser options (wildard, message) docsstring
     with the wrapped function's doc string.
     """
-    _doc = """:param wildcard: Sets the wildcard, which can contain multiple file types, for 
+    _doc = """:param wildcard: Sets the wildcard, which can contain multiple file types, for
                      example: "BMP files (.bmp)|.bmp|GIF files (.gif)|.gif"
     :param message:  Sets the message that will be displayed on the dialog.
     """
@@ -38,7 +38,7 @@ def _include_choose_dir_file_docs(f):
         Combines the basic Chooser options (wildard, message) docsstring
         with the wrapped function's doc string.
         """
-    _doc = """:param default_dir: The default directory selected when the dialog spawns 
+    _doc = """:param default_dir: The default directory selected when the dialog spawns
     :param default_file: The default filename used in the dialog
     """
     f.__doc__ = (f.__doc__ or '') + _doc
@@ -331,4 +331,3 @@ def _clean(options):
     cleaned = {k: v for k, v in options.items()
                if v is not None and k != "layout_options"}
     return {**options.get('layout_options', {}), **cleaned}
-

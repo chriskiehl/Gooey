@@ -3,12 +3,14 @@ import sys
 import unittest
 from argparse import ArgumentParser, FileType
 
+from gui.components.options.options import FileChooser
+from gui.components.widgets import FileSaver
+
 from gooey import GooeyParser
 from gooey.python_bindings import argparse_to_json
 from gooey.util.functional import getin
 from gooey.tests import *
-from gui.components.options.options import FileChooser
-from gui.components.widgets import FileSaver
+
 
 
 class TestArgparse(unittest.TestCase):
@@ -87,7 +89,7 @@ class TestArgparse(unittest.TestCase):
         choice_action = parser._actions[-1]
         result = argparse_to_json.action_to_json(choice_action, 'Dropdown', {})
         self.assertEqual(getin(result, ['data', 'default']), None)
-        
+
 
     def test_listbox_defaults_cast_correctly(self):
         """
@@ -289,4 +291,3 @@ class TestArgparse(unittest.TestCase):
                 action = [parser._actions[-1]]
                 result = next(argparse_to_json.categorize(action, {}, {}))
                 self.assertEqual(result['type'], expected_widget)
-

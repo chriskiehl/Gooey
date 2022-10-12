@@ -37,32 +37,27 @@ class Classes:
 def imageFromBitmap(bitmap):
     if isLatestVersion:
         return bitmap.ConvertToImage()
-    else:
-        return wx.ImageFromBitmap(bitmap)
+    return wx.ImageFromBitmap(bitmap)
 
 
 def bitmapFromImage(image):
     if isLatestVersion:
         return wx.Bitmap(image)
-    else:
-        return wx.BitmapFromImage(image)
+    return wx.BitmapFromImage(image)
 
 
 def bitmapFromBufferRGBA(im, rgba):
     if isLatestVersion:
         return wx.Bitmap.FromBufferRGBA(im.size[0], im.size[1], rgba)
-    else:
-        return wx.BitmapFromBufferRGBA(im.size[0], im.size[1], rgba)
+    return wx.BitmapFromBufferRGBA(im.size[0], im.size[1], rgba)
 
 def AboutDialog():
     if isLatestVersion:
         return wx.adv.AboutDialogInfo()
-    else:
-        return wx.AboutDialogInfo()
+    return wx.AboutDialogInfo()
 
 
 def AboutBox(aboutDialog):
     return (wx.adv.AboutBox(aboutDialog)
             if isLatestVersion
             else wx.AboutBox(aboutDialog))
-

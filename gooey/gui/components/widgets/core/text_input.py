@@ -7,7 +7,7 @@ from gooey.gui.components.mouse import notifyMouseEvent
 
 class TextInput(wx.Panel):
     def __init__(self, parent, *args, **kwargs):
-        super(TextInput, self).__init__(parent)
+        super().__init__(parent)
         self.widget = wx.TextCtrl(self, *args, **kwargs)
         dt = FileDrop(self.widget)
         self.widget.SetDropTarget(dt)

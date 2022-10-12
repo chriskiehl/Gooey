@@ -1,7 +1,7 @@
+import re
 import wx  # type: ignore
 import wx.richtext  # type: ignore
 import colored  # type: ignore
-import re
 from gooey.python_bindings import types as t
 
 
@@ -62,12 +62,12 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
             wxcolor = wx.Colour(int(hex[1:3],16), int(hex[3:5],16), int(hex[5:],16), alpha=wx.ALPHA_OPAQUE)
             # NB : we use a default parameter to force the evaluation of the binding
             self.actionsMap[escSeq] = lambda bindedColor=wxcolor: self.BeginTextColour(bindedColor)
-            
+
         self.Bind(wx.EVT_MOUSEWHEEL, self.onMouseWheel)
 
 
     def PreprocessAndWriteText(self, content):
-        """Write text into console, while capturing URLs and making 
+        """Write text into console, while capturing URLs and making
         them blue, underlined, and clickable.
         """
         textStream=iter(re.split(self.regex_urls, content))
@@ -76,7 +76,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         for plaintext in textStream:
             url=next(textStream, None)
             self.WriteText(plaintext)
-            if url:    
+            if url:
                 self.BeginTextColour(self.url_colour)
                 self.BeginUnderline()
                 self.BeginURL(url)
@@ -84,7 +84,7 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
                 self.EndURL()
                 self.EndUnderline()
                 self.EndTextColour()
-            
+
     def AppendText(self, content):
         """
         wx method overridden to capture the terminal control character and translate them into wx styles.
@@ -122,4 +122,4 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
                 return
             self.SetFontScale(self.GetFontScale() * r, True)
         else:
-           event.Skip()
+            event.Skip()
