@@ -7,7 +7,7 @@ from gooey.gui.util import wx_util
 
 class Tabbar(wx.Panel):
     def __init__(self, parent, buildSpec, configPanels, *args, **kwargs):
-        super(Tabbar, self).__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self._parent = parent
         self.notebook = wx.Notebook(self, style=wx.BK_DEFAULT)
         self.buildSpec = buildSpec

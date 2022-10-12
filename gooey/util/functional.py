@@ -3,7 +3,7 @@ A collection of functional utilities/helpers
 """
 from functools import reduce, wraps
 from copy import deepcopy
-from itertools import chain, dropwhile
+from itertools import chain
 from typing import Tuple, Any, List, Union
 
 from gooey.python_bindings.types import Try, Success, Failure
@@ -46,8 +46,7 @@ def associnMany(m, *args: Tuple[Union[str, List[str]], Any]):
         path, value = change
         if isinstance(path, list):
             return associn(_m, path, value)
-        else:
-            return associn(_m, path.split('.'), value)
+        return associn(_m, path.split('.'), value)
     return reduce(apply, args, m)
 
 
@@ -82,8 +81,7 @@ def compact(coll):
     """Returns a new list with all falsy values removed"""
     if isinstance(coll, dict):
         return {k:v for k,v in coll.items() if v is not None}
-    else:
-        return list(filter(None, coll))
+    return list(filter(None, coll))
 
 
 def ifPresent(f):
@@ -91,8 +89,7 @@ def ifPresent(f):
     def inner(value):
         if value:
             return f(value)
-        else:
-            return True
+        return True
     return inner
 
 
@@ -117,4 +114,3 @@ def lift(f):
         except Exception as e:
             return Failure(e)
     return inner
-

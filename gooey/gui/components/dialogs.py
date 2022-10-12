@@ -20,7 +20,7 @@ class HtmlDialog(wx.Dialog):
     def __init__(self, *args, **kwargs):
         caption = kwargs.pop('caption', '')
         html = kwargs.pop('html', '')
-        super(HtmlDialog, self).__init__(None, *args, **kwargs)
+        super().__init__(None, *args, **kwargs)
 
         wx.InitAllImageHandlers()
 
@@ -35,6 +35,3 @@ class HtmlDialog(wx.Dialog):
         sizer.Add(btnSizer, 0, wx.ALL | wx.EXPAND, 9)
         self.SetSizer(sizer)
         self.Layout()
-
-
-

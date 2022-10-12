@@ -45,4 +45,3 @@ def confirmExit():
 def confirmForceStop():
     result = showDialog(_('stop_task'), _('sure_you_want_to_stop'), wx.YES_NO | wx.ICON_WARNING)
     return result == DialogConstants.YES
-

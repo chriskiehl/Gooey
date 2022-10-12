@@ -3,8 +3,9 @@ Collection of Utility methods for creating often used, pre-styled wx Widgets
 """
 from functools import wraps
 
-import wx  # type: ignore
 from contextlib import contextmanager
+
+import wx  # type: ignore
 
 from gooey.gui.three_to_four import Constants
 

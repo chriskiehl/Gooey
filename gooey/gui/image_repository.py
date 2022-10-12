@@ -48,5 +48,3 @@ def collectOverrides(targetDir, filenames):
 def resolvePaths(dirname, filenames):
     return {key:  os.path.join(dirname, filename)
             for key, filename in filenames.items()}
-
-

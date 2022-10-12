@@ -42,4 +42,3 @@ def communicateAsync(cmd: str, state: FullGooeyState, callback: Callable[[Any], 
         callback(result)
     thread = Thread(target=work)
     thread.start()
-

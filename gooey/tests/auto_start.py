@@ -1,8 +1,9 @@
 import sys
 
+from argparse import ArgumentParser
 from gooey import Gooey
 from gooey import GooeyParser
-from argparse import ArgumentParser
+
 
 @Gooey(
     progress_regex=r"^progress: (-?\d+)%$",

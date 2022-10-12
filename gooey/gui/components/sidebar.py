@@ -9,7 +9,7 @@ class Sidebar(wx.Panel):
     of the wx.Notebook class (which wants to control everything)
     """
     def __init__(self, parent, buildSpec, configPanels, *args, **kwargs):
-        super(Sidebar, self).__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
         self._parent = parent
         self.buildSpec = buildSpec
         self.configPanels = configPanels
@@ -81,6 +81,3 @@ class Sidebar(wx.Panel):
         container.AddSpacer(20)
         self.leftPanel.SetSizer(container)
         return self.leftPanel
-
-
-

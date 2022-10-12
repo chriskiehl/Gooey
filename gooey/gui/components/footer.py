@@ -48,11 +48,10 @@ class Footer(wx.Panel):
         elapsed_time_value = kwargs.get('elapsed_time')
         if elapsed_time_value is None:
             return
-        elif estimate_time_remaining is not None:
+        if estimate_time_remaining is not None:
             self.time_remaining_text.SetLabel(f"{elapsed_time_value}<{estimate_time_remaining}")
             return
-        else:
-            self.time_remaining_text.SetLabel(f"{elapsed_time_value}")
+        self.time_remaining_text.SetLabel(f"{elapsed_time_value}")
 
 
     def updateProgressBar(self, *args, **kwargs):
@@ -121,7 +120,7 @@ class Footer(wx.Panel):
 
         h_sizer.Add(self.progress_bar, 1,
                     wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 20)
-        
+
         h_sizer.Add(self.time_remaining_text,0,wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 20)
 
         h_sizer.AddStretchSpacer(1)

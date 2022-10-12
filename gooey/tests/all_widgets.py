@@ -47,6 +47,3 @@ parser.add_argument("--filesaver", default="fs-value", widget='FileSaver')
 parser.add_argument("--dirchooser", default="dc-value", widget='DirChooser')
 parser.add_argument("--datechooser", default="2015-01-01", widget='DateChooser')
 parser.add_argument("--colourchooser", default="#000000", widget='ColourChooser')
-
-
-

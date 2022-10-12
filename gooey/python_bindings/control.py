@@ -74,7 +74,7 @@ def boostrap_gooey(params: GooeyParams):
             try:
                 exec_dir = os.path.dirname(sys.argv[0])
                 open_path = os.path.join(exec_dir, params['load_build_config'])  # type: ignore
-                build_spec = json.load(open(open_path, "r"))
+                build_spec = json.load(open(open_path, "r", encoding='utf-8'))
             except Exception as e:
                 print('Exception loading Build Config from {0}: {1}'.format(params['load_build_config'], e))
                 sys.exit(1)
@@ -91,7 +91,7 @@ def boostrap_gooey(params: GooeyParams):
         if params['dump_build_config']:
             config_path = os.path.join(os.path.dirname(sys.argv[0]), 'gooey_config.json')
             print('Writing Build Config to: {}'.format(config_path))
-            with open(config_path, 'w') as f:
+            with open(config_path, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(build_spec, indent=2))
         bootstrap.run(build_spec)
     return parse_args
@@ -121,10 +121,10 @@ def validate_form(params: GooeyParams, write=print, exit=sys.exit):
             state = args.gooey_state
             next_state = merge_errors(state, collect_errors(patched_parser, error_registry, vars(args)))
             write(serialize_outbound(next_state))
-            exit(0)
+            sys.exit(0)
         except Exception as e:
             write(e)
-            exit(1)
+            sys.exit(1)
     return parse_args
 
 
@@ -160,11 +160,11 @@ def handle_completed_run(params, write=print, exit=sys.exit):
             else:
                 next_state = getattr(self, 'on_gooey_error', noop)(args, form_state)  # type: ignore
             write(serialize_outbound(next_state))
-            exit(0)
+            sys.exit(0)
         except Exception as e:
             write(''.join(traceback.format_stack()))
             write(e)
-            exit(1)
+            sys.exit(1)
     return parse_args
 
 
@@ -191,16 +191,12 @@ def choose_hander(params: GooeyParams, cliargs: List[str]):
     Dispatches to the appropriate handler based on values
     found in the CLI arguments
     """
-    with open('tmp.txt', 'w') as f:
+    with open('tmp.txt', 'w', encoding="utf-8") as f:
         f.write(str(sys.argv))
     if '--gooey-validate-form' in cliargs:
         return validate_form(params)
-    elif '--gooey-run-is-success' in cliargs or '--gooey-run-is-failure' in cliargs:
+    if '--gooey-run-is-success' in cliargs or '--gooey-run-is-failure' in cliargs:
         return handle_completed_run(params)
-    elif '--ignore-gooey' in cliargs:
+    if '--ignore-gooey' in cliargs:
         return bypass_gooey(params)
-    else:
-        return boostrap_gooey(params)
-
-
-
+    return boostrap_gooey(params)

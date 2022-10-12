@@ -1,10 +1,10 @@
-import wx  # type: ignore
 from collections import defaultdict
+import wx  # type: ignore
 
 __ALL__ = ['pub']
 
 
-class PubSub(object):
+class PubSub():
     """
     A super simplified clone of Wx.lib.pubsub since it doesn't exist on linux
     """

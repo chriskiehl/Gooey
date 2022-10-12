@@ -11,15 +11,13 @@ from gooey.util.functional import assoc, associnMany
 def value(field: FormField):
     if field['type'] in ['Checkbox', 'BlockCheckbox']:
         return field['checked']   # type: ignore
-    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
+    if field['type'] in ['Dropdown', 'Listbox', 'Counter']:
         return field['selected']   # type: ignore
-    elif field['type'] == 'RadioGroup':
+    if field['type'] == 'RadioGroup':
         if field['selected'] is not None:  # type: ignore
             return value(field['options'][field['selected']])  # type: ignore
-        else:
-            return None
-    else:
-        return field['value'] # type: ignore
+        return None
+    return field['value'] # type: ignore
 
 
 def add_placeholder(field: FormField, placeholder=VALUE_PLACEHOLDER):
@@ -34,9 +32,9 @@ def add_placeholder(field: FormField, placeholder=VALUE_PLACEHOLDER):
         # way of passing a placeholder without even MORE monket patching
         # of the user's parser to rewrite the action type
         return assoc(field, 'checked', True)
-    elif field['type'] in ['Dropdown', 'Listbox', 'Counter']:
+    if field['type'] in ['Dropdown', 'Listbox', 'Counter']:
         return assoc(field, 'selected', placeholder)
-    elif field['type'] == 'RadioGroup':
+    if field['type'] == 'RadioGroup':
         # We arbitrarily attach a placeholder for first RadioGroup option
         # and mark it as the selected one.
         return {
@@ -47,35 +45,32 @@ def add_placeholder(field: FormField, placeholder=VALUE_PLACEHOLDER):
                 *field['options'][1:]  # type: ignore
             ]
         }
-    else:
-        return assoc(field, 'value', placeholder)
+    return assoc(field, 'value', placeholder)
 
 
 def formatArgument(item: EnrichedItem):
     if item['type'] in ['Checkbox', 'CheckBox', 'BlockCheckbox']:
         return checkbox(item['data'], value(item['field']))
-    elif item['type'] == 'MultiFileChooser':
+    if item['type'] == 'MultiFileChooser':
         return multiFileChooser(item['data'], value(item['field']))
-    elif item['type'] == 'Textarea':
+    if item['type'] == 'Textarea':
         return textArea(item['data'], value(item['field']))
-    elif item['type'] == 'CommandField':
+    if item['type'] == 'CommandField':
         return textArea(item['data'], value(item['field']))
-    elif item['type'] == 'Counter':
+    if item['type'] == 'Counter':
         return counter(item['data'], value(item['field']))
-    elif item['type'] == 'Dropdown':
+    if item['type'] == 'Dropdown':
         return dropdown(item['data'], value(item['field']))
-    elif item['type'] == 'Listbox':
+    if item['type'] == 'Listbox':
         return listbox(item['data'], value(item['field']))
-    elif item['type'] == 'RadioGroup':
+    if item['type'] == 'RadioGroup':
         selected = item['field']['selected']  # type: ignore
         if selected is not None:
             formField = item['field']['options'][selected]  # type: ignore
             argparseDefinition = item['data']['widgets'][selected]  # type: ignore
             return formatArgument(assoc(argparseDefinition, 'field', formField))  # type: ignore
-        else:
-            return None
-    else:
-        return general(item['data'], value(item['field']))
+        return None
+    return general(item['data'], value(item['field']))
 
 
 def placeholder(item: EnrichedItem):
@@ -89,22 +84,20 @@ def checkbox(metadata, value):
 def multiFileChooser(metadata, value):
     paths = ' '.join(quote(x) for x in value.split(os.pathsep) if x)
     if metadata['commands'] and paths:
-        return u'{} {}'.format(metadata['commands'][0], paths)
+        return '{} {}'.format(metadata['commands'][0], paths)
     return paths or None
 
 
 def textArea(metadata, value):
     if metadata['commands'] and value:
         return '{} {}'.format(metadata['commands'][0], quote(value.encode('unicode_escape')))
-    else:
-        return quote(value.encode('unicode_escape')) if value else ''
+    return quote(value.encode('unicode_escape')) if value else ''
 
 
 def commandField(metadata, value):
     if metadata['commands'] and value:
-        return u'{} {}'.format(metadata['commands'][0], value)
-    else:
-        return value or None
+        return '{} {}'.format(metadata['commands'][0], value)
+    return value or None
 
 
 def counter(metatdata, value):
@@ -123,17 +116,15 @@ def counter(metatdata, value):
 def dropdown(metadata, value):
     if value == 'Select Option':
         return None
-    elif metadata['commands'] and value:
-        return u'{} {}'.format(metadata['commands'][0], quote(value))
-    else:
-        return quote(value) if value else ''
+    if metadata['commands'] and value:
+        return '{} {}'.format(metadata['commands'][0], quote(value))
+    return quote(value) if value else ''
 
 
 def listbox(meta, value):
     if meta['commands'] and value:
-        return u'{} {}'.format(meta['commands'][0], ' '.join(map(quote, value)))
-    else:
-        return ' '.join(map(quote, value)) if value else ''
+        return '{} {}'.format(meta['commands'][0], ' '.join(map(quote, value)))
+    return ' '.join(map(quote, value)) if value else ''
 
 
 def general(metadata, value):
@@ -142,12 +133,9 @@ def general(metadata, value):
             v = quote(value)
         else:
             v = value
-        return u'{0} {1}'.format(metadata['commands'][0], v)
-    else:
-        if not value:
-            return None
-        elif not metadata.get('nargs'):
-            return quote(value)
-        else:
-            return value
-
+        return '{0} {1}'.format(metadata['commands'][0], v)
+    if not value:
+        return None
+    if not metadata.get('nargs'):
+        return quote(value)
+    return value

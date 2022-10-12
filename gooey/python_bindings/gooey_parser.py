@@ -4,7 +4,7 @@ from argparse import _MutuallyExclusiveGroup, _ArgumentGroup
 
 class GooeySubParser(_SubParsersAction):
     def __init__(self, *args, **kwargs):
-        super(GooeySubParser, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 # TODO: figure out how to correctly dispatch all of these
@@ -14,14 +14,14 @@ class GooeyArgumentGroup(_ArgumentGroup):
         self.parser = parser
         self.widgets = widgets
         self.options = options
-        super(GooeyArgumentGroup, self).__init__(self.parser, *args, **kwargs)
+        super().__init__(self.parser, *args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
-        action = super(GooeyArgumentGroup, self).add_argument(*args, **kwargs)
+        action = super().add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
@@ -48,14 +48,14 @@ class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
         self.parser = parser
         self.widgets = widgets
         self.options = options
-        super(GooeyMutuallyExclusiveGroup, self).__init__(container, *args, **kwargs)
+        super().__init__(container, *args, **kwargs)
 
     def add_argument(self, *args, **kwargs):
         widget = kwargs.pop('widget', None)
         metavar = kwargs.pop('metavar', None)
         options = kwargs.pop('gooey_options', None)
 
-        super(GooeyMutuallyExclusiveGroup, self).add_argument(*args, **kwargs)
+        super().add_argument(*args, **kwargs)
         self.parser._actions[-1].metavar = metavar
         self.widgets[self.parser._actions[-1].dest] = widget
         self.options[self.parser._actions[-1].dest] = options
@@ -64,7 +64,7 @@ class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
 class MyArgumentParser(ArgumentParser):
     def __init__(self, **kwargs):
         self._errors = []
-        super(MyArgumentParser, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def error(self, message):
         self._errors.append(message)
@@ -94,12 +94,12 @@ def cls_wrapper(cls, **options):
         class ActionWrapper(cls):
             def __call__(self, p, namespace, values, option_string, **qkwargs):
                 # print('hello from', options, namespace, values, option_string, qkwargs)
-                super(ActionWrapper, self).__call__(p, namespace, values, option_string, **qkwargs)
+                super().__call__(p, namespace, values, option_string, **qkwargs)
         return ActionWrapper(*args, **kwargs)
     return inner
 
 
-class GooeyParser(object):
+class GooeyParser():
     def __init__(self, **kwargs):
         on_success = kwargs.pop('on_success', None)
         on_error = kwargs.pop('on_error', None)
@@ -219,4 +219,3 @@ class GooeyParser(object):
 
     def __setattr__(self, key, value):
         return setattr(self.parser, key, value)
-

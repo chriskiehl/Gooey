@@ -25,4 +25,3 @@ Events = namedtuple('Events', [
 #     VALIDATE_FORM = 'VALIDATE_FORM'
 #     ON_SUCCESS = 'ON_SUCCESS'
 #     ON_ERROR = 'ON_ERROR'
-

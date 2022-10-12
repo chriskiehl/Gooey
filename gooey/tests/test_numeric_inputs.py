@@ -68,7 +68,7 @@ class TestNumbericInputs(unittest.TestCase):
             {'widget': 'DecimalField', 'gooey_options': {'min': 1234, 'max': 3456, 'increment': 2.2}},
             {'widget': 'IntegerField', 'gooey_options': {'min': -100, 'max': 1234}},
             {'widget': 'IntegerField', 'gooey_options': {'min': 1234, 'max': 3456}}
-        ];
+        ]
         using = {
             'min': lambda widget: widget.GetMin(),
             'max': lambda widget: widget.GetMax(),

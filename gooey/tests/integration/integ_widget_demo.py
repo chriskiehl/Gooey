@@ -2,8 +2,9 @@ import time
 import unittest
 
 import wx
-from gooey.gui.lang.i18n import _
 from tests.integration.programs import all_widgets as all_widgets_module
+from gooey.gui.lang.i18n import _
+
 
 
 class TestGooeyIntegration99(unittest.TestCase):
@@ -56,9 +57,3 @@ class TestGooeyIntegration99(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-

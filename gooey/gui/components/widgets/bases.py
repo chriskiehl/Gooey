@@ -63,7 +63,7 @@ class TextContainer(BaseWidget):
     widget_class = None  # type: ignore
 
     def __init__(self, parent, widgetInfo, *args, **kwargs):
-        super(TextContainer, self).__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
 
         self.info = widgetInfo
         self._id = widgetInfo['id']
@@ -183,7 +183,7 @@ class TextContainer(BaseWidget):
     def syncUiState(self, state: FormField):  # type: ignore
         self.widget.setValue(state['value'])  # type: ignore
         self.error.SetLabel(state['error'] or '')
-        self.error.Show(state['error'] is not None and state['error'] is not '')
+        self.error.Show(state['error'] is not None and state['error'] != '')
 
 
     def getValue(self) -> t.FieldValue:

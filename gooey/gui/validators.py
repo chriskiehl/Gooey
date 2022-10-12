@@ -8,8 +8,5 @@ def runValidator(f, value) -> bool:
     """
     try:
         return f(value)
-    except:
+    except Exception:
         return False
-
-
-

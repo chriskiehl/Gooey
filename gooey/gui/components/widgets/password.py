@@ -8,8 +8,7 @@ class PasswordField(TextField):
     widget_class = PasswordInput  # type: ignore
 
     def __init__(self, *args, **kwargs):
-        super(PasswordField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def getUiState(self) -> t.FormField:  # type: ignore
         return t.PasswordField(**super().getUiState())  # type: ignore
-

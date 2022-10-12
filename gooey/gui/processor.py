@@ -23,7 +23,7 @@ except ModuleNotFoundError:
     creationflag = 0
 
 
-class ProcessController(object):
+class ProcessController():
 
     @classmethod
     def of(cls, params: GooeyParams):
@@ -96,7 +96,7 @@ class ProcessController(object):
                 stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                 stderr=subprocess.STDOUT, shell=self.shell_execution, env=env,
                 creationflags=creationflag)
-        except:
+        except Exception:
             self._process = subprocess.Popen(
                 command,
                 stdout=subprocess.PIPE, stdin=subprocess.PIPE,
@@ -146,8 +146,7 @@ class ProcessController(object):
         '''
         if not self.progress_expr:
             return safe_float(match.group(1))
-        else:
-            return self._eval_progress(match)
+        return self._eval_progress(match)
 
     def _eval_progress(self, match):
         '''
@@ -158,6 +157,5 @@ class ProcessController(object):
             _locals["x"] = [safe_float(x) for x in match.groups()]
         try:
             return int(eval(self.progress_expr, {}, _locals))
-        except:
+        except Exception:
             return None
-

@@ -11,25 +11,22 @@ import shlex
 
 from wx._core import CommandEvent
 
-from gooey import GooeyParser
 from python_bindings.coms import decode_payload, deserialize_inbound
 from python_bindings.dynamics import patch_argument, check_value
+from python_bindings.types import FormField
+from tests.harness import instrumentGooey
+from gooey.tests import *
 from gooey.python_bindings import control
+from gooey import GooeyParser
 from gooey.python_bindings.parameters import gooey_params
 from gooey.gui import state as s
 from gooey.python_bindings.schema import validate_public_state
-from python_bindings.types import FormField
-
-from tests.harness import instrumentGooey
-
-from gooey.tests import *
 
 
 def custom_type(x):
     if x == '1234':
         return x
-    else:
-        raise Exception('KABOOM!')
+    raise Exception('KABOOM!')
 
 
 class TestControl(unittest.TestCase):
@@ -230,6 +227,3 @@ class TestControl(unittest.TestCase):
 
 def get_by_id(items: List[FormField], id: str):
     return [x for x in items if x['id'] == id][0]
-
-
-

@@ -4,33 +4,35 @@ Primary orchestration and control point for Gooey.
 import queue
 import sys
 import threading
+from threading import Lock
+from threading import Thread, get_ident
 from contextlib import contextmanager
 from functools import wraps
 from json import JSONDecodeError
 from pprint import pprint
 from subprocess import CalledProcessError
-from threading import Thread, get_ident
+
 from typing import Mapping, Dict, Type, Iterable
+
+
+import signal
 
 import six
 import wx  # type: ignore
 
+from typing_extensions import TypedDict
+from rewx.widgets import set_basic_props
+from rewx import wsx, render, create_element, mount, update
+from rewx import components as c
+from wx.adv import TaskBarIcon  # type: ignore
+
+
 from gooey.gui.state import FullGooeyState
 from gooey.python_bindings.types import PublicGooeyState
-from rewx.widgets import set_basic_props
-
 from gooey.gui.components.mouse import notifyMouseEvent
 from gooey.gui.state import initial_state, present_time, form_page, ProgressEvent, TimingEvent
 from gooey.gui import state as s
 from gooey.gui.three_to_four import Constants
-from rewx.core import Component, Ref, updatewx, patch
-from typing_extensions import TypedDict
-
-from rewx import wsx, render, create_element, mount, update
-from rewx import components as c
-from wx.adv import TaskBarIcon  # type: ignore
-import signal
-
 from gooey import Events
 from gooey.gui import cli
 from gooey.gui import events
@@ -56,7 +58,7 @@ from gooey.gui.image_repository import loadImages
 from gooey.gui import host
 
 
-from threading import Lock
+
 
 from gooey.util.functional import associnMany
 
@@ -68,7 +70,7 @@ class GooeyApplication(wx.Frame):
     """
 
     def __init__(self, buildSpec, *args, **kwargs):
-        super(GooeyApplication, self).__init__(None, *args, **kwargs)
+        super().__init__(None, *args, **kwargs)
         self._state = {}
         self.buildSpec = buildSpec
 
@@ -291,9 +293,8 @@ class GooeyApplication(wx.Frame):
                 cmd.positionals,
                 cmd.optionals
             ), self.buildSpec['encoding'])
-        else:
-            # shim response if nothing to do.
-            return Success({})
+        # shim response if nothing to do.
+        return Success({})
 
 
     def getCommandDetails(self) -> CommandDetails:
@@ -438,9 +439,3 @@ class GooeyApplication(wx.Frame):
         else:
             self.showSuccess()
         self.header.setSubtitle(_('finished_forced_quit'))
-
-
-
-
-
-

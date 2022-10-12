@@ -71,5 +71,3 @@ class DecimalField(IntegerField):
             enabled=self.IsEnabled(),
             visible=self.IsShown()
         )
-
-

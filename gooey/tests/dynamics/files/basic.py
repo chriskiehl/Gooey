@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from gooey import Events, Gooey
 
 
-with open('tmp.txt', 'w') as f:
+with open('tmp.txt', 'w', encoding='utf-8') as f:
     import sys
     f.write(str(sys.argv))
 
@@ -21,4 +21,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

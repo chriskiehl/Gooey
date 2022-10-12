@@ -15,7 +15,7 @@ class ConfigPage(ScrolledPanel):
     self_managed = True
 
     def __init__(self, parent, rawWidgets, buildSpec,  *args, **kwargs):
-        super(ConfigPage, self).__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, **kwargs)
 
         self.SetupScrolling(scroll_x=False, scrollToTop=False)
         self.rawWidgets = rawWidgets
@@ -273,4 +273,3 @@ class TabbedConfigPage(ConfigPage):
 
     def snapToErrorTab(self):
         pass
-

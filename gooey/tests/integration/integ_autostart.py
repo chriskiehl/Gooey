@@ -1,8 +1,9 @@
 import time
 import unittest
 
-from gooey.gui.lang.i18n import _
 from tests.integration.programs import auto_start as auto_start_module
+from gooey.gui.lang.i18n import _
+
 
 
 class TestGooeyIntegration(unittest.TestCase):
@@ -60,9 +61,3 @@ class TestGooeyIntegration(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-

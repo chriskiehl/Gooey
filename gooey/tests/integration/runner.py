@@ -42,5 +42,3 @@ def run_integration(module, assertionFunction, **kwargs):
     # any waiting it may be doing.
     testResult.result()
     del app
-
-

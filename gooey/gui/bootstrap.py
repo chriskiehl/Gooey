@@ -11,12 +11,13 @@ import wx.html  # type: ignore
 import wx.lib.inspection  # type: ignore
 import wx.richtext  # type: ignore
 import wx.xml  # type: ignore
+from rewx import render, create_element  # type: ignore
 
 from gooey.gui import image_repository
 from gooey.gui.application.application import RGooey
 from gooey.gui.lang import i18n
 from gooey.util.functional import merge
-from rewx import render, create_element  # type: ignore
+
 
 
 def run(build_spec):

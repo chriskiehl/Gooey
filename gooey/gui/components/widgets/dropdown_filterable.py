@@ -3,7 +3,7 @@ from contextlib import contextmanager
 import wx  # type: ignore
 import wx.html  # type: ignore
 
-import gooey.gui.events as events
+from gooey.gui import events
 from gooey.gui.components.filtering.prefix_filter import PrefixSearch
 from gooey.gui.components.mouse import notifyMouseEvent
 from gooey.gui.components.widgets.dropdown import Dropdown
@@ -56,7 +56,7 @@ class FilterableDropdown(Dropdown):
         # this inheritance garbage is broken.
         self.listbox = None
         self.model = None
-        super(FilterableDropdown, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.SetDoubleBuffered(True)
 
     def interpretState(self, model):
@@ -128,7 +128,7 @@ class FilterableDropdown(Dropdown):
         if state['value'] is not None:
             self.setValue(state['value'])
         self.error.SetLabel(state['error'] or '')
-        self.error.Show(state['error'] is not None and state['error'] is not '')
+        self.error.Show(state['error'] is not None and state['error'] != '')
 
     def OnGetItem(self, n):
         return self.model.suggestions[n]
@@ -225,7 +225,7 @@ class FilterableDropdown(Dropdown):
 
 class VirtualizedListBox(wx.html.HtmlListBox):
     def __init__(self, *args, **kwargs):
-        super(VirtualizedListBox, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.SetItemCount(1)
 
     def OnGetItem(self, n):
@@ -234,7 +234,7 @@ class VirtualizedListBox(wx.html.HtmlListBox):
 
 
 
-class FilterableDropdownModel(object):
+class FilterableDropdownModel():
     """
     The model/state for the FilterableDropdown. While this is still one
     big ball of mutation (hard to get away from in WX), it serves the purpose
@@ -368,4 +368,3 @@ class ListCtrlComboPopup(wx.ComboPopup):
 
     def GetControl(self):
         return self.lc
-
