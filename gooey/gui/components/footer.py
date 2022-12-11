@@ -64,6 +64,7 @@ class Footer(wx.Panel):
         '''
         value = kwargs.get('progress')
         pb = self.progress_bar
+        pt = self.progress_text
         if value is None:
             return
         if value < 0:
@@ -81,6 +82,7 @@ class Footer(wx.Panel):
                     else:
                         pb.SetValue(value + 1)
                 pb.SetValue(value)
+                pt.SetLabelText(f"{str(value)}%")
 
 
     def showButtons(self, *buttonsToShow):
@@ -101,6 +103,8 @@ class Footer(wx.Panel):
 
         self.progress_bar = wx.Gauge(self, range=100)
 
+        self.progress_text = wx.StaticText(self)
+
         self.time_remaining_text = wx.StaticText(self)
 
         self.buttons = [self.cancel_button, self.start_button,
@@ -119,8 +123,10 @@ class Footer(wx.Panel):
         v_sizer = wx.BoxSizer(wx.VERTICAL)
         h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        h_sizer.Add(self.progress_bar, 1,
+        h_sizer.Add(self.progress_bar, 2,
                     wx.ALIGN_LEFT | wx.ALIGN_CENTER_VERTICAL | wx.LEFT, 20)
+        
+        h_sizer.Add(self.progress_text, 1, wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 20)
         
         h_sizer.Add(self.time_remaining_text,0,wx.LEFT | wx.ALIGN_CENTER_VERTICAL, 20)
 
