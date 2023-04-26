@@ -6,3 +6,4 @@ pygtrie>=2.3.3
 re-wx>=0.0.2
 typing-extensions==3.10.0.2
 mypy-extensions==0.4.3
+attrdict @ git+https://github.com/CreatorZZY/AttrDict.git@913a18c
