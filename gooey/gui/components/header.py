@@ -62,6 +62,8 @@ class FrameHeader(wx.Panel):
         self.running_img = self._load_image(images['runningIcon'], targetHeight)
         self.check_mark = self._load_image(images['successIcon'], targetHeight)
         self.error_symbol = self._load_image(images['errorIcon'], targetHeight)
+        self._header.SetForegroundColour(self.buildSpec['header_text_color'])
+        self._subheader.SetForegroundColour(self.buildSpec['header_text_color'])
 
         self.images = [
             self.settings_img,
