@@ -18,33 +18,35 @@ Table of Contents
 -----------------  
 
 - [Gooey](#gooey)
-- [Table of contents](#table-of-contents)
-- [Latest Update](#latest-update)
-- [Quick Start](#quick-start)
-    - [Installation Instructions](#installation-instructions)
+    - [Support this project](#support-this-project)
+  - [Table of Contents](#table-of-contents)
+  - [Quick Start](#quick-start)
+    - [Installation instructions](#installation-instructions)
     - [Usage](#usage)
     - [Examples](#examples)
-- [What It Is](#what-is-it)
-- [Why Is It](#why)
-- [Who is this for](#who-is-this-for)
-- [How does it work](#how-does-it-work)
-- [Internationalization](#internationalization)
-- [Global Configuration](#global-configuration)
-- [Layout Customization](#layout-customization)
-- [Run Modes](#run-modes)
-    - [Full/Advanced](#advanced)
+  - [What is it?](#what-is-it)
+  - [Why?](#why)
+  - [Who is this for?](#who-is-this-for)
+  - [How does it work?](#how-does-it-work)
+      - [Mappings:](#mappings)
+    - [GooeyParser](#gooeyparser)
+  - [Internationalization](#internationalization)
+  - [Global Configuration](#global-configuration)
+  - [Options and Options Groups style configuration](#options-and-options-groups-style-configuration)
+  - [Layout Customization](#layout-customization)
+  - [Run Modes](#run-modes)
+    - [Advanced](#advanced)
     - [Basic](#basic)
     - [No Config](#no-config)
-- [Menus](#menus)    
-- [Input Validation](#input-validation)
-- [Using Dynamic Values](#using-dynamic-values)
-- [Showing Progress](#showing-progress)
+    - [Menus](#menus)
+    - [Input Validation](#input-validation)
+  - [Using Dynamic Values](#using-dynamic-values)
+  - [Showing Progress](#showing-progress)
     - [Elapsed / Remaining Time](#elapsed--remaining-time)
-- [Customizing Icons](#customizing-icons)
-- [Packaging](#packaging)
-- [Screenshots](#screenshots)
-- [Contributing](#wanna-help)
-- [Image Credits](#image-credits)
+  - [Customizing Icons](#customizing-icons)
+  - [Packaging](#packaging)
+  - [Screenshots](#screenshots)
+  - [Wanna help?](#wanna-help)
 
 
 
@@ -287,7 +289,9 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | sidebar_title | <img src="https://github.com/chriskiehl/GooeyImages/raw/images/readme-images/34472159-1bfedbd0-ef10-11e7-8bc3-b6d69febb8c3.png" width="250" height="auto" align="right"> Controls the heading title above the SideBar's navigation pane. Defaults to: "Actions" |
 | show_sidebar | Show/Hide the sidebar in when navigation mode == `SIDEBAR` |
 | body_bg_color | HEX value of the main Gooey window |
+| body_text_color | HEX value of the main Gooey window's texts |
 | header_bg_color | HEX value of the header background | 
+| header_text_color | HEX value of the header texts | 
 | header_height | height in pixels of the header | 
 | header_show_title | Show/Hide the header title | 
 | header_show_subtitle | Show/Hide the header subtitle | 
@@ -303,7 +307,45 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | menus | Show custom menu groups and items (see: [Menus](#menus) |
 | clear_before_run | When true, previous output will be cleared from the terminal when running program again |
 
+Options and Options Groups style configuration
+--------------------
 
+Options (and options groups in adavance layout) can also be configurated by passing a `gooey_options` parameter.
+| Parameter | Summary | 
+|-----------|---------|
+| label_color | HEX value of the option name |
+| help_color | HEX value of the option help |
+| description_color | [GROUPS ONLY] HEX value of the group description |
+| full_width | Bool |
+| error_color | HEX value of the text displayed when a validation error occurs |
+
+Example
+
+```python
+    parser = GooeyParser(description="DemoParser")
+    group1 = parser.add_argument_group(
+            "My Group", "My Group description",gooey_options={"label_color": "#E5FFCC","description_color": "#1cac78"}
+        )
+    group1.add_argument(
+            "--zip",
+            default="azip.zip",
+            help="Provide the zip to process",
+            widget="FileChooser",
+            gooey_options={"label_color": "#E5FFCC","help_color": "#1cac78"}
+        )
+```
+
+Note you can also loop on your (sub)parser args to set those values
+
+```python
+    # Create subparsers and groups first
+    for subparser in [subparser1, subparser2]:
+        for group in subparser.parser._action_groups:
+            group.gooey_options = {
+            "label_color": "#ff0000",
+            "help_color": "#363636",
+            }
+```
 
 Layout Customization
 --------------------
