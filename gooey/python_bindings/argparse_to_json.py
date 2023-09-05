@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import sys
+import wx
 from argparse import (
     _CountAction,
     _HelpAction,
@@ -19,6 +20,7 @@ from functools import partial
 from uuid import uuid4
 
 from gooey.python_bindings.gooey_parser import GooeyParser
+from gooey.python_bindings import constants
 from gooey.util.functional import merge, getin, identity, assoc
 from gooey.gui.components.options.validators import validators
 from gooey.gui.components.options.validators import collect_errors
@@ -60,10 +62,12 @@ class UnsupportedConfiguration(Exception):
 
 # TODO: merge the default foreground and bg colors from the
 # baseline build_spec
-item_default = {
+def item_default():
+    use_dark_mode = wx.SystemSettings.GetAppearance().IsUsingDarkBackground()
+    return {
     'error_color': '#ea7878',
-    'label_color': '#000000',
-    'help_color': '#363636',
+    'label_color': constants.COLOR_WHITE if use_dark_mode else constants.COLOR_BLACK,
+    'help_color': constants.COLOR_GREY_5 if use_dark_mode else constants.COLOR_GREY_100,
     'full_width': False,
     'validator': {
         'type': 'local',
@@ -265,7 +269,14 @@ def reapply_mutex_groups(mutex_groups, action_groups):
 
 
 def categorize2(groups, widget_dict, options):
-    defaults = {'label_color': '#000000', 'description_color': '#363636'}
+    use_dark_mode = wx.SystemSettings.GetAppearance().IsUsingDarkBackground()
+
+    constants.COLOR_WHITE if use_dark_mode else constants.COLOR_BLACK
+
+    defaults = {'label_color': constants.COLOR_WHITE if use_dark_mode else constants.COLOR_BLACK,
+                'description_color': constants.COLOR_GREY_10 if use_dark_mode else constants.COLOR_GREY_100
+                }
+
     return [{
         'name': group['name'],
         'items': list(categorize(group['items'], widget_dict, options)),
@@ -427,7 +438,7 @@ def action_to_json(action, widget, options):
         validator = 'True'
         error_msg = ''
 
-    base = merge(item_default, {
+    base = merge(item_default(), {
         'validator': {
             'type': 'ExpressionValidator',
             'test': validator,
