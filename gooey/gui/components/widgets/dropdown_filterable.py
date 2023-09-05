@@ -9,6 +9,7 @@ from gooey.gui.components.mouse import notifyMouseEvent
 from gooey.gui.components.widgets.dropdown import Dropdown
 from gooey.gui.lang.i18n import _
 from gooey.gui.pubsub import pub
+from gooey.python_bindings import constants
 
 __ALL__ = ('FilterableDropdown',)
 
@@ -207,6 +208,7 @@ class VirtualizedListBox(wx.html.HtmlListBox):
     def __init__(self, *args, **kwargs):
         super(VirtualizedListBox, self).__init__(*args, **kwargs)
         self.SetItemCount(1)
+        self.SetBackgroundColour(constants.COLOR_WHITE)
 
     def OnGetItem(self, n):
         return ''
