@@ -290,3 +290,19 @@ class TestArgparse(unittest.TestCase):
                 result = next(argparse_to_json.categorize(action, {}, {}))
                 self.assertEqual(result['type'], expected_widget)
 
+
+    def test_nargs_with_choices_chooses_good_widget(self):
+        """
+        #763 argument with nargs in {+, *} and a list of choices should use
+        a Listbox widget
+        """
+        cases = ['*', '+']
+
+        for nargs in cases:
+            with self.subTest(f'expect {nargs} to produce a Listbox'):
+                parser = ArgumentParser()
+                parser.add_argument('foo', nargs=nargs, choices=['choice', 'choice1'])
+                action = [parser._actions[-1]]
+                result = next(argparse_to_json.categorize(action, {}, {}))
+                self.assertEqual(result['type'], 'Listbox')
+
