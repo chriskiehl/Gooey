@@ -42,7 +42,7 @@ exe = EXE(pyz,
           gooey_images,
           name='APPNAME',
           debug=False,
-          strip=None,
+          strip=False,
           upx=True,
           console=False,
           icon=os.path.join(gooey_root, 'images', 'program_icon.ico'))
