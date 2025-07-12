@@ -212,7 +212,7 @@ def FilterableDropdown(placeholder=None,
 
 def PrefixSearchStrategy(
                    choice_tokenizer=PrefixTokenizers.WORDS,
-                   input_tokenizer=PrefixTokenizers.REGEX('\s'),
+                   input_tokenizer=PrefixTokenizers.REGEX(r'\s'),
                    ignore_case=True,
                    operator='AND',
                    index_suffix=False):
@@ -301,7 +301,7 @@ def RegexValidator(test=None, message=None):
     Creates the data for a basic RegexValidator.
 
     :param test:    the regex expression. This should be the expression
-                    directly (i.e. `test='\d+'`). Gooey will test
+                    directly (i.e. `test=r'\d+'`). Gooey will test
                     that the user's input satisfies this expression.
     :param message: The message to display if the input doesn't match
                     the regex
