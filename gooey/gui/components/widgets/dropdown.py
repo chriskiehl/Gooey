@@ -52,7 +52,7 @@ class Dropdown(TextContainer):
         if state['selected'] is not None:  # type: ignore
             self.setValue(state['selected'])  # type: ignore
         self.error.SetLabel(state['error'] or '')
-        self.error.Show(state['error'] is not None and state['error'] is not '')
+        self.error.Show(state['error'] is not None and state['error'] != '')
 
     def getUiState(self) -> t.FormField:
         widget: wx.ComboBox = self.widget
