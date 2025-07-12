@@ -300,9 +300,8 @@ def RegexValidator(test=None, message=None):
     """
     Creates the data for a basic RegexValidator.
 
-    :param test:    the regex expression. This should be the expression
-                    directly (i.e. `test=r'\d+'`). Gooey will test
-                    that the user's input satisfies this expression.
+    :param test:    the regex expression. Gooey will test that the user's
+                    input satisfies this expression.
     :param message: The message to display if the input doesn't match
                     the regex
     """
