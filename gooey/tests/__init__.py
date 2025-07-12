@@ -55,7 +55,7 @@ class TestApp(wx.App):
             self._initial_locale = None
             locale.setlocale(locale.LC_ALL, 'C')
         else:
-            lang, enc = locale.getdefaultlocale()
+            lang, enc = locale.getlocale()
             self._initial_locale = wx.Locale(lang, lang[:2], lang)
             locale.setlocale(locale.LC_ALL, lang)
 
