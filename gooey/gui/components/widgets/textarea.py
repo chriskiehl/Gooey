@@ -41,7 +41,7 @@ class Textarea(TextContainer):
     def syncUiState(self, state: FormField):
         self.setValue(state['value'])  # type: ignore
         self.error.SetLabel(state['error'] or '')
-        self.error.Show(state['error'] is not None and state['error'] is not '')
+        self.error.Show(state['error'] is not None and state['error'] != '')
 
     def getUiState(self) -> t.FormField:
         return t.TextField(

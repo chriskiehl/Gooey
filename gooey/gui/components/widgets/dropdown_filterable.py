@@ -128,7 +128,7 @@ class FilterableDropdown(Dropdown):
         if state['value'] is not None:
             self.setValue(state['value'])
         self.error.SetLabel(state['error'] or '')
-        self.error.Show(state['error'] is not None and state['error'] is not '')
+        self.error.Show(state['error'] is not None and state['error'] != '')
 
     def OnGetItem(self, n):
         return self.model.suggestions[n]
