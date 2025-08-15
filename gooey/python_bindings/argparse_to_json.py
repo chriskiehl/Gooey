@@ -304,6 +304,8 @@ def categorize(actions, widget_dict, options):
             # pre-fill the 'counter' dropdown
             _json['data']['choices'] = list(map(str, range(0, 11)))
             yield _json
+        elif is_listbox(action):
+            yield action_to_json(action, _get_widget(action, 'Listbox'), options)
         else:
             raise UnknownWidgetType(action)
 
@@ -352,7 +354,7 @@ def is_optional(action):
 
 def is_choice(action):
     ''' action with choices supplied '''
-    return action.choices
+    return action.choices and not action.nargs
 
 def is_file(action):
     ''' action with FileType '''
@@ -402,6 +404,13 @@ def is_flag(action):
 def is_counter(action):
     """ _actions which are of type _CountAction """
     return isinstance(action, _CountAction)
+
+
+def is_listbox(action):
+    """ _actions whic can be translated into a Listbox """
+    return (isinstance(action, _StoreAction)
+            and action.choices
+            and action.nargs in {'+', '*'})
 
 
 def is_default_progname(name, subparser):
