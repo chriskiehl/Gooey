@@ -29,7 +29,7 @@ def create_from_parser(parser, source_path, **kwargs):
 
   run_cmd = kwargs.get('target')
   if run_cmd is None:
-    if hasattr(sys, 'frozen'):
+    if hasattr(sys, 'frozen') or "__compiled__" in globals():
       run_cmd = quote(source_path)
     else:
       run_cmd = '{} -u {}'.format(quote(sys.executable), quote(source_path))
