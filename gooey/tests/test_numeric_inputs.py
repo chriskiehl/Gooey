@@ -2,7 +2,7 @@ import unittest
 from random import randint
 from unittest.mock import patch
 
-from tests.harness import instrumentGooey
+from gooey.tests.harness import instrumentGooey
 from gooey import GooeyParser
 from gooey.tests import *
 

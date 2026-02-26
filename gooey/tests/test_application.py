@@ -6,8 +6,8 @@ from pprint import pprint
 from unittest.mock import patch
 from unittest.mock import MagicMock
 
-from python_bindings import constants
-from tests.harness import instrumentGooey
+from gooey.python_bindings import constants
+from gooey.tests.harness import instrumentGooey
 
 from gooey.tests import *
 
@@ -21,7 +21,7 @@ class TestGooeyApplication(unittest.TestCase):
                     self.assertEqual(frame.IsFullScreen(), shouldShow)
 
 
-    @patch("gui.containers.application.modals.confirmForceStop")
+    @patch("gooey.gui.containers.application.modals.confirmForceStop")
     def testGooeyRequestsConfirmationWhenShowStopWarningModalTrue(self, mockModal):
         """
         When show_stop_warning=False, Gooey should immediately kill the
@@ -56,22 +56,6 @@ class TestGooeyApplication(unittest.TestCase):
                     mockClientRunner.stop.assert_called()
                 else:
                     mockClientRunner.stop.assert_not_called()
-
-    # @patch("gui.containers.application.modals.confirmForceStop")
-    # def testOnCloseShutsDownActiveClients(self, mockModal):
-    #     """
-    #     Issue 592: Closing the UI should clean up any actively running programs
-    #     """
-    #     parser = self.basicParser()
-    #     with instrumentGooey(parser) as (app, frame):
-    #         frame.clientRunner = MagicMock()
-    #         frame.destroyGooey = MagicMock()
-    #         # mocking that the user clicks "yes shut down" in the warning modal
-    #         mockModal.return_value = True
-    #         frame._instance.handleClose()
-    #
-    #         mockModal.assert_called()
-    #         frame.destroyGooey.assert_called()
 
 
     def testTerminalColorChanges(self):

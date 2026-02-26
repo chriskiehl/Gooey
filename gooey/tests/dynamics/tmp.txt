@@ -1,1 +1,1 @@
-['C:\\Users\\Chris\\Documents\\Gooey\\gooey\\tests\\dynamics\\files\\basic.py', '--ignore-gooey', '--', '10']
+['C:\\Users\\Chris\\Documents\\Gooey\\gooey\\tests\\dynamics\\files\\basic.py', '--gooey-validate-form', '--gooey-state', 'eyJhY3RpdmVfZm9ybSI6IFt7ImlkIjogImZvbyIsICJ0eXBlIjogIlRleHRGaWVsZCIsICJ2YWx1ZSI6ICJub3QgYSBudW1iZXIiLCAicGxhY2Vob2xkZXIiOiAiIiwgImVycm9yIjogIiIsICJlbmFibGVkIjogdHJ1ZSwgInZpc2libGUiOiB0cnVlfV19', '--', 'not a number']

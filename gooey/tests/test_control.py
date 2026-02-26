@@ -12,15 +12,15 @@ import shlex
 from wx._core import CommandEvent
 
 from gooey import GooeyParser
-from python_bindings.coms import decode_payload, deserialize_inbound
-from python_bindings.dynamics import patch_argument, check_value
+from gooey.python_bindings.coms import decode_payload, deserialize_inbound
+from gooey.python_bindings.dynamics import patch_argument, check_value
 from gooey.python_bindings import control
 from gooey.python_bindings.parameters import gooey_params
 from gooey.gui import state as s
 from gooey.python_bindings.schema import validate_public_state
-from python_bindings.types import FormField
+from gooey.python_bindings.types import FormField
 
-from tests.harness import instrumentGooey
+from gooey.tests.harness import instrumentGooey
 
 from gooey.tests import *
 
