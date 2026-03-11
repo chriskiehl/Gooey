@@ -11,7 +11,7 @@ Some Caveats Up Front:
 * Feedback may take time
 * Merges may take time 
 
-**--> The current release branch is [1.0.9](https://github.com/chriskiehl/Gooey/tree/1.0.9-release) <--**. All PRs should be opened against this branch. 
+**--> The current release branch is [1.2.1](https://github.com/chriskiehl/Gooey/tree/1.2.1-release) <--**. All PRs should be opened against this branch. 
 
 
 ### Getting Started: 
