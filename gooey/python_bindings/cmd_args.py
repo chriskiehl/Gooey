@@ -52,8 +52,12 @@ def parse_cmd_args(self, args=None):
       else:
         dest = getattr(action, 'dest', None)
         if dest:
-          cmd_arg = getattr(cmd_args, dest, None)
-          if cmd_arg:
+          cmd_arg = getattr(cmd_args, dest, None)        
+          if cmd_arg and dest in item.options and 'initial_value' not in (item.options[dest] or {}):
+            if item.options[dest] is None:
+              item.options[dest] = {}
+            item.options[dest]['initial_value'] = cmd_arg
+          else:
             action.default = cmd_arg
 
   def restore_original_configuration(item):

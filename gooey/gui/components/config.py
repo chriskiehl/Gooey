@@ -52,7 +52,7 @@ class ConfigPage(ScrolledPanel):
 
     def getOptionalArgs(self):
         return [widget.getValue()['cmd'] for widget in self.reifiedWidgets
-                if widget.info['cli_type'] != 'positional']
+                if widget.info['cli_type'] != 'positional' and str(widget.getValue()['rawValue']) != str(widget.info['data']['default'])]
 
 
     def getPositionalValues(self):
