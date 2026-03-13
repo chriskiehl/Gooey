@@ -123,8 +123,9 @@ class DirChooser(Chooser):
     """ Retrieve a path to the supplied directory """
     def getDialog(self):
         options = self.Parent._options
+        pathValue = self.getValue()
         return wx.DirDialog(self, message=options.get('message', _('choose_folder')),
-                            defaultPath=options.get('default_path', os.getcwd()))
+                            defaultPath=pathValue)
 
 class MultiDirChooser(Chooser):
     """ Retrieve multiple directories from the system """
