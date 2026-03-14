@@ -21,7 +21,7 @@ class Dropdown(TextContainer):
             # str conversion allows using stringyfiable values in addition to pure strings
             value=str(default),
             choices=[str(default)] + [str(choice) for choice in self._meta['choices']],
-            style=wx.CB_DROPDOWN)
+            style=wx.CB_READONLY)
 
     def setOptions(self, options):
         with self.retainSelection():
