@@ -22,6 +22,7 @@ Table of Contents
 - [Why Is It](#why)
 - [Who is this for](#who-is-this-for)
 - [How does it work](#how-does-it-work)
+- [Bypassing the GUI with --ignore-gooey](#bypassing-the-gui-with---ignore-gooey)
 - [Internationalization](#internationalization)
 - [Global Configuration](#global-configuration)
 - [Layout Customization](#layout-customization)
@@ -210,6 +211,42 @@ However, by dropping in `GooeyParser` and supplying a `widget` name, you can dis
 
  
   
+Bypassing the GUI with `--ignore-gooey`
+---------------------------------------
+
+It is possible to disable the Gooey GUI with the `--ignore-gooey` flag. This flag tells Gooey to skip the GUI and execute your program as a normal command line application. Gooey handles this flag transparently — it is consumed internally and will not appear in your parsed arguments.
+
+Example:
+
+    python my_app.py --ignore-gooey --your-arg value
+
+This is useful when you want to offer both a GUI and a CLI for the same program. 
+
+A helpful pattern is to automatically bypass the GUI when any command line arguments are provided:
+
+```python
+import sys
+from gooey import Gooey
+
+# This must be placed *before* the @Gooey decorator
+if len(sys.argv) >= 2:
+    if '--ignore-gooey' not in sys.argv:
+        sys.argv.append('--ignore-gooey')
+
+@Gooey
+def main():
+    parser = ArgumentParser()
+    # ...
+```
+
+> ⚠️ Note: The `sys.argv` check must appear before the `@Gooey` decorator in your source file. Placing it inside `if __name__ == '__main__'` or after the decorated function definition will not work, because the decorator is evaluated at import time.
+
+If you are using a custom `target` in the `@Gooey` decorator and don't want Gooey to inject the `--ignore-gooey` flag, set `suppress_gooey_flag=True`. See [Global Configuration](#global-configuration).
+
+
+-------------------------------------------    
+
+
 Internationalization
 -------------------- 
 
@@ -245,7 +282,7 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | auto_start | Skips the configuration all together and runs the program immediately |
 | language | Tells Gooey which language set to load from the `gooey/languages` directory.|
 | target | Tells Gooey how to re-invoke itself. By default Gooey will find python, but this allows you to specify the program (and arguments if supplied).|
-| suppress_gooey_flag | Should be set when using a custom `target`. Prevent Gooey from injecting additional CLI params |
+| suppress_gooey_flag | Should be set when using a custom `target`. Prevents Gooey from injecting the `--ignore-gooey` flag into the CLI params when re-invoking your program |
 |program_name | The name displayed in the title bar of the GUI window. If not supplied, the title defaults to the script name pulled from `sys.argv[0]`. |
 | program_description | Sets the text displayed in the top panel of the `Settings` screen. Defaults to the description pulled from `ArgumentParser`. |
 | default_size | Initial size of the window | 
