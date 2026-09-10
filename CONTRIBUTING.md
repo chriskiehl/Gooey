@@ -43,7 +43,7 @@ You can find the current release branch by checking out the [branches page](http
 	* Make your commits about One Thing. 
 	* Avoid stream of consciousness style commits as they'll just be asked to be cleaned up during code review
 * Make sure you've added tests for your feature / bug fix
-* Make sure it works on Python 3.9+ (this is often overlooked!) 
+* Make sure it works on Python 3.9+
 * Backwards compatibility must be honored 
 
 **When to PEP8:**
