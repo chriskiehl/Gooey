@@ -72,7 +72,7 @@ run `setup.py`
 
 **NOTE:** Gooey no longer supports Python 2.
 Python 2 users must pin an older release (`pip install Gooey==1.0.8.1`)
-and manually install WxPython. Unfortunately, this cannot be done as part of the pip installation and should be manually downloaded from the [wxPython website](http://www.wxpython.org/download.php).
+and manually install WxPython. Unfortunately, WxPython installation cannot be done as part of the pip installation and should be manually downloaded from the [wxPython website](http://www.wxpython.org/download.php).
 
 
 
