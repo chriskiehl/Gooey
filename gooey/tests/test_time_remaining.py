@@ -15,7 +15,7 @@ class TestFooterTimeRemaining(unittest.TestCase):
         return parser
 
     def test_time_remaining_visibility(self):
-        for testdata in self.testcases():
+        for testdata in self.get_testcases():
             with self.subTest(testdata):
                 with instrumentGooey(self.make_parser(), timing_options=testdata) as (app, gooeyApp):
 
@@ -28,7 +28,7 @@ class TestFooterTimeRemaining(unittest.TestCase):
                     )
 
     def test_time_remaining_visibility_on_complete(self):
-        for testdata in self.testcases():
+        for testdata in self.get_testcases():
             with self.subTest(testdata):
                 with instrumentGooey(self.make_parser(), timing_options=testdata) as (app, gooeyApp):
 
@@ -42,9 +42,9 @@ class TestFooterTimeRemaining(unittest.TestCase):
                             testdata.get('hide_time_remaining_on_complete',True)
                         )
                     else:
-                        return True
+                        continue
 
-    def testcases(self):
+    def get_testcases(self):
         """
         Generate a powerset of all possible combinations of
         the header parameters (empty, some present, all present, all combos)

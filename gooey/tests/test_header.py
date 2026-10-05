@@ -18,7 +18,7 @@ class TestGooeyHeader(unittest.TestCase):
 
         Verifying Issue #497
         """
-        for testdata in self.testcases():
+        for testdata in self.get_testcases():
             with self.subTest(testdata):
                 with instrumentGooey(self.make_parser(), **testdata) as (app, gooeyApp):
                     header = gooeyApp.header
@@ -45,7 +45,7 @@ class TestGooeyHeader(unittest.TestCase):
             self.assertEqual(gooeyApp.header._subheader.GetLabelText(), 'Foobar')
 
 
-    def testcases(self):
+    def get_testcases(self):
         """
         Generate a powerset of all possible combinations of
         the header parameters (empty, some present, all present, all combos)
