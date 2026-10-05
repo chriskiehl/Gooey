@@ -33,6 +33,10 @@ def instrumentGooey(parser, **kwargs):
         yield (app, gooey)
     finally:
         wx.CallAfter(app.ExitMainLoop)
+        if getattr(gooey, 'taskbarIcon', None):
+            # Destroy the taskbar icon for running tests on MacOS
+            gooey.taskbarIcon.Destroy()
         gooey.Destroy()
+        app.Yield(True)
         app.SetTopWindow(None)
         del gooey
