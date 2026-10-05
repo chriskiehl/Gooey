@@ -29,6 +29,8 @@ class TestGooeyDropdown(unittest.TestCase):
             [['1', '2'], '1', '1', ['1', '2','3'], '1'],
             # dynamic updates removed our selected value; defaults back to placeholder
             [['1', '2'], '2', '2', ['1', '3'], 'Select Option'],
+            # dynamic updates shrank the choices below our selected index; defaults back to placeholder
+            [['1', '2', '3'], '3', '3', ['1'], 'Select Option'],
             # TODO: this test case is currently passing wrong data for the dynamic
             # TODO: update due to a bug where Gooey doesn't apply the same ingestion
             # TODO: rules for data received dynamically as it does for parsers.
