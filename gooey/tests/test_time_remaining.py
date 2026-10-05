@@ -42,7 +42,7 @@ class TestFooterTimeRemaining(unittest.TestCase):
                             testdata.get('hide_time_remaining_on_complete',True)
                         )
                     else:
-                        continue
+                        return True
 
     def get_testcases(self):
         """
