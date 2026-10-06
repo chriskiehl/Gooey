@@ -25,10 +25,12 @@ class TestFooterTimeRemaining(unittest.TestCase):
             # Expected: Text is hidden.
             ({'show_time_remaining': False}, False),
             # C4: show_time_remaining is True and hide_time_remaining_on_complete is True.
-            # Expected: Text is shown.
+            # Expected: Text is shown and hide_time_remaining_on_complete does not
+            # affect the visibility while running, since it only applies after completion.
             ({'show_time_remaining': True, 'hide_time_remaining_on_complete': True}, True),
             # C5: show_time_remaining is False and hide_time_remaining_on_complete is False.
-            # Expected: Text is hidden.
+            # Expected: Text is hidden and hide_time_remaining_on_complete does not
+            # affect the visibility while running, since it only applies after completion.
             ({'show_time_remaining': False, 'hide_time_remaining_on_complete': False}, False),
         ]
         for input_timing_options, expected_is_text_shown in testcases:
@@ -52,10 +54,14 @@ class TestFooterTimeRemaining(unittest.TestCase):
             # Expected: Text is shown.
             ({'hide_time_remaining_on_complete': False}, True),
             # C4: show_time_remaining is True and hide_time_remaining_on_complete is True.
-            # Expected: Text is hidden.
+            # Expected: Text is hidden and show_time_remaining does not
+            # affect the visibility once the program has finished,
+            # since it only applies while running.
             ({'show_time_remaining': True, 'hide_time_remaining_on_complete': True}, False),
             # C5: show_time_remaining is True and hide_time_remaining_on_complete is False.
-            # Expected: Text is shown.
+            # Expected: Text is shown and show_time_remaining does not
+            # affect the visibility once the program has finished,
+            # since it only applies while running.
             ({'show_time_remaining': True, 'hide_time_remaining_on_complete': False}, True),
         ]
         for input_timing_options, expected_is_text_shown in testcases:
