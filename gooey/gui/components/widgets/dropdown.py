@@ -55,8 +55,9 @@ class Dropdown(TextContainer):
         try:
             yield
         finally:
-            current_at_index = self.widget.GetString(prevSelection)
-            if prevValue == current_at_index:
+            hadSelection = prevSelection != wx.NOT_FOUND
+            indexStillExists = prevSelection < self.widget.GetCount()
+            if hadSelection and indexStillExists and self.widget.GetString(prevSelection) == prevValue:
                 self.widget.SetSelection(prevSelection)
             else:
                 self.widget.SetSelection(0)
