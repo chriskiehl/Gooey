@@ -36,6 +36,7 @@ def instrumentGooey(parser, **kwargs):
         if getattr(gooey, 'taskbarIcon', None):
             # Destroy the taskbar icon for running tests on MacOS
             gooey.taskbarIcon.Destroy()
+        gooey.timer.stop()
         gooey.Destroy()
         app.Yield(True)
         app.SetTopWindow(None)
