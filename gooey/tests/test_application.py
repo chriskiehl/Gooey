@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 from argparse import ArgumentParser
@@ -5,6 +6,7 @@ from collections import namedtuple
 from unittest.mock import patch
 from unittest.mock import MagicMock
 
+from gooey import GooeyParser
 from python_bindings import constants
 from tests.harness import instrumentGooey
 
@@ -91,6 +93,26 @@ class TestGooeyApplication(unittest.TestCase):
                 terminal = gapp.console.textbox
                 self.assertEqual(terminal.GetFont().GetWeight(), weight)
 
+    def testSubparserProgHasNoColorCodes(self):
+        # Python 3.14+ now automatically colors the output text of argparse
+        # when run from a terminal. This test ensures that Gooey's subcommand
+        # sidebar names are always plain text and do not include ANSI color codes.
+        testcases = [
+            # C1: Color output is disabled.
+            # Expected: Prog is plain text with no ANSI escape codes.
+            ({'PYTHON_COLORS': '0'}, 'program subcommand'),
+            # C2: Color output is enabled.
+            # Expected: Prog is plain text with no ANSI escape codes.
+            ({'PYTHON_COLORS': '1'}, 'program subcommand'),
+        ]
+        for input_environment, expected_prog in testcases:
+            with self.subTest(input_environment):
+                with patch.dict(os.environ, input_environment):
+                    parser = GooeyParser(prog='program')
+                    subparsers = parser.add_subparsers(dest='command')
+                    subcommand_parser = subparsers.add_parser('subcommand')
+                actual_prog = subcommand_parser.prog
+                self.assertEqual(actual_prog, expected_prog)
 
     def basicParser(self):
         parser = ArgumentParser()
