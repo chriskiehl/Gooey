@@ -117,30 +117,35 @@ class TestGooeyApplication(unittest.TestCase):
                 self.assertEqual(actual_prog, expected_prog)
 
     def testRichtextControlsColorsConsoleText(self):
-        # The console only turns ANSI color codes into colored text when
-        # richtext_controls=True. Otherwise the text keeps the default
-        # terminal font color. Each case writes "hello" wrapped in the
-        # 256-color code for green and reads back the color of "hello".
+        # The console only turns 256-color ANSI codes (like \x1b[38;5;2m) into
+        # colored text when richtext_controls=True. Otherwise the codes are
+        # shown as plain text and the text keeps the terminal_font_color.
+        # Each case writes "hello" wrapped in the 256-color code for green,
+        # then reads back the console text and the color of "hello".
         testcases = [
             # C1: richtext_controls is not set (default False).
-            # Expected: "hello" stays in the default black.
-            ({}, '#000000'),
+            # Expected: The color codes stay in the text as characters and
+            # "hello" stays in the default black.
+            ({}, '\x1b[38;5;2mhello\x1b[0m\n', '#000000'),
             # C2: richtext_controls is explicitly False.
-            # Expected: "hello" stays in the default black.
-            ({'richtext_controls': False}, '#000000'),
+            # Expected: As above, the color codes stay in the text as 
+            # characters and "hello" stays in the default black.
+            ({'richtext_controls': False}, '\x1b[38;5;2mhello\x1b[0m\n', '#000000'),
             # C3: richtext_controls is True.
-            # Expected: "hello" is green.
-            ({'richtext_controls': True}, '#008000'),
+            # Expected: The color codes are removed and "hello" is green.
+            ({'richtext_controls': True}, 'hello\n', '#008000'),
         ]
-        for input_options, expected_hello_color in testcases:
+        for input_options, expected_console_text, expected_hello_color in testcases:
             with self.subTest(input_options):
                 parser = self.basicParser()
                 with instrumentGooey(parser, **input_options) as (app, gapp):
                     gapp.console.appendText('\x1b[38;5;2mhello\x1b[0m\n')
-                    inside_hello_position = gapp.console.getText().find('hello') + 1
+                    actual_console_text = gapp.console.getText()
+                    inside_hello_position = actual_console_text.find('hello') + 1
                     hello_style = wx.TextAttr()
                     gapp.console.textbox.GetStyle(inside_hello_position, hello_style)
                     actual_hello_color = hello_style.GetTextColour().GetAsString(wx.C2S_HTML_SYNTAX)
+                self.assertEqual(actual_console_text, expected_console_text)
                 self.assertEqual(actual_hello_color, expected_hello_color)
 
 
