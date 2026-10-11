@@ -52,6 +52,35 @@ class TestParentInheritance(unittest.TestCase):
         self._verify_duplicate_parameters(action1, action2, parser)
         self.assertEqual(parser.widgets["a_file"], "FileChooser")
 
+    def test_parent_mutually_exclusive_groups_exist_in_child(self):
+        """
+        Verifies that mutually exclusive groups on a parent are inherited, along with their widgets.
+        """
+        # Case: A parent GooeyParser has a required mutually exclusive group of two arguments,
+        # one of which has a widget, and a child GooeyParser inherits from it.
+        # Expected: The child has one mutually exclusive group with the same arguments, it is
+        # still required, and the widget is carried over.
+        base_parser = GooeyParser(add_help=False)
+        mutex = base_parser.add_mutually_exclusive_group(required=True)
+        mutex.add_argument("--one", action="store_true", widget="CheckBox")
+        mutex.add_argument("--two", action="store_true")
+
+        parser = GooeyParser(parents=[base_parser])
+
+        expected_mutex_count = 1
+        expected_mutex_dests = ["one", "two"]
+        expected_mutex_required = True
+        expected_widget = "CheckBox"
+        actual_mutex_count = len(parser._mutually_exclusive_groups)
+        assert actual_mutex_count == expected_mutex_count
+        actual_mutex = parser._mutually_exclusive_groups[0]
+        actual_mutex_dests = [action.dest for action in actual_mutex._group_actions]
+        actual_mutex_required = actual_mutex.required
+        actual_widget = parser.widgets["one"]
+        assert actual_mutex_dests == expected_mutex_dests
+        assert actual_mutex_required == expected_mutex_required
+        assert actual_widget == expected_widget
+
     def test_duplicates_on_same_parser_are_ignored(self):
         """
         Verify that adding duplicate named arguments works the same in argparse and Gooey.

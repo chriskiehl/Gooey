@@ -63,14 +63,21 @@ class GooeyMutuallyExclusiveGroup(_MutuallyExclusiveGroup):
 
 class GooeyParser(object):
     def __init__(self, **kwargs):
+        parents = kwargs.get('parents', [])
+        argparse_parents = []
+        for parent in parents:
+            if isinstance(parent, GooeyParser):
+                argparse_parents.append(parent.parser)
+            else:
+                argparse_parents.append(parent)
+        kwargs['parents'] = argparse_parents
         self.__dict__['parser'] = ArgumentParser(**kwargs)
         self.widgets = {}
         self.options = {}
-        if 'parents' in kwargs:
-            for parent in kwargs['parents']:
-                if isinstance(parent, self.__class__):
-                    self.widgets.update(parent.widgets)
-                    self.options.update(parent.options)
+        for parent in parents:
+            if isinstance(parent, self.__class__):
+                self.widgets.update(parent.widgets)
+                self.options.update(parent.options)
 
     @property
     def _mutually_exclusive_groups(self):
@@ -109,7 +116,7 @@ class GooeyParser(object):
 
     def add_mutually_exclusive_group(self, *args, **kwargs):
         options = kwargs.pop('gooey_options', {})
-        group = GooeyMutuallyExclusiveGroup(self, self.parser, self.widgets, self.options, *args, **kwargs)
+        group = GooeyMutuallyExclusiveGroup(self.parser, self.parser, self.widgets, self.options, *args, **kwargs)
         group.gooey_options = options
         self.parser._mutually_exclusive_groups.append(group)
         return group
