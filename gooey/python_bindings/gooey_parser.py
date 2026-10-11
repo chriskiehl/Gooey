@@ -142,6 +142,9 @@ class GooeyParser(object):
         # optional arguments and with no "usage:" prefix
         if kwargs.get('prog') is None:
             formatter = self._get_formatter()
+            # Python 3.14+ colorizes argparse output; keep ANSI codes out of prog
+            if hasattr(formatter, '_set_color'):
+                formatter._set_color(False)
             positionals = self._get_positional_actions()
             groups = self._mutually_exclusive_groups
             formatter.add_usage(self.usage, positionals, groups, '')

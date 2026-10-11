@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 from argparse import ArgumentParser
@@ -5,6 +6,9 @@ from collections import namedtuple
 from unittest.mock import patch
 from unittest.mock import MagicMock
 
+import wx
+
+from gooey import GooeyParser
 from python_bindings import constants
 from tests.harness import instrumentGooey
 
@@ -90,6 +94,59 @@ class TestGooeyApplication(unittest.TestCase):
             with instrumentGooey(parser, terminal_font_weight=weight) as (app, gapp):
                 terminal = gapp.console.textbox
                 self.assertEqual(terminal.GetFont().GetWeight(), weight)
+
+    def testSubparserProgHasNoColorCodes(self):
+        # Python 3.14+ now automatically colors the output text of argparse
+        # when run from a terminal. This test ensures that Gooey's subcommand
+        # sidebar names are always plain text and do not include ANSI color codes.
+        testcases = [
+            # C1: Color output is disabled.
+            # Expected: Prog is plain text with no ANSI escape codes.
+            ({'PYTHON_COLORS': '0'}, 'program subcommand'),
+            # C2: Color output is enabled.
+            # Expected: Prog is plain text with no ANSI escape codes.
+            ({'PYTHON_COLORS': '1'}, 'program subcommand'),
+        ]
+        for input_environment, expected_prog in testcases:
+            with self.subTest(input_environment):
+                with patch.dict(os.environ, input_environment):
+                    parser = GooeyParser(prog='program')
+                    subparsers = parser.add_subparsers(dest='command')
+                    subcommand_parser = subparsers.add_parser('subcommand')
+                actual_prog = subcommand_parser.prog
+                self.assertEqual(actual_prog, expected_prog)
+
+    def testRichtextControlsColorsConsoleText(self):
+        # The console only turns 256-color ANSI codes (like \x1b[38;5;2m) into
+        # colored text when richtext_controls=True. Otherwise the codes are
+        # shown as plain text and the text keeps the terminal_font_color.
+        # Each case writes "hello" wrapped in the 256-color code for green,
+        # then reads back the console text and the color of "hello".
+        testcases = [
+            # C1: richtext_controls is not set (default False).
+            # Expected: The color codes stay in the text as characters and
+            # "hello" stays in the default black.
+            ({}, '\x1b[38;5;2mhello\x1b[0m\n', '#000000'),
+            # C2: richtext_controls is explicitly False.
+            # Expected: As above, the color codes stay in the text as 
+            # characters and "hello" stays in the default black.
+            ({'richtext_controls': False}, '\x1b[38;5;2mhello\x1b[0m\n', '#000000'),
+            # C3: richtext_controls is True.
+            # Expected: The color codes are removed and "hello" is green.
+            ({'richtext_controls': True}, 'hello\n', '#008000'),
+        ]
+        for input_options, expected_console_text, expected_hello_color in testcases:
+            with self.subTest(input_options):
+                parser = self.basicParser()
+                with instrumentGooey(parser, **input_options) as (app, gapp):
+                    gapp.console.appendText('\x1b[38;5;2mhello\x1b[0m\n')
+                    actual_console_text = gapp.console.getText()
+                    inside_hello_position = actual_console_text.find('hello') + 1
+                    hello_style = wx.TextAttr()
+                    gapp.console.textbox.GetStyle(inside_hello_position, hello_style)
+                    actual_hello_color = hello_style.GetTextColour().GetAsString(wx.C2S_HTML_SYNTAX)
+                self.assertEqual(actual_console_text, expected_console_text)
+                self.assertEqual(actual_hello_color, expected_hello_color)
 
 
     def basicParser(self):
