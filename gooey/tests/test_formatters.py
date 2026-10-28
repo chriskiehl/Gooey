@@ -4,6 +4,7 @@ import shlex
 import unittest
 
 from gooey.gui import formatters
+from gooey.gui.util.quoting import quote
 
 
 class TestFormatters(unittest.TestCase):
@@ -62,13 +63,14 @@ class TestFormatters(unittest.TestCase):
             else:
                 prefix = ''
 
+            # Quoting is platform-specific: double quotes on Windows, single quotes elsewhere.
             expected_outputs = [
                 (names, None, ''),
-                (names, prefix + '"abc"', 'abc'),
-                (names, prefix + '"abc" "def"', os.pathsep.join(['abc', 'def'])),
+                (names, prefix + quote('abc'), 'abc'),
+                (names, prefix + quote('abc') + ' ' + quote('def'), os.pathsep.join(['abc', 'def'])),
                 # paths with spaces
-                (names, prefix + '"a b c"', 'a b c'),
-                (names, prefix + '"a b c" "d e f"', os.pathsep.join(['a b c', 'd e f'])),
+                (names, prefix + quote('a b c'), 'a b c'),
+                (names, prefix + quote('a b c') + ' ' + quote('d e f'), os.pathsep.join(['a b c', 'd e f'])),
             ]
 
             for commands, expected, widget_result in expected_outputs:

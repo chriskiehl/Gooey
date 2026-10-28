@@ -15,9 +15,7 @@
   "dialog_button_no": "Nee",
   "dialog_button_ok": "OK",
   "dialog_button_yes": "Ja",
-  "dropdown": {
-    "no_matches": "Geen overeenkomsten gevonden"
-  },
+  "dropdown.no_matches": "Geen overeenkomsten gevonden",
   "edit": "Bewerken",
   "enter_filename": "Voer bestandsnaam in",
   "error_required_fields": "Voer alle verplichte velden in!",

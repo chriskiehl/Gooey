@@ -33,5 +33,16 @@
   "sure_you_want_to_exit": "Sei sicuro di voler uscire?",
   "sure_you_want_to_stop": "Sei sicuro di voler interrompere il processo? \nL'interruzione potrebbe corrempere i dati!",
   "uh_oh": "\nOh oh! Sembra che ci sia stato un problema. \nCopia il testo dalla finestra di stato per far sapere allo sviluppatore cosa è andato storto.\n",
-  "validation_failed": "Validazione fallita in uno o più campi"
+  "validation_failed": "Validazione fallita in uno o più campi",
+  "checkbox_label": "Abilita",
+  "choose_colour": "Seleziona Colore",
+  "choose_folders_msg": "Seleziona una o più cartelle:",
+  "choose_folders_title": "Sfoglia cartelle",
+  "ok": "Ok",
+  "open_files": "Apri files",
+  "select_date": "Seleziona una Data",
+  "select_time": "Seleziona un Orario",
+  "dialog_button_yes": "Si",
+  "dialog_button_no": "No",
+  "dialog_button_ok": "OK"
 }

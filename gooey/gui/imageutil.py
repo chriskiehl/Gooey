@@ -2,7 +2,8 @@
 Utilities for loading, resizing and converting between PIL and WX image formats
 '''
 
-import six
+import sys
+
 from PIL import Image  # type: ignore
 import wx  # type: ignore
 
@@ -15,7 +16,7 @@ def loadImage(img_path):
 
 
 def resizeImage(im, targetHeight):
-    im.thumbnail((six.MAXSIZE, targetHeight))
+    im.thumbnail((sys.maxsize, targetHeight))
     return im
 
 
