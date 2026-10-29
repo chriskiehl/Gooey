@@ -101,6 +101,14 @@ def cls_wrapper(cls, **options):
 
 class GooeyParser(object):
     def __init__(self, **kwargs):
+        parents = kwargs.get('parents', [])
+        argparse_parents = []
+        for parent in parents:
+            if isinstance(parent, GooeyParser):
+                argparse_parents.append(parent.parser)
+            else:
+                argparse_parents.append(parent)
+        kwargs['parents'] = argparse_parents
         on_success = kwargs.pop('on_success', None)
         on_error = kwargs.pop('on_error', None)
         self.__dict__['parser'] = ArgumentParser(**kwargs)
@@ -108,11 +116,10 @@ class GooeyParser(object):
         self.options = {}
         self.on_gooey_success = on_success
         self.on_gooey_error = on_error
-        if 'parents' in kwargs:
-            for parent in kwargs['parents']:
-                if isinstance(parent, self.__class__):
-                    self.widgets.update(parent.widgets)
-                    self.options.update(parent.options)
+        for parent in parents:
+            if isinstance(parent, self.__class__):
+                self.widgets.update(parent.widgets)
+                self.options.update(parent.options)
 
     @property
     def _mutually_exclusive_groups(self):
@@ -161,7 +168,7 @@ class GooeyParser(object):
 
     def add_mutually_exclusive_group(self, *args, **kwargs):
         options = kwargs.pop('gooey_options', {})
-        group = GooeyMutuallyExclusiveGroup(self, self.parser, self.widgets, self.options, *args, **kwargs)
+        group = GooeyMutuallyExclusiveGroup(self.parser, self.parser, self.widgets, self.options, *args, **kwargs)
         group.gooey_options = options
         self.parser._mutually_exclusive_groups.append(group)
         return group
@@ -194,6 +201,9 @@ class GooeyParser(object):
         # optional arguments and with no "usage:" prefix
         if kwargs.get('prog') is None:
             formatter = self._get_formatter()
+            # Python 3.14+ colorizes argparse output; keep ANSI codes out of prog
+            if hasattr(formatter, '_set_color'):
+                formatter._set_color(False)
             positionals = self._get_positional_actions()
             groups = self._mutually_exclusive_groups
             formatter.add_usage(self.usage, positionals, groups, '')

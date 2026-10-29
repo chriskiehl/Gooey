@@ -104,6 +104,7 @@ class TestControl(unittest.TestCase):
             parser.parse_args(shlex.split(cmd)[1:])
             assert writer.called
             assert exit.called
+            currentState = gapp.fullState()
 
 
         result = deserialize_inbound(writer.call_args[0][0].encode('utf-8'), 'utf-8')
@@ -112,7 +113,7 @@ class TestControl(unittest.TestCase):
         validate_public_state(result)
 
         # manually merging the two states back together
-        nextState = s.mergeExternalState(gapp.fullState(), result)
+        nextState = s.mergeExternalState(currentState, result)
         # and now we find that we have errors!
         self.assertTrue(s.has_errors(nextState))
         items = s.activeFormState(nextState)

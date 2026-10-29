@@ -1,5 +1,4 @@
 """Script for setuptools."""
-import sys
 from setuptools import setup, find_packages
 
 
@@ -11,12 +10,11 @@ version = '1.2.0-ALPHA'
 deps = [
     'Pillow>=4.3.0',
     'psutil>=5.4.2',
-    'colored>=1.3.93',
+    'colored>=1.3.93,<2',
     'pygtrie>=2.3.3',
+    'wxpython>=4.1.0',
     're-wx>=0.0.9',
     'typing-extensions==3.10.0.2',
-    'wxpython>=4.1.0',
-    "dataclasses>=0.8;python_version<'3.7'",
 ]
 
 setup(
@@ -28,18 +26,22 @@ setup(
     description=('Turn (almost) any command line program into a full GUI '
                  'application with one line'),
     license='MIT',
-    python_requires='>=3.6',
+    python_requires='>=3.9',
     packages=find_packages(),
     install_requires=deps,
     include_package_data=True,
-    dependency_links = ["http://www.wxpython.org/download.php"],
     classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Topic :: Desktop Environment',
         'Topic :: Software Development :: Build Tools',
         'Topic :: Software Development :: Widget Sets',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'License :: OSI Approved :: MIT License'
     ],
     long_description='''

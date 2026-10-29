@@ -73,7 +73,7 @@ def is_three_channeled(value):
 @lift
 def is_hex_string(value: str):
     """Invalid hexadecimal format. Expected: "#FFFFFF" """
-    return isinstance(value, str) and bool(re.match('^#[\dABCDEF]{6}$', value, flags=2))
+    return isinstance(value, str) and bool(re.match(r'^#[\dABCDEF]{6}$', value, flags=2))
 
 
 @lift

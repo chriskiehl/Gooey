@@ -35,7 +35,7 @@ class Timing(object):
     def start(self):
         self.startTime = get_current_time()
         self.estimatedRemaining = None
-        self.wxTimer.Start()
+        self.wxTimer.Start(milliseconds=1000)
 
     def stop(self):
         self.wxTimer.Stop()
