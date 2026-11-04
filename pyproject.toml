@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=62.0", "setuptools-git-versioning>=2.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Gooey"
+dynamic = ["version", "dependencies"]
+authors = [
+  {name = "Chris Kiehl", email = "audionautic@gmail.com"},
+]
+description = "Turn (almost) any command line program into a full GUI application with one line"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Desktop Environment",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Widget Sets",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "http://pypi.python.org/pypi/Gooey/"
+
+[tool.setuptools-git-versioning]
+enabled = true
+template = "{tag}"
+dev_template = "{tag}"
+dirty_template = "{tag}"
+
+[tool.setuptools.packages.find]
+include = ["gooey*"]
+namespaces = false
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements/pip.txt"]}
