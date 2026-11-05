@@ -4,6 +4,12 @@ from gooey import GooeyParser
 from gooey.tests import *
 from tests.harness import instrumentGooey
 
+IS_GTK = wx.Platform == '__WXGTK__'
+GTK_ALWAYS_SELECTS_REASON = (
+    "GTK always keeps one radio button selected, so a radio group with "
+    "nothing selected is not possible on Linux. See issue #604."
+)
+
 
 class TestRadioGroupBehavior(unittest.TestCase):
 
@@ -50,6 +56,8 @@ class TestRadioGroupBehavior(unittest.TestCase):
         for options, expected in testCases:
             parser = self.mutext_group(options)
             with self.subTest(options):
+                if IS_GTK and expected['selected'] is None:
+                    self.skipTest(GTK_ALWAYS_SELECTS_REASON)
                 with instrumentGooey(parser) as (app, gooeyApp):
                     radioGroup = gooeyApp.configs[0].reifiedWidgets[0]
 
@@ -100,6 +108,8 @@ class TestRadioGroupBehavior(unittest.TestCase):
                         radioGroup.radioButtons[targetButton].ProcessEvent(event)
 
                         expectedEnabled, expectedDisabled = scenario['postState']
+                        if IS_GTK and not expectedEnabled:
+                            self.skipTest(GTK_ALWAYS_SELECTS_REASON)
 
                         for index in expectedEnabled:
                             self.assertEqual(radioGroup.selected, radioGroup.radioButtons[index])
