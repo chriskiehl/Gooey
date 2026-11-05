@@ -41,3 +41,7 @@ namespaces = false
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements/pip.txt"]}
+
+[tool.pytest.ini_options]
+testpaths = ["gooey/tests"]
+pythonpath = ["gooey"]
