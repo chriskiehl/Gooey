@@ -65,9 +65,10 @@ Alternatively, you can install Gooey by cloning the project to your local direct
 
     git clone https://github.com/chriskiehl/Gooey.git
 
-run `setup.py` 
+and install it with `pip` from inside the project directory
 
-    python setup.py install
+    cd Gooey
+    pip install .
 
 
 **NOTE:** Gooey no longer supports Python 2.

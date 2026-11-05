@@ -12,8 +12,7 @@
  - [ ] All new features have README updates 
  - [ ] Wx Inspection tool is removed from the runner
  - [ ] all debug prints removed  
- - [ ] setup.py version is updated 
- - [ ] __init__.py version is updated
+ - [ ] Release tag matches the intended version (the package version is read from the git tag)
  - [ ] pip install of release branch works.   
      - [ ] All Gooey Examples run and work as expected
  - [ ] pypi is updated 

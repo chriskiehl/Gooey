@@ -8,7 +8,7 @@ The 1.0.4 release was botched when uploading to PyPi as it pulled in the 1.0.3 a
 1\. build the wheel
 
 ```
-python pip_build_wheel.py
+python -m build
 ``` 
 
 this will output the wheel to the `dist/` directory. 
@@ -33,7 +33,7 @@ pip install /path/to/local/dist/Gooey-1.0.4.tar.gz
 If everything installs OK, you're good to upload.
 
 ```
-python pip_deploy.py
+twine upload dist/*
 ```
 
  
