@@ -43,6 +43,7 @@ You can find the current release branch by checking out the [branches page](http
 	* Make your commits about One Thing. 
 	* Avoid stream of consciousness style commits as they'll just be asked to be cleaned up during code review
 * Make sure you've added tests for your feature / bug fix
+* Add a news item describing your change (see [Adding a news item](#adding-a-news-item))
 * Make sure it works on Python 3.9+
 * Backwards compatibility must be honored 
 
@@ -65,11 +66,78 @@ Basic Checklist:
  - [ ] Commit message includes the relevant issue number
  - [ ] Pull request description contains link to relevant issue
  - [ ] Bug fix / feature has associated tests
+ - [ ] A news item is added to the `news/` directory
  - [ ] README.md is updated (if relevant)
  - [ ] PR has summary of the change and links to the detailed issue.  
 
 Super Cool Person Above and Beyond Checklist Additions:
  - [ ] A sister commit in the [Examples Repo](https://github.com/chriskiehl/GooeyExamples) was created demonstrating your new feature 
+
+
+### Adding a news item
+
+Every pull request must add a news file. These files are merged into `CHANGELOG.rst` when a release is made. A CI check fails, and leaves a comment on the PR, if no news file is added.
+
+Write each news item as one sentence that starts with a verb, begins with a capital letter, and ends with a period. Use rst-style double backticks for code, e.g. ``` ``GooeyParser`` ```.
+
+**With scikit-package (recommended)**
+
+Install [scikit-package](https://scikit-package.github.io/scikit-package/):
+
+```bash
+conda install -c conda-forge scikit-package
+```
+
+Then, from your branch, run the command that matches your change:
+
+```bash
+package add news -a "Add a ``foo`` option to ``GooeyParser``."   # Added
+package add news -c "Change the default ``foo`` to ``bar``."   # Changed
+package add news -d "Deprecate the ``foo`` option."   # Deprecated
+package add news -r "Remove the ``foo`` option."   # Removed
+package add news -f "Fix ``Dropdown`` ignoring the ``default`` value."   # Fixed
+package add news -s "Fix a security issue in ``foo``."   # Security
+```
+
+This copies `news/TEMPLATE.rst` to `news/<branch-name>.rst` and adds your message under the matching heading. Run it again to add another item.
+
+**By hand**
+
+1. Copy `news/TEMPLATE.rst` to `news/<branch-name>.rst`. From the root of the repository, this command names the copy after your current branch:
+
+   ```bash
+   cp news/TEMPLATE.rst news/$(git rev-parse --abbrev-ref HEAD).rst
+   ```
+
+2. Under the heading that fits your change (Added, Changed, Deprecated, Removed, Fixed, or Security), replace `* <news item>` with your news item. Leave the other headings as they are.
+
+For example, `news/fix-dropdown-default.rst` might contain:
+
+```rst
+**Fixed:**
+
+* Fix ``Dropdown`` ignoring the ``default`` value.
+```
+
+along with the remaining `* <news item>` headings from the template.
+
+#### When no news is needed
+
+Some changes don't belong in the changelog, for example CI or test-only changes, typo fixes, or internal refactors that users won't notice. These pull requests still need a news file, so that reviewers can see why the change was left out of the changelog. Give a brief reason:
+
+```bash
+package add news -n "CI-only change."
+```
+
+or, by hand, replace the first `* <news item>` in your copy of the template with:
+
+```rst
+* No news added: CI-only change.
+```
+
+Lines that start with `* No news` are skipped when `CHANGELOG.rst` is built.
+
+See the [scikit-package news guide](https://scikit-package.github.io/scikit-package/snippets/news-file-format.html) for more examples.
 
 
 ## Why is master the default branch when you don't want people submitting PRs to it? 

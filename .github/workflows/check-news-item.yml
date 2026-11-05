@@ -1,0 +1,15 @@
+name: Check for News
+
+on:
+  pull_request_target:
+    branches:
+      - "*-release"
+
+jobs:
+  check-news-item:
+    permissions:
+      pull-requests: write
+      contents: read
+    uses: scikit-package/release-scripts/.github/workflows/_check-news-item.yml@v0
+    with:
+      project: Gooey
