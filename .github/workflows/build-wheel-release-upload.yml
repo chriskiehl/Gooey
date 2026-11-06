@@ -1,0 +1,27 @@
+name: Build Wheel and Release
+
+# Trigger on tag push or manual dispatch.
+# Tag and release privilege are verified inside the reusable workflow.
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  # Release to GitHub and publish to PyPI.
+  #
+  # The wheel is uploaded to PyPI so users can install with `pip install`.
+  # A GitHub release is created with the changelog as the release body.
+  # Gooey releases from its `X.Y.Z-release` branch and has no Sphinx docs to deploy.
+  build-release:
+    uses: scikit-package/release-scripts/.github/workflows/_build-wheel-release-upload.yml@v0
+    with:
+      project: Gooey
+      c_extension: false
+      maintainer_github_username: sbillinge
+      release_branch: ${{ github.ref_name }}-release
+      deploy_docs: false
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
