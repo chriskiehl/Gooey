@@ -1,25 +1,17 @@
 """
 This weirdness exists to work around a very specific problem
 with testing WX: you can only ever have one App() instance per
-process. I've spent hours and hours trying to work around this and
-figure out how to gracefully destroy and recreate them, but... no dice.
+process. Destroying and recreating it is unreliable, see
+https://wxpython.org/Phoenix/docs/html/wx.App.html
 
-This is echo'd in the docs: https://wxpython.org/Phoenix/docs/html/wx.App.html
+Destroying the App between test modules crashes the process when the
+tests are run with pytest. So instead, the first test module to run
+creates the App and every later module reuses it. Only the top level
+frame is destroyed between tests (see harness.instrumentGooey). The App
+itself is cleaned up when the test process exits.
 
-Destroying/recreating causes instability in the tests. We can work around that
-by reusing the same App instance across tests and only destroying the top level
-frame (which is fine). However, this causes a new problem: the last test which
-runs will now always fail, cause we're not Destroying the App instance.
-
-Ideal world: UnitTest would expose a global "done" hook regardless of test
-discovery type. That doesn't exist, so the best we can do is use the Module cleanup
-methods. These aren't perfect, but destroying / recreating at the module boundary
-gives slightly more reliable tests. These are picked up by the test runner
-by their existence in the module's globals(). There's no other way to hook
-things together. We need it in every test, and thus... that's the background
-for why this weirdness is going on.
-
-It's a hack around a hack around a problem in Wx.
+The App is created in setUpModule, which the test runner (unittest or
+pytest) picks up by its existence in the test module's globals().
 
 Usage:
 
@@ -36,8 +28,5 @@ app = None
 
 def setUpModule():
     global app
-    app = wx.App()
-
-def tearDownModule():
-    global app
-    app.Destroy()
+    if app is None:
+        app = wx.App()

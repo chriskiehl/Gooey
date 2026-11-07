@@ -1,0 +1,13 @@
+name: Tests on PR
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests-on-pr:
+    uses: scikit-package/release-scripts/.github/workflows/_tests-on-pr-no-codecov.yml@v0
+    with:
+      project: Gooey
+      c_extension: false
+      headless: true

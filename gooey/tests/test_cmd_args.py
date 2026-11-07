@@ -31,7 +31,7 @@ class TextCommandLine(unittest.TestCase):
         mutex.add_argument('--two', action='store_true')
 
         # No error when we don't provide required arguments
-        cmd_args.parse_cmd_args(parser)
+        cmd_args.parse_cmd_args(parser, [])
 
         # Test that required/argn have been restored in parser
         argrequired = next(action for action in parser._actions if action.dest == 'arg').required
