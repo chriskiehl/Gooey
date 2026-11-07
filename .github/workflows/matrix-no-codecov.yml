@@ -1,0 +1,16 @@
+name: Matrix
+
+on:
+  release:
+    types:
+      - prereleased
+      - published
+  workflow_dispatch:
+
+jobs:
+  matrix:
+    uses: scikit-package/release-scripts/.github/workflows/_matrix-no-codecov-on-merge-to-main.yml@v0
+    with:
+      project: Gooey
+      c_extension: false
+      headless: true

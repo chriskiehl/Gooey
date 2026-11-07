@@ -1,3 +1,11 @@
+---
+name: Bug report
+about: Report a bug in Gooey
+title: ""
+labels: ""
+assignees: ""
+---
+
 Hello There, Future Issue Creator! 
 
 >README: Are you suddenly seeing errors related to Alignment flags when starting Gooey? Upgrade your gooey installation to the latest version (`pip install -U gooey`) to resolve the errors! See [this issue](https://github.com/chriskiehl/Gooey/issues/549) for additional information. 
