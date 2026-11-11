@@ -4,7 +4,7 @@
 
 **Changed:**
 
-* <news item>
+* New installs of Gooey now get ``colored`` 2.x. Programs that use names only found in ``colored`` 1.x, such as ``colored.fore.RED``, ``colored.style.BOLD``, or ``attr('underlined')``, need to pin ``colored<2`` or switch to the 2.x names, such as ``colored.Fore.red``, ``colored.Style.bold``, or ``attr('underline')``.
 
 **Deprecated:**
 
