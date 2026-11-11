@@ -22,9 +22,23 @@ def run(build_spec):
     app.MainLoop()
 
 
+def get_app():
+    """
+    Get the running wx.App, creating it if there is none yet.
+
+    Gooey creates the App before building its window settings, so it can
+    check whether the system is in dark mode, and then reuses it here.
+
+    Returns
+    -------
+    wx.App
+        The running wx.App.
+    """
+    return wx.GetApp() or wx.App(False)
+
+
 def build_app(build_spec):
-    app = wx.App(False)
-    return _build_app(build_spec, app)
+    return _build_app(build_spec, get_app())
 
 
 def _build_app(build_spec, app):

@@ -308,6 +308,8 @@ Just about everything in Gooey's overall look and feel can be customized by pass
 | menus | Show custom menu groups and items (see: [Menus](#menus) |
 | clear_before_run | When true, previous output will be cleared from the terminal when running program again |
 
+> **Dark mode:** when the system is in dark mode, the default colors (backgrounds, terminal, and label, help, and group text) switch to dark backgrounds with light text, so all text stays readable. Any color you set yourself is always used as is. A build config saved with `dump_build_config` keeps the colors of the mode it was saved in.
+
 
 
 Layout Customization

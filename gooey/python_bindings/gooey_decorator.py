@@ -93,6 +93,9 @@ def Gooey(f=None,
     def run_gooey(self, args=None, namespace=None):
       # This import is delayed so it is not in the --ignore-gooey codepath.
       from gooey.gui import application
+      # The App must exist before the build spec so dark mode can be detected.
+      # Keep a reference to it, because wx frees an App that nothing refers to.
+      app = application.get_app()
       source_path = sys.argv[0]
 
       build_spec = None
