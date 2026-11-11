@@ -1,0 +1,25 @@
+name: Block PRs to master
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  check-target-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail unless the PR comes from a release branch
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [[ "$BASE_REF" != "master" ]]; then
+            echo "This pull request targets '$BASE_REF', not master, so there is nothing to check."
+            exit 0
+          fi
+          if [[ "$HEAD_REF" =~ ^[0-9]+(\.[0-9]+)+-release$ ]]; then
+            echo "Branch '$HEAD_REF' is a release branch, so it may be merged into master."
+            exit 0
+          fi
+          echo "::error::This pull request targets master, but master only tracks the latest release. Please change the base branch of this pull request to a release branch."
+          exit 1
