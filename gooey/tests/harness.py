@@ -3,6 +3,7 @@ from contextlib import contextmanager
 import importlib
 import time
 from threading import Thread
+from unittest.mock import patch
 
 import wx
 
@@ -16,10 +17,13 @@ from util.functional import merge
 
 
 @contextmanager
-def instrumentGooey(parser, **kwargs):
+def instrumentGooey(parser, dark_mode=False, **kwargs):
     """
     Context manager used during testing for setup/tear down of the
     WX infrastructure during subTests.
+
+    Gooey's default colors follow the system appearance. Tests use light
+    mode unless `dark_mode=True`, so they pass on machines in either mode.
 
     Weirdness warning: this uses a globally reused wx.App instance.
     """
@@ -31,8 +35,9 @@ def instrumentGooey(parser, **kwargs):
     # wx frees a window's control ids when it is destroyed, so give each test
     # window fresh event ids, as a new run of the program would get.
     importlib.reload(events)
-    buildspec = create_from_parser(parser, "", **merge(defaults, kwargs))
-    app, gooey = application._build_app(buildspec, app)
+    with patch('gooey.python_bindings.colors.is_dark_mode', return_value=dark_mode):
+        buildspec = create_from_parser(parser, "", **merge(defaults, kwargs))
+        app, gooey = application._build_app(buildspec, app)
     app.SetTopWindow(gooey)
     try:
         yield (app, gooey)

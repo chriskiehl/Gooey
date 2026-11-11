@@ -10,6 +10,7 @@ import colored
 import wx
 
 from gooey import GooeyParser
+from gooey.gui import application
 from python_bindings import constants
 from tests.harness import instrumentGooey
 
@@ -224,6 +225,38 @@ class TestGooeyApplication(unittest.TestCase):
                 actual_hello_style = {name: hello_style[name] for name in expected_hello_style}
                 self.assertEqual(actual_console_text, 'hello\n')
                 self.assertEqual(actual_hello_style, expected_hello_style)
+
+    def testDarkModeColorsWindow(self):
+        # The window, header, and footer use dark backgrounds when the
+        # system is in dark mode, so native text such as button labels,
+        # which the system draws in white, stays readable. Each case builds
+        # the window and reads back its background colors.
+        testcases = [
+            # C1: Light mode.
+            # Expected: The light backgrounds Gooey has always used.
+            (False, {'body': '#F0F0F0', 'header': '#FFFFFF', 'footer': '#F0F0F0'}),
+            # C2: Dark mode.
+            # Expected: Dark backgrounds.
+            (True, {'body': '#292A31', 'header': '#19191D', 'footer': '#292A31'}),
+        ]
+        for input_dark_mode, expected_backgrounds in testcases:
+            with self.subTest(dark_mode=input_dark_mode):
+                parser = self.basicParser()
+                with instrumentGooey(parser, dark_mode=input_dark_mode) as (app, gapp):
+                    actual_backgrounds = {
+                        'body': gapp.GetBackgroundColour().GetAsString(wx.C2S_HTML_SYNTAX),
+                        'header': gapp.header.GetBackgroundColour().GetAsString(wx.C2S_HTML_SYNTAX),
+                        'footer': gapp.footer.GetBackgroundColour().GetAsString(wx.C2S_HTML_SYNTAX),
+                    }
+                self.assertEqual(actual_backgrounds, expected_backgrounds)
+
+    def testGetAppReusesRunningApp(self):
+        # Gooey creates its wx.App before building the window settings so it
+        # can check for dark mode, and must then reuse that App instead of
+        # creating a second one.
+        # Expected: The App that is already running is returned.
+        actual_app = application.get_app()
+        self.assertIs(actual_app, wx.GetApp())
 
     def getConsoleTextStyle(self, gapp, text):
         inside_text_position = gapp.console.getText().find(text) + 1
