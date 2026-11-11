@@ -45,6 +45,8 @@ Richtext currently supports the following attributes:
 
 These can be used either via their code (`attr(1)`) or their verbose form (`attr('bold')`)
 
+> Gooey supports colored 1.x and 2.x. The `stylize`, `fg`, and `attr` functions are available in colored 1.x and in 2.2 and later. In colored 2.x the underline names are `underline` and `res_underline` instead of `underlined` and `res_underlined`. The codes (`attr(4)`, `attr(24)`) work with every version.
+
 
 ### Foreground Colors:
 

@@ -6,6 +6,7 @@ from collections import namedtuple
 from unittest.mock import patch
 from unittest.mock import MagicMock
 
+import colored
 import wx
 
 from gooey import GooeyParser
@@ -147,6 +148,92 @@ class TestGooeyApplication(unittest.TestCase):
                     actual_hello_color = hello_style.GetTextColour().GetAsString(wx.C2S_HTML_SYNTAX)
                 self.assertEqual(actual_console_text, expected_console_text)
                 self.assertEqual(actual_hello_color, expected_hello_color)
+
+    def testRichtextControlsStylesConsoleText(self):
+        # The console turns the ANSI bold and underline codes, and the codes
+        # that end them, into styled text when richtext_controls=True. Each
+        # case writes "hello" after a sequence of codes, then reads back the
+        # console text and the style attributes of "hello" that the case checks.
+        testcases = [
+            # C1: Bold code (1).
+            # Expected: The codes are removed and "hello" is bold, not underlined.
+            ('\x1b[1mhello\n', {'bold': True, 'underlined': False}),
+            # C2: Underline code (4).
+            # Expected: The codes are removed and "hello" is underlined, not bold.
+            ('\x1b[4mhello\n', {'bold': False, 'underlined': True}),
+            # C3: Bold code (1) followed by the end bold code (21).
+            # Expected: The codes are removed and "hello" is not bold.
+            ('\x1b[1m\x1b[21mhello\n', {'bold': False}),
+            # C4: Underline code (4) followed by the end underline code (24).
+            # Expected: The codes are removed and "hello" is not underlined.
+            ('\x1b[4m\x1b[24mhello\n', {'underlined': False}),
+        ]
+        for input_text, expected_hello_style in testcases:
+            with self.subTest(input_text):
+                parser = self.basicParser()
+                with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+                    gapp.console.appendText(input_text)
+                    actual_console_text = gapp.console.getText()
+                    hello_style = self.getConsoleTextStyle(gapp, 'hello')
+                actual_hello_style = {name: hello_style[name] for name in expected_hello_style}
+                self.assertEqual(actual_console_text, 'hello\n')
+                self.assertEqual(actual_hello_style, expected_hello_style)
+
+    def testRichtextControlsResetRestoresDefaultStyle(self):
+        # The ANSI reset code (0) ends every style, so text after it looks
+        # the same as text written before any codes.
+        parser = self.basicParser()
+        with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+            gapp.console.appendText('plain \x1b[1m\x1b[4m\x1b[38;5;2m\x1b[0mhello\n')
+            actual_console_text = gapp.console.getText()
+            expected_hello_style = self.getConsoleTextStyle(gapp, 'plain')
+            actual_hello_style = self.getConsoleTextStyle(gapp, 'hello')
+        self.assertEqual(actual_console_text, 'plain hello\n')
+        self.assertEqual(actual_hello_style, expected_hello_style)
+
+    def testRichtextControlsRendersColoredLibraryOutput(self):
+        # Output styled with the colored library, which the richtext docs
+        # recommend, renders in the console with both colored 1.x and 2.x.
+        # Version 1.4 and later only add codes when writing to a terminal, so
+        # FORCE_COLOR is set here as a program run by Gooey needs to do.
+        # Each case writes "hello" styled by colored, then reads back the
+        # console text and the style attributes of "hello" that the case checks.
+        testcases = [
+            # C1: Foreground color by name.
+            # Expected: The codes are removed and "hello" is green.
+            (lambda: colored.fg('green'), {'color': '#008000'}),
+            # C2: Bold attribute by name.
+            # Expected: The codes are removed and "hello" is bold, not underlined.
+            (lambda: colored.attr('bold'), {'bold': True, 'underlined': False}),
+            # C3: Underline attribute by code.
+            # Expected: The codes are removed and "hello" is underlined, not bold.
+            (lambda: colored.attr(4), {'bold': False, 'underlined': True}),
+            # C4: Foreground color and bold attribute combined with +.
+            # Expected: The codes are removed and "hello" is bold and red.
+            (lambda: colored.fg('red') + colored.attr('bold'), {'bold': True, 'color': '#800000'}),
+        ]
+        for input_style, expected_hello_style in testcases:
+            with patch.dict(os.environ, {'FORCE_COLOR': '1'}):
+                styled_hello = colored.stylize('hello', input_style()) + '\n'
+            with self.subTest(styled_hello):
+                parser = self.basicParser()
+                with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+                    gapp.console.appendText(styled_hello)
+                    actual_console_text = gapp.console.getText()
+                    hello_style = self.getConsoleTextStyle(gapp, 'hello')
+                actual_hello_style = {name: hello_style[name] for name in expected_hello_style}
+                self.assertEqual(actual_console_text, 'hello\n')
+                self.assertEqual(actual_hello_style, expected_hello_style)
+
+    def getConsoleTextStyle(self, gapp, text):
+        inside_text_position = gapp.console.getText().find(text) + 1
+        text_style = wx.TextAttr()
+        gapp.console.textbox.GetStyle(inside_text_position, text_style)
+        return {
+            'bold': text_style.GetFontWeight() == wx.FONTWEIGHT_BOLD,
+            'underlined': text_style.GetFontUnderlined(),
+            'color': text_style.GetTextColour().GetAsString(wx.C2S_HTML_SYNTAX),
+        }
 
 
     def basicParser(self):
