@@ -54,6 +54,7 @@ class GooeyApplication(wx.Frame):
             self.buildSpec.get('hide_progress_msg'),
             self.buildSpec.get('encoding'),
             self.buildSpec.get('requires_shell'),
+            self.buildSpec.get('richtext_controls', False),
         )
 
         pub.subscribe(events.WINDOW_START, self.onStart)

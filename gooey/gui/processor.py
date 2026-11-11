@@ -13,7 +13,7 @@ from gooey.util.functional import unit, bind
 
 
 class ProcessController(object):
-    def __init__(self, progress_regex, progress_expr, hide_progress_msg,encoding, shell=True):
+    def __init__(self, progress_regex, progress_expr, hide_progress_msg,encoding, shell=True, richtext_controls=False):
         self._process = None
         self.progress_regex = progress_regex
         self.progress_expr = progress_expr
@@ -21,6 +21,7 @@ class ProcessController(object):
         self.encoding = encoding
         self.wasForcefullyStopped = False
         self.shell_execution = shell
+        self.richtext_controls = richtext_controls
 
     def was_success(self):
         self._process.communicate()
@@ -39,11 +40,18 @@ class ProcessController(object):
     def running(self):
         return self._process and self.poll() is None
 
-    def run(self, command):
-        self.wasForcefullyStopped = False
+    def _get_env(self):
         env = os.environ.copy()
         env["GOOEY"] = "1"
         env["PYTHONIOENCODING"] = self.encoding
+        if self.richtext_controls and "FORCE_COLOR" not in env and "NO_COLOR" not in env:
+            # The program writes to a pipe, so color libraries skip ANSI codes unless forced
+            env["FORCE_COLOR"] = "1"
+        return env
+
+    def run(self, command):
+        self.wasForcefullyStopped = False
+        env = self._get_env()
         try:
             self._process = subprocess.Popen(
                 command.encode(sys.getfilesystemencoding()),

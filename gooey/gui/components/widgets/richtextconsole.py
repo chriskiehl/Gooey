@@ -1,6 +1,5 @@
 import wx
 import wx.richtext
-import colored
 import re
 
 kColorList = ["#000000", "#800000", "#008000", "#808000", "#000080", "#800080", "#008080", "#c0c0c0",
@@ -42,21 +41,21 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         super(wx.richtext.RichTextCtrl, self).__init__(parent, -1, "", style=wx.richtext.RE_MULTILINE | wx.richtext.RE_READONLY)
         self.regex_urls=re.compile(r'\b((?:file://|https?://|mailto:)[^][\s<>|]*)')
         self.url_colour = wx.Colour(0,0,255)
-        self.esc = colored.style.ESC
-        self.end = colored.style.END
+        self.esc = '\x1b['
+        self.end = 'm'
         self.noop = lambda *args, **kwargs: None
 
         self.actionsMap = {
-            colored.style.BOLD: self.BeginBold,
-            colored.style.RES_BOLD: self.EndBold,
-            colored.style.UNDERLINED: self.BeginUnderline,
-            colored.style.RES_UNDERLINED: self.EndUnderline,
-            colored.style.RESET: self.EndAllStyles,
+            '\x1b[1m': self.BeginBold,
+            '\x1b[21m': self.EndBold,
+            '\x1b[4m': self.BeginUnderline,
+            '\x1b[24m': self.EndUnderline,
+            '\x1b[0m': self.EndAllStyles,
         }
 
         # Actions for coloring text
         for index, hex in enumerate(kColorList):
-            escSeq = '{}{}{}'.format(colored.fore.ESC, index, colored.fore.END)
+            escSeq = '\x1b[38;5;{}m'.format(index)
             wxcolor = wx.Colour(int(hex[1:3],16), int(hex[3:5],16), int(hex[5:],16), alpha=wx.ALPHA_OPAQUE)
             # NB : we use a default parameter to force the evaluation of the binding
             self.actionsMap[escSeq] = lambda bindedColor=wxcolor: self.BeginTextColour(bindedColor)

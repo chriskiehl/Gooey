@@ -30,6 +30,10 @@ print(stylize('Hello world!', fg('red') + attr('bold')))
 
 > Note that you combine the foreground and attribute functions with the `+` operator.   
 
+Gooey shows your program's output in its own window rather than a terminal, and colored (version 1.4 and later) normally leaves out color codes when it is not writing to a terminal. To keep your colors, Gooey sets the `FORCE_COLOR` environment variable to `1` for your program when `richtext_controls=True`. You don't need to set anything yourself. If you set `FORCE_COLOR` or `NO_COLOR` before starting your program, Gooey keeps your setting, so `FORCE_COLOR=0` or `NO_COLOR=1` turns colors off.
+
+> `FORCE_COLOR` also turns on color for other libraries that check it, such as rich.
+
 ### Attributes: 
 
 Richtext currently supports the following attributes:
@@ -44,6 +48,8 @@ Richtext currently supports the following attributes:
 |  24 | res_underlined   |
 
 These can be used either via their code (`attr(1)`) or their verbose form (`attr('bold')`)
+
+> Gooey supports colored 1.x and 2.x. The `stylize`, `fg`, and `attr` functions are available in colored 1.x and in 2.2 and later. In colored 2.x the underline names are `underline` and `res_underline` instead of `underlined` and `res_underlined`. The codes (`attr(4)`, `attr(24)`) work with every version.
 
 
 ### Foreground Colors:
