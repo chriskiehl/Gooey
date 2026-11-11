@@ -27,5 +27,5 @@ class TextField(TextContainer):
         textctr.Enable(state['enabled'])
         self.Show(state['visible'])
         self.error.SetLabel(state['error'] or '')
-        self.error.Show(state['error'] is not None and state['error'] is not '')
+        self.error.Show(state['error'] is not None and state['error'] != '')
         self.Layout()
