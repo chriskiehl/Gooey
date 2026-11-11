@@ -225,6 +225,61 @@ class TestGooeyApplication(unittest.TestCase):
                 self.assertEqual(actual_console_text, 'hello\n')
                 self.assertEqual(actual_hello_style, expected_hello_style)
 
+    def testRichtextControlsRemovesEscapeCodesThatDoNotSetStyle(self):
+        # Programs such as progress bars print escape codes that end in a
+        # letter other than "m" to move the cursor or clear the line. The
+        # console does not act on these codes, but it removes them and keeps
+        # all of the text around them. Each case writes a line with such
+        # codes, then reads back the console text.
+        testcases = [
+            # C1: Clear line code (2K) followed by text that contains "m".
+            # Expected: The code is removed and all of the text is kept.
+            ('\x1b[2Khello world mm\n', 'hello world mm\n'),
+            # C2: Cursor up code (1A) with no "m" after it.
+            # Expected: The code is removed and all of the text is kept.
+            ('\x1b[1Aup\n', 'up\n'),
+            # C3: Hide and show cursor codes (?25l, ?25h) around text.
+            # Expected: The codes are removed and the text is kept.
+            ('\x1b[?25lhello\x1b[?25h\n', 'hello\n'),
+            # C4: One frame of a rich progress bar, which mixes a clear line
+            # code with color codes.
+            # Expected: All codes are removed and the label and bar are kept.
+            ('\x1b[2KWorking \x1b[38;5;237m━━━━━\x1b[0m \x1b[35m100%\x1b[0m\n', 'Working ━━━━━ 100%\n'),
+            # C5: Start of an escape code with no ending, at the end of the line.
+            # Expected: The unfinished code is removed and the text is kept.
+            ('hello\x1b[\n', 'hello\n'),
+        ]
+        for input_text, expected_console_text in testcases:
+            with self.subTest(input_text):
+                parser = self.basicParser()
+                with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+                    gapp.console.appendText(input_text)
+                    actual_console_text = gapp.console.getText()
+                self.assertEqual(actual_console_text, expected_console_text)
+
+    def testRichtextControlsKeepsStyleAfterEscapeCodesThatDoNotSetStyle(self):
+        # An escape code that does not set a style must not hide the style
+        # code that follows it. Each case writes "hello" after a code that
+        # does not set a style and the code for green, then reads back the
+        # console text and the color of "hello".
+        testcases = [
+            # C1: Clear line code (2K) before the green code.
+            # Expected: The codes are removed and "hello" is green.
+            '\x1b[2K\x1b[38;5;2mhello\n',
+            # C2: Hide cursor code (?25l) before the green code.
+            # Expected: The codes are removed and "hello" is green.
+            '\x1b[?25l\x1b[38;5;2mhello\n',
+        ]
+        for input_text in testcases:
+            with self.subTest(input_text):
+                parser = self.basicParser()
+                with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+                    gapp.console.appendText(input_text)
+                    actual_console_text = gapp.console.getText()
+                    actual_hello_color = self.getConsoleTextStyle(gapp, 'hello')['color']
+                self.assertEqual(actual_console_text, 'hello\n')
+                self.assertEqual(actual_hello_color, '#008000')
+
     def getConsoleTextStyle(self, gapp, text):
         inside_text_position = gapp.console.getText().find(text) + 1
         text_style = wx.TextAttr()

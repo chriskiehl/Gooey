@@ -41,8 +41,9 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         super(wx.richtext.RichTextCtrl, self).__init__(parent, -1, "", style=wx.richtext.RE_MULTILINE | wx.richtext.RE_READONLY)
         self.regex_urls=re.compile(r'\b((?:file://|https?://|mailto:)[^][\s<>|]*)')
         self.url_colour = wx.Colour(0,0,255)
-        self.esc = '\x1b['
-        self.end = 'm'
+        # An escape code is ESC [, then parameters, then one final character.
+        # The final character is optional so an unfinished code is removed too.
+        self.regex_escape_codes = re.compile(r'\x1b\[[0-?]*[ -/]*[@-~]?')
         self.noop = lambda *args, **kwargs: None
 
         self.actionsMap = {
@@ -89,22 +90,13 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
         """
         self.SetInsertionPointEnd()
         unprocIndex = 0
-        while True:
-            # Invariant : unprocIndex is the starting index of the unprocessed part of the buffer
-            escPos = content.find(self.esc, unprocIndex)
-            if escPos == -1:
-                break
-            # Invariant : found an escape sequence starting at escPos
-            # NB : we flush all the characters before the escape sequence, if any
-            if content[unprocIndex:escPos]:
-                self.PreprocessAndWriteText(content[unprocIndex:escPos])
-            endEsc = content.find(self.end, escPos)
-            if endEsc == -1:
-                unprocIndex = escPos + len(self.esc)
-                continue
-            # Invariant : end of sequence has been found
-            self.actionsMap.get(content[escPos:endEsc+1], self.noop)()
-            unprocIndex = endEsc + 1
+        for escapeCode in self.regex_escape_codes.finditer(content):
+            # NB : we flush all the characters before the escape code, if any
+            if content[unprocIndex:escapeCode.start()]:
+                self.PreprocessAndWriteText(content[unprocIndex:escapeCode.start()])
+            # Codes without an action, such as cursor movement, are dropped
+            self.actionsMap.get(escapeCode.group(), self.noop)()
+            unprocIndex = escapeCode.end()
         # Invariant : unprocessed end of buffer is escape-free, ready to be printed
         self.PreprocessAndWriteText(content[unprocIndex:])
         self.ShowPosition(self.GetInsertionPoint())
@@ -119,4 +111,4 @@ class RichTextConsole(wx.richtext.RichTextCtrl):
                 return
             self.SetFontScale(self.GetFontScale() * r, True)
         else:
-           event.Skip()
+            event.Skip()
