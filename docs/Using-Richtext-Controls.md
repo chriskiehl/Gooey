@@ -34,6 +34,18 @@ Gooey shows your program's output in its own window rather than a terminal, and 
 
 > `FORCE_COLOR` also turns on color for other libraries that check it, such as rich.
 
+### Other color libraries:
+
+You do not have to use colored. Gooey reads the standard ANSI style codes, so output from other libraries that print them, such as termcolor, colorama, or rich, is styled as well. Gooey understands the codes for:
+
+* bold, italic, and underline, and the codes that end them
+* the 8 basic and 8 bright text and background colors
+* the 256 color palette for text and background
+* text and background colors given as red, green, and blue values
+* reset
+
+Other escape codes, such as the ones that move the cursor, are removed from the text.
+
 ### Attributes: 
 
 Richtext currently supports the following attributes:
