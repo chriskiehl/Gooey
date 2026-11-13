@@ -280,6 +280,68 @@ class TestGooeyApplication(unittest.TestCase):
                 self.assertEqual(actual_console_text, 'hello\n')
                 self.assertEqual(actual_hello_color, '#008000')
 
+    def testRichtextControlsRendersCodesFromOtherLibraries(self):
+        # The console understands the standard ANSI style codes, not only
+        # the ones that the colored library sends. Each case writes "hello"
+        # after a style code, then reads back the console text and the style
+        # attributes of "hello" that the case checks.
+        testcases = [
+            # C1: Basic color code (31), as sent by termcolor and colorama.
+            # Expected: The code is removed and "hello" is red.
+            ('\x1b[31mhello\n', {'color': '#800000'}),
+            # C2: Bright color code (92).
+            # Expected: The code is removed and "hello" is bright green.
+            ('\x1b[92mhello\n', {'color': '#00FF00'}),
+            # C3: Bold, underline and color in one code, as sent by rich.
+            # Expected: The code is removed and "hello" is bold, underlined and red.
+            ('\x1b[1;4;31mhello\n', {'bold': True, 'underlined': True, 'color': '#800000'}),
+            # C4: Color given as red, green and blue values (38;2).
+            # Expected: The code is removed and "hello" has exactly that color.
+            ('\x1b[38;2;18;52;86mhello\n', {'color': '#123456'}),
+            # C5: Bold code (1) followed by the standard end bold code (22).
+            # Expected: The codes are removed and "hello" is not bold.
+            ('\x1b[1m\x1b[22mhello\n', {'bold': False}),
+            # C6: Background color code (44).
+            # Expected: The code is removed and "hello" has a blue background.
+            ('\x1b[44mhello\n', {'background': '#000080'}),
+        ]
+        for input_text, expected_hello_style in testcases:
+            with self.subTest(input_text):
+                parser = self.basicParser()
+                with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+                    gapp.console.appendText(input_text)
+                    actual_console_text = gapp.console.getText()
+                    hello_style = self.getConsoleTextStyle(gapp, 'hello')
+                actual_hello_style = {name: hello_style[name] for name in expected_hello_style}
+                self.assertEqual(actual_console_text, 'hello\n')
+                self.assertEqual(actual_hello_style, expected_hello_style)
+
+    def testRichtextControlsKeepsStyleBetweenLines(self):
+        # Gooey passes the program output to the console line by line. A
+        # style that is not ended on one line carries on to the next line,
+        # as it does in a terminal.
+        parser = self.basicParser()
+        with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+            gapp.console.appendText('\x1b[1mhello\n')
+            gapp.console.appendText('world\n')
+            actual_console_text = gapp.console.getText()
+            actual_world_bold = self.getConsoleTextStyle(gapp, 'world')['bold']
+        self.assertEqual(actual_console_text, 'hello\nworld\n')
+        self.assertEqual(actual_world_bold, True)
+
+    def testRichtextControlsClearForgetsStyle(self):
+        # Clearing the console, as Gooey does before each run, ends any
+        # style left over from the previous run.
+        parser = self.basicParser()
+        with instrumentGooey(parser, richtext_controls=True) as (app, gapp):
+            gapp.console.appendText('\x1b[1mhello\n')
+            gapp.console.clear()
+            gapp.console.appendText('world\n')
+            actual_console_text = gapp.console.getText()
+            actual_world_bold = self.getConsoleTextStyle(gapp, 'world')['bold']
+        self.assertEqual(actual_console_text, 'world\n')
+        self.assertEqual(actual_world_bold, False)
+
     def getConsoleTextStyle(self, gapp, text):
         inside_text_position = gapp.console.getText().find(text) + 1
         text_style = wx.TextAttr()
@@ -288,6 +350,7 @@ class TestGooeyApplication(unittest.TestCase):
             'bold': text_style.GetFontWeight() == wx.FONTWEIGHT_BOLD,
             'underlined': text_style.GetFontUnderlined(),
             'color': text_style.GetTextColour().GetAsString(wx.C2S_HTML_SYNTAX),
+            'background': text_style.GetBackgroundColour().GetAsString(wx.C2S_HTML_SYNTAX),
         }
 
 
