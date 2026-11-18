@@ -159,7 +159,7 @@ def iter_parsers(parser):
     ''' Iterate over name, parser pairs '''
     try:
         return get_subparser(parser._actions).choices.items()
-    except:
+    except (AttributeError, TypeError):
         return iter([('::gooey/default', parser)])
 
 
