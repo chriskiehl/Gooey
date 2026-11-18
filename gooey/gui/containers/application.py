@@ -127,11 +127,22 @@ class GooeyApplication(wx.Frame):
         # self.Bind(wx.EVT_CLOSE, self.onClose)
 
         # TODO: handle child focus for per-field level validation.
-        # self.Bind(wx.EVT_CHILD_FOCUS, self.handleFocus)
+        self.Bind(wx.EVT_CHILD_FOCUS, self.handleFocus)
 
         if self.buildSpec.get('auto_start', False):
             self.onStart()
 
+    def handleFocus(self, event):
+        """
+        Handle focus event for per-field level validation.
+        """
+        child = event.GetWindow()
+        if isinstance(child, wx.TextCtrl):  # Sample validation for text inputs
+            value = child.GetValue()
+            if not value:  # Simple validation to check if the field is empty
+                wx.MessageBox('This field cannot be empty!', 'Validation Error', wx.OK | wx.ICON_ERROR)
+                child.SetFocus()  # Keep focus on the field until valid
+        event.Skip()  # Ensure the event is not blocked
 
     def applyConfiguration(self):
         self.SetTitle(self.buildSpec['program_name'])
