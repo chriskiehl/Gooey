@@ -1,5 +1,6 @@
 include README.md
 include LICENSE.txt
+include LICENSE
 include MANIFEST.in
 recursive-include gooey/images *
 recursive-include gooey/languages *
