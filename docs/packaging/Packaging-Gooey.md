@@ -44,7 +44,7 @@ block_cipher = None
 
 a = Analysis(
     ['main.py'],  # replace me with the main entry point 
-    pathex=['/path/to/main.py'],  # replace me with the appropriate path
+    pathex=['/path/to/'],  # replace me with the appropriate path to main.py, but leave off filename.
     ...
     )
 
