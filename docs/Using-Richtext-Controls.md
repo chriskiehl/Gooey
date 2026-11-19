@@ -18,6 +18,12 @@ def main():
 
 The [colored library](https://pypi.org/project/colored/) provides functions for adding markup controls to your text. Gooey supports the foreground (`fg`) and attributes (`attr`).
 
+Gooey does not install colored for you, so add it to your program's requirements or install it yourself:
+
+```
+pip install colored
+```
+
 ```python
 from colored import stylize, attr, fg
 ```

@@ -1,3 +1,4 @@
 pytest
 pytest-cov
 coverage
+colored
