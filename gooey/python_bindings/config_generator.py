@@ -3,6 +3,7 @@ import sys
 import warnings
 import textwrap
 from gooey.python_bindings import argparse_to_json
+from gooey.python_bindings import colors
 from gooey.gui.util.quoting import quote
 from gooey.python_bindings import constants
 from gooey.python_bindings import gooey_decorator
@@ -26,6 +27,7 @@ default_layout = {
 
 def create_from_parser(parser, source_path, **kwargs):
 
+  default_colors = colors.get_default_colors()
   run_cmd = kwargs.get('target')
   if run_cmd is None:
     if hasattr(sys, 'frozen'):
@@ -82,18 +84,18 @@ def create_from_parser(parser, source_path, **kwargs):
       'group_by_type':        kwargs.get('group_by_type', True),
 
       # styles
-      'body_bg_color':        kwargs.get('body_bg_color', '#f0f0f0'),
-      'header_bg_color':      kwargs.get('header_bg_color', '#ffffff'),
+      'body_bg_color':        kwargs.get('body_bg_color', default_colors['body_bg_color']),
+      'header_bg_color':      kwargs.get('header_bg_color', default_colors['header_bg_color']),
       'header_height':        kwargs.get('header_height', 90),
       'header_show_title':    kwargs.get('header_show_title', True),
       'header_show_subtitle': kwargs.get('header_show_subtitle', True),
       'header_image_center':  kwargs.get('header_image_center', False),
-      'footer_bg_color':      kwargs.get('footer_bg_color', '#f0f0f0'),
-      'sidebar_bg_color':     kwargs.get('sidebar_bg_color', '#f2f2f2'),
+      'footer_bg_color':      kwargs.get('footer_bg_color', default_colors['footer_bg_color']),
+      'sidebar_bg_color':     kwargs.get('sidebar_bg_color', default_colors['sidebar_bg_color']),
 
       # font family, weight, and size are determined at runtime
-      'terminal_panel_color': kwargs.get('terminal_panel_color', '#F0F0F0'),
-      'terminal_font_color':  kwargs.get('terminal_font_color', '#000000'),
+      'terminal_panel_color': kwargs.get('terminal_panel_color', default_colors['terminal_panel_color']),
+      'terminal_font_color':  kwargs.get('terminal_font_color', default_colors['terminal_font_color']),
       'terminal_font_family': kwargs.get('terminal_font_family', None),
       'terminal_font_weight': get_font_weight(kwargs),
       'terminal_font_size':   kwargs.get('terminal_font_size', None),

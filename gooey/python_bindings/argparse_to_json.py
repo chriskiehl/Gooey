@@ -18,6 +18,7 @@ from collections import OrderedDict
 from functools import partial
 from uuid import uuid4
 
+from gooey.python_bindings import colors
 from gooey.python_bindings.gooey_parser import GooeyParser
 from gooey.util.functional import merge, getin, identity, assoc
 from gooey.gui.components.options.validators import validators
@@ -62,8 +63,6 @@ class UnsupportedConfiguration(Exception):
 # baseline build_spec
 item_default = {
     'error_color': '#ea7878',
-    'label_color': '#000000',
-    'help_color': '#363636',
     'full_width': False,
     'validator': {
         'type': 'local',
@@ -264,8 +263,17 @@ def reapply_mutex_groups(mutex_groups, action_groups):
             for group in action_groups]
 
 
+def get_item_defaults():
+    default_colors = colors.get_default_colors()
+    return merge(item_default, {
+        'label_color': default_colors['label_color'],
+        'help_color': default_colors['help_color'],
+    })
+
+
 def categorize2(groups, widget_dict, options):
-    defaults = {'label_color': '#000000', 'description_color': '#363636'}
+    default_colors = colors.get_default_colors()
+    defaults = {'label_color': default_colors['label_color'], 'description_color': default_colors['description_color']}
     return [{
         'name': group['name'],
         'items': list(categorize(group['items'], widget_dict, options)),
@@ -404,7 +412,7 @@ def build_radio_group(mutex_group, widget_group, options):
     'cli_type': 'optional',
     'group_name': 'Choose Option',
     'required': mutex_group.required,
-    'options': merge(item_default, getattr(mutex_group, 'gooey_options', {})),
+    'options': merge(get_item_defaults(), getattr(mutex_group, 'gooey_options', {})),
     'data': {
       'commands': [action.option_strings for action in mutex_group._group_actions],
       'widgets': list(categorize(mutex_group._group_actions, widget_group, options))
@@ -427,7 +435,7 @@ def action_to_json(action, widget, options):
         validator = 'True'
         error_msg = ''
 
-    base = merge(item_default, {
+    base = merge(get_item_defaults(), {
         'validator': {
             'type': 'ExpressionValidator',
             'test': validator,
